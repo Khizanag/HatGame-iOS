@@ -74,6 +74,23 @@ struct HatGameTests {
         #expect(texts.allSatisfy { database.contains($0) })
     }
 
+    // MARK: - Editing a team
+    /// Editing a team must replace it in place, not move it to the end of the list.
+    @Test func updateTeamReplacesInPlacePreservingOrder() {
+        let manager = makeManager(isSkippingEnabled: true)
+        let secondId = UUID()
+        manager.addTeam(Team(name: "Beta", players: [Player(name: "X", teamId: secondId)], color: .red))
+
+        let original = manager.configuration.teams[0]
+        let edited = Team(id: original.id, name: "Renamed", players: original.players, color: original.color)
+        manager.updateTeam(edited)
+
+        #expect(manager.configuration.teams.count == 2)
+        #expect(manager.configuration.teams[0].id == original.id)
+        #expect(manager.configuration.teams[0].name == "Renamed")
+        #expect(manager.configuration.teams[1].name == "Beta")
+    }
+
     // MARK: - Helpers
     private func makeManager(isSkippingEnabled: Bool) -> GameManager {
         let teamId = UUID()

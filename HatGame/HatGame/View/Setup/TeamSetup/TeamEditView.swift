@@ -18,8 +18,7 @@ struct TeamEditView: View {
         TeamFormView(
             team: team,
             onPrimaryAction: { updatedTeam in
-                gameManager.removeTeam(team)
-                gameManager.addTeam(updatedTeam)
+                gameManager.updateTeam(updatedTeam)
             }
         )
         .environment(gameManager)

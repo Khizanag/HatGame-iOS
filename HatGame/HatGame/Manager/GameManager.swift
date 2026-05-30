@@ -218,6 +218,12 @@ extension GameManager {
         configuration.teams.removeAll { $0.id == team.id }
     }
 
+    /// Replaces a team in place, preserving its position in the list.
+    func updateTeam(_ team: Team) {
+        guard let index = configuration.teams.firstIndex(where: { $0.id == team.id }) else { return }
+        configuration.teams[index] = team
+    }
+
     func moveTeam(from source: IndexSet, to destination: Int) {
         configuration.teams.move(fromOffsets: source, toOffset: destination)
     }
