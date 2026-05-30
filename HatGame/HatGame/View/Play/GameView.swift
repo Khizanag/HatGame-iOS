@@ -13,6 +13,7 @@ struct GameView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.scenePhase) private var scenePhase
 
     let round: GameRound
 
@@ -32,6 +33,9 @@ struct GameView: View {
             .onDisappear(perform: stopTimer)
             .onChange(of: gameManager.currentWord) { _, newWord in
                 handleCurrentWordChange(newWord)
+            }
+            .onChange(of: scenePhase) { _, phase in
+                handleScenePhaseChange(phase)
             }
             .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 giveUpAlertActions
@@ -192,6 +196,16 @@ private extension GameView {
             return
         }
         startTimer()
+    }
+
+    /// Auto-pause an in-progress turn when the app leaves the foreground so the
+    /// countdown can't run down while the player isn't looking. The player
+    /// resumes manually from the pause overlay on return.
+    func handleScenePhaseChange(_ phase: ScenePhase) {
+        guard phase != .active, !isPaused, gameManager.currentWord != nil else { return }
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
+            isPaused = true
+        }
     }
 
     func handleCurrentWordChange(_ newWord: Word?) {
