@@ -11,46 +11,49 @@ import SwiftUI
 struct TeamCard: View {
     let team: Team
     let playersPerTeam: Int
-    let onRemoveTeam: () -> Void
-    let onEditTeam: () -> Void
-    let isEditMode: Bool
 
     var body: some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            GameCard {
+        GameCard {
+            HStack(alignment: .top, spacing: DesignBook.Spacing.md) {
+                ribbon
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                     header
                     playersList
                 }
             }
-
-            if isEditMode {
-                editModeActions
-            }
         }
     }
 }
 
-// MARK: - Private
+// MARK: - Subviews
 private extension TeamCard {
+    var ribbon: some View {
+        Capsule()
+            .fill(team.color)
+            .frame(width: DesignBook.Spacing.xs)
+            .accessibilityHidden(true)
+    }
+
     var header: some View {
-        HStack {
+        HStack(alignment: .firstTextBaseline) {
             Text(team.name)
                 .font(DesignBook.Font.headline)
-                .foregroundStyle(team.color)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .lineLimit(1)
 
             Spacer()
 
-            Text("\(team.players.count)/\(playersPerTeam)")
+            Text(verbatim: "\(team.players.count)/\(playersPerTeam)")
                 .font(DesignBook.Font.captionBold)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
+                .monospacedDigit()
         }
     }
 
     var playersList: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             ForEach(team.players) { player in
-                HStack {
+                HStack(spacing: DesignBook.Spacing.sm) {
                     Circle()
                         .fill(team.color)
                         .frame(width: DesignBook.Size.dotMedium, height: DesignBook.Size.dotMedium)
@@ -60,26 +63,6 @@ private extension TeamCard {
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
             }
-        }
-    }
-
-    var editModeActions: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            Button(action: onEditTeam) {
-                Image(systemName: "pencil.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-            }
-            .buttonStyle(.plain)
-            .frame(width: 44, height: 44)
-
-            Button(action: onRemoveTeam) {
-                Image(systemName: "trash.circle.fill")
-                    .font(.system(size: 32))
-                    .foregroundStyle(DesignBook.Color.Status.error)
-            }
-            .buttonStyle(.plain)
-            .frame(width: 44, height: 44)
         }
     }
 }

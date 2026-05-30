@@ -12,6 +12,7 @@ import SwiftUI
 struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     private let appConfiguration = AppConfiguration.shared
 
     @State private var isAddTeamSheetPresented = false
@@ -19,11 +20,15 @@ struct TeamSetupView: View {
     @State private var deletingTeam: Team?
     @State private var editMode: EditMode = .inactive
 
+    private var teams: [Team] { gameManager.configuration.teams }
     private var isEditMode: Bool { editMode == .active }
+    private var hasTeams: Bool { !teams.isEmpty }
+    private var canAddMore: Bool { teams.count < gameManager.configuration.maxTeams }
+    private var canReorder: Bool { teams.count >= 2 }
 
     private var canContinue: Bool {
         (gameManager.configuration.minTeams...gameManager.configuration.maxTeams)
-            .contains(gameManager.configuration.teams.count)
+            .contains(teams.count)
     }
 
     // MARK: - Body
@@ -32,6 +37,7 @@ struct TeamSetupView: View {
             .environment(\.editMode, $editMode)
             .navigationTitle(String(localized: "teamSetup.title"))
             .setDefaultStyle()
+            .toolbar { toolbarContent }
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationStack {
                     AddTeamView(
@@ -54,91 +60,129 @@ struct TeamSetupView: View {
     }
 }
 
-// MARK: - Private
+// MARK: - Layout
 private extension TeamSetupView {
     var content: some View {
         VStack(spacing: 0) {
-            List {
-                headerSection
-                teamsSection
-            }
-            .listStyle(.plain)
-            .scrollContentBackground(.hidden)
-
-            continueSection
-                .paddingHorizontalDefault()
-                .withFooterGradient()
-        }
-    }
-
-    var headerSection: some View {
-        Section {
             headerCard
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.md)
-                .listRowInsets(EdgeInsets())
-                .listRowBackground(Color.clear)
-                .listRowSeparator(.hidden)
+                .padding(.bottom, DesignBook.Spacing.md)
+
+            if hasTeams {
+                populatedList
+                continueSection
+                    .paddingHorizontalDefault()
+                    .withFooterGradient()
+            } else {
+                emptyState
+                    .frame(maxHeight: .infinity)
+            }
         }
     }
 
-    var teamsSection: some View {
-        Section {
-            if shouldShowEditButton {
-                editButtonRow
-            }
+    var headerCard: some View {
+        HeaderCard(
+            title: String(localized: "teamSetup.title"),
+            description: String(localized: "teamSetup.description")
+        )
+    }
 
+    var populatedList: some View {
+        List {
             teamsList
 
-            if shouldShowAddButton {
+            if !isEditMode, canAddMore {
                 addTeamButtonRow
             }
         }
-    }
-
-    var shouldShowEditButton: Bool {
-        gameManager.configuration.teams.count > 1
-    }
-
-    var shouldShowAddButton: Bool {
-        !isEditMode && gameManager.configuration.teams.count < 6
-    }
-
-    var editButtonRow: some View {
-        HStack {
-            Spacer()
-            editModeButton
-        }
-        .paddingHorizontalDefault()
-        .padding(.top, DesignBook.Spacing.sm)
-        .listRowInsets(EdgeInsets())
-        .listRowBackground(Color.clear)
-        .listRowSeparator(.hidden)
+        .listStyle(.plain)
+        .scrollContentBackground(.hidden)
     }
 
     var teamsList: some View {
-        ForEach(gameManager.configuration.teams) { team in
+        ForEach(teams) { team in
             teamRow(for: team)
         }
         .onMove(perform: moveTeam)
     }
 
+    var emptyState: some View {
+        ContentUnavailableView {
+            Label(String(localized: "teamSetup.empty.title"), systemImage: "person.3")
+        } description: {
+            Text(String(
+                format: String(localized: "teamSetup.empty.description"),
+                gameManager.configuration.minTeams
+            ))
+        } actions: {
+            SecondaryButton(
+                title: String(localized: "teamSetup.addTeam"),
+                icon: "plus.circle.fill"
+            ) {
+                DesignBook.Haptics.tap()
+                isAddTeamSheetPresented = true
+            }
+            .paddingHorizontalDefault()
+        }
+    }
+
+    var continueSection: some View {
+        VStack(spacing: DesignBook.Spacing.sm) {
+            PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+                DesignBook.Haptics.tap()
+                navigator.push(.wordSettings)
+            }
+            .disabled(!canContinue)
+            .opacity(canContinue ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+
+            if !canContinue {
+                requirementText
+            }
+        }
+    }
+
+    var requirementText: some View {
+        Text(String(format: String(localized: "teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
+            .font(DesignBook.Font.caption)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
+            .multilineTextAlignment(.center)
+            .paddingHorizontalDefault()
+    }
+}
+
+// MARK: - Row
+private extension TeamSetupView {
     func teamRow(for team: Team) -> some View {
-        TeamCard(
-            team: team,
-            playersPerTeam: gameManager.configuration.playersPerTeam,
-            onRemoveTeam: { deletingTeam = team },
-            onEditTeam: { editingTeam = team },
-            isEditMode: isEditMode
-        )
+        Button {
+            DesignBook.Haptics.tap()
+            editingTeam = team
+        } label: {
+            TeamCard(team: team, playersPerTeam: gameManager.configuration.playersPerTeam)
+        }
+        .buttonStyle(.plain)
         .paddingHorizontalDefault()
         .padding(.vertical, DesignBook.Spacing.sm)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
+        .accessibilityLabel(Text(String(format: String(localized: "teamSetup.editTeam.a11y %@"), team.name)))
+        .accessibilityHint(Text("teamSetup.editTeam.a11yHint"))
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             deleteSwipeAction(for: team)
             editSwipeAction(for: team)
+        }
+        .contextMenu {
+            Button {
+                editingTeam = team
+            } label: {
+                Label(String(localized: "common.buttons.edit"), systemImage: "pencil")
+            }
+            Button(role: .destructive) {
+                deletingTeam = team
+            } label: {
+                Label(String(localized: "common.buttons.delete"), systemImage: "trash")
+            }
         }
     }
 
@@ -164,6 +208,7 @@ private extension TeamSetupView {
             title: String(localized: "teamSetup.addTeam"),
             icon: "plus.circle.fill"
         ) {
+            DesignBook.Haptics.tap()
             isAddTeamSheetPresented = true
         }
         .paddingHorizontalDefault()
@@ -174,41 +219,49 @@ private extension TeamSetupView {
     }
 
     func moveTeam(from source: IndexSet, to destination: Int) {
-        withAnimation {
+        withAnimation(DesignBook.Motion.respectingReducedMotion(.smooth, reduceMotion: reduceMotion)) {
             gameManager.moveTeam(from: source, to: destination)
         }
     }
+}
 
-    var headerCard: some View {
-        HeaderCard(
-            title: String(localized: "teamSetup.title"),
-            description: String(localized: "teamSetup.description")
-        )
-    }
-
-    var continueSection: some View {
-        VStack(spacing: DesignBook.Spacing.sm) {
-            PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
-                DesignBook.Haptics.tap()
-                navigator.push(.wordSettings)
+// MARK: - Toolbar
+private extension TeamSetupView {
+    @ToolbarContentBuilder
+    var toolbarContent: some ToolbarContent {
+        if canReorder {
+            ToolbarItem(placement: .topBarTrailing) {
+                editToggleButton
             }
-            .disabled(!canContinue)
-            .opacity(canContinue ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-
-            if !canContinue {
-                requirementText
+        }
+        if canAddMore {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    DesignBook.Haptics.tap()
+                    isAddTeamSheetPresented = true
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .accessibilityLabel(Text("teamSetup.addTeam"))
             }
         }
     }
 
-    var requirementText: some View {
-        Text(String(format: String(localized: "teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
-            .font(DesignBook.Font.caption)
-            .foregroundStyle(DesignBook.Color.Text.secondary)
-            .multilineTextAlignment(.center)
-            .paddingHorizontalDefault()
+    var editToggleButton: some View {
+        Button {
+            DesignBook.Haptics.tap()
+            withAnimation(DesignBook.Motion.respectingReducedMotion(.snappy, reduceMotion: reduceMotion)) {
+                editMode = isEditMode ? .inactive : .active
+            }
+        } label: {
+            Text(isEditMode ? "common.buttons.done" : "common.buttons.edit")
+                .fontWeight(isEditMode ? .semibold : .regular)
+        }
     }
+}
 
+// MARK: - Sheets and alerts
+private extension TeamSetupView {
     var editTeamBinding: Binding<Bool> {
         Binding(
             get: { editingTeam != nil },
@@ -241,7 +294,10 @@ private extension TeamSetupView {
         }
         Button(String(localized: "teamSetup.deleteTeam.title"), role: .destructive) {
             if let deletingTeam {
-                gameManager.removeTeam(deletingTeam)
+                DesignBook.Haptics.rigid()
+                withAnimation(DesignBook.Motion.respectingReducedMotion(.smooth, reduceMotion: reduceMotion)) {
+                    gameManager.removeTeam(deletingTeam)
+                }
                 self.deletingTeam = nil
             }
         }
@@ -252,29 +308,6 @@ private extension TeamSetupView {
         if let deletingTeam {
             Text(String(format: String(localized: "teamSetup.deleteTeam.confirmation"), deletingTeam.name))
         }
-    }
-
-    var editModeButton: some View {
-        Button {
-            withAnimation(.spring(response: 0.3)) {
-                editMode = editMode == .active ? .inactive : .active
-            }
-        } label: {
-            HStack(spacing: DesignBook.Spacing.xs) {
-                Image(systemName: isEditMode ? "checkmark.circle.fill" : "slider.horizontal.3")
-                    .font(DesignBook.Font.body)
-                Text(isEditMode ? String(localized: "common.buttons.done") : String(localized: "common.buttons.edit"))
-                    .font(DesignBook.Font.bodyBold)
-            }
-            .foregroundStyle(isEditMode ? DesignBook.Color.Status.success : DesignBook.Color.Text.accent)
-            .padding(.horizontal, DesignBook.Spacing.md)
-            .padding(.vertical, DesignBook.Spacing.sm)
-            .background(
-                RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
-                    .fill(isEditMode ? DesignBook.Color.Status.success.opacity(DesignBook.Opacity.veryLight) : DesignBook.Color.Background.secondary)
-            )
-        }
-        .buttonStyle(.plain)
     }
 }
 

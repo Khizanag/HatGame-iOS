@@ -10,7 +10,7 @@ import SwiftUI
 
 extension View {
     func setDefaultBackground() -> some View {
-        background(DesignBook.Color.Background.primary)
+        background(DesignBook.Color.Background.primary.ignoresSafeArea())
     }
 
     func setDefaultStyle() -> some View {

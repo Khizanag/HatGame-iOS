@@ -6,7 +6,6 @@
 //
 
 import DesignBook
-import Navigation
 import SwiftUI
 
 struct TeamFormView: View {
@@ -16,7 +15,7 @@ struct TeamFormView: View {
     }
 
     @Environment(GameManager.self) private var gameManager
-    @Environment(Navigator.self) private var navigator
+    @Environment(\.dismiss) private var dismissSheet
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let team: Team?
@@ -384,12 +383,12 @@ private extension TeamFormView {
         )
 
         onPrimaryAction(updatedTeam)
-        navigator.dismiss()
+        dismissSheet()
     }
 
     func dismiss() {
         DesignBook.Haptics.tap()
-        navigator.dismiss()
+        dismissSheet()
     }
 }
 

@@ -15,6 +15,7 @@ import SwiftUI
 /// back button so iOS can supply the previous screen's title and standard chevron.
 private struct NavigationButtonToolbarModifier: ViewModifier {
     @Environment(Navigator.self) private var navigator
+    @Environment(\.dismiss) private var dismiss
 
     func body(content: Content) -> some View {
         content
@@ -22,10 +23,10 @@ private struct NavigationButtonToolbarModifier: ViewModifier {
                 if navigator.navigationPath.isEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button {
-                            navigator.dismiss()
+                            dismiss()
                         } label: {
                             Image(systemName: "xmark")
-                                .foregroundColor(DesignBook.Color.Text.primary)
+                                .foregroundStyle(DesignBook.Color.Text.primary)
                         }
                     }
                 }
