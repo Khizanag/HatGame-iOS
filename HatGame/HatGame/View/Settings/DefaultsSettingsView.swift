@@ -50,34 +50,16 @@ private extension DefaultsSettingsView {
             title: String(localized: "settings.defaultWordsPerPlayer.title"),
             footer: String(localized: "settings.defaultWordsPerPlayer.description")
         ) {
-            VStack(spacing: DesignBook.Spacing.md) {
-                HStack {
-                    Image(systemName: "text.bubble.fill")
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(.orange)
-
-                    Text("settings.defaultWordsPerPlayer.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundStyle(DesignBook.Color.Text.primary)
-
-                    Spacer()
-
-                    Text("\(appConfiguration.defaultWordsPerPlayer)")
-                        .font(DesignBook.Font.title2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.orange)
-                }
-
-                Stepper(
-                    "",
-                    value: Binding(
-                        get: { appConfiguration.defaultWordsPerPlayer },
-                        set: { appConfiguration.defaultWordsPerPlayer = $0 }
-                    ),
-                    in: 3...20
-                )
-                .labelsHidden()
-            }
+            GameSettingsRow(
+                icon: "text.bubble.fill",
+                title: String(localized: "settings.defaultWordsPerPlayer.title"),
+                value: Binding(
+                    get: { appConfiguration.defaultWordsPerPlayer },
+                    set: { appConfiguration.defaultWordsPerPlayer = $0 }
+                ),
+                range: 3...20,
+                step: 1
+            )
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
             .cornerRadius(DesignBook.Size.cardCornerRadius)
@@ -90,35 +72,17 @@ private extension DefaultsSettingsView {
             title: String(localized: "settings.defaultRoundDuration.title"),
             footer: String(localized: "settings.defaultRoundDuration.description")
         ) {
-            VStack(spacing: DesignBook.Spacing.md) {
-                HStack {
-                    Image(systemName: "timer.circle.fill")
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(.blue)
-
-                    Text("settings.defaultRoundDuration.title")
-                        .font(DesignBook.Font.headline)
-                        .foregroundStyle(DesignBook.Color.Text.primary)
-
-                    Spacer()
-
-                    Text("\(appConfiguration.defaultRoundDuration)s")
-                        .font(DesignBook.Font.title2)
-                        .fontWeight(.bold)
-                        .foregroundStyle(.blue)
-                }
-
-                Stepper(
-                    "",
-                    value: Binding(
-                        get: { appConfiguration.defaultRoundDuration },
-                        set: { appConfiguration.defaultRoundDuration = $0 }
-                    ),
-                    in: 5...120,
-                    step: 5
-                )
-                .labelsHidden()
-            }
+            GameSettingsRow(
+                icon: "timer.circle.fill",
+                title: String(localized: "settings.defaultRoundDuration.title"),
+                value: Binding(
+                    get: { appConfiguration.defaultRoundDuration },
+                    set: { appConfiguration.defaultRoundDuration = $0 }
+                ),
+                range: 5...120,
+                step: 5,
+                suffix: String(localized: "createRoom.seconds")
+            )
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
             .cornerRadius(DesignBook.Size.cardCornerRadius)

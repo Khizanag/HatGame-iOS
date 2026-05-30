@@ -171,6 +171,9 @@ private extension WordInputView {
     var wordTextField: some View {
         TextField("wordInput.enterWord", text: $currentWord)
             .textFieldStyle(.plain)
+            .submitLabel(.next)
+            .textInputAutocapitalization(.words)
+            .autocorrectionDisabled()
             .font(DesignBook.Font.body)
             .foregroundStyle(DesignBook.Color.Text.primary)
             .padding(DesignBook.Spacing.md)
@@ -260,7 +263,12 @@ private extension WordInputView {
 
     func handleAddWord() {
         let trimmed = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty, !isCurrentPlayerDone, !playerWords.contains(trimmed) else { return }
+        guard !trimmed.isEmpty, !isCurrentPlayerDone else { return }
+        // Signal silent duplicate rejections so the input doesn't feel dead.
+        guard !playerWords.contains(trimmed) else {
+            DesignBook.Haptics.warning()
+            return
+        }
 
         DesignBook.Haptics.tap()
         let animation = reduceMotion ? nil : DesignBook.Motion.bouncy
