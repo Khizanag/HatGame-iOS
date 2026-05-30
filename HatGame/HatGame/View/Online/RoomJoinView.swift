@@ -16,7 +16,7 @@ struct RoomJoinView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
 
-    @State private var playerName: String = ""
+    @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
     @State private var roomCode: String = ""
     @State private var isJoining: Bool = false
     @State private var error: Error?
@@ -54,6 +54,11 @@ private extension RoomJoinView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
+                SetupHero(
+                    systemImage: "person.2.wave.2.fill",
+                    title: String(localized: "joinRoom.hero.title"),
+                    subtitle: String(localized: "joinRoom.hero.subtitle")
+                )
                 codeCard
                 nameCard
             }
@@ -134,6 +139,8 @@ private extension RoomJoinView {
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     .focused($focusedField, equals: .name)
+                    .submitLabel(.join)
+                    .onSubmit(joinRoom)
             }
         }
     }

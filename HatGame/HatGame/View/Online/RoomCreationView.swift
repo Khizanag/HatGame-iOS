@@ -54,6 +54,11 @@ private extension RoomCreationView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
+                SetupHero(
+                    systemImage: "wifi",
+                    title: String(localized: "createRoom.hero.title"),
+                    subtitle: String(localized: "createRoom.hero.subtitle")
+                )
                 nameCard
                 settingsCard
             }

@@ -121,11 +121,11 @@ private extension LocalRoomBrowser {
     }
 
     var emptyState: some View {
-        EmptyStateCard(
-            symbol: "antenna.radiowaves.left.and.right",
-            title: "local.browser.empty",
-            animatesSymbol: true
-        )
+        ContentUnavailableView {
+            Label("local.browser.empty", systemImage: "antenna.radiowaves.left.and.right")
+        } description: {
+            Text("local.browser.empty.hint")
+        }
     }
 
     func hostRow(_ host: LocalMultipeerService.DiscoveredHost) -> some View {

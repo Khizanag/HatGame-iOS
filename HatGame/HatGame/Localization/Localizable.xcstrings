@@ -1,6 +1,91 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "createRoom.hero.title" : {
+      "comment" : "Hero title on the online room-creation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახის შექმნა"
+          }
+        }
+      }
+    },
+    "createRoom.hero.subtitle" : {
+      "comment" : "Hero subtitle on the online room-creation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set up the game and share the code with friends"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოაწყვეთ თამაში და გაუზიარეთ კოდი მეგობრებს"
+          }
+        }
+      }
+    },
+    "joinRoom.hero.title" : {
+      "comment" : "Hero title on the online join-room screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join a room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახში შესვლა"
+          }
+        }
+      }
+    },
+    "joinRoom.hero.subtitle" : {
+      "comment" : "Hero subtitle on the online join-room screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the 6-character code from the host"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეიყვანეთ მასპინძლის 6-სიმბოლოიანი კოდი"
+          }
+        }
+      }
+    },
+    "local.browser.empty.hint" : {
+      "comment" : "Hint under the nearby-browser empty state.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make sure the host has started a nearby game and you're on the same Wi-Fi or have Bluetooth on"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დარწმუნდით, რომ მასპინძელმა დაიწყო ახლომდებარე თამაში და ხართ იმავე Wi-Fi-ზე ან ჩართული გაქვთ Bluetooth"
+          }
+        }
+      }
+    },
     "wordSource.navTitle" : {
       "comment" : "Navigation title for the word-source choice screen.",
       "localizations" : {
