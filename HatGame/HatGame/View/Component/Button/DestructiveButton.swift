@@ -23,7 +23,6 @@ struct DestructiveButton<Label: View>: View {
                 .font(DesignBook.Font.headline)
                 .padding(8)
                 .frame(maxWidth: .infinity)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
         }
         .buttonStyle(.glassProminent)
         .tint(DesignBook.Color.Status.error)

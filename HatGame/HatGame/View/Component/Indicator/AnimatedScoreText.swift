@@ -32,26 +32,15 @@ struct AnimatedScoreText: View {
 
 // MARK: - Helpers
 private extension AnimatedScoreText {
+    /// Rolls to the target in a single value change and lets `.numericText`
+    /// drive the odometer animation natively (no per-step timer churn).
     func animate(to target: Int) {
         guard !reduceMotion else {
             displayValue = target
             return
         }
-
-        let start = displayValue
-        let delta = target - start
-        guard delta != 0 else { return }
-
-        let steps = min(max(abs(delta), 8), 30)
-        let stepDuration = duration / Double(steps)
-
-        for step in 1...steps {
-            DispatchQueue.main.asyncAfter(deadline: .now() + stepDuration * Double(step)) {
-                withAnimation(.easeOut(duration: stepDuration)) {
-                    let progress = Double(step) / Double(steps)
-                    displayValue = start + Int((Double(delta) * progress).rounded())
-                }
-            }
+        withAnimation(.easeOut(duration: duration)) {
+            displayValue = target
         }
     }
 }

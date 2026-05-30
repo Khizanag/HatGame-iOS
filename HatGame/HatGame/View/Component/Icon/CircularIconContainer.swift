@@ -54,6 +54,8 @@ struct CircularIconContainer: View {
             }
 
             Image(systemName: icon)
+                // Icon size scales with the container's `size` parameter, so it is intentionally dynamic.
+                // swiftlint:disable:next no_inline_font
                 .font(.system(size: calculatedIconSize))
                 .foregroundStyle(color)
         }

@@ -24,7 +24,7 @@ struct EmptyStateCard: View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: symbol)
-                    .font(.system(size: 40))
+                    .font(DesignBook.IconFont.extraLarge)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .symbolEffect(
                         .variableColor.iterative.dimInactiveLayers,
