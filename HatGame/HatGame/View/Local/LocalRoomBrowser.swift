@@ -19,7 +19,7 @@ struct LocalRoomBrowser: View {
     @Environment(Navigator.self) private var navigator
     @Environment(LocalRoomManager.self) private var roomManager
 
-    @State private var playerName: String = ""
+    @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
     @State private var isConnecting: Bool = false
     @State private var error: Error?
 
@@ -87,6 +87,8 @@ private extension LocalRoomBrowser {
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     .focused($focusedField, equals: .name)
+                    .submitLabel(.done)
+                    .onSubmit { focusedField = nil }
             }
         }
     }

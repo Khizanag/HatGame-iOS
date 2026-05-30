@@ -17,7 +17,7 @@ struct RoomCreationView: View {
     @Environment(RoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var playerName: String = ""
+    @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
     @State private var wordsPerPlayer: Int = 5
     @State private var roundDuration: Int = 60
     @State private var isCreating: Bool = false
@@ -91,6 +91,8 @@ private extension RoomCreationView {
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     .focused($focusedField, equals: .name)
+                    .submitLabel(.done)
+                    .onSubmit(createRoom)
             }
         }
     }

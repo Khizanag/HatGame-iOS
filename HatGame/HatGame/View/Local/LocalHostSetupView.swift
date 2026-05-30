@@ -19,7 +19,7 @@ struct LocalHostSetupView: View {
     @Environment(LocalRoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var hostName: String = ""
+    @AppStorage("HatGame.lastPlayerName") private var hostName: String = ""
     @State private var wordsPerPlayer: Int = 5
     @State private var roundDuration: Int = 60
     @State private var isCreating: Bool = false
@@ -123,6 +123,8 @@ private extension LocalHostSetupView {
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     .focused($focusedField, equals: .name)
+                    .submitLabel(.done)
+                    .onSubmit(host)
             }
         }
     }
