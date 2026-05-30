@@ -26,6 +26,10 @@ struct TeamFormView: View {
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var isColorSectionExpanded: Bool = false
     @State private var nameSuggestions: [String] = TeamNameSuggestions.random()
+    /// True once the user types/picks a team name themselves — stops auto-deriving it from members.
+    @State private var hasEditedTeamName: Bool = false
+    /// Reveals the name + color cards. Hidden until the members are filled (sticky once shown).
+    @State private var hasRevealedDetails: Bool = false
 
     @FocusState private var focusedField: Field?
 
@@ -41,6 +45,15 @@ struct TeamFormView: View {
         playerNames
             .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             .filter { !$0.isEmpty }
+    }
+
+    /// A team name built from the member names, e.g. "Anna & Ben".
+    private var derivedTeamName: String {
+        filledPlayerNames.joined(separator: " & ")
+    }
+
+    private var areAllPlayersFilled: Bool {
+        filledPlayerNames.count == requiredPlayers
     }
 
     private var requiredPlayers: Int { gameManager.configuration.playersPerTeam }
@@ -79,9 +92,14 @@ struct TeamFormView: View {
     var body: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                teamNameCard
-                teamColorCard
                 playersCard
+
+                if hasRevealedDetails {
+                    teamNameCard
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                    teamColorCard
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -97,6 +115,7 @@ struct TeamFormView: View {
                 .withFooterGradient()
         }
         .onAppear(perform: handleAppear)
+        .onChange(of: playerNames) { _, _ in handlePlayerNamesChange() }
     }
 }
 
@@ -107,7 +126,7 @@ private extension TeamFormView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 FieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
 
-                TextField("teamForm.enterTeamName", text: $teamName)
+                TextField("teamForm.enterTeamName", text: teamNameBinding)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
@@ -115,11 +134,7 @@ private extension TeamFormView {
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     .focused($focusedField, equals: .teamName)
-                    .onSubmit {
-                        if !playerNames.isEmpty {
-                            focusedField = .player(0)
-                        }
-                    }
+                    .onSubmit { focusedField = nil }
 
                 if showNameSuggestions {
                     TeamNameSuggestionRow(
@@ -302,10 +317,22 @@ private extension TeamFormView {
 
 // MARK: - Derived state
 private extension TeamFormView {
-    /// Show inline suggestions only when the user is actively focused on the team-name
-    /// field with no text yet — i.e. they're looking for inspiration, not editing.
+    /// Show inline suggestions whenever the user is focused on the team-name field,
+    /// so they stay available even after it's been auto-filled from the members.
     var showNameSuggestions: Bool {
-        focusedField == .teamName && trimmedTeamName.isEmpty
+        focusedField == .teamName
+    }
+
+    /// Binding for the team-name field that records when the user edits it directly,
+    /// so we stop overwriting their choice with the auto-derived name.
+    var teamNameBinding: Binding<String> {
+        Binding(
+            get: { teamName },
+            set: { newValue in
+                teamName = newValue
+                hasEditedTeamName = true
+            }
+        )
     }
 
     func isColorSelected(_ color: Color) -> Bool {
@@ -325,8 +352,23 @@ private extension TeamFormView {
 private extension TeamFormView {
     func handleAppear() {
         loadInitialData()
-        if teamName.isEmpty {
-            focusedField = .teamName
+        // Start the host straight on the first member field for a new team.
+        if team == nil {
+            focusedField = .player(0)
+        }
+    }
+
+    /// Keeps the team name auto-derived from the members ("Anna & Ben") until the
+    /// host edits it themselves, and reveals the name + color cards once all
+    /// members are filled.
+    func handlePlayerNamesChange() {
+        if !hasEditedTeamName {
+            teamName = derivedTeamName
+        }
+        if areAllPlayersFilled, !hasRevealedDetails {
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+                hasRevealedDetails = true
+            }
         }
     }
 
@@ -343,8 +385,8 @@ private extension TeamFormView {
         withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             teamName = name
         }
-        // Advance focus so the user can keep moving without an extra tap.
-        focusedField = playerNames.isEmpty ? nil : .player(0)
+        hasEditedTeamName = true
+        focusedField = nil
     }
 
     func refreshSuggestions() {
@@ -363,10 +405,15 @@ private extension TeamFormView {
             if names.count > requiredPlayers { names = Array(names.prefix(requiredPlayers)) }
             playerNames = names
             teamColor = team.color
+            // Editing an existing team: keep its name and show everything up front.
+            hasEditedTeamName = true
+            hasRevealedDetails = true
         } else {
             teamName = ""
             playerNames = Array(repeating: "", count: requiredPlayers)
             teamColor = TeamDefaultColorGenerator().generateDefaultColor(for: gameManager.configuration)
+            hasEditedTeamName = false
+            hasRevealedDetails = false
         }
     }
 
