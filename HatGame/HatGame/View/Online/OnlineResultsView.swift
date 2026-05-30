@@ -190,35 +190,16 @@ private extension OnlineResultsView {
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
-                ForEach(Array(sortedTeams.enumerated()), id: \.element.team.id) { rank, item in
-                    HStack(spacing: DesignBook.Spacing.md) {
-                        Text(verbatim: "\(rank + 1)")
-                            .font(DesignBook.Font.captionBold)
-                            .foregroundStyle(.white)
-                            .frame(width: 28, height: 28)
-                            .background {
-                                Circle().fill(rank == 0
-                                    ? (Color(hex: item.team.colorHex) ?? DesignBook.Color.Text.accent)
-                                    : DesignBook.Color.Text.tertiary.opacity(0.4))
-                            }
-                            .monospacedDigit()
-                        Circle()
-                            .fill(Color(hex: item.team.colorHex) ?? DesignBook.Color.Text.accent)
-                            .frame(width: 10, height: 10)
-                        Text(item.team.name)
-                            .font(DesignBook.Font.body)
-                            .foregroundStyle(DesignBook.Color.Text.primary)
-                        Spacer()
-                        AnimatedScoreText(
-                            value: item.score,
-                            font: DesignBook.Font.title3,
-                            color: rank == 0
-                                ? (Color(hex: item.team.colorHex) ?? DesignBook.Color.Text.accent)
-                                : DesignBook.Color.Text.secondary,
-                            duration: 0.7
+                VStack(spacing: DesignBook.Spacing.sm) {
+                    ForEach(Array(sortedTeams.enumerated()), id: \.element.team.id) { index, item in
+                        TeamScoreRowView(
+                            name: item.team.name,
+                            color: Color(hex: item.team.colorHex) ?? DesignBook.Color.Text.accent,
+                            rank: index + 1,
+                            score: item.score,
+                            isWinner: index == 0
                         )
                     }
-                    .padding(.vertical, DesignBook.Spacing.xs)
                 }
             }
         }
