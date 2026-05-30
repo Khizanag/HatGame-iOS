@@ -43,6 +43,12 @@ struct ResultsView: View {
                 }
             }
             .onAppear(perform: handleAppear)
+            .task {
+                guard isFinal else { return }
+                try? await Task.sleep(for: .milliseconds(180))
+                hasCelebrated = true
+            }
+            .sensoryFeedback(.success, trigger: hasCelebrated)
     }
 }
 
@@ -291,11 +297,6 @@ private extension ResultsView {
             expandedRounds = [currentRound]
         } else if isFinal {
             expandedRounds = Set(GameRound.allCases)
-            // Slight delay so confetti + counter feel choreographed.
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-                DesignBook.Haptics.success()
-                hasCelebrated = true
-            }
         }
     }
 

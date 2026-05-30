@@ -41,12 +41,11 @@ struct OnlineResultsView: View {
                     ConfettiView(isActive: true).ignoresSafeArea().allowsHitTesting(false)
                 }
             }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-                    DesignBook.Haptics.success()
-                    hasCelebrated = true
-                }
+            .task {
+                try? await Task.sleep(for: .milliseconds(180))
+                hasCelebrated = true
             }
+            .sensoryFeedback(.success, trigger: hasCelebrated)
     }
 }
 

@@ -38,11 +38,10 @@ struct TeamTurnResultsView: View {
                 .environment(gameManager)
                 .environment(navigator)
             }
-            .onAppear {
+            .task {
                 guard !hasCelebrated else { return }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.12) {
-                    hasCelebrated = true
-                }
+                try? await Task.sleep(for: .milliseconds(120))
+                hasCelebrated = true
             }
     }
 }
