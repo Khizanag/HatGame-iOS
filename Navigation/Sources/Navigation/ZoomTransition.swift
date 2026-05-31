@@ -35,4 +35,15 @@ public extension View {
             self
         }
     }
+
+    /// Applies the matching zoom transition for a pushed destination (iOS 18+).
+    /// A no-op when no namespace is available, so it is always safe to apply.
+    @ViewBuilder
+    func navigationZoomDestination(id: String, in namespace: Namespace.ID?) -> some View {
+        if #available(iOS 18.0, *), let namespace {
+            navigationTransition(.zoom(sourceID: id, in: namespace))
+        } else {
+            self
+        }
+    }
 }

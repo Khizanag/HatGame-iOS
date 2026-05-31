@@ -11,6 +11,7 @@ import SwiftUI
 
 struct AppIconSelectionView: View {
     @Environment(Navigator.self) private var navigator
+    @Environment(\.navZoomNamespace) private var zoomNamespace
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let appConfiguration = AppConfiguration.shared
@@ -28,6 +29,7 @@ struct AppIconSelectionView: View {
         }
         .navigationTitle(String(localized: "settings.appIcon.title"))
         .setDefaultStyle()
+        .navigationZoomDestination(id: "appIconSelection", in: zoomNamespace)
     }
 }
 

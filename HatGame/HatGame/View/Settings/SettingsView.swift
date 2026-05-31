@@ -11,6 +11,7 @@ import SwiftUI
 
 struct SettingsView: View {
     @Environment(Navigator.self) private var navigator
+    @Environment(\.navZoomNamespace) private var zoomNamespace
 
     private let appConfiguration = AppConfiguration.shared
 
@@ -56,6 +57,7 @@ private extension SettingsView {
                     )
                 }
                 .buttonStyle(.plain)
+                .navigationZoomSource(id: "appIconSelection", in: zoomNamespace)
             }
         }
     }
