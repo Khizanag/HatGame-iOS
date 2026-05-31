@@ -12,6 +12,7 @@ import SwiftUI
 struct HomeView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.navZoomNamespace) private var zoomNamespace
     @SceneStorage("HomeView.howToPlay.expanded.v2") private var isHowToPlayExpanded: Bool = false
     @State private var isHeroFloating: Bool = false
 
@@ -137,16 +138,19 @@ private extension HomeView {
                 DesignBook.Haptics.tap()
                 navigator.present(.teamSetup)
             }
+            .navigationZoomSource(id: "teamSetup", in: zoomNamespace)
 
             SecondaryButton(title: String(localized: "home.nearbyGame"), icon: "dot.radiowaves.left.and.right") {
                 DesignBook.Haptics.tap()
                 navigator.present(.localFlow)
             }
+            .navigationZoomSource(id: "localFlow", in: zoomNamespace)
 
             SecondaryButton(title: String(localized: "home.onlineGame"), icon: "wifi") {
                 DesignBook.Haptics.tap()
                 navigator.present(.onlineFlow)
             }
+            .navigationZoomSource(id: "onlineFlow", in: zoomNamespace)
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.sm)

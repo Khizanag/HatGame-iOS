@@ -9,6 +9,7 @@ import SwiftUI
 
 public struct NavigationView<RootContent: View>: View {
     @State private var navigator = Navigator()
+    @Namespace private var zoomNamespace
     @ViewBuilder private let rootContent: () -> RootContent
     @Environment(\.dismiss) private var dismiss
 
@@ -24,12 +25,26 @@ public struct NavigationView<RootContent: View>: View {
                 }
         }
         .environment(navigator)
+        .environment(\.navZoomNamespace, zoomNamespace)
         .fullScreenCover(item: $navigator.presentedPage) { page in
-            page.view()
-                .environment(navigator)
+            coverContent(for: page)
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()
+        }
+    }
+
+    @ViewBuilder
+    private func coverContent(for page: AnyPage) -> some View {
+        if #available(iOS 18.0, *) {
+            page.view()
+                .environment(navigator)
+                .environment(\.navZoomNamespace, zoomNamespace)
+                .navigationTransition(.zoom(sourceID: page.id, in: zoomNamespace))
+        } else {
+            page.view()
+                .environment(navigator)
+                .environment(\.navZoomNamespace, zoomNamespace)
         }
     }
 }
