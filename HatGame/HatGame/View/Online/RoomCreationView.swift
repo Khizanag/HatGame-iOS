@@ -20,6 +20,8 @@ struct RoomCreationView: View {
     @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
     @State private var wordsPerPlayer: Int = 5
     @State private var roundDuration: Int = 60
+    @State private var isSkippingEnabled: Bool = true
+    @State private var isAutomaticWords: Bool = false
     @State private var isCreating: Bool = false
     @State private var error: Error?
 
@@ -41,7 +43,10 @@ struct RoomCreationView: View {
             } message: {
                 Text(error?.localizedDescription ?? "")
             }
-            .onAppear { focusedField = .name }
+            .onAppear {
+                focusedField = .name
+                isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
+            }
     }
 
     private var errorBinding: Binding<Bool> {
@@ -130,6 +135,19 @@ private extension RoomCreationView {
                         step: 10,
                         suffix: String(localized: "createRoom.seconds")
                     )
+                    GameSettingsToggleRow(
+                        icon: "wand.and.stars",
+                        title: String(localized: "wordSource.automatic.title"),
+                        subtitle: String(localized: "wordSource.automatic.description"),
+                        isOn: $isAutomaticWords
+                    )
+                    GameSettingsToggleRow(
+                        icon: "arrow.uturn.forward",
+                        title: String(localized: "timerSettings.allowSkipping.title"),
+                        subtitle: String(localized: "timerSettings.allowSkipping.description"),
+                        isOn: $isSkippingEnabled,
+                        tint: DesignBook.Color.Status.warning
+                    )
                 }
             }
         }
@@ -177,7 +195,12 @@ private extension RoomCreationView {
 
         Task {
             do {
-                let settings = GameSettings(wordsPerPlayer: wordsPerPlayer, roundDuration: roundDuration)
+                let settings = GameSettings(
+                    wordsPerPlayer: wordsPerPlayer,
+                    roundDuration: roundDuration,
+                    isSkippingEnabled: isSkippingEnabled,
+                    isAutomaticWords: isAutomaticWords
+                )
                 let code = try await roomManager.createRoom(hostName: name, settings: settings)
                 navigator.push(.roomLobby(roomCode: code))
             } catch {
