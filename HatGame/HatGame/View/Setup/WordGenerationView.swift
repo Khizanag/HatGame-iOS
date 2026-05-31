@@ -18,6 +18,7 @@ struct WordGenerationView: View {
 
     @State private var phase: Phase = .generating
     @State private var displayWord: String = ""
+    @State private var wordBlur: Double = 0
     @State private var progress: Double = 0
     @State private var generatedCount: Int = 0
     @State private var hasStarted = false
@@ -126,6 +127,7 @@ private extension WordGenerationView {
             .foregroundStyle(DesignBook.Color.Text.accent)
             .lineLimit(1)
             .minimumScaleFactor(0.5)
+            .blur(radius: wordBlur)
             .frame(maxWidth: .infinity)
             .padding(.vertical, DesignBook.Spacing.lg)
             .padding(.horizontal, DesignBook.Spacing.md)
@@ -159,25 +161,47 @@ private extension WordGenerationView {
         }
 
         let words = WordDatabase.words
-        guard !reduceMotion, !words.isEmpty else {
+        guard !words.isEmpty else {
             finish()
             return
         }
 
-        var ticks = 0
-        let maxTicks = 26 // ~26 * 0.08s ≈ 2.1s of "drawing"
-        cycleTimer = Timer.scheduledTimer(withTimeInterval: 0.08, repeats: true) { _ in
-            ticks += 1
-            displayWord = words.randomElement() ?? ""
-            withAnimation(.linear(duration: 0.08)) {
-                progress = min(1, Double(ticks) / Double(maxTicks))
+        // Draw a sequence of words, each materializing out of a blur so the
+        // generation is visible. Reduce Motion keeps the reveal but swaps the
+        // blur for a calm opacity cross-fade through fewer words.
+        let drawCount = reduceMotion ? 5 : 14
+        let interval = reduceMotion ? 0.34 : 0.16
+        var draws = 1
+        drawWord(from: words)
+
+        cycleTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
+            draws += 1
+            drawWord(from: words)
+            withAnimation(.linear(duration: interval)) {
+                progress = min(1, Double(draws) / Double(drawCount))
             }
-            if ticks.isMultiple(of: 5) {
+            if !reduceMotion, draws.isMultiple(of: 3) {
                 Task { @MainActor in DesignBook.Haptics.selection() }
             }
-            if ticks >= maxTicks {
+            if draws >= drawCount {
                 stopCycling()
                 finish()
+            }
+        }
+    }
+
+    /// Draws one random word, sharpening it into focus from a blur — or a calm
+    /// opacity cross-fade under Reduce Motion.
+    func drawWord(from words: [String]) {
+        if reduceMotion {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                displayWord = words.randomElement() ?? ""
+            }
+        } else {
+            displayWord = words.randomElement() ?? ""
+            wordBlur = 16
+            withAnimation(.easeOut(duration: 0.34)) {
+                wordBlur = 0
             }
         }
     }
