@@ -116,25 +116,27 @@ private extension RoomLobbyView {
                     .kerning(8)
                     .accessibilityLabel(Text("lobby.shareCode"))
 
-                HStack(spacing: DesignBook.Spacing.md) {
-                    if let code = room?.id {
-                        Button {
-                            DesignBook.Haptics.tap()
-                            UIPasteboard.general.string = code
-                        } label: {
-                            Label("lobby.copyCode", systemImage: "doc.on.doc")
-                                .font(DesignBook.Font.caption)
-                        }
-                        .buttonStyle(.glass)
+                GlassEffectContainer(spacing: DesignBook.Spacing.md) {
+                    HStack(spacing: DesignBook.Spacing.md) {
+                        if let code = room?.id {
+                            Button {
+                                DesignBook.Haptics.tap()
+                                UIPasteboard.general.string = code
+                            } label: {
+                                Label("lobby.copyCode", systemImage: "doc.on.doc")
+                                    .font(DesignBook.Font.caption)
+                            }
+                            .buttonStyle(.glass)
 
-                        ShareLink(
-                            item: String(format: String(localized: "lobby.shareMessage"), code),
-                            preview: SharePreview(String(localized: "online.title"))
-                        ) {
-                            Label("lobby.share", systemImage: "square.and.arrow.up")
-                                .font(DesignBook.Font.caption)
+                            ShareLink(
+                                item: String(format: String(localized: "lobby.shareMessage"), code),
+                                preview: SharePreview(String(localized: "online.title"))
+                            ) {
+                                Label("lobby.share", systemImage: "square.and.arrow.up")
+                                    .font(DesignBook.Font.caption)
+                            }
+                            .buttonStyle(.glass)
                         }
-                        .buttonStyle(.glass)
                     }
                 }
             }
