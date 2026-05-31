@@ -20,12 +20,14 @@ struct LocalSessionView: View {
     @Environment(Navigator.self) private var navigator
 
     @State private var hasInitializedGame: Bool = false
+    @State private var hasGeneratedWords: Bool = false
     @State private var showHostLostAlert: Bool = false
     @State private var hasBeenConnected: Bool = false
 
     private var room: GameRoom? { roomManager.room }
     private var roomStatus: RoomStatus? { room?.status }
     private var gamePhase: GamePhase? { room?.gameState?.phase }
+    private var isAutomaticWords: Bool { room?.settings.isAutomaticWords == true }
 
     private var allPlayersSubmittedWords: Bool {
         guard let players = room?.players, !players.isEmpty else { return false }
@@ -39,6 +41,10 @@ struct LocalSessionView: View {
             .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
                 guard allSubmitted, roomManager.isHost else { return }
                 initializeGameIfNeeded()
+            }
+            .onChange(of: roomStatus) { _, status in
+                guard status == .playing else { return }
+                generateWordsIfNeeded()
             }
             .onChange(of: localRoomManager.isConnected) { _, isConnected in
                 if isConnected {
@@ -73,10 +79,41 @@ struct LocalSessionView: View {
                     teams: room.teams,
                     players: room.players,
                     words: words,
-                    roundDuration: room.settings.roundDuration
+                    settings: room.settings
                 )
             } catch {
                 hasInitializedGame = false
+            }
+        }
+    }
+
+    /// Host-only. In automatic mode the host draws the shared word pool from
+    /// the bundled database when the game starts; `fillRandomWords` broadcasts
+    /// it and opens the submission gate for everyone, triggering initialization.
+    private func generateWordsIfNeeded() {
+        guard localRoomManager.isHostInternal,
+              isAutomaticWords,
+              !hasGeneratedWords,
+              room?.gameState == nil,
+              !allPlayersSubmittedWords,
+              let room = localRoomManager.room else { return }
+        hasGeneratedWords = true
+
+        let count = max(1, room.settings.wordsPerPlayer * room.players.count)
+        let texts = WordDatabase.randomWords(count: count)
+        let hostId = localRoomManager.currentPlayerId ?? ""
+        Task {
+            for attempt in 1...3 {
+                do {
+                    try await localRoomManager.fillRandomWords(texts, hostPlayerId: hostId)
+                    return
+                } catch {
+                    guard attempt < 3 else {
+                        hasGeneratedWords = false
+                        return
+                    }
+                    try? await Task.sleep(for: .seconds(1))
+                }
             }
         }
     }
@@ -114,6 +151,8 @@ private extension LocalSessionView {
                     .frame(width: 96, height: 96)
                     .shadow(.medium)
                 Image(systemName: "antenna.radiowaves.left.and.right")
+                    // Connectivity hero glyph; off-token size with no Dynamic Type match.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 42, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
                     .symbolEffect(.variableColor.iterative, options: .repeating)
@@ -137,7 +176,9 @@ private extension LocalSessionView {
     @ViewBuilder
     var playingContent: some View {
         if !allPlayersSubmittedWords {
-            if roomManager.currentPlayer?.hasSubmittedWords == true {
+            if isAutomaticWords {
+                OnlineWaitingView(message: String(localized: "online.preparingGame"))
+            } else if roomManager.currentPlayer?.hasSubmittedWords == true {
                 OnlineWaitingView(message: String(localized: "online.waitingForOthers"))
             } else {
                 OnlineWordInputView()

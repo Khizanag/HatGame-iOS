@@ -20,10 +20,12 @@ struct OnlineGameFlowView: View {
     @Environment(GameSyncManager.self) private var gameSyncManager
 
     @State private var hasInitializedGame: Bool = false
+    @State private var hasGeneratedWords: Bool = false
 
     private var room: GameRoom? { roomManager.room }
     private var roomStatus: RoomStatus? { room?.status }
     private var gamePhase: GamePhase? { room?.gameState?.phase }
+    private var isAutomaticWords: Bool { room?.settings.isAutomaticWords == true }
 
     private var allPlayersSubmittedWords: Bool {
         guard let players = room?.players, !players.isEmpty else { return false }
@@ -37,6 +39,10 @@ struct OnlineGameFlowView: View {
             .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
                 guard allSubmitted, roomManager.isHost else { return }
                 initializeGameIfNeeded()
+            }
+            .onChange(of: roomStatus) { _, status in
+                guard status == .playing else { return }
+                generateWordsIfNeeded()
             }
     }
 }
@@ -74,6 +80,8 @@ private extension OnlineGameFlowView {
                     .frame(width: 96, height: 96)
                     .shadow(.medium)
                 Image(systemName: "wifi")
+                    // Connectivity hero glyph; off-token size with no Dynamic Type match.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 42, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
                     .symbolEffect(.variableColor.iterative, options: .repeating)
@@ -97,7 +105,9 @@ private extension OnlineGameFlowView {
     @ViewBuilder
     var playingContent: some View {
         if !allPlayersSubmittedWords {
-            if roomManager.currentPlayer?.hasSubmittedWords == true {
+            if isAutomaticWords {
+                OnlineWaitingView(message: String(localized: "online.preparingGame"))
+            } else if roomManager.currentPlayer?.hasSubmittedWords == true {
                 OnlineWaitingView(message: String(localized: "online.waitingForOthers"))
             } else {
                 OnlineWordInputView()
@@ -133,10 +143,44 @@ private extension OnlineGameFlowView {
                     teams: room.teams,
                     players: room.players,
                     words: words,
-                    roundDuration: room.settings.roundDuration
+                    settings: room.settings
                 )
             } catch {
                 hasInitializedGame = false
+            }
+        }
+    }
+
+    /// Host-only. In automatic mode the host generates the shared word pool
+    /// from the bundled database once the game starts; `fillRandomWords` then
+    /// atomically opens the submission gate for everyone, which triggers
+    /// initialization. Retries transient write failures rather than stranding
+    /// the room on the waiting screen; the atomic write makes retries safe
+    /// (a failed attempt persists nothing, so no duplicate words).
+    func generateWordsIfNeeded() {
+        guard roomManager.isHost,
+              isAutomaticWords,
+              !hasGeneratedWords,
+              room?.gameState == nil,
+              !allPlayersSubmittedWords,
+              let room = roomManager.room else { return }
+        hasGeneratedWords = true
+
+        let count = max(1, room.settings.wordsPerPlayer * room.players.count)
+        let texts = WordDatabase.randomWords(count: count)
+        let hostId = roomManager.currentPlayerId ?? ""
+        Task {
+            for attempt in 1...3 {
+                do {
+                    try await roomManager.fillRandomWords(texts, hostPlayerId: hostId)
+                    return
+                } catch {
+                    guard attempt < 3 else {
+                        hasGeneratedWords = false
+                        return
+                    }
+                    try? await Task.sleep(for: .seconds(1))
+                }
             }
         }
     }

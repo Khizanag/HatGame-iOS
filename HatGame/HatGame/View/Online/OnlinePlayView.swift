@@ -133,6 +133,18 @@ private extension OnlinePlayView {
         return Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
     }
 
+    /// Whether the host enabled skipping for this game at all (frozen into the
+    /// synced game state). Old games without the flag default to allowed.
+    var isSkippingAllowed: Bool {
+        gameState?.isSkippingEnabled ?? true
+    }
+
+    /// Whether the skip control is actionable right now: allowed AND more than
+    /// one word remains (parity with the offline rule).
+    var isSkipEnabled: Bool {
+        isSkippingAllowed && remainingWordCount > 1
+    }
+
     @ViewBuilder
     var wordSection: some View {
         if let word = currentWord {
@@ -141,7 +153,7 @@ private extension OnlinePlayView {
                 teamTint: tint,
                 onGuessed: markGuessed,
                 onSkip: skipCurrentWord,
-                isSkipEnabled: remainingWordCount > 1
+                isSkipEnabled: isSkipEnabled
             )
             .id(word.id)
             .transition(
@@ -160,16 +172,18 @@ private extension OnlinePlayView {
 
     var actionRow: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            Button(action: skipCurrentWord) {
-                Label("game.skip", systemImage: "arrow.uturn.forward")
-                    .font(DesignBook.Font.headline)
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, DesignBook.Spacing.sm)
+            if isSkippingAllowed {
+                Button(action: skipCurrentWord) {
+                    Label("game.skip", systemImage: "arrow.uturn.forward")
+                        .font(DesignBook.Font.headline)
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, DesignBook.Spacing.sm)
+                }
+                .buttonStyle(.glass)
+                .tint(DesignBook.Color.Status.warning)
+                .disabled(!isSkipEnabled)
+                .opacity(isSkipEnabled ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
             }
-            .buttonStyle(.glass)
-            .tint(DesignBook.Color.Status.warning)
-            .disabled(remainingWordCount <= 1)
-            .opacity(remainingWordCount <= 1 ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
 
             Button(action: markGuessed) {
                 Label("game.gotIt", systemImage: "checkmark.circle.fill")
@@ -285,7 +299,7 @@ private extension OnlinePlayView {
         guard isActivePlayer,
               let roomId = room?.id,
               let state = gameState,
-              remainingWordCount > 1 else { return }
+              isSkipEnabled else { return }
         DesignBook.Haptics.soft()
         Task {
             try? await gameSyncManager.skipWord(roomId: roomId, gameState: state)
