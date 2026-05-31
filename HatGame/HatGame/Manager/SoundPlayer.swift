@@ -22,9 +22,9 @@ final class SoundPlayer {
     static let shared = SoundPlayer()
 
     private var timeUpPlayer: AVAudioPlayer?
-    private var didConfigureSession = false
 
     private init() {
+        configureSession()
         timeUpPlayer = makePlayer(resource: "time-up", extension: "caf")
     }
 
@@ -36,7 +36,7 @@ final class SoundPlayer {
 
     private func play(_ player: AVAudioPlayer?) {
         guard let player else { return }
-        configureSessionIfNeeded()
+        activateSession()
         player.currentTime = 0
         player.play()
     }
@@ -56,9 +56,10 @@ final class SoundPlayer {
         }
     }
 
-    private func configureSessionIfNeeded() {
-        guard !didConfigureSession else { return }
-        didConfigureSession = true
+    /// Sets the playback category and activates the session eagerly at launch,
+    /// so it is ready long before the first turn ends — the first cue is never
+    /// dropped waiting on session setup.
+    private func configureSession() {
         #if os(iOS)
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, options: [.mixWithOthers])
@@ -66,6 +67,14 @@ final class SoundPlayer {
         } catch {
             logger.error("Audio session configuration failed: \(error.localizedDescription)")
         }
+        #endif
+    }
+
+    /// Re-asserts the active session right before playing, in case an
+    /// interruption deactivated it; playback is attempted regardless.
+    private func activateSession() {
+        #if os(iOS)
+        try? AVAudioSession.sharedInstance().setActive(true)
         #endif
     }
 }
