@@ -212,6 +212,19 @@ public final class LocalRoomManager: RoomManager {
         }
     }
 
+    public override func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
+        guard isLocalHost else { throw LocalError.hostOnly }
+        let onlineWords = texts.map { OnlineWord(text: $0, addedByPlayerId: hostPlayerId) }
+        self.words.append(contentsOf: onlineWords)
+        guard var room else { return }
+        for index in room.players.indices {
+            room.players[index].hasSubmittedWords = true
+        }
+        self.room = room
+        broadcastSnapshot()
+        broadcastWords()
+    }
+
     public override func updateGameState(_ state: OnlineGameState) async throws {
         guard isLocalHost else { throw LocalError.hostOnly }
         guard var room else { return }
@@ -284,8 +297,12 @@ public final class LocalRoomManager: RoomManager {
             guard !isLocalHost else { return }
             self.words = snapshot
         case .helloFromGuest(let player):
-            // Host path: register the new guest and broadcast.
+            // Host path: register the new guest and broadcast — but only while
+            // still in the lobby. Adding a player mid-game would reopen the
+            // word-submission gate and yank everyone back to setup, so late
+            // joiners are ignored (mirrors the Firebase joinRoom status guard).
             guard isLocalHost else { return }
+            guard let status = room?.status, status == .waiting || status == .setup else { return }
             peerToPlayerId[peer] = player.id
             applyAddPlayer(player)
         case .clientAction(let action):

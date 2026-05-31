@@ -70,16 +70,41 @@ public struct GameSettings: Codable, Sendable {
     public var playersPerTeam: Int
     public var wordsPerPlayer: Int
     public var roundDuration: Int
+    public var isSkippingEnabled: Bool
+    public var isAutomaticWords: Bool
 
     public init(
         maxTeams: Int = 4,
         playersPerTeam: Int = 2,
         wordsPerPlayer: Int = 5,
-        roundDuration: Int = 60
+        roundDuration: Int = 60,
+        isSkippingEnabled: Bool = true,
+        isAutomaticWords: Bool = false
     ) {
         self.maxTeams = maxTeams
         self.playersPerTeam = playersPerTeam
         self.wordsPerPlayer = wordsPerPlayer
         self.roundDuration = roundDuration
+        self.isSkippingEnabled = isSkippingEnabled
+        self.isAutomaticWords = isAutomaticWords
+    }
+
+    // MARK: - Codable
+    /// Firebase RTDB strips defaulted values, and rooms created before these
+    /// flags existed omit them entirely — decode each defensively so older
+    /// in-flight rooms keep decoding with today's behavior as the default.
+    private enum CodingKeys: String, CodingKey {
+        case maxTeams, playersPerTeam, wordsPerPlayer, roundDuration,
+             isSkippingEnabled, isAutomaticWords
+    }
+
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.maxTeams = try container.decodeIfPresent(Int.self, forKey: .maxTeams) ?? 4
+        self.playersPerTeam = try container.decodeIfPresent(Int.self, forKey: .playersPerTeam) ?? 2
+        self.wordsPerPlayer = try container.decodeIfPresent(Int.self, forKey: .wordsPerPlayer) ?? 5
+        self.roundDuration = try container.decodeIfPresent(Int.self, forKey: .roundDuration) ?? 60
+        self.isSkippingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSkippingEnabled) ?? true
+        self.isAutomaticWords = try container.decodeIfPresent(Bool.self, forKey: .isAutomaticWords) ?? false
     }
 }

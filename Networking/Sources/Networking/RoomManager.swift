@@ -209,6 +209,18 @@ open class RoomManager {
         try await markWordsSubmitted()
     }
 
+    /// Host-only automatic word source. Atomically writes a host-generated
+    /// pool and opens the submission gate for every player in one write — the
+    /// host generated on behalf of the whole room, so no one types words.
+    /// All-or-nothing, so a transient failure can be retried without writing
+    /// duplicate words.
+    open func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
+        guard let roomId = room?.id else { return }
+        let onlineWords = texts.map { OnlineWord(text: $0, addedByPlayerId: hostPlayerId) }
+        let playerIds = (room?.players ?? []).map(\.id)
+        try await firebaseService.fillWords(onlineWords, markSubmittedPlayerIds: playerIds, toRoomId: roomId)
+    }
+
     // MARK: - Game State
     open func updateGameState(_ state: OnlineGameState) async throws {
         guard let roomId = room?.id else { return }

@@ -28,7 +28,7 @@ open class GameSyncManager {
         teams: [OnlineTeam],
         players: [OnlinePlayer],
         words: [OnlineWord],
-        roundDuration: Int
+        settings: GameSettings
     ) async throws -> OnlineGameState {
         let shuffledWordIds = words.map(\.id).shuffled()
 
@@ -54,7 +54,8 @@ open class GameSyncManager {
             scores: initialScores,
             phase: .teamPrep,
             activePlayerId: firstExplainerId,
-            roundDuration: roundDuration
+            roundDuration: settings.roundDuration,
+            isSkippingEnabled: settings.isSkippingEnabled
         )
 
         try await firebaseService.updateGameState(state, forRoomId: roomId)
@@ -99,7 +100,8 @@ open class GameSyncManager {
     /// no scoring effect. If only one word remains we no-op (parity with
     /// the offline `skipCurrentWord`).
     open func skipWord(roomId: String, gameState: OnlineGameState) async throws {
-        guard let currentId = gameState.currentWordId,
+        guard gameState.isSkippingEnabled,
+              let currentId = gameState.currentWordId,
               gameState.remainingWordIds.count > 1 else { return }
         var next = gameState
         next.remainingWordIds.removeAll { $0 == currentId }
