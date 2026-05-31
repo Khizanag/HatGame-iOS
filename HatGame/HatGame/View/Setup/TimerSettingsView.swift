@@ -53,6 +53,8 @@ private extension TimerSettingsView {
         VStack(spacing: DesignBook.Spacing.md) {
             HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
                 Text("\(selectedDuration)")
+                    // Unique hero numeral; no Dynamic Type text-style token matches this size.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 96, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText(value: Double(selectedDuration)))
@@ -133,35 +135,28 @@ private extension TimerSettingsView {
 
     var rulesCard: some View {
         GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Text("timerSettings.rules.title")
-                    .font(DesignBook.Font.caption)
-                    .textCase(.uppercase)
-                    .tracking(1.2)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+            Toggle(isOn: $isSkippingEnabled) {
+                HStack(spacing: DesignBook.Spacing.md) {
+                    Image(systemName: "arrow.uturn.forward")
+                        .font(DesignBook.IconFont.small)
+                        .foregroundStyle(DesignBook.Color.Status.warning)
+                        .frame(width: DesignBook.Size.touchTargetSize, height: DesignBook.Size.touchTargetSize)
+                        .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
 
-                Toggle(isOn: $isSkippingEnabled) {
-                    HStack(spacing: DesignBook.Spacing.md) {
-                        Image(systemName: "arrow.uturn.forward")
-                            .font(DesignBook.Font.body)
-                            .foregroundStyle(DesignBook.Color.Status.warning)
-                            .frame(width: 24)
-
-                        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                            Text("timerSettings.allowSkipping.title")
-                                .font(DesignBook.Font.headline)
-                                .foregroundStyle(DesignBook.Color.Text.primary)
-                            Text("timerSettings.allowSkipping.description")
-                                .font(DesignBook.Font.caption)
-                                .foregroundStyle(DesignBook.Color.Text.secondary)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        Text("timerSettings.allowSkipping.title")
+                            .font(DesignBook.Font.headline)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
+                        Text("timerSettings.allowSkipping.description")
+                            .font(DesignBook.Font.caption)
+                            .foregroundStyle(DesignBook.Color.Text.secondary)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
-                .tint(DesignBook.Color.Status.warning)
-                .onChange(of: isSkippingEnabled) { _, _ in
-                    DesignBook.Haptics.selection()
-                }
+            }
+            .tint(DesignBook.Color.Status.warning)
+            .onChange(of: isSkippingEnabled) { _, _ in
+                DesignBook.Haptics.selection()
             }
         }
     }
