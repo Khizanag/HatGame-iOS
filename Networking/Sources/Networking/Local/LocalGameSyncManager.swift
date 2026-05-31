@@ -36,9 +36,11 @@ public final class LocalGameSyncManager: GameSyncManager {
         teams: [OnlineTeam],
         players: [OnlinePlayer],
         words: [OnlineWord],
-        roundDuration: Int
+        settings: GameSettings
     ) async throws -> OnlineGameState {
-        guard let roomManager, isHost else { return OnlineGameState(roundDuration: roundDuration) }
+        guard let roomManager, isHost else {
+            return OnlineGameState(roundDuration: settings.roundDuration, isSkippingEnabled: settings.isSkippingEnabled)
+        }
 
         let shuffledWordIds = words.map(\.id).shuffled()
         var initialScores: [String: [OnlineGameRound: Int]] = [:]
@@ -61,7 +63,8 @@ public final class LocalGameSyncManager: GameSyncManager {
             scores: initialScores,
             phase: .teamPrep,
             activePlayerId: firstExplainerId,
-            roundDuration: roundDuration
+            roundDuration: settings.roundDuration,
+            isSkippingEnabled: settings.isSkippingEnabled
         )
 
         try await roomManager.updateGameState(state)
@@ -94,7 +97,8 @@ public final class LocalGameSyncManager: GameSyncManager {
     }
 
     public override func skipWord(roomId: String, gameState: OnlineGameState) async throws {
-        guard let currentId = gameState.currentWordId,
+        guard gameState.isSkippingEnabled,
+              let currentId = gameState.currentWordId,
               gameState.remainingWordIds.count > 1 else { return }
         var next = gameState
         next.remainingWordIds.removeAll { $0 == currentId }

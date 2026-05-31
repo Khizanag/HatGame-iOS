@@ -173,6 +173,27 @@ public final class FirebaseService: @unchecked Sendable {
         try await roomsRef.child(roomId).updateChildValues(updates)
     }
 
+    /// Host-only automatic word source. Writes the generated pool AND flips
+    /// every listed player's `hasSubmittedWords` flag in a single multi-path
+    /// update — all-or-nothing, so a failure leaves no partial state to
+    /// recover from, and it touches only the flag leaf (never a full player
+    /// node), so concurrent edits to other fields are not clobbered.
+    public func fillWords(
+        _ words: [OnlineWord],
+        markSubmittedPlayerIds playerIds: [String],
+        toRoomId roomId: String
+    ) async throws {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        var updates: [String: Any] = [:]
+        for word in words {
+            updates["words/\(word.id)"] = try encodeToDict(word)
+        }
+        for playerId in playerIds {
+            updates["players/\(playerId)/hasSubmittedWords"] = true
+        }
+        try await roomsRef.child(roomId).updateChildValues(updates)
+    }
+
     public func getWords(forRoomId roomId: String) async throws -> [OnlineWord] {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         return try await withTimeout(seconds: 10) {
@@ -231,7 +252,10 @@ public final class FirebaseService: @unchecked Sendable {
         return try JSONDecoder().decode(type, from: data)
     }
 
-    private func withTimeout<T: Sendable>(seconds: TimeInterval, operation: @Sendable @escaping () async throws -> T) async throws -> T {
+    private func withTimeout<T: Sendable>(
+        seconds: TimeInterval,
+        operation: @Sendable @escaping () async throws -> T
+    ) async throws -> T {
         try await withThrowingTaskGroup(of: T.self) { group in
             group.addTask {
                 try await operation()

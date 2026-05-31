@@ -43,6 +43,9 @@ public struct OnlineGameState: Codable, Sendable {
     public var activePlayerId: String?
     public var timerStartedAt: Date?
     public var roundDuration: Int
+    /// Frozen at game start from the host's `GameSettings` — authoritative for
+    /// every peer so all clients agree on whether skipping is allowed.
+    public var isSkippingEnabled: Bool
 
     public init(
         currentRound: OnlineGameRound = .first,
@@ -55,7 +58,8 @@ public struct OnlineGameState: Codable, Sendable {
         phase: GamePhase = .teamPrep,
         activePlayerId: String? = nil,
         timerStartedAt: Date? = nil,
-        roundDuration: Int = 60
+        roundDuration: Int = 60,
+        isSkippingEnabled: Bool = true
     ) {
         self.currentRound = currentRound
         self.currentTeamIndex = currentTeamIndex
@@ -68,6 +72,7 @@ public struct OnlineGameState: Codable, Sendable {
         self.activePlayerId = activePlayerId
         self.timerStartedAt = timerStartedAt
         self.roundDuration = roundDuration
+        self.isSkippingEnabled = isSkippingEnabled
     }
 
     public func getScore(for teamId: String, in round: OnlineGameRound) -> Int {
@@ -88,7 +93,7 @@ public struct OnlineGameState: Codable, Sendable {
     private enum CodingKeys: String, CodingKey {
         case currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
              remainingWordIds, allWordIds, scores, phase, activePlayerId,
-             timerStartedAt, roundDuration
+             timerStartedAt, roundDuration, isSkippingEnabled
     }
 
     public init(from decoder: Decoder) throws {
@@ -104,5 +109,6 @@ public struct OnlineGameState: Codable, Sendable {
         self.activePlayerId = try container.decodeIfPresent(String.self, forKey: .activePlayerId)
         self.timerStartedAt = try container.decodeIfPresent(Date.self, forKey: .timerStartedAt)
         self.roundDuration = try container.decode(Int.self, forKey: .roundDuration)
+        self.isSkippingEnabled = (try? container.decode(Bool.self, forKey: .isSkippingEnabled)) ?? true
     }
 }
