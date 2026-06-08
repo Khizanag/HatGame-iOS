@@ -401,6 +401,23 @@
         }
       }
     },
+    "common.tryAgain" : {
+      "comment" : "Button label to retry a failed action.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Try Again"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ხელახლა ცდა"
+          }
+        }
+      }
+    },
     "common.tapOrHoldToAdjust" : {
       "comment" : "A description of a stepper control used in settings views.",
       "localizations" : {
@@ -3333,6 +3350,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სიტყვის ჩატვირთვა..."
+          }
+        }
+      }
+    },
+    "onlinePlay.wordsFailed" : {
+      "comment" : "Shown to the explainer when the word list could not be loaded.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't load the words."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვების ჩატვირთვა ვერ მოხერხდა."
           }
         }
       }

@@ -21,6 +21,7 @@ struct OnlinePlayView: View {
     @State private var showingGiveUpConfirmation: Bool = false
     @State private var words: [String: OnlineWord] = [:]
     @State private var hasPlayedFinalWarning: Bool = false
+    @State private var wordLoadFailed: Bool = false
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -162,11 +163,32 @@ private extension OnlinePlayView {
                     removal: .opacity
                 )
             )
+        } else if wordLoadFailed {
+            wordLoadErrorCard
         } else {
             RoundedRectangle(cornerRadius: 32, style: .continuous)
                 .fill(DesignBook.Color.Background.card)
                 .aspectRatio(1.05, contentMode: .fit)
                 .opacity(0.4)
+        }
+    }
+
+    var wordLoadErrorCard: some View {
+        GameCard {
+            VStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: "wifi.exclamationmark")
+                    .font(DesignBook.IconFont.large)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                Text(localized("onlinePlay.wordsFailed"))
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .multilineTextAlignment(.center)
+                SecondaryButton(title: localized("common.tryAgain"), icon: "arrow.clockwise") {
+                    retryLoadWords()
+                }
+            }
+            .frame(maxWidth: .infinity)
+            .padding(DesignBook.Spacing.md)
         }
     }
 
@@ -276,10 +298,16 @@ private extension OnlinePlayView {
             for word in fetched {
                 words[word.id] = word
             }
+            wordLoadFailed = false
         } catch {
-            // Words missing — show progress placeholder. The active player
-            // will retry on next phase change.
+            wordLoadFailed = true
         }
+    }
+
+    func retryLoadWords() {
+        wordLoadFailed = false
+        DesignBook.Haptics.tap()
+        Task { await loadWordsIfNeeded() }
     }
 }
 

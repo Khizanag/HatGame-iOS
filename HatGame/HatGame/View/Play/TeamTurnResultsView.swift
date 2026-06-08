@@ -17,6 +17,7 @@ struct TeamTurnResultsView: View {
     let completionReason: PlayCompletionReason
     @State private var isStandingsPresented = false
     @State private var hasCelebrated: Bool = false
+    @State private var confettiBurst: Int = 0
 
     private var isCelebratory: Bool { completionReason == .allWordsGuessed }
 
@@ -26,7 +27,7 @@ struct TeamTurnResultsView: View {
             .navigationBarBackButtonHidden()
             .overlay {
                 if isCelebratory {
-                    ConfettiView(isActive: hasCelebrated)
+                    ConfettiView(isActive: hasCelebrated, retriggerId: confettiBurst)
                         .ignoresSafeArea()
                         .allowsHitTesting(false)
                 }
@@ -37,6 +38,9 @@ struct TeamTurnResultsView: View {
                 }
                 .environment(gameManager)
                 .environment(navigator)
+            }
+            .onChange(of: isStandingsPresented) { _, presented in
+                if !presented { confettiBurst += 1 }
             }
             .task {
                 guard !hasCelebrated else { return }
