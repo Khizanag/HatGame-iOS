@@ -17,6 +17,7 @@ struct OnlineRoundResultsView: View {
 
     @State private var isLoading: Bool = false
     @State private var hasCelebrated: Bool = false
+    @State private var error: Error?
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -47,6 +48,11 @@ struct OnlineRoundResultsView: View {
                     DesignBook.Haptics.success()
                     hasCelebrated = true
                 }
+            }
+            .alert(localized("common.error"), isPresented: errorBinding) {
+                Button(localized("common.gotIt")) { error = nil }
+            } message: {
+                Text(error?.localizedDescription ?? "")
             }
     }
 }
@@ -237,17 +243,25 @@ private extension OnlineRoundResultsView {
 
 // MARK: - Actions
 private extension OnlineRoundResultsView {
+    var errorBinding: Binding<Bool> {
+        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+    }
+
     func advance() {
         guard let roomId = room?.id, let state = gameState else { return }
         isLoading = true
         DesignBook.Haptics.confirm()
         Task {
-            try? await gameSyncManager.advanceAfterRoundResults(
-                roomId: roomId,
-                gameState: state,
-                teams: teams,
-                players: players
-            )
+            do {
+                try await gameSyncManager.advanceAfterRoundResults(
+                    roomId: roomId,
+                    gameState: state,
+                    teams: teams,
+                    players: players
+                )
+            } catch {
+                self.error = error
+            }
             isLoading = false
         }
     }

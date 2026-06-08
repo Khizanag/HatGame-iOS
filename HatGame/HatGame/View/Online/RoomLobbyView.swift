@@ -46,7 +46,7 @@ struct RoomLobbyView: View {
                     leaveRoom()
                 }
             } message: {
-                Text(isHost ? "lobby.leave.hostMessage" : "lobby.leave.guestMessage")
+                Text(isHost ? localized("lobby.leave.hostMessage") : localized("lobby.leave.guestMessage"))
             }
             .alert("common.error", isPresented: errorBinding) {
                 Button("common.gotIt") { error = nil }
@@ -242,7 +242,7 @@ private extension RoomLobbyView {
         EmptyStateCard(
             symbol: "person.2.slash",
             title: "lobby.noTeams",
-            caption: isHost ? "lobby.noTeams.host" : nil
+            caption: isHost ? "lobby.noTeams.host" : "lobby.noTeams.guest"
         )
     }
 

@@ -17,6 +17,7 @@ struct OnlineTurnResultsView: View {
 
     @State private var isLoading: Bool = false
     @State private var hasCelebrated: Bool = false
+    @State private var error: Error?
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -62,6 +63,11 @@ struct OnlineTurnResultsView: View {
                     DesignBook.Haptics.success()
                     hasCelebrated = true
                 }
+            }
+            .alert(localized("common.error"), isPresented: errorBinding) {
+                Button(localized("common.gotIt")) { error = nil }
+            } message: {
+                Text(error?.localizedDescription ?? "")
             }
     }
 }
@@ -196,17 +202,25 @@ private extension OnlineTurnResultsView {
 
 // MARK: - Actions
 private extension OnlineTurnResultsView {
+    var errorBinding: Binding<Bool> {
+        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+    }
+
     func continueFlow() {
         guard let roomId = room?.id, let state = gameState else { return }
         isLoading = true
         DesignBook.Haptics.tap()
         Task {
-            try? await gameSyncManager.advanceAfterTurnResults(
-                roomId: roomId,
-                gameState: state,
-                teams: teams,
-                players: players
-            )
+            do {
+                try await gameSyncManager.advanceAfterTurnResults(
+                    roomId: roomId,
+                    gameState: state,
+                    teams: teams,
+                    players: players
+                )
+            } catch {
+                self.error = error
+            }
             isLoading = false
         }
     }

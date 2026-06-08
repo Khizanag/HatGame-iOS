@@ -159,7 +159,7 @@ private extension GameView {
                     }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(isPaused ? Text(localized("game.timer.resume")) : Text(localized("game.timer.paused")))
+            .accessibilityLabel(isPaused ? Text(localized("game.timer.resume")) : Text(localized("game.timer.pause")))
         }
     }
 

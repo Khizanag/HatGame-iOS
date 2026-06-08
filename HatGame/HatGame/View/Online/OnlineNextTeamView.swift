@@ -16,6 +16,7 @@ struct OnlineNextTeamView: View {
     @Environment(GameSyncManager.self) private var gameSyncManager
 
     @State private var isLoading: Bool = false
+    @State private var error: Error?
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -66,6 +67,11 @@ struct OnlineNextTeamView: View {
     var body: some View {
         content
             .setDefaultStyle()
+            .alert(localized("common.error"), isPresented: errorBinding) {
+                Button(localized("common.gotIt")) { error = nil }
+            } message: {
+                Text(error?.localizedDescription ?? "")
+            }
     }
 }
 
@@ -275,12 +281,20 @@ private extension OnlineNextTeamView {
 
 // MARK: - Actions
 private extension OnlineNextTeamView {
+    var errorBinding: Binding<Bool> {
+        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+    }
+
     func startTurn() {
         guard let roomId = room?.id, let state = gameState else { return }
         isLoading = true
         DesignBook.Haptics.confirm()
         Task {
-            try? await gameSyncManager.startTurn(roomId: roomId, gameState: state)
+            do {
+                try await gameSyncManager.startTurn(roomId: roomId, gameState: state)
+            } catch {
+                self.error = error
+            }
             isLoading = false
         }
     }
