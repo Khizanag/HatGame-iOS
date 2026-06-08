@@ -66,7 +66,7 @@ Each mode's `*FlowView` is the seam. It:
 
 ### Single-device game engine
 
-`GameManager` (`Manager/GameManager.swift`, `@Observable`) owns all pass-and-play logic: round iteration, team rotation, explainer-role locking, word pool, and per-team time preservation across rounds. It **owns** `HistoryManager` as a `let` (accessed via `gameManager.historyManager`, not injected separately). Other single-device managers: `GameConfiguration`, `SoundPlayer`, `WordDatabase` (200 Georgian quick-fill words), `TeamDefaultColorGenerator`, `TeamNameSuggestions`, `FeedbackService`.
+`GameManager` (`Manager/GameManager.swift`, `@Observable`) owns all pass-and-play logic: round iteration, team rotation, explainer-role locking, word pool, and per-team time preservation across rounds. It **owns** `HistoryManager` as a `let` (accessed via `gameManager.historyManager`, not injected separately). Other single-device managers: `GameConfiguration`, `SoundPlayer`, `WordDatabase` (4,943 Georgian quick-fill words from Wiktionary, bundled as `Resources/georgian-words.txt`), `TeamDefaultColorGenerator`, `TeamNameSuggestions`, `FeedbackService`.
 
 ### Local Swift packages (`Package/` siblings of the app)
 
