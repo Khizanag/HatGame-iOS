@@ -5121,6 +5121,40 @@
         }
       }
     },
+    "settings.developerInfo.credits.words" : {
+      "comment" : "Credit line attributing the bundled Georgian word list to Wiktionary.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Word list — Wiktionary"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვების სია — ვიქსიკონი"
+          }
+        }
+      }
+    },
+    "settings.developerInfo.credits.wordsLicense" : {
+      "comment" : "License note shown under the Wiktionary word-list credit.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Georgian nouns from Wiktionary, CC BY-SA 4.0"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქართული არსებითი სახელები ვიქსიკონიდან, CC BY-SA 4.0"
+          }
+        }
+      }
+    },
     "settings.developerInfo.description" : {
       "comment" : "A description for the developer info navigation button.",
       "extractionState" : "stale",

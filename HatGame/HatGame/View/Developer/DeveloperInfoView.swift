@@ -74,6 +74,30 @@ private extension DeveloperInfoView {
 
                     Spacer()
                 }
+
+                Link(destination: URL(string: "https://en.wiktionary.org/wiki/Category:Georgian_nouns")!) {
+                    HStack(alignment: .center, spacing: DesignBook.Spacing.sm) {
+                        Image(systemName: "text.book.closed.fill")
+                            .font(DesignBook.Font.body)
+                            .foregroundStyle(DesignBook.Color.Text.accent)
+
+                        VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                            Text(localized("settings.developerInfo.credits.words"))
+                                .font(DesignBook.Font.body)
+                                .foregroundStyle(DesignBook.Color.Text.primary)
+
+                            Text(localized("settings.developerInfo.credits.wordsLicense"))
+                                .font(DesignBook.Font.caption)
+                                .foregroundStyle(DesignBook.Color.Text.secondary)
+                        }
+
+                        Spacer()
+
+                        Image(systemName: "arrow.up.right")
+                            .font(DesignBook.Font.caption)
+                            .foregroundStyle(DesignBook.Color.Text.accent)
+                    }
+                }
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
