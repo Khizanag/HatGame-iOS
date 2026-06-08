@@ -6,6 +6,8 @@ A SwiftUI party game. Players explain words to their teammates against a timer a
 
 ## Game rules
 
+> The complete rules, flow diagrams, and play-mode details live in [docs/](docs/README.md). This section is a summary.
+
 ### Setup
 
 1. Create teams (default 2 players each, configurable; 2–6 teams).
