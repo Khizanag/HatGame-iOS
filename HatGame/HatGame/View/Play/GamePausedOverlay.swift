@@ -34,6 +34,7 @@ struct GamePausedOverlay: View {
                     onResume()
                 }
                 .frame(width: DesignBook.Size.pauseButtonWidth)
+                .keyboardShortcut(.defaultAction)
             }
         }
     }

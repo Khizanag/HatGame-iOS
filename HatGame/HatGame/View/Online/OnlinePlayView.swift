@@ -206,6 +206,7 @@ private extension OnlinePlayView {
                 .tint(DesignBook.Color.Status.warning)
                 .disabled(!isSkipEnabled)
                 .opacity(isSkipEnabled ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+                .keyboardShortcut(.leftArrow, modifiers: [])
             }
 
             Button(action: markGuessed) {
@@ -217,6 +218,7 @@ private extension OnlinePlayView {
             .buttonStyle(.glassProminent)
             .tint(DesignBook.Color.Status.success)
             .disabled(currentWord == nil)
+            .keyboardShortcut(.rightArrow, modifiers: [])
         }
     }
 
@@ -229,6 +231,7 @@ private extension OnlinePlayView {
                         .foregroundStyle(DesignBook.Color.Status.error)
                 }
                 .buttonStyle(.plain)
+                .keyboardShortcut(.cancelAction)
             }
         }
     }

@@ -124,6 +124,7 @@ private extension GameView {
                 .tint(DesignBook.Color.Status.warning)
                 .disabled(isSkipDisabled)
                 .opacity(isSkipDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+                .keyboardShortcut(.leftArrow, modifiers: [])
             }
 
             Button(action: markCurrentWordGuessed) {
@@ -135,6 +136,7 @@ private extension GameView {
             .buttonStyle(.glassProminent)
             .tint(DesignBook.Color.Status.success)
             .disabled(isPaused || gameManager.currentWord == nil)
+            .keyboardShortcut(.rightArrow, modifiers: [])
         }
     }
 
@@ -148,6 +150,7 @@ private extension GameView {
                     .foregroundStyle(DesignBook.Color.Status.error)
             }
             .buttonStyle(.plain)
+            .keyboardShortcut(.cancelAction)
         }
 
         ToolbarItem(placement: .primaryAction) {
@@ -161,6 +164,7 @@ private extension GameView {
             }
             .buttonStyle(.plain)
             .accessibilityLabel(isPaused ? Text(localized("game.timer.resume")) : Text(localized("game.timer.pause")))
+            .keyboardShortcut("p", modifiers: [])
         }
     }
 
