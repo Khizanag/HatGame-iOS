@@ -175,21 +175,25 @@ final class GameManager {
         shouldRotateRoles = true
     }
 
-    func resetForNewGame() {
-        // Reset round iterator
+    /// Resets all game progress but keeps the teams *and* the words, so the
+    /// same game can be replayed immediately (a rematch).
+    func resetForRematch() {
         roundIterator = GameConfiguration.rounds.makeIterator()
         currentRound = nil
         currentWord = nil
         currentTeamIndex = 0
 
-        // Clear game state but keep teams
         remainingWords = []
         teamExplainerIndices = [:]
         teamsWithLockedRoles = []
         teamRemainingTimes = [:]
         shouldRotateRoles = true
+    }
 
-        // Clear words - they need to be re-entered
+    /// Resets progress and clears the words too (teams are kept), so a new game
+    /// starts again from word entry.
+    func resetForNewGame() {
+        resetForRematch()
         configuration.words = []
     }
 }
