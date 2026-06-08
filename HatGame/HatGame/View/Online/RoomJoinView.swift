@@ -67,7 +67,7 @@ private extension RoomJoinView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil {
+            if focusedField == nil || Platform.isMac {
                 joinButton
                     .paddingHorizontalDefault()
                     .padding(.top, DesignBook.Spacing.md)
@@ -158,6 +158,7 @@ private extension RoomJoinView {
                 }
                 .disabled(!canJoin)
                 .opacity(canJoin ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+                .keyboardShortcut(.defaultAction)
             }
         }
     }

@@ -99,3 +99,17 @@ extension View {
         #endif
     }
 }
+
+// MARK: - Platform
+enum Platform {
+    /// True on native macOS. Use to branch UI that must differ at runtime —
+    /// e.g. always showing a primary footer button, since macOS has no software
+    /// keyboard to dismiss and `.keyboard` toolbars don't render there.
+    static var isMac: Bool {
+        #if os(macOS)
+        true
+        #else
+        false
+        #endif
+    }
+}

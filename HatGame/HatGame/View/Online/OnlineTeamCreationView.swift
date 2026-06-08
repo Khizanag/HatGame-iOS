@@ -41,6 +41,7 @@ struct OnlineTeamCreationView: View {
                             Image(systemName: "xmark")
                                 .foregroundStyle(DesignBook.Color.Text.primary)
                         }
+                        .keyboardShortcut(.cancelAction)
                     }
                     keyboardToolbar
                 }
@@ -71,7 +72,7 @@ private extension OnlineTeamCreationView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil {
+            if focusedField == nil || Platform.isMac {
                 primaryButton
                     .paddingHorizontalDefault()
                     .padding(.top, DesignBook.Spacing.md)
@@ -205,6 +206,7 @@ private extension OnlineTeamCreationView {
                 }
                 .disabled(!canCreate)
                 .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+                .keyboardShortcut(.defaultAction)
             }
         }
     }
