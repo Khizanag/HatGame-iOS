@@ -1537,6 +1537,23 @@
         }
       }
     },
+    "game.timer.pause" : {
+      "comment" : "Accessibility label for the pause button while the game is running.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "პაუზა"
+          }
+        }
+      }
+    },
     "game.timer.resume" : {
       "comment" : "Accessibility label for the resume button when the game is paused.",
       "localizations" : {
@@ -2446,6 +2463,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "შეეხე „გუნდის დამატება“-ს."
+          }
+        }
+      }
+    },
+    "lobby.noTeams.guest" : {
+      "comment" : "Sub-hint under the no-teams empty state for a guest waiting on the host.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waiting for the host to add teams."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დაელოდე, სანამ მასპინძელი გუნდებს დაამატებს."
           }
         }
       }

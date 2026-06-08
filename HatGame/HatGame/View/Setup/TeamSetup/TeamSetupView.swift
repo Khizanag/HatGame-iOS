@@ -254,7 +254,7 @@ private extension TeamSetupView {
                 editMode = isEditMode ? .inactive : .active
             }
         } label: {
-            Text(isEditMode ? "common.buttons.done" : "common.buttons.edit")
+            Text(isEditMode ? localized("common.buttons.done") : localized("common.buttons.edit"))
                 .fontWeight(isEditMode ? .semibold : .regular)
         }
     }
