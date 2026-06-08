@@ -14,6 +14,7 @@ struct HomeView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.navZoomNamespace) private var zoomNamespace
     @SceneStorage("HomeView.howToPlay.expanded.v2") private var isHowToPlayExpanded: Bool = false
+    @AppStorage("HomeView.hasSeenHowToPlay") private var hasSeenHowToPlay: Bool = false
     @State private var isHeroFloating: Bool = false
 
     private let appConfiguration = AppConfiguration.shared
@@ -51,6 +52,10 @@ private extension HomeView {
                 .withFooterGradient()
         }
         .onAppear {
+            if !hasSeenHowToPlay {
+                hasSeenHowToPlay = true
+                isHowToPlayExpanded = true
+            }
             guard !reduceMotion else { return }
             #if DEBUG
             if UITestConfiguration.disablesAnimations { return }

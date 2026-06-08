@@ -269,6 +269,7 @@ private extension ResultsView {
         if isFinal {
             VStack(spacing: DesignBook.Spacing.md) {
                 playAgainButton
+                newWordsButton
                 returnToMainButton
             }
         }
@@ -283,6 +284,12 @@ private extension ResultsView {
             Text(localized("game.results.playAgain.note"))
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
+        }
+    }
+
+    var newWordsButton: some View {
+        SecondaryButton(title: localized("game.results.newWords"), icon: "text.bubble.fill") {
+            handleNewWords()
         }
     }
 
@@ -301,6 +308,13 @@ private extension ResultsView {
     }
 
     func handlePlayAgain() {
+        DesignBook.Haptics.tap()
+        gameManager.resetForRematch()
+        navigator.dismissToRoot()
+        navigator.push(.randomization)
+    }
+
+    func handleNewWords() {
         DesignBook.Haptics.tap()
         gameManager.resetForNewGame()
         navigator.dismissToRoot()
