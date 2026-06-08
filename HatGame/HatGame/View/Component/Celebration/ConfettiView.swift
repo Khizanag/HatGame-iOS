@@ -18,15 +18,19 @@ struct ConfettiView: View {
     let palette: [Color]
     /// Number of confetti pieces to render.
     let pieceCount: Int
+    /// Bump this to re-fire the burst (e.g. after returning from a sheet).
+    let retriggerId: Int
 
     init(
         isActive: Bool,
         palette: [Color] = ConfettiView.defaultPalette,
-        pieceCount: Int = 60
+        pieceCount: Int = 60,
+        retriggerId: Int = 0
     ) {
         self.isActive = isActive
         self.palette = palette
         self.pieceCount = pieceCount
+        self.retriggerId = retriggerId
     }
 
     static let defaultPalette: [Color] = [
@@ -46,7 +50,8 @@ struct ConfettiView: View {
                         size: geometry.size,
                         seed: index,
                         isActive: isActive,
-                        reduceMotion: reduceMotion
+                        reduceMotion: reduceMotion,
+                        retriggerId: retriggerId
                     )
                 }
             }
@@ -61,6 +66,7 @@ private struct ConfettiPiece: View {
     let seed: Int
     let isActive: Bool
     let reduceMotion: Bool
+    let retriggerId: Int
 
     @State private var hasAppeared: Bool = false
 
@@ -108,14 +114,19 @@ private struct ConfettiPiece: View {
                 y: hasAppeared ? size.height + pieceHeight : -pieceHeight
             )
             .opacity(hasAppeared ? 0 : 1)
-            .onAppear {
-                guard isActive, !reduceMotion else { return }
-                withAnimation(
-                    .easeIn(duration: fallDuration).delay(delay)
-                ) {
-                    hasAppeared = true
-                }
+            .onAppear { fire() }
+            .onChange(of: isActive) { _, _ in fire() }
+            .onChange(of: retriggerId) { _, _ in fire() }
+    }
+
+    private func fire() {
+        guard isActive, !reduceMotion else { return }
+        hasAppeared = false
+        DispatchQueue.main.async {
+            withAnimation(.easeIn(duration: fallDuration).delay(delay)) {
+                hasAppeared = true
             }
+        }
     }
 }
 
