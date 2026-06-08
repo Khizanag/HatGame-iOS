@@ -14,19 +14,13 @@ struct TimerSettingsView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let appConfiguration = AppConfiguration.shared
-
-    @State private var selectedDuration: Int = 60
-    @State private var isSkippingEnabled: Bool = true
+    @State private var selectedDuration: Int = AppConfiguration.shared.defaultRoundDuration
+    @State private var isSkippingEnabled: Bool = AppConfiguration.shared.defaultSkippingEnabled
 
     var body: some View {
         content
             .navigationTitle(localized("timerSettings.title"))
             .setDefaultStyle()
-            .onAppear {
-                selectedDuration = appConfiguration.defaultRoundDuration
-                isSkippingEnabled = appConfiguration.defaultSkippingEnabled
-            }
     }
 }
 

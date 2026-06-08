@@ -14,6 +14,7 @@ import SwiftUI
 /// still typing and who has handed in their pile.
 struct OnlineWaitingView: View {
     @Environment(RoomManager.self) private var roomManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let message: String
 
@@ -51,7 +52,7 @@ private extension OnlineWaitingView {
                 Image(systemName: "hourglass")
                     .font(.system(size: 44, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
-                    .symbolEffect(.pulse, options: .repeating)
+                    .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
             }
             .accessibilityHidden(true)
 

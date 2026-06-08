@@ -18,6 +18,7 @@ struct LocalSessionView: View {
     @Environment(GameSyncManager.self) private var gameSyncManager
     @Environment(LocalRoomManager.self) private var localRoomManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var hasInitializedGame: Bool = false
     @State private var hasGeneratedWords: Bool = false
@@ -155,7 +156,7 @@ private extension LocalSessionView {
                     // swiftlint:disable:next no_inline_font
                     .font(.system(size: 42, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
-                    .symbolEffect(.variableColor.iterative, options: .repeating)
+                    .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
             }
             .accessibilityHidden(true)
             Text(localized("local.session.connecting"))

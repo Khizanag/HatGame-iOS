@@ -340,7 +340,7 @@ private extension RoomLobbyView {
                 Image(systemName: "hourglass")
                     .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.accent)
-                    .symbolEffect(.pulse, options: .repeating)
+                    .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(localized("lobby.waitingForHost"))
                         .font(DesignBook.Font.bodyBold)

@@ -102,7 +102,7 @@ private extension OnlineSpectatorView {
                 Image(systemName: isOwnTeam ? "ear.fill" : "eye.fill")
                     .font(.system(size: 38))
                     .foregroundStyle(tint)
-                    .symbolEffect(.pulse, options: .repeating)
+                    .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 
                 Text(isOwnTeam ? "onlineSpectator.listen" : "onlineSpectator.watching")
                     .font(DesignBook.Font.title3)

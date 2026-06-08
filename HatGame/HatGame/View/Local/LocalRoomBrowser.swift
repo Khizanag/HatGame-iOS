@@ -18,6 +18,7 @@ struct LocalRoomBrowser: View {
 
     @Environment(Navigator.self) private var navigator
     @Environment(LocalRoomManager.self) private var roomManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
     @State private var isConnecting: Bool = false
@@ -99,7 +100,7 @@ private extension LocalRoomBrowser {
                 Image(systemName: "dot.radiowaves.left.and.right")
                     .font(DesignBook.IconFont.medium)
                     .foregroundStyle(DesignBook.Color.Text.accent)
-                    .symbolEffect(.pulse, options: .repeating)
+                    .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
                 Text(localized("local.browser.nearby"))
                     .font(DesignBook.Font.captionBold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)

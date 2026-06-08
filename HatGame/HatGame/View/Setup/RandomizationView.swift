@@ -91,7 +91,7 @@ private extension RandomizationView {
                     HStack(spacing: DesignBook.Spacing.xs) {
                         Image(systemName: isRandomizingTeam ? "sparkles" : "shuffle")
                             .font(DesignBook.Font.caption)
-                            .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingTeam)
+                            .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingTeam && !reduceMotion)
 
                         Text(localized("randomization.startingTeam.randomize"))
                             .font(DesignBook.Font.caption)
@@ -111,13 +111,15 @@ private extension RandomizationView {
     var teamsList: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
-                TeamSelectionRow(
-                    team: team,
-                    isSelected: selectedStartingTeamIndex == index
-                )
-                .onTapGesture {
+                Button {
                     selectTeam(at: index)
+                } label: {
+                    TeamSelectionRow(
+                        team: team,
+                        isSelected: selectedStartingTeamIndex == index
+                    )
                 }
+                .buttonStyle(.plain)
             }
         }
     }
@@ -191,6 +193,8 @@ private extension RandomizationView {
 
 // MARK: - Subview types
 private struct RandomizationHeaderCard: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
@@ -204,7 +208,7 @@ private struct RandomizationHeaderCard: View {
                         DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.veryLight),
                     ]
                 )
-                .symbolEffect(.pulse, options: .repeating)
+                .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 
                 VStack(spacing: DesignBook.Spacing.xs) {
                     Text(localized("randomization.header.title"))

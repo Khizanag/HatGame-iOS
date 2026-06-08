@@ -12,6 +12,7 @@ import SwiftUI
 /// Honors Reduce Transparency by swapping the material for an opaque background.
 struct GamePausedOverlay: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let onResume: () -> Void
 
@@ -23,7 +24,7 @@ struct GamePausedOverlay: View {
                 Image(systemName: "pause.circle.fill")
                     .font(DesignBook.IconFont.emoji)
                     .foregroundStyle(DesignBook.Color.Text.primary)
-                    .symbolEffect(.pulse, options: .repeating)
+                    .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 
                 Text(localized("game.paused.title"))
                     .font(DesignBook.Font.largeTitle)
