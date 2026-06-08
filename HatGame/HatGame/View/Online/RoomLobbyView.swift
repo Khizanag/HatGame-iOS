@@ -9,9 +9,6 @@ import DesignBook
 import Navigation
 import Networking
 import SwiftUI
-#if canImport(AppKit)
-import AppKit
-#endif
 
 struct RoomLobbyView: View {
     @Environment(Navigator.self) private var navigator
@@ -124,12 +121,7 @@ private extension RoomLobbyView {
                         if let code = room?.id {
                             Button {
                                 DesignBook.Haptics.tap()
-                                #if canImport(UIKit)
-                                UIPasteboard.general.string = code
-                                #elseif canImport(AppKit)
-                                NSPasteboard.general.clearContents()
-                                NSPasteboard.general.setString(code, forType: .string)
-                                #endif
+                                Platform.copyToClipboard(code)
                             } label: {
                                 Label("lobby.copyCode", systemImage: "doc.on.doc")
                                     .font(DesignBook.Font.caption)

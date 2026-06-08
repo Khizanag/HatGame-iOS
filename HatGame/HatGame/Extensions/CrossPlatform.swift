@@ -6,6 +6,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 // MARK: - Navigation title
 extension View {
@@ -110,6 +115,28 @@ enum Platform {
         true
         #else
         false
+        #endif
+    }
+
+    /// Copies a string to the system clipboard (UIPasteboard on iOS,
+    /// NSPasteboard on macOS).
+    static func copyToClipboard(_ string: String) {
+        #if canImport(UIKit)
+        UIPasteboard.general.string = string
+        #elseif canImport(AppKit)
+        NSPasteboard.general.clearContents()
+        NSPasteboard.general.setString(string, forType: .string)
+        #endif
+    }
+
+    /// The user's device name — `UIDevice` on iOS, the host name on macOS.
+    static var deviceDisplayName: String {
+        #if canImport(UIKit)
+        UIDevice.current.name
+        #elseif canImport(AppKit)
+        Host.current().localizedName ?? "Mac"
+        #else
+        "Device"
         #endif
     }
 }
