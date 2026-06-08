@@ -1,702 +1,165 @@
 # Development Guide
 
-> **Last Updated:** 2025-11-26
->
-> This document contains all technical details, code style guidelines, and development practices for the Hat Game iOS project. It is updated regularly to reflect the latest decisions and conventions.
-
-## Table of Contents
-
-- [Technical Stack](#technical-stack)
-- [Project Architecture](#project-architecture)
-- [Code Style Guidelines](#code-style-guidelines)
-- [Testing Infrastructure](#testing-infrastructure)
-- [State Management](#state-management)
-- [Navigation](#navigation)
-- [Design System](#design-system)
-- [Localization](#localization)
-- [Git Workflow](#git-workflow)
-- [Common Patterns](#common-patterns)
-- [Development Rules](#development-rules)
-
----
-
-## Technical Stack
-
-### Requirements
-- **iOS:** 15.0+
-- **Swift:** 5.9+
-- **Xcode:** 15.0+
-- **Framework:** SwiftUI (pure implementation, no external dependencies)
-
-### Key Technologies
-- **SwiftUI:** Modern declarative UI framework
-- **Observation Framework:** `@Observable` macro for state management (NOT `@ObservableObject`)
-- **UserDefaults:** Settings persistence
-- **Swift Concurrency:** async/await for asynchronous operations
-- **Combine:** Minimal usage for specific reactive scenarios
-
----
-
-## Project Architecture
-
-### MVVM Pattern
-- **Views:** SwiftUI views that observe state changes
-- **Managers:** Business logic and state management using `@Observable`
-- **Models:** Pure data structures (Team, Player, Word, GameRound)
-
-### Directory Structure
-
-```
-HatGame/
-├── Configuration/        # App-wide configuration
-├── Managers/            # Business logic (@Observable classes)
-├── Model/               # Data models (structs/enums)
-├── View/                # SwiftUI views
-│   ├── Home/
-│   ├── Setup/
-│   ├── Play/
-│   ├── Settings/
-│   ├── Developer/
-│   └── Component/       # Reusable UI components
-├── Navigation/          # Navigation logic
-├── DesignBook/          # Design system
-├── Extensions/          # Swift extensions
-├── Localization/        # String resources
-└── Assets.xcassets/     # Images and colors
-```
-
-### Key Components
-
-#### GameManager
-**Purpose:** Core game state and flow management
-
-**Responsibilities:**
-- Game configuration and initialization
-- Team rotation logic
-- Word management (remaining words, current word)
-- Time tracking per team
-- Round progression
-- Integration with HistoryManager
-
-**Key Features:**
-- Test mode support: Auto-loads mock configuration when `AppConfiguration.shared.isTestMode` is enabled
-- Time preservation: Saves and restores team remaining time across rounds
-- Proper cleanup when rounds transition
-
-#### HistoryManager
-**Purpose:** Score tracking and statistics
-
-**Responsibilities:**
-- Track guessed words per team per round
-- Calculate scores and rankings
-- Maintain round-by-round history
-
-#### Navigator
-**Purpose:** Centralized navigation management
-
-**Pattern:** Page-based routing with type-safe navigation
-- Uses `NavigationStack` with path binding
-- Supports both push and full-screen presentation
-- Publisher-based dismiss mechanism
-
-#### DesignBook
-**Purpose:** Centralized design system
-
-**Contains:**
-- Colors (Text, Background, Status)
-- Typography (Font styles)
-- Spacing (Consistent padding/margins)
-- Sizes (Component dimensions)
-- Shadows (Elevation system)
-- Opacity (Disabled states, overlays)
-
----
-
-## Code Style Guidelines
-
-### Swift Style
-
-#### 1. Naming Conventions
-
-**Variables:** camelCase
-```swift
-var currentTeamIndex: Int
-var remainingWords: Set<Word>
-var teamRemainingTimes: [UUID: Int]
-```
-
-**Types:** PascalCase
-```swift
-struct Team
-class GameManager
-enum GameRound
-```
-
-**Functions:** Descriptive verb phrases
-```swift
-func prepareForNewPlay()
-func saveRemainingTime(_ seconds: Int, for team: Team)
-func commitWordGuess()
-```
-
-**Booleans:** Use "is", "has", "should" prefixes
-```swift
-var isGameFinished: Bool
-var hasRemainingTime: Bool
-var shouldResetTeams: Bool
-```
-
-#### 2. MARK Comments
-
-Organize code sections with MARK comments:
-```swift
-// MARK: - Properties
-// MARK: - Initialization
-// MARK: - Lifecycle
-// MARK: - Actions
-// MARK: - Private
-```
-
-#### 3. Explicit Result Handling
-
-Always use `_ =` when intentionally discarding return values:
-```swift
-// Good
-_ = withAnimation(.spring()) {
-    playerWords.remove(at: index)
-}
-
-// Avoid (causes warnings)
-withAnimation(.spring()) {
-    playerWords.remove(at: index)
-}
-```
-
-#### 4. Optional Handling
-
-Avoid force unwrapping (`!`) unless absolutely necessary:
-```swift
-// Good
-guard let currentWord = gameManager.currentWord else { return }
-
-// Avoid
-let word = gameManager.currentWord!
-```
-
-#### 5. Code Comments
-
-**Why, not what:** Explain reasoning, not obvious actions
-```swift
-// Good: Explains reasoning
-// Only save time if round is ending to prevent 0-second starts
-if gameManager.currentWord == nil && remainingSeconds > 0 {
-    gameManager.saveRemainingTime(remainingSeconds, for: team)
-}
-
-// Avoid: States the obvious
-// Save remaining time
-gameManager.saveRemainingTime(remainingSeconds, for: team)
-```
-
-**TODOs:** Mark incomplete work clearly
-```swift
-// TODO: Implement final results animation
-func finishGame() {
-    // Implementation pending
-}
-```
-
-### SwiftUI Specific
-
-#### 1. View Composition
-
-Extract complex views into computed properties:
-```swift
-var body: some View {
-    VStack {
-        headerView
-        contentView
-        footerView
-    }
-}
-
-var headerView: some View {
-    // Complex header implementation
-}
-```
-
-#### 2. View Size Limits
-
-- Keep views under **200 lines**
-- Extract reusable components to `View/Component/`
-- Break down large views into smaller, focused views
-
-#### 3. DesignBook Usage
-
-**Always use DesignBook** for design tokens:
-```swift
-// Good
-.padding(DesignBook.Spacing.md)
-.foregroundColor(DesignBook.Color.Text.primary)
-.font(DesignBook.Font.headline)
-
-// Avoid
-.padding(16)
-.foregroundColor(.black)
-.font(.system(size: 17, weight: .semibold))
-```
-
-#### 4. Animations
-
-Use `withAnimation` with explicit discard when needed:
-```swift
-_ = withAnimation(.spring(response: 0.4, dampingFraction: 0.7)) {
-    playerWords.append(trimmedWord)
-}
-```
-
----
-
-## Testing Infrastructure
-
-### Test Mode
-
-**Purpose:** Quick setup for testing game flow without manual data entry
-
-**How to Enable:**
-1. Go to Settings → Developer Info
-2. Toggle "Test Mode" ON
-3. Start new game → Teams and words are pre-configured
-
-**Implementation:**
-- `GameManager` checks `AppConfiguration.shared.isTestMode` on initialization
-- When enabled, uses `GameConfiguration.mockForTesting`
-- Mock includes 2 pre-configured teams with players and test words
-
-### Word Database
-
-**File:** `Managers/WordDatabase.swift`
-
-**Contents:** 200 sorted Georgian words for testing and quick-fill
-
-**Usage:**
-```swift
-// Get random subset
-let words = WordDatabase.randomWords(count: 10)
-
-// Get all words shuffled
-let allWords = WordDatabase.allWordsShuffled()
-```
-
-**Auto-Fill Feature:**
-- Available in WordInputView
-- One-click button to fill remaining words
-- Uses random words from database
-- Respects "Allow Duplicate Words" setting
-
-**Duplicate Words Setting:**
-- Located in Settings → Defaults → Allow Duplicate Words
-- Default: **Disabled** (ensures unique words per game)
-- When **Disabled:**
-  - Auto-fill gives each player unique words
-  - Tracks all used words across all players in the game
-  - Prevents duplicate words between players
-- When **Enabled:**
-  - Auto-fill can give the same words to different players
-  - Only prevents duplicates within the same player's list
-  - Useful when word database is small relative to game size
-
-**Implementation Details:**
-- `AppConfiguration.allowDuplicateWords` - User preference
-- `GameManager.getAllUsedWords()` - Returns all words added by all players
-- Auto-fill logic filters based on setting and used words
-
----
-
-## State Management
-
-### Observation Framework
-
-**Use `@Observable` macro** for all managers and view models:
-```swift
-@Observable
-final class GameManager {
-    var configuration: GameConfiguration
-    var currentRound: GameRound?
-    // ...
-}
-```
-
-**NOT `@ObservableObject`** - we use the modern Observation framework
-
-### View State
-
-**Local State:** `@State`
-```swift
-@State private var currentWord: String = ""
-@State private var isExpanded: Bool = false
-```
-
-**Environment:** `@Environment`
-```swift
-@Environment(GameManager.self) private var gameManager
-@Environment(Navigator.self) private var navigator
-```
-
-**Focus State:** `@FocusState`
-```swift
-@FocusState private var isWordFieldFocused: Bool
-```
-
-### State Ownership
-
-- Views own their **local UI state** (`@State`)
-- Managers own **business state** (`@Observable`)
-- No global mutable state
-- Pass dependencies through `@Environment`
-
----
+Technical reference for the Hat Game iOS project — architecture, conventions, and workflows. For product-level rules and quick start, see [README.md](README.md). For the condensed agent reference, see [CLAUDE.md](CLAUDE.md).
+
+> Last updated: 2026-06-08.
+
+## Technical stack
+
+- **Deployment target:** iOS 26.0.
+- **UI:** SwiftUI, Observation framework (`@Observable` — never `@ObservableObject`).
+- **Concurrency:** Swift Concurrency (`async`/`await`, `@MainActor`); app target builds in Swift 5 language mode with approachable concurrency enabled, packages use swift-tools 6.x.
+- **Persistence:** `UserDefaults` for settings; Firebase Realtime Database for online rooms; no local database.
+- **Dependencies:** Firebase iOS SDK only (via the `Networking` package). Everything else is first-party.
+
+## Architecture
+
+### Three play modes
+
+The folder layout under `View/` mirrors three independent modes. Identify a view's mode before changing it.
+
+| Mode | Entry flow view | Screens | State managers |
+|---|---|---|---|
+| Pass-and-play | `View/Game/GameFlowView` | `View/Setup`, `View/Play` | `GameManager` |
+| Online (Firebase) | `View/Online/OnlineFlowView` | `View/Online` | `RoomManager`, `GameSyncManager` |
+| Nearby (Multipeer) | `View/Local/LocalFlowView` | `View/Local` (+ reuses `View/Online`) | `LocalRoomManager`, `LocalGameSyncManager` |
+
+### Per-flow navigation and dependency injection
+
+Each mode's `*FlowView` is the composition seam. It:
+
+1. Creates its own `Navigator()` and the mode's managers as `@State` — fresh per launch.
+2. Hosts a `NavigationStack` bound to `navigator.navigationPath`.
+3. Injects those objects into the environment for the whole subtree with `.environment(...)`.
+
+`HatGameApp` injects only an app-level `RoomManager`/`GameSyncManager` plus `AppConfiguration.locale`; the live per-game state is owned by the flow views, not globally. Child views read what they need with `@Environment(GameManager.self)`, `@Environment(Navigator.self)`, and so on. There is no global mutable game state.
+
+### Nearby multiplayer reuses online views via subclassing
+
+`LocalRoomManager: RoomManager` and `LocalGameSyncManager: GameSyncManager` — the base classes are `open` in the `Networking` package. `LocalFlowView` injects the subclasses upcast to the base types (`.environment(roomManager as RoomManager)`), so the entire `View/Online` gameplay surface (`OnlineGameFlowView`, `OnlinePlayView`, results screens, …) runs unchanged over a Multipeer transport instead of Firebase.
+
+**Consequence:** when editing an online gameplay view, keep it transport-agnostic — it also drives nearby play. Behavior that must differ belongs behind the manager API, overridden in the `Local*` subclass.
+
+### Single-device game engine
+
+`GameManager` (`Manager/GameManager.swift`, `@Observable`) owns all pass-and-play logic:
+
+- Round iteration over `GameConfiguration.rounds` (`.first`, `.second`, `.third`).
+- Team rotation and explainer-role locking.
+- The word pool (`remainingWords`, `currentWord`) and skipping.
+- Per-team remaining-time tracking and preservation across rounds.
+
+It **owns** `HistoryManager` as a `let` (reached via `gameManager.historyManager`, not injected separately). `HistoryManager` tracks guessed words per team per round and computes scores and rankings.
+
+`GameConfiguration` (`@Observable`, reference type) holds one game's settings and data (teams, words, durations). Defaults come from `AppConfiguration.shared` unless overridden. Test mode swaps in `GameConfiguration.mockForTesting`, which must stay a fresh value per access (see the regression note in the type).
+
+Supporting single-device managers: `WordDatabase` (bundled quick-fill words), `SoundPlayer`, `TeamDefaultColorGenerator`, `TeamNameSuggestions`, `FeedbackService`.
+
+### Local Swift packages
+
+Three packages live as siblings of the app and are referenced as local SPM packages (no workspace).
+
+- **Navigation** (swift-tools 6.2) — the navigation system. `Page<Content: View>` is a typed, `id`-keyed view factory; `AnyPage` type-erases it for storage in the stack; `Navigator` (`@MainActor @Observable`) exposes `push` / `present` / `dismiss` / `popToRoot` / `replace`. App destinations are static factories in `HatGame/Navigation/` (`extension Page`).
+- **Networking** (swift-tools 6.0, depends on firebase-ios-sdk 11+) — both multiplayer transports.
+  - Online: `FirebaseService` (singleton over Realtime Database at `/rooms/$roomId`), `RoomManager`, `GameSyncManager`, and the `Online*` models (`GameRoom`, `OnlinePlayer`, `OnlineTeam`, `OnlineWord`, `OnlineGameState`, `Feedback`).
+  - Nearby: `LocalMultipeerService` (thin `MultipeerConnectivity` wrapper, Bonjour service `hg-hat-game`), `LocalRoomManager`, `LocalGameSyncManager`, `LocalMessage`.
+- **DesignBook** (swift-tools 6.2) — the `DesignBook` token namespace plus a bundled color asset catalog.
 
 ## Navigation
 
-### Page Enum
+Banned in feature code (enforced by SwiftLint): `NavigationLink`, and `.navigationDestination(for:)` anywhere except a flow view's own `NavigationStack`. Navigate instead through the `Navigator` in the environment:
 
-All screens defined in `Page` enum:
-```swift
-enum Page: Hashable {
-    case home
-    case teamSetup
-    case wordInput
-    case play(round: GameRound)
-    case nextTeam(round: GameRound, team: Team)
-    // ...
-}
-```
-
-### Navigator Class
-
-Centralized navigation management:
 ```swift
 @Environment(Navigator.self) private var navigator
 
-// Push to navigation stack
-navigator.push(.wordInput)
-
-// Full-screen presentation
-navigator.present(.teamSetup)
-
-// Dismiss
-navigator.dismiss()
+navigator.push(.wordInput)            // push onto the stack
+navigator.present(.feedback)          // full-screen presentation
+navigator.dismiss()                   // pop the presented flow
 ```
 
-### Navigation Hierarchy
+Destinations are `Page` factories. Add a screen by adding a factory to `extension Page` (in `HatGame/Navigation/`) and pushing it — no central switch to update:
 
-```
-Home (NavigationView root)
-├── Settings
-│   ├── App Icon Selection
-│   └── Defaults Settings
-├── Developer Info
-└── Team Setup (full-screen)
-    ├── Word Settings
-    ├── Timer Settings
-    ├── Word Input
-    ├── Randomization
-    └── Game Flow
-        ├── Play (round)
-        ├── Team Turn Results
-        ├── Next Team
-        └── Final Results
-```
-
----
-
-## Design System
-
-### DesignBook Structure
-
-All design tokens centralized in `DesignBook`:
-
-#### Colors
 ```swift
-DesignBook.Color.Text.primary      // Main text
-DesignBook.Color.Text.secondary    // Supporting text
-DesignBook.Color.Text.tertiary     // Subtle text
-DesignBook.Color.Text.accent       // Brand accent
-
-DesignBook.Color.Background.primary
-DesignBook.Color.Background.secondary
-
-DesignBook.Color.Status.success
-DesignBook.Color.Status.error
-DesignBook.Color.Status.warning
+static func nextTeam(round: GameRound, team: Team) -> Page<NextTeamView> {
+    Page<NextTeamView>(id: "nextTeam-\(round.rawValue)-\(team.id)") {
+        NextTeamView(round: round, team: team)
+    }
+}
 ```
 
-#### Typography
+## Design system
+
+All visual values come from the `DesignBook` namespace. Never hardcode a font size, color literal, or spacing value in feature code.
+
 ```swift
-DesignBook.Font.largeTitle
-DesignBook.Font.title
-DesignBook.Font.title2
-DesignBook.Font.title3
-DesignBook.Font.headline
-DesignBook.Font.body
-DesignBook.Font.bodyBold
-DesignBook.Font.caption
+.padding(DesignBook.Spacing.md)
+.foregroundStyle(DesignBook.Color.Text.primary)
+.font(DesignBook.Font.headline)
 ```
 
-#### Spacing
-```swift
-DesignBook.Spacing.xs    // 4pt
-DesignBook.Spacing.sm    // 8pt
-DesignBook.Spacing.md    // 16pt
-DesignBook.Spacing.lg    // 24pt
-DesignBook.Spacing.xl    // 32pt
-DesignBook.Spacing.xxl   // 48pt
-```
+Token categories: `Color`, `Font` (Typography), `Spacing`, `Size`, `Shadow`, `Opacity`, `Gradient`, `Motion`, `Haptics`. Reusable UI lives in `View/Component/`; components stay generic and free of business logic.
 
-#### Component Sizes
-```swift
-DesignBook.Size.cardCornerRadius
-DesignBook.Size.smallCardCornerRadius
-DesignBook.Size.badgeSize
-DesignBook.Size.floatingButtonSize
-```
+## State management
 
-### Custom Components
+- **Managers / view models:** `@Observable` classes, injected via `.environment(...)` and read with `@Environment(Type.self)`.
+- **View-local state:** `@State`, `@FocusState`.
+- **Ownership:** views own UI state; managers own game state. Pass dependencies down the environment, scoped to the flow that creates them.
 
-Located in `View/Component/`:
+## Conventions
 
-#### Buttons
-- `PrimaryButton`: Main action button
-- `SecondaryButton`: Secondary actions
-- `DestructiveButton`: Destructive actions (red)
+This project uses its own `Navigator` / `Page` / `DesignBook` patterns. Follow them — do not migrate toward a generic coordinator or `DesignSystem` pattern. `swiftlint lint --strict` must pass with zero violations; the custom rules in `.swiftlint.yml` encode the house style:
 
-#### Cards
-- `GameCard`: Standard game content card
-- `HeaderCard`: Card with title and description
-- `FoldableCard`: Expandable/collapsible card
-- `NavigationCard`: Card that leads to another screen
-
-#### Settings
-- `SettingsRow`: Reusable row component with icon, title, subtitle, and optional content
-- `SettingsSection`: Section component with title and footer for organizing settings
-
-#### Other
-- `SegmentedSelectionView`: Custom segmented control
-- `LegendTag`: Small colored tag for legends
-
----
+- Navigation: `no_navigation_link`, `no_navigation_destination`, `no_on_tap_gesture_navigation`.
+- Design tokens: `no_inline_font`, `no_raw_foreground_white_black`, `no_raw_background_white_black`.
+- View structure: private view-returning `func`/`var` move into a `private extension <ViewName>` block at the bottom of the file; every `extension` is preceded by a `// MARK: -`; no blank line after a MARK or doc comment.
+- Sheets: no `.presentationDragIndicator`.
+- Package files: no trailing `.git` in URLs, `from:` over `.upToNextMajor(from:)`.
+- General: trailing commas mandatory in multiline collections; avoid `!` force-unwraps; descriptive `is`/`has`/`should` booleans; MARK-organized files.
 
 ## Localization
 
-### String Resources
+UI strings live in `HatGame/Localization/Localizable.xcstrings` (English and Georgian). No hardcoded user-facing strings. Use dot-notation keys (`home.title`, `wordInput.addWord`, `gameRound.first.description`). In-app language selection runs through `AppLanguage` and `AppConfiguration.locale`, which re-renders views in place.
 
-**File:** `Localization/Localizable.xcstrings`
+## Testing
 
-**Languages:**
-- English (en) - primary
-- Georgian (ka) - translated
+- **Unit tests** (`HatGameTests`) use the **Swift Testing** framework — `@Test`, `#expect`, `#require`, `@MainActor` suites. Not XCTest.
+- **UI tests** (`HatGameUITests`) use XCUITest.
+- **Test mode:** enable in Settings → Developer Info. `GameManager` then loads `GameConfiguration.mockForTesting` (two ready teams and words), skipping manual setup.
 
-### Adding New Strings
+Run a single test by target/suite/function:
 
-1. Add to `Localizable.xcstrings`:
-```json
-"key.name": {
-  "comment": "Description of the string",
-  "localizations": {
-    "en": {
-      "stringUnit": {
-        "state": "translated",
-        "value": "English Text"
-      }
-    },
-    "ka": {
-      "stringUnit": {
-        "state": "translated",
-        "value": "ქართული ტექსტი"
-      }
-    }
-  }
-}
+```bash
+xcodebuild ... test -only-testing:HatGameTests/HatGameTests/skippingDisabledKeepsCurrentWord
 ```
 
-2. Use in code:
-```swift
-Text("key.name")
-// or
-String(localized: "key.name")
+## Multiplayer specifics
+
+- **Firebase config gating:** online code must check `Networking.isConfigured` (or `FirebaseService.shared.isAvailable`) before any read/write. Both require a non-empty `DATABASE_URL` in `GoogleService-Info.plist`; without it the SDK fails silently. `Networking.configure()` runs at launch and logs actionable diagnostics if the plist or URL is missing.
+- **Room codes:** six characters from `A–Z` / `2–9` (no ambiguous `0`/`1`/`O`/`I`). The database security rules in `database.rules.json` validate this shape.
+- **Nearby requirements:** `Info.plist` must keep `NSLocalNetworkUsageDescription`, `NSBluetoothAlwaysUsageDescription`, and `NSBonjourServices` (`_hg-hat-game._tcp` / `._udp`). Removing them breaks discovery.
+- **Logging:** `OSLog` with subsystem `com.khizanag.hat-game`.
+
+## Build and run
+
+No `.xcworkspace` — build with `-project` (local packages resolve automatically). Scheme `HatGame`, iOS 26 destination.
+
+```bash
+xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
+  -destination 'platform=iOS Simulator,name=iPhone 16' build
+
+xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
+  -destination 'platform=iOS Simulator,name=iPhone 16' test
+
+swiftlint lint --strict
 ```
 
-### String Naming Convention
+## Git workflow
 
-Use dot notation for hierarchy:
-- `home.title`
-- `wordInput.addWord`
-- `game.turnResults.timeUp`
-- `common.buttons.continue`
+- Imperative commit subjects under ~72 characters; explain the *why* in the body only when non-obvious.
+- **No AI attribution** in commits or PRs — no "Generated with" footers, no `Co-Authored-By` trailers.
+- Work on branches (`feature/*`, `bugfix/*`, `hotfix/*`); never commit directly to `master`. Keep PRs focused.
+- Commit `GoogleService-Info.plist` (it is not a secret); the only sensitive value is the `FIREBASE_SERVICE_ACCOUNT` GitHub Actions secret used to deploy database rules.
 
----
+## Continuous integration
 
-## Git Workflow
-
-### Commit Messages
-
-**Format:**
-```
-Short descriptive title (imperative mood)
-
-- Bullet points describing changes
-- Focus on what and why, not how
-- Keep lines under 72 characters
-
-🤖 Generated with [Claude Code](https://claude.com/claude-code)
-
-Co-Authored-By: Claude <noreply@anthropic.com>
-```
-
-**Examples:**
-```
-Add testing infrastructure and word auto-fill feature
-
-Fix team rotation bug in prepareForNewPlay
-
-Update README with comprehensive game rules
-```
-
-### Branch Naming
-
-- `feature/*` - New features
-- `bugfix/*` - Bug fixes
-- `hotfix/*` - Critical production fixes
-- `refactor/*` - Code refactoring
-
-### Pull Requests
-
-- Keep PRs focused and reviewable
-- Include description of changes
-- Reference related issues
-- Ensure all tests pass
-
----
-
-## Common Patterns
-
-### Manager Initialization
-
-Managers use `@Observable` and proper initialization:
-```swift
-@Observable
-final class GameManager {
-    var configuration: GameConfiguration
-
-    init(configuration: GameConfiguration? = nil) {
-        if let configuration {
-            self.configuration = configuration
-        } else if AppConfiguration.shared.isTestMode {
-            self.configuration = GameConfiguration.mockForTesting
-        } else {
-            self.configuration = GameConfiguration()
-        }
-    }
-}
-```
-
-### View Lifecycle
-
-Common lifecycle patterns:
-```swift
-var body: some View {
-    content
-        .onAppear {
-            // Setup when view appears
-        }
-        .onDisappear {
-            // Cleanup when view disappears
-        }
-        .onChange(of: someValue) { oldValue, newValue in
-            // React to changes
-        }
-}
-```
-
-### Error Handling
-
-Prefer graceful degradation over crashes:
-```swift
-// Good
-guard let currentWord = gameManager.currentWord else {
-    print("Warning: No current word available")
-    return
-}
-
-// Avoid
-guard let currentWord = gameManager.currentWord else {
-    fatalError("No current word")
-}
-```
-
-### Async Operations
-
-Use DispatchQueue for UI updates:
-```swift
-DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-    isWordFieldFocused = true
-}
-```
-
----
-
-## Development Rules
-
-### Core Principles
-
-1. **SwiftUI First:** Use SwiftUI for all UI components
-2. **No External Dependencies:** Keep the project dependency-free
-3. **Type Safety:** Leverage Swift's type system
-4. **Composition Over Inheritance:** Build complex views from simple components
-5. **Single Responsibility:** Each component has one clear purpose
-
-### Code Quality
-
-1. **No Force Unwrapping:** Use proper optional handling
-2. **No Magic Numbers:** Use DesignBook constants
-3. **No Hardcoded Strings:** Use localization
-4. **Explicit Typing:** Clear type annotations where helpful
-5. **Meaningful Names:** Self-documenting code
-
-### Performance
-
-1. **Lazy Loading:** Use lazy initialization where appropriate
-2. **View Optimization:** Keep view body computations light
-3. **Avoid Premature Optimization:** Measure first, optimize second
-
-### Testing
-
-1. **Test Business Logic:** Unit tests for managers
-2. **Test User Flows:** UI tests for critical paths
-3. **Test Edge Cases:** Empty states, max values, errors
-
-### Documentation
-
-1. **Update This Document:** Keep DEVELOPMENT.md current
-2. **Comment Complex Logic:** Explain non-obvious decisions
-3. **Update README:** Keep user-facing docs accurate
-4. **Use TODOs:** Mark incomplete work clearly
-
----
-
-## Notes
-
-**This document is a living guide.** It will be updated regularly to reflect:
-- New architectural decisions
-- Code style refinements
-- Development best practices
-- Lessons learned
-
-**Review this document before:**
-- Starting new features
-- Making architectural changes
-- Code reviews
-- Onboarding new developers
-
-**Last Major Update:** 2025-11-26 - Redesigned Settings page with reusable SettingsRow and SettingsSection components for improved UX
+The single workflow (`.github/workflows/firebase-database-rules.yml`) deploys `database.rules.json` to Firebase when it changes on `master`. There is no build or test CI — run builds, tests, and SwiftLint locally before pushing.

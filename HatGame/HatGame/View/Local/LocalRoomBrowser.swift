@@ -35,7 +35,7 @@ struct LocalRoomBrowser: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "local.browser.title"))
+            .navigationTitle(localized("local.browser.title"))
             .setDefaultStyle()
             .alert("common.error", isPresented: errorBinding) {
                 Button("common.gotIt") { error = nil }
@@ -75,7 +75,7 @@ private extension LocalRoomBrowser {
                     Image(systemName: "person.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("createRoom.yourName")
+                    Text(localized("createRoom.yourName"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -100,7 +100,7 @@ private extension LocalRoomBrowser {
                     .font(DesignBook.IconFont.medium)
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .symbolEffect(.pulse, options: .repeating)
-                Text("local.browser.nearby")
+                Text(localized("local.browser.nearby"))
                     .font(DesignBook.Font.captionBold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                 Spacer()
@@ -124,7 +124,7 @@ private extension LocalRoomBrowser {
         ContentUnavailableView {
             Label("local.browser.empty", systemImage: "antenna.radiowaves.left.and.right")
         } description: {
-            Text("local.browser.empty.hint")
+            Text(localized("local.browser.empty.hint"))
         }
     }
 

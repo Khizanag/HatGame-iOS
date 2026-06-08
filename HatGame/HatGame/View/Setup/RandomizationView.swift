@@ -35,7 +35,7 @@ struct RandomizationView: View {
                     .transition(.opacity)
             }
         }
-        .navigationTitle(String(localized: "randomization.title"))
+        .navigationTitle(localized("randomization.title"))
         .setDefaultStyle()
         .navigationBarBackButtonHidden(isShuffling)
         .toolbar(isShuffling ? .hidden : .automatic, for: .navigationBar)
@@ -80,7 +80,7 @@ private extension RandomizationView {
 
     var startingTeamHeader: some View {
         HStack {
-            Text("randomization.startingTeam.title")
+            Text(localized("randomization.startingTeam.title"))
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -93,7 +93,7 @@ private extension RandomizationView {
                             .font(DesignBook.Font.caption)
                             .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingTeam)
 
-                        Text("randomization.startingTeam.randomize")
+                        Text(localized("randomization.startingTeam.randomize"))
                             .font(DesignBook.Font.caption)
                     }
                     .foregroundStyle(DesignBook.Color.Text.accent)
@@ -124,7 +124,7 @@ private extension RandomizationView {
 
     var shuffleButton: some View {
         PrimaryButton(
-            title: String(localized: "randomization.shuffleAndStart"),
+            title: localized("randomization.shuffleAndStart"),
             icon: "play.fill",
             action: shuffleAndStart
         )
@@ -207,11 +207,11 @@ private struct RandomizationHeaderCard: View {
                 .symbolEffect(.pulse, options: .repeating)
 
                 VStack(spacing: DesignBook.Spacing.xs) {
-                    Text("randomization.header.title")
+                    Text(localized("randomization.header.title"))
                         .font(DesignBook.Font.title2)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
-                    Text("randomization.header.subtitle")
+                    Text(localized("randomization.header.subtitle"))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
@@ -239,11 +239,11 @@ private struct WordsReadyCard: View {
                 }
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                    Text("randomization.wordsReady.title")
+                    Text(localized("randomization.wordsReady.title"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
-                    Text(String(format: String(localized: "randomization.wordsReady.count"), wordCount))
+                    Text(String(format: localized("randomization.wordsReady.count"), wordCount))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -270,7 +270,7 @@ private struct TeamSelectionRow: View {
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
-                Text(String(format: String(localized: "randomization.team.players"), team.players.count))
+                Text(String(format: localized("randomization.team.players"), team.players.count))
                     .font(DesignBook.Font.caption)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             }
@@ -306,7 +306,7 @@ private struct RevealedTeamCard: View {
                 trophyIcon
 
                 VStack(spacing: DesignBook.Spacing.sm) {
-                    Text("randomization.startingTeam.selected")
+                    Text(localized("randomization.startingTeam.selected"))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
 
@@ -315,7 +315,7 @@ private struct RevealedTeamCard: View {
                         .fontWeight(.bold)
                         .foregroundStyle(team.color)
 
-                    Text("randomization.startingTeam.goesFirst")
+                    Text(localized("randomization.startingTeam.goesFirst"))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -380,7 +380,7 @@ private struct ShufflingOverlay: View {
                 hatBadge
 
                 VStack(spacing: DesignBook.Spacing.sm) {
-                    Text("randomization.shuffling.message")
+                    Text(localized("randomization.shuffling.message"))
                         .font(DesignBook.Font.title2)
                         .foregroundStyle(.white)
 

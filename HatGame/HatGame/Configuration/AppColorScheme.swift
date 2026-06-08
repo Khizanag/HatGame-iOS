@@ -8,18 +8,18 @@
 import SwiftUI
 
 enum AppColorScheme: String, CaseIterable {
-    case light = "light"
-    case dark = "dark"
-    case system = "system"
+    case light
+    case dark
+    case system
 
     var displayName: String {
         switch self {
         case .light:
-            String(localized: "settings.appearance.light")
+            localized("settings.appearance.light")
         case .dark:
-            String(localized: "settings.appearance.dark")
+            localized("settings.appearance.dark")
         case .system:
-            String(localized: "settings.appearance.system")
+            localized("settings.appearance.system")
         }
     }
 
@@ -31,6 +31,17 @@ enum AppColorScheme: String, CaseIterable {
             .dark
         case .system:
             nil
+        }
+    }
+
+    var systemImage: String {
+        switch self {
+        case .light:
+            "sun.max.fill"
+        case .dark:
+            "moon.fill"
+        case .system:
+            "circle.lefthalf.filled"
         }
     }
 }

@@ -27,7 +27,7 @@ struct LocalMenuView: View {
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.lg)
-        .navigationTitle(String(localized: "local.title"))
+        .navigationTitle(localized("local.title"))
         .setDefaultStyle()
     }
 }
@@ -36,11 +36,11 @@ struct LocalMenuView: View {
 private extension LocalMenuView {
     var actions: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: String(localized: "local.host"), icon: "antenna.radiowaves.left.and.right") {
+            PrimaryButton(title: localized("local.host"), icon: "antenna.radiowaves.left.and.right") {
                 DesignBook.Haptics.tap()
                 navigator.push(.localHostSetup)
             }
-            SecondaryButton(title: String(localized: "local.join"), icon: "magnifyingglass") {
+            SecondaryButton(title: localized("local.join"), icon: "magnifyingglass") {
                 DesignBook.Haptics.tap()
                 navigator.push(.localBrowser)
             }

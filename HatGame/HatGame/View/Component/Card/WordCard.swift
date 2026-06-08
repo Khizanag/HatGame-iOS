@@ -58,8 +58,8 @@ struct WordCard: View {
         .opacity(isExiting ? 0 : 1)
         .gesture(dragGesture)
         .accessibilityElement(children: .combine)
-        .accessibilityLabel(Text("game.card.accessibility.word \(word)"))
-        .accessibilityHint(Text("game.card.accessibility.hint"))
+        .accessibilityLabel(Text(localized("game.card.accessibility.word \(word)")))
+        .accessibilityHint(Text(localized("game.card.accessibility.hint")))
         .accessibilityAddTraits(.isButton)
     }
 
@@ -164,7 +164,7 @@ private extension WordCard {
 
             Spacer(minLength: 0)
 
-            Text("game.card.swipeHint")
+            Text(localized("game.card.swipeHint"))
                 .font(DesignBook.Font.smallCaption)
                 .textCase(.uppercase)
                 .tracking(1.6)

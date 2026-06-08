@@ -75,7 +75,7 @@ private extension OnlineRoundResultsView {
     var header: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             Text("🏁").font(DesignBook.IconFont.emoji)
-            Text("onlineRoundResults.roundComplete")
+            Text(localized("onlineRoundResults.roundComplete"))
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
@@ -89,7 +89,7 @@ private extension OnlineRoundResultsView {
     var roundScoresCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("onlineRoundResults.roundScores")
+                Text(localized("onlineRoundResults.roundScores"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -129,7 +129,7 @@ private extension OnlineRoundResultsView {
     var totalScoresCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("onlineRoundResults.totalScores")
+                Text(localized("onlineRoundResults.totalScores"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -179,7 +179,7 @@ private extension OnlineRoundResultsView {
     func nextRoundCard(_ round: OnlineGameRound) -> some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text("onlineRoundResults.nextRound")
+                Text(localized("onlineRoundResults.nextRound"))
                     .font(DesignBook.Font.smallCaption)
                     .textCase(.uppercase)
                     .tracking(1.6)
@@ -216,8 +216,8 @@ private extension OnlineRoundResultsView {
         if roomManager.isHost {
             PrimaryButton(
                 title: nextRound == nil
-                    ? String(localized: "onlineRoundResults.finish")
-                    : String(localized: "onlineRoundResults.startNextRound"),
+                    ? localized("onlineRoundResults.finish")
+                    : localized("onlineRoundResults.startNextRound"),
                 icon: "play.fill"
             ) {
                 advance()
@@ -225,7 +225,7 @@ private extension OnlineRoundResultsView {
             .disabled(isLoading)
         } else {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text("onlineRoundResults.waitingForHost")
+                Text(localized("onlineRoundResults.waitingForHost"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -257,17 +257,17 @@ private extension OnlineRoundResultsView {
 private extension OnlineGameRound {
     var title: String {
         switch self {
-        case .first: String(localized: "round.first.title")
-        case .second: String(localized: "round.second.title")
-        case .third: String(localized: "round.third.title")
+        case .first: localized("round.first.title")
+        case .second: localized("round.second.title")
+        case .third: localized("round.third.title")
         }
     }
 
     var description: String {
         switch self {
-        case .first: String(localized: "round.first.description")
-        case .second: String(localized: "round.second.description")
-        case .third: String(localized: "round.third.description")
+        case .first: localized("round.first.description")
+        case .second: localized("round.second.description")
+        case .third: localized("round.third.description")
         }
     }
 }

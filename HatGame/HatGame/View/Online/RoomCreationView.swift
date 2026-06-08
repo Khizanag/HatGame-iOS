@@ -35,7 +35,7 @@ struct RoomCreationView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "createRoom.title"))
+            .navigationTitle(localized("createRoom.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .alert("common.error", isPresented: errorBinding) {
@@ -61,8 +61,8 @@ private extension RoomCreationView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 SetupHero(
                     systemImage: "wifi",
-                    title: String(localized: "createRoom.hero.title"),
-                    subtitle: String(localized: "createRoom.hero.subtitle")
+                    title: localized("createRoom.hero.title"),
+                    subtitle: localized("createRoom.hero.subtitle")
                 )
                 nameCard
                 settingsCard
@@ -89,7 +89,7 @@ private extension RoomCreationView {
                     Image(systemName: "person.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("createRoom.yourName")
+                    Text(localized("createRoom.yourName"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -114,7 +114,7 @@ private extension RoomCreationView {
                     Image(systemName: "gearshape.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("createRoom.gameSettings")
+                    Text(localized("createRoom.gameSettings"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -122,29 +122,29 @@ private extension RoomCreationView {
                 VStack(spacing: DesignBook.Spacing.md) {
                     GameSettingsRow(
                         icon: "text.bubble.fill",
-                        title: String(localized: "createRoom.wordsPerPlayer"),
+                        title: localized("createRoom.wordsPerPlayer"),
                         value: $wordsPerPlayer,
                         range: 3...10,
                         step: 1
                     )
                     GameSettingsRow(
                         icon: "timer",
-                        title: String(localized: "createRoom.roundDuration"),
+                        title: localized("createRoom.roundDuration"),
                         value: $roundDuration,
                         range: 30...120,
                         step: 10,
-                        suffix: String(localized: "createRoom.seconds")
+                        suffix: localized("createRoom.seconds")
                     )
                     GameSettingsToggleRow(
                         icon: "wand.and.stars",
-                        title: String(localized: "wordSource.automatic.title"),
-                        subtitle: String(localized: "wordSource.automatic.description"),
+                        title: localized("wordSource.automatic.title"),
+                        subtitle: localized("wordSource.automatic.description"),
                         isOn: $isAutomaticWords
                     )
                     GameSettingsToggleRow(
                         icon: "arrow.uturn.forward",
-                        title: String(localized: "timerSettings.allowSkipping.title"),
-                        subtitle: String(localized: "timerSettings.allowSkipping.description"),
+                        title: localized("timerSettings.allowSkipping.title"),
+                        subtitle: localized("timerSettings.allowSkipping.description"),
                         isOn: $isSkippingEnabled,
                         tint: DesignBook.Color.Status.warning
                     )
@@ -161,7 +161,7 @@ private extension RoomCreationView {
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else {
-                PrimaryButton(title: String(localized: "createRoom.create"), icon: "plus.circle.fill") {
+                PrimaryButton(title: localized("createRoom.create"), icon: "plus.circle.fill") {
                     createRoom()
                 }
                 .disabled(!canCreate)
@@ -175,7 +175,7 @@ private extension RoomCreationView {
         ToolbarItemGroup(placement: .keyboard) {
             Spacer()
             Button(action: createRoom) {
-                Label(String(localized: "createRoom.create"), systemImage: "plus.circle.fill")
+                Label(localized("createRoom.create"), systemImage: "plus.circle.fill")
                     .labelStyle(.titleAndIcon)
                     .fontWeight(.semibold)
             }

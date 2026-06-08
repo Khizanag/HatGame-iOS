@@ -21,30 +21,30 @@ enum AppIcon: String, CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .classic:
-            String(localized: "settings.appIcon.classic.title")
+            localized("settings.appIcon.classic.title")
         case .sunset:
-            String(localized: "settings.appIcon.sunset.title")
+            localized("settings.appIcon.sunset.title")
         case .neon:
-            String(localized: "settings.appIcon.neon.title")
+            localized("settings.appIcon.neon.title")
         case .vintage:
-            String(localized: "settings.appIcon.vintage.title")
+            localized("settings.appIcon.vintage.title")
         case .minimal:
-            String(localized: "settings.appIcon.minimal.title")
+            localized("settings.appIcon.minimal.title")
         }
     }
 
     var subtitle: String {
         switch self {
         case .classic:
-            String(localized: "settings.appIcon.classic.subtitle")
+            localized("settings.appIcon.classic.subtitle")
         case .sunset:
-            String(localized: "settings.appIcon.sunset.subtitle")
+            localized("settings.appIcon.sunset.subtitle")
         case .neon:
-            String(localized: "settings.appIcon.neon.subtitle")
+            localized("settings.appIcon.neon.subtitle")
         case .vintage:
-            String(localized: "settings.appIcon.vintage.subtitle")
+            localized("settings.appIcon.vintage.subtitle")
         case .minimal:
-            String(localized: "settings.appIcon.minimal.subtitle")
+            localized("settings.appIcon.minimal.subtitle")
         }
     }
 

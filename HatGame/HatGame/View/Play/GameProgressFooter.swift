@@ -19,7 +19,7 @@ struct GameProgressFooter: View {
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             HStack {
-                Text("game.progress.title")
+                Text(localized("game.progress.title"))
                     .font(DesignBook.Font.smallCaption)
                     .textCase(.uppercase)
                     .tracking(1.2)

@@ -92,11 +92,13 @@ private extension OnlineTurnResultsView {
             ZStack {
                 Circle().fill(DesignBook.Color.Status.success.opacity(0.18)).frame(width: 88, height: 88)
                 Image(systemName: "sparkles")
+                    // Hero celebration glyph; unique size with no Dynamic Type token.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 38, weight: .bold))
                     .foregroundStyle(DesignBook.Color.Status.success)
                     .symbolEffect(.bounce, options: .nonRepeating, value: hasCelebrated)
             }
-            Text("onlineTurnResults.title")
+            Text(localized("onlineTurnResults.title"))
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
@@ -118,7 +120,7 @@ private extension OnlineTurnResultsView {
                         color: tint,
                         duration: 0.7
                     )
-                    Text(roundScore == 1 ? "word" : "words")
+                    Text(roundScore == 1 ? "onlineTurnResults.wordUnit.one" : "onlineTurnResults.wordUnit.many")
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
@@ -129,7 +131,7 @@ private extension OnlineTurnResultsView {
     var scoreboardCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("onlineTurnResults.standings")
+                Text(localized("onlineTurnResults.standings"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -137,6 +139,8 @@ private extension OnlineTurnResultsView {
                     HStack(spacing: DesignBook.Spacing.md) {
                         Text(verbatim: "\(index + 1)")
                             .font(DesignBook.Font.captionBold)
+                            // White rank numeral sits on a colored team badge.
+                            // swiftlint:disable:next no_raw_foreground_white_black
                             .foregroundStyle(.white)
                             .frame(width: 28, height: 28)
                             .background {
@@ -174,13 +178,13 @@ private extension OnlineTurnResultsView {
     @ViewBuilder
     var actionSection: some View {
         if isActivePlayer {
-            PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+            PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 continueFlow()
             }
             .disabled(isLoading)
         } else {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text("onlineTurnResults.waitingForNext")
+                Text(localized("onlineTurnResults.waitingForNext"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)

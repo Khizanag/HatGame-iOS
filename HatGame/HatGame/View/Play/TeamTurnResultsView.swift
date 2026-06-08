@@ -101,7 +101,7 @@ private extension TeamTurnResultsView {
         let team = gameManager.currentTeam
         return GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text(String(format: String(localized: "game.turnResults.teamTitle"), team.name))
+                Text(String(format: localized("game.turnResults.teamTitle"), team.name))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(team.color)
                     .multilineTextAlignment(.center)
@@ -113,7 +113,7 @@ private extension TeamTurnResultsView {
                         color: team.color,
                         duration: 0.7
                     )
-                    Text("game.turnResults.wordsUnit")
+                    Text(localized("game.turnResults.wordsUnit"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
@@ -134,7 +134,7 @@ private extension TeamTurnResultsView {
     var guessedWordsCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("game.turnResults.wordsGuessed")
+                Text(localized("game.turnResults.wordsGuessed"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -162,7 +162,7 @@ private extension TeamTurnResultsView {
                 Image(systemName: "moon.stars.fill")
                     .font(DesignBook.IconFont.large)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
-                Text("game.turnResults.noWordsGuessed")
+                Text(localized("game.turnResults.noWordsGuessed"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -174,12 +174,12 @@ private extension TeamTurnResultsView {
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: String(localized: "game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
+            SecondaryButton(title: localized("game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
                 DesignBook.Haptics.tap()
                 isStandingsPresented = true
             }
 
-            PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+            PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 DesignBook.Haptics.tap()
                 gameManager.prepareForNewPlay()
 

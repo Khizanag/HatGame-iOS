@@ -28,6 +28,12 @@ extension Page {
         }
     }
 
+    static var feedback: Page<FeedbackView> {
+        Page<FeedbackView>(id: "feedback") {
+            FeedbackView()
+        }
+    }
+
     static var appIconSelection: Page<AppIconSelectionView> {
         Page<AppIconSelectionView>(id: "appIconSelection") {
             AppIconSelectionView()
@@ -88,7 +94,10 @@ extension Page {
         }
     }
 
-    static func teamTurnResults(guessedWords: [Word], completionReason: PlayCompletionReason) -> Page<TeamTurnResultsView> {
+    static func teamTurnResults(
+        guessedWords: [Word],
+        completionReason: PlayCompletionReason
+    ) -> Page<TeamTurnResultsView> {
         Page<TeamTurnResultsView>(id: "teamTurnResults-\(guessedWords.hashValue)") {
             TeamTurnResultsView(guessedWords: guessedWords, completionReason: completionReason)
         }

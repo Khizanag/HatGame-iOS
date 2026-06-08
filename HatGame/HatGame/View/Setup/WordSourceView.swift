@@ -17,7 +17,7 @@ struct WordSourceView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "wordSource.navTitle"))
+            .navigationTitle(localized("wordSource.navTitle"))
             .setDefaultStyle()
     }
 }
@@ -28,21 +28,21 @@ private extension WordSourceView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 HeaderCard(
-                    title: String(localized: "wordSource.question"),
-                    description: String(localized: "wordSource.description")
+                    title: localized("wordSource.question"),
+                    description: localized("wordSource.description")
                 )
 
                 optionCard(
                     icon: "square.and.pencil",
-                    title: String(localized: "wordSource.manual.title"),
-                    description: String(localized: "wordSource.manual.description"),
+                    title: localized("wordSource.manual.title"),
+                    description: localized("wordSource.manual.description"),
                     action: chooseManual
                 )
 
                 optionCard(
                     icon: "wand.and.stars",
-                    title: String(localized: "wordSource.automatic.title"),
-                    description: String(localized: "wordSource.automatic.description"),
+                    title: localized("wordSource.automatic.title"),
+                    description: localized("wordSource.automatic.description"),
                     action: chooseAutomatic
                 )
             }

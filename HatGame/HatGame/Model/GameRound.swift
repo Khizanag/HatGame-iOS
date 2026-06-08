@@ -15,16 +15,16 @@ enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
     var description: String {
         switch self {
         case .first:
-            String(localized: "gameRound.first.description")
+            localized("gameRound.first.description")
         case .second:
-            String(localized: "gameRound.second.description")
+            localized("gameRound.second.description")
         case .third:
-            String(localized: "gameRound.third.description")
+            localized("gameRound.third.description")
         }
     }
 
     var title: String {
-        String(format: String(localized: "gameRound.title"), rawValue)
+        String(format: localized("gameRound.title"), rawValue)
     }
 
     /// SF Symbol that hints at the round's flavor — describe / hint / mime.

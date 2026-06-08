@@ -37,7 +37,7 @@ struct WordGenerationView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "wordGeneration.navTitle"))
+            .navigationTitle(localized("wordGeneration.navTitle"))
             .navigationBarTitleDisplayMode(.inline)
             .setDefaultBackground()
             .navigationBarBackButtonHidden(phase == .generating)
@@ -60,7 +60,7 @@ private extension WordGenerationView {
                 .tint(DesignBook.Color.Text.accent)
                 .padding(.horizontal, DesignBook.Spacing.xl)
                 .opacity(phase == .generating ? 1 : 0)
-                .accessibilityLabel(Text(String(localized: "wordGeneration.title")))
+                .accessibilityLabel(Text(localized("wordGeneration.title")))
             Spacer(minLength: 0)
             if phase == .ready, generatedCount > 0 {
                 continueButton
@@ -104,15 +104,15 @@ private extension WordGenerationView {
     var statusSection: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Text(phase == .generating
-                ? String(localized: "wordGeneration.title")
-                : String(localized: "wordGeneration.ready"))
+                ? localized("wordGeneration.title")
+                : localized("wordGeneration.ready"))
                 .font(DesignBook.Font.title2)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .contentTransition(.opacity)
 
             Text(phase == .generating
-                ? String(localized: "wordGeneration.subtitle")
-                : String(format: String(localized: "wordGeneration.count"), generatedCount))
+                ? localized("wordGeneration.subtitle")
+                : String(format: localized("wordGeneration.count"), generatedCount))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
@@ -139,12 +139,12 @@ private extension WordGenerationView {
     }
 
     var continueButton: some View {
-        PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+        PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
             DesignBook.Haptics.tap()
             navigator.push(.randomization)
         }
         .accessibilityFocused($readyControlFocused)
-        .accessibilityHint(Text(String(format: String(localized: "wordGeneration.count"), generatedCount)))
+        .accessibilityHint(Text(String(format: localized("wordGeneration.count"), generatedCount)))
     }
 }
 

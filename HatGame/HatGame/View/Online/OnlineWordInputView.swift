@@ -31,7 +31,7 @@ struct OnlineWordInputView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "onlineWordInput.title"))
+            .navigationTitle(localized("onlineWordInput.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .onAppear { isFieldFocused = true }
@@ -80,7 +80,7 @@ private extension OnlineWordInputView {
                 Image(systemName: "text.bubble.fill")
                     .font(.system(size: 40))
                     .foregroundStyle(DesignBook.Color.Text.accent)
-                Text("onlineWordInput.instruction")
+                Text(localized("onlineWordInput.instruction"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -104,7 +104,7 @@ private extension OnlineWordInputView {
     var progressHeader: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             HStack {
-                Text("onlineWordInput.wordsAdded")
+                Text(localized("onlineWordInput.wordsAdded"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 Spacer()
@@ -150,7 +150,7 @@ private extension OnlineWordInputView {
                     .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("wordInput.removeWord"))
+            .accessibilityLabel(Text(localized("wordInput.removeWord")))
         }
         .padding(DesignBook.Spacing.md)
         .background(DesignBook.Color.Background.secondary)
@@ -185,10 +185,10 @@ private extension OnlineWordInputView {
                 Image(systemName: "checkmark.circle.fill")
                     .font(DesignBook.IconFont.extraLarge)
                     .foregroundStyle(DesignBook.Color.Status.success)
-                Text("onlineWordInput.ready")
+                Text(localized("onlineWordInput.ready"))
                     .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
-                Text("onlineWordInput.readyHint")
+                Text(localized("onlineWordInput.readyHint"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -201,7 +201,7 @@ private extension OnlineWordInputView {
     var summaryCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("onlineWordInput.summary")
+                Text(localized("onlineWordInput.summary"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 wordsList
@@ -217,11 +217,11 @@ private extension OnlineWordInputView {
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else if playerWords.count == wordsPerPlayer {
-                PrimaryButton(title: String(localized: "onlineWordInput.submit"), icon: "paperplane.fill") {
+                PrimaryButton(title: localized("onlineWordInput.submit"), icon: "paperplane.fill") {
                     submit()
                 }
             } else {
-                PrimaryButton(title: String(localized: "wordInput.addWord"), icon: "plus.circle.fill") {
+                PrimaryButton(title: localized("wordInput.addWord"), icon: "plus.circle.fill") {
                     addWord()
                 }
                 .disabled(!canAdd)
@@ -236,14 +236,14 @@ private extension OnlineWordInputView {
             Spacer()
             if playerWords.count == wordsPerPlayer {
                 Button(action: submit) {
-                    Label(String(localized: "onlineWordInput.submit"), systemImage: "paperplane.fill")
+                    Label(localized("onlineWordInput.submit"), systemImage: "paperplane.fill")
                         .labelStyle(.titleAndIcon)
                         .fontWeight(.semibold)
                 }
                 .disabled(!canSubmit)
             } else {
                 Button(action: addWord) {
-                    Label(String(localized: "wordInput.addWord"), systemImage: "plus.circle.fill")
+                    Label(localized("wordInput.addWord"), systemImage: "plus.circle.fill")
                         .labelStyle(.titleAndIcon)
                         .fontWeight(.semibold)
                 }

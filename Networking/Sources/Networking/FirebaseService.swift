@@ -20,6 +20,10 @@ public final class FirebaseService: @unchecked Sendable {
         database.reference().child("rooms")
     }
 
+    private var feedbackRef: DatabaseReference {
+        database.reference().child("feedback")
+    }
+
     private init() {
         // Lazy initialization - database accessed only when needed
     }
@@ -228,6 +232,13 @@ public final class FirebaseService: @unchecked Sendable {
     public func updateRoomStatus(_ status: RoomStatus, forRoomId roomId: String) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         try await roomsRef.child(roomId).child("status").setValue(status.rawValue)
+    }
+
+    // MARK: - Feedback
+    public func submitFeedback(_ feedback: Feedback) async throws {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        let data = try encodeToDict(feedback)
+        try await feedbackRef.child(feedback.id).setValue(data)
     }
 
     // MARK: - Room Code Generation

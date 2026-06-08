@@ -20,6 +20,9 @@ public struct NavigationView<RootContent: View>: View {
     public var body: some View {
         NavigationStack(path: $navigator.navigationPath) {
             rootContent()
+                // This IS the navigation stack wrapper — the one place the
+                // app's single navigationDestination is allowed to live.
+                // swiftlint:disable:next no_navigation_destination
                 .navigationDestination(for: AnyPage.self) { page in
                     page.view()
                 }
@@ -28,6 +31,9 @@ public struct NavigationView<RootContent: View>: View {
         .environment(\.navZoomNamespace, zoomNamespace)
         .fullScreenCover(item: $navigator.presentedPage) { page in
             coverContent(for: page)
+                // Presented flows are deliberate (game setup, nearby, online) —
+                // they must be left via their own controls, never swiped away.
+                .interactiveDismissDisabled()
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()

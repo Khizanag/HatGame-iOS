@@ -73,11 +73,11 @@ struct OnlinePlayView: View {
                 guard isActivePlayer, newId == nil, gameState?.phase == .playing else { return }
                 endTurn()
             }
-            .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
-                Button(String(localized: "common.buttons.cancel"), role: .cancel) { }
-                Button(String(localized: "game.giveUp.button"), role: .destructive) { endTurn() }
+            .alert(localized("game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
+                Button(localized("common.buttons.cancel"), role: .cancel) { }
+                Button(localized("game.giveUp.button"), role: .destructive) { endTurn() }
             } message: {
-                Text("game.giveUp.confirmationMessage")
+                Text(localized("game.giveUp.confirmationMessage"))
             }
     }
 }

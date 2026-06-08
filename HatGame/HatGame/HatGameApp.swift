@@ -29,7 +29,19 @@ struct HatGameApp: App {
             }
             .environment(roomManager)
             .environment(gameSyncManager)
-            .preferredColorScheme(appConfiguration.colorScheme.colorScheme)
+            .preferredColorScheme(preferredColorScheme)
+            // Locale drives formatters; string lookups switch via
+            // `bundle: .appLanguage`, which re-renders views in place on change.
+            .environment(\.locale, appConfiguration.locale)
         }
+    }
+
+    private var preferredColorScheme: ColorScheme? {
+        #if DEBUG
+        if let override = UITestConfiguration.colorScheme {
+            return override.colorScheme
+        }
+        #endif
+        return appConfiguration.colorScheme.colorScheme
     }
 }

@@ -25,7 +25,7 @@ struct DeveloperInfoView: View {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .navigationTitle(String(localized: "settings.developerInfo.title"))
+        .navigationTitle(localized("settings.developerInfo.title"))
         .setDefaultStyle()
     }
 }
@@ -33,7 +33,7 @@ struct DeveloperInfoView: View {
 // MARK: - Private
 private extension DeveloperInfoView {
     var headerText: some View {
-        Text("settings.developerInfo.createdBy")
+        Text(localized("settings.developerInfo.createdBy"))
             .font(DesignBook.Font.body)
             .foregroundStyle(DesignBook.Color.Text.secondary)
             .padding(.horizontal, DesignBook.Spacing.sm)
@@ -42,7 +42,7 @@ private extension DeveloperInfoView {
     // MARK: - Credits Section
     var creditsSection: some View {
         SettingsSection(
-            title: String(localized: "settings.developerInfo.credits.title")
+            title: localized("settings.developerInfo.credits.title")
         ) {
             VStack(spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
@@ -50,7 +50,7 @@ private extension DeveloperInfoView {
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.accent)
 
-                    Text("settings.developerInfo.credits.title")
+                    Text(localized("settings.developerInfo.credits.title"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -63,11 +63,11 @@ private extension DeveloperInfoView {
                         .foregroundStyle(DesignBook.Color.Text.accent)
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text("home.director.name")
+                        Text(localized("home.director.name"))
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.primary)
 
-                        Text("settings.developerInfo.credits.rulesExplainer")
+                        Text(localized("settings.developerInfo.credits.rulesExplainer"))
                             .font(DesignBook.Font.caption)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
@@ -84,7 +84,7 @@ private extension DeveloperInfoView {
     // MARK: - About Section
     var aboutSection: some View {
         SettingsSection(
-            title: String(localized: "settings.developerInfo.about.title")
+            title: localized("settings.developerInfo.about.title")
         ) {
             VStack(spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
@@ -92,14 +92,14 @@ private extension DeveloperInfoView {
                         .font(DesignBook.Font.body)
                         .foregroundStyle(.purple)
 
-                    Text("settings.developerInfo.about.title")
+                    Text(localized("settings.developerInfo.about.title"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
                 }
 
-                Text("settings.developerInfo.about.description")
+                Text(localized("settings.developerInfo.about.description"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)
@@ -113,7 +113,7 @@ private extension DeveloperInfoView {
     // MARK: - Technologies Section
     var technologiesSection: some View {
         SettingsSection(
-            title: String(localized: "settings.developerInfo.technologies.title")
+            title: localized("settings.developerInfo.technologies.title")
         ) {
             VStack(spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
@@ -121,7 +121,7 @@ private extension DeveloperInfoView {
                         .font(DesignBook.Font.body)
                         .foregroundStyle(.blue)
 
-                    Text("settings.developerInfo.technologies.title")
+                    Text(localized("settings.developerInfo.technologies.title"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -157,8 +157,8 @@ private extension DeveloperInfoView {
     // MARK: - Test Mode Section
     var testModeSection: some View {
         SettingsSection(
-            title: String(localized: "settings.testMode.title"),
-            footer: String(localized: "settings.testMode.description")
+            title: localized("settings.testMode.title"),
+            footer: localized("settings.testMode.description")
         ) {
             VStack(spacing: DesignBook.Spacing.md) {
                 Toggle(isOn: Binding(
@@ -171,7 +171,7 @@ private extension DeveloperInfoView {
                             .foregroundStyle(DesignBook.Color.Text.accent)
                             .contentTransition(.symbolEffect(.replace))
 
-                        Text("settings.testMode.title")
+                        Text(localized("settings.testMode.title"))
                             .font(DesignBook.Font.headline)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                     }
@@ -187,7 +187,7 @@ private extension DeveloperInfoView {
     // MARK: - Contact Section
     var contactSection: some View {
         SettingsSection(
-            title: String(localized: "settings.developerInfo.contact.title")
+            title: localized("settings.developerInfo.contact.title")
         ) {
             VStack(spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
@@ -195,7 +195,7 @@ private extension DeveloperInfoView {
                         .font(DesignBook.Font.body)
                         .foregroundStyle(.green)
 
-                    Text("settings.developerInfo.contact.title")
+                    Text(localized("settings.developerInfo.contact.title"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -203,7 +203,7 @@ private extension DeveloperInfoView {
                 }
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                    Text("settings.developerInfo.contact.message")
+                    Text(localized("settings.developerInfo.contact.message"))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
