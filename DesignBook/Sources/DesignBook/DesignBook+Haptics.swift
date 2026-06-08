@@ -7,11 +7,16 @@
 
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 extension DesignBook {
     /// Centralized, semantic haptic feedback used across the app.
     /// Wraps UIKit feedback generators so callers don't manage `prepare()` themselves.
+    /// On macOS the impact-style events map onto `NSHapticFeedbackManager` (Force
+    /// Touch trackpads only); notification-style events have no macOS equivalent
+    /// and stay silent.
     @MainActor
     public enum Haptics {
         // MARK: - Semantic events
@@ -19,6 +24,8 @@ extension DesignBook {
         public static func selection() {
             #if os(iOS)
             UISelectionFeedbackGenerator().selectionChanged()
+            #elseif os(macOS)
+            performMac(.generic)
             #endif
         }
 
@@ -26,6 +33,8 @@ extension DesignBook {
         public static func tap() {
             #if os(iOS)
             UIImpactFeedbackGenerator(style: .light).impactOccurred()
+            #elseif os(macOS)
+            performMac(.generic)
             #endif
         }
 
@@ -33,6 +42,8 @@ extension DesignBook {
         public static func confirm() {
             #if os(iOS)
             UIImpactFeedbackGenerator(style: .medium).impactOccurred()
+            #elseif os(macOS)
+            performMac(.levelChange)
             #endif
         }
 
@@ -40,6 +51,8 @@ extension DesignBook {
         public static func soft() {
             #if os(iOS)
             UIImpactFeedbackGenerator(style: .soft).impactOccurred()
+            #elseif os(macOS)
+            performMac(.generic)
             #endif
         }
 
@@ -47,6 +60,8 @@ extension DesignBook {
         public static func rigid() {
             #if os(iOS)
             UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
+            #elseif os(macOS)
+            performMac(.levelChange)
             #endif
         }
 
@@ -70,5 +85,11 @@ extension DesignBook {
             UINotificationFeedbackGenerator().notificationOccurred(.error)
             #endif
         }
+
+        #if os(macOS)
+        private static func performMac(_ pattern: NSHapticFeedbackManager.FeedbackPattern) {
+            NSHapticFeedbackManager.defaultPerformer.perform(pattern, performanceTime: .default)
+        }
+        #endif
     }
 }
