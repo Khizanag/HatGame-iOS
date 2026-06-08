@@ -28,6 +28,12 @@ struct CircularTimerView: View {
         remainingSeconds > 0 && remainingSeconds <= 5
     }
 
+    /// The urgency pulse only runs while actively counting down — never while
+    /// paused, and never under Reduce Motion.
+    private var isPulsing: Bool {
+        isUrgent && !isPaused && !reduceMotion
+    }
+
     private var displayColor: Color {
         if isUrgent {
             DesignBook.Color.Status.error
@@ -58,10 +64,10 @@ struct CircularTimerView: View {
             progressRing
             timeLabel
         }
-        .scaleEffect(isUrgent && !reduceMotion ? 1.04 : 1.0)
+        .scaleEffect(isPulsing ? 1.04 : 1.0)
         .animation(
-            reduceMotion ? nil : .easeInOut(duration: 0.45).repeatForever(autoreverses: true),
-            value: isUrgent
+            isPulsing ? .easeInOut(duration: 0.45).repeatForever(autoreverses: true) : DesignBook.Motion.quick,
+            value: isPulsing
         )
     }
 }

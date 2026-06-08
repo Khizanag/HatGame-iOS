@@ -18,6 +18,7 @@ import SwiftUI
 struct OnlineGameFlowView: View {
     @Environment(RoomManager.self) private var roomManager
     @Environment(GameSyncManager.self) private var gameSyncManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var hasInitializedGame: Bool = false
     @State private var hasGeneratedWords: Bool = false
@@ -84,7 +85,7 @@ private extension OnlineGameFlowView {
                     // swiftlint:disable:next no_inline_font
                     .font(.system(size: 42, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
-                    .symbolEffect(.variableColor.iterative, options: .repeating)
+                    .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
             }
             .accessibilityHidden(true)
             Text(localized("online.session.joining"))

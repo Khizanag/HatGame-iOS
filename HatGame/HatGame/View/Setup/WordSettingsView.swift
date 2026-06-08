@@ -14,17 +14,12 @@ struct WordSettingsView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    private let appConfiguration = AppConfiguration.shared
-
-    @State private var selectedWordCount: Int = 10
+    @State private var selectedWordCount: Int = AppConfiguration.shared.defaultWordsPerPlayer
 
     var body: some View {
         content
             .navigationTitle(localized("wordSettings.title"))
             .setDefaultStyle()
-            .onAppear {
-                selectedWordCount = appConfiguration.defaultWordsPerPlayer
-            }
     }
 }
 
