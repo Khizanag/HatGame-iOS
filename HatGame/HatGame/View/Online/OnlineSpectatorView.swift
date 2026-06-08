@@ -93,7 +93,7 @@ private extension OnlineSpectatorView {
                 }
         }
         .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: teamScore)
-        .accessibilityLabel(Text("onlineSpectator.score.accessibility \(teamScore)"))
+        .accessibilityLabel(Text(localized("onlineSpectator.score.accessibility \(teamScore)")))
     }
 
     var instructionCard: some View {
@@ -109,7 +109,7 @@ private extension OnlineSpectatorView {
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
 
-                Text(String(format: String(localized: "onlineSpectator.explainerLabel"), explainerName))
+                Text(String(format: localized("onlineSpectator.explainerLabel"), explainerName))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)

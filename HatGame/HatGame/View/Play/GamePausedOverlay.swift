@@ -25,11 +25,11 @@ struct GamePausedOverlay: View {
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .symbolEffect(.pulse, options: .repeating)
 
-                Text("game.paused.title")
+                Text(localized("game.paused.title"))
                     .font(DesignBook.Font.largeTitle)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
-                PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "play.fill") {
+                PrimaryButton(title: localized("common.buttons.continue"), icon: "play.fill") {
                     onResume()
                 }
                 .frame(width: DesignBook.Size.pauseButtonWidth)

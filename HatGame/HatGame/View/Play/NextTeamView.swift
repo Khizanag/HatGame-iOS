@@ -84,7 +84,7 @@ private extension NextTeamView {
             }
             .accessibilityHidden(true)
 
-            Text("game.nextTeam.title")
+            Text(localized("game.nextTeam.title"))
                 .font(DesignBook.Font.smallCaption)
                 .textCase(.uppercase)
                 .tracking(1.6)
@@ -104,7 +104,7 @@ private extension NextTeamView {
                         font: DesignBook.Font.headline,
                         color: team.color
                     )
-                    Text("game.currentScoreLabel.suffix")
+                    Text(localized("game.currentScoreLabel.suffix"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .textCase(.uppercase)
@@ -136,7 +136,7 @@ private extension NextTeamView {
                     Text(round.title)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                    Text(String(format: String(localized: "game.wordsRemainingLabel"), gameManager.remainingWordCount))
+                    Text(String(format: localized("game.wordsRemainingLabel"), gameManager.remainingWordCount))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -160,11 +160,11 @@ private extension NextTeamView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
                 HStack {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text("game.nextTeam.selectExplainer")
+                        Text(localized("game.nextTeam.selectExplainer"))
                             .font(DesignBook.Font.headline)
                             .foregroundStyle(DesignBook.Color.Text.primary)
 
-                        Text("game.nextTeam.selectExplainer.description")
+                        Text(localized("game.nextTeam.selectExplainer.description"))
                             .font(DesignBook.Font.caption)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
@@ -181,7 +181,7 @@ private extension NextTeamView {
                             .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     }
                     .disabled(isRandomizingExplainer || team.players.count < 2)
-                    .accessibilityLabel(Text("game.nextTeam.shuffleExplainer"))
+                    .accessibilityLabel(Text(localized("game.nextTeam.shuffleExplainer")))
                 }
 
                 VStack(spacing: DesignBook.Spacing.sm) {
@@ -257,7 +257,7 @@ private extension NextTeamView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
-                    Text("game.nextTeam.teamRoles")
+                    Text(localized("game.nextTeam.teamRoles"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -353,12 +353,12 @@ private extension NextTeamView {
 
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: String(localized: "game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
+            SecondaryButton(title: localized("game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
                 DesignBook.Haptics.tap()
                 isStandingsPresented = true
             }
 
-            PrimaryButton(title: String(localized: "common.buttons.play"), icon: "play.fill") {
+            PrimaryButton(title: localized("common.buttons.play"), icon: "play.fill") {
                 DesignBook.Haptics.confirm()
                 if isFirstPlay {
                     gameManager.setExplainer(playerIndex: selectedExplainerIndex, for: team)

@@ -8,10 +8,13 @@
 import DesignBook
 import SwiftUI
 
-/// A labelled +/- stepper row used to tune game settings (words per
-/// player, round duration). Shared by `RoomCreationView` and
-/// `LocalHostSetupView` so the two flows look and behave the same.
+/// A labelled numeric row backed by a native `Stepper` for the −/+ control,
+/// keeping the app's icon and animated value styling. Shared by
+/// `DefaultsSettingsView`, `RoomCreationView` and `LocalHostSetupView` so the
+/// flows look and behave the same.
 struct GameSettingsRow: View {
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     let icon: String
     let title: String
     @Binding var value: Int
@@ -20,42 +23,33 @@ struct GameSettingsRow: View {
     var suffix: String?
 
     var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .font(DesignBook.IconFont.small)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: 24)
-            Text(title)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-            Spacer()
+        Stepper(value: $value, in: range, step: step) {
             HStack(spacing: DesignBook.Spacing.sm) {
-                stepperButton(systemName: "minus.circle.fill", enabled: value - step >= range.lowerBound) {
-                    DesignBook.Haptics.selection()
-                    value -= step
-                }
-                Text(suffix.map { "\(value) \($0)" } ?? "\(value)")
-                    .font(DesignBook.Font.headline)
+                Image(systemName: icon)
+                    .font(DesignBook.IconFont.small)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                    .frame(width: DesignBook.Size.iconSize)
+
+                Text(title)
+                    .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.primary)
+
+                Spacer(minLength: DesignBook.Spacing.sm)
+
+                Text(valueText)
+                    .font(DesignBook.Font.headline)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
                     .monospacedDigit()
-                    .frame(minWidth: 50)
                     .contentTransition(.numericText(value: Double(value)))
-                stepperButton(systemName: "plus.circle.fill", enabled: value + step <= range.upperBound) {
-                    DesignBook.Haptics.selection()
-                    value += step
-                }
+                    .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: value)
             }
         }
-        .padding(.vertical, DesignBook.Spacing.xs)
+        .onChange(of: value) { _, _ in
+            DesignBook.Haptics.selection()
+        }
     }
 
-    private func stepperButton(systemName: String, enabled: Bool, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Image(systemName: systemName)
-                .font(DesignBook.Font.title3)
-                .foregroundStyle(enabled ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
-        }
-        .buttonStyle(.plain)
-        .disabled(!enabled)
+    private var valueText: String {
+        suffix.map { "\(value) \($0)" } ?? "\(value)"
     }
 }

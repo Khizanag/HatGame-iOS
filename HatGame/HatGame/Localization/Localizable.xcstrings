@@ -1,414 +1,6 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
-    "createRoom.hero.title" : {
-      "comment" : "Hero title on the online room-creation screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create a room"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ოთახის შექმნა"
-          }
-        }
-      }
-    },
-    "createRoom.hero.subtitle" : {
-      "comment" : "Hero subtitle on the online room-creation screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Set up the game and share the code with friends"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "მოაწყვეთ თამაში და გაუზიარეთ კოდი მეგობრებს"
-          }
-        }
-      }
-    },
-    "joinRoom.hero.title" : {
-      "comment" : "Hero title on the online join-room screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Join a room"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ოთახში შესვლა"
-          }
-        }
-      }
-    },
-    "joinRoom.hero.subtitle" : {
-      "comment" : "Hero subtitle on the online join-room screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter the 6-character code from the host"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "შეიყვანეთ მასპინძლის 6-სიმბოლოიანი კოდი"
-          }
-        }
-      }
-    },
-    "local.browser.empty.hint" : {
-      "comment" : "Hint under the nearby-browser empty state.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Make sure the host has started a nearby game and you're on the same Wi-Fi or have Bluetooth on"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "დარწმუნდით, რომ მასპინძელმა დაიწყო ახლომდებარე თამაში და ხართ იმავე Wi-Fi-ზე ან ჩართული გაქვთ Bluetooth"
-          }
-        }
-      }
-    },
-    "wordSource.navTitle" : {
-      "comment" : "Navigation title for the word-source choice screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვები"
-          }
-        }
-      }
-    },
-    "wordSource.question" : {
-      "comment" : "Header on the word-source choice screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How do you want to add words?"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "როგორ გსურთ სიტყვების დამატება?"
-          }
-        }
-      }
-    },
-    "wordSource.description" : {
-      "comment" : "Header subtitle on the word-source choice screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Type your own words, or let the app pick them for you."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "შეიყვანეთ საკუთარი სიტყვები, ან მიანდეთ აპს არჩევა."
-          }
-        }
-      }
-    },
-    "wordSource.manual.title" : {
-      "comment" : "Title of the manual word-entry option.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter manually"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ხელით შეყვანა"
-          }
-        }
-      }
-    },
-    "wordSource.manual.description" : {
-      "comment" : "Description of the manual word-entry option.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Each player types in their own words."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "თითოეული მოთამაშე თავის სიტყვებს თავად შეიყვანს."
-          }
-        }
-      }
-    },
-    "wordSource.automatic.title" : {
-      "comment" : "Title of the automatic word option.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pick for me"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ავტომატური არჩევა"
-          }
-        }
-      }
-    },
-    "wordSource.automatic.description" : {
-      "comment" : "Description of the automatic word option.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "We'll choose words from our database — no typing needed."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვებს ჩვენი ბაზიდან ავირჩევთ — შეყვანა არ დაგჭირდებათ."
-          }
-        }
-      }
-    },
-    "wordGeneration.navTitle" : {
-      "comment" : "Navigation title for the automatic word-generation screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვები"
-          }
-        }
-      }
-    },
-    "wordGeneration.title" : {
-      "comment" : "Status title while words are being generated.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choosing words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ვირჩევთ სიტყვებს"
-          }
-        }
-      }
-    },
-    "wordGeneration.subtitle" : {
-      "comment" : "Status subtitle while words are being generated.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Drawing words from the hat…"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვებს ქუდიდან ვიღებთ…"
-          }
-        }
-      }
-    },
-    "wordGeneration.ready" : {
-      "comment" : "Status title once words are generated.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Ready!"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "მზადაა!"
-          }
-        }
-      }
-    },
-    "wordGeneration.count" : {
-      "comment" : "Count of generated words; %lld is the number.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld words ready"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld სიტყვა მზადაა"
-          }
-        }
-      }
-    },
-    "timerSettings.rules.title" : {
-      "comment" : "Section title above in-game rule toggles on the timer settings screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Game Rules"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "თამაშის წესები"
-          }
-        }
-      }
-    },
-    "timerSettings.allowSkipping.title" : {
-      "comment" : "Toggle title: whether players may skip words during this game.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allow Skipping"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გამოტოვების დაშვება"
-          }
-        }
-      }
-    },
-    "timerSettings.allowSkipping.description" : {
-      "comment" : "Explanation under the allow-skipping toggle.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Let players pass on a word and return it to the hat."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "მიეცით მოთამაშეებს უფლება გამოტოვონ სიტყვა და დააბრუნონ ქუდში."
-          }
-        }
-      }
-    },
-    "settings.defaultSkipping.title" : {
-      "comment" : "Defaults screen: default value of the allow-skipping toggle for new games.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Allow Skipping"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გამოტოვების დაშვება"
-          }
-        }
-      }
-    },
-    "settings.defaultSkipping.description" : {
-      "comment" : "Footer explaining the default allow-skipping setting.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "New games let players skip words by default."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ახალ თამაშებში მოთამაშეებს ნაგულისხმევად შეუძლიათ სიტყვის გამოტოვება."
-          }
-        }
-      }
-    },
-    "settings.timeUpSound.title" : {
-      "comment" : "Defaults screen: toggle title for the turn-timer end sound.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Time's Up Sound"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "დროის ამოწურვის ხმა"
-          }
-        }
-      }
-    },
-    "settings.timeUpSound.description" : {
-      "comment" : "Footer explaining the time's-up sound setting.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Play a chime when a turn's timer runs out."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "დაუკარით ხმა, როცა ხვედრის დრო იწურება."
-          }
-        }
-      }
-    },
     "" : {
 
     },
@@ -426,16 +18,6 @@
     },
     "%@" : {
 
-    },
-    "%@, rank %lld, %lld points" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "new",
-            "value" : "%1$@, rank %2$lld, %3$lld points"
-          }
-        }
-      }
     },
     "%@:" : {
       "comment" : "A label followed by its value, displayed in a row. The argument is the label text, and the second argument is the value text.",
@@ -548,6 +130,7 @@
     },
     "%llds" : {
       "comment" : "A label displaying the current value of the default round duration. The argument is the current value of the default round duration.",
+      "extractionState" : "stale",
       "isCommentAutoGenerated" : true,
       "localizations" : {
         "en" : {
@@ -663,7 +246,6 @@
     },
     "common.buttons.close" : {
       "comment" : "Generic close button label.",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -716,7 +298,6 @@
     },
     "common.buttons.done" : {
       "comment" : "Generic done button.",
-      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -867,6 +448,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "თამაშის პარამეტრები"
+          }
+        }
+      }
+    },
+    "createRoom.hero.subtitle" : {
+      "comment" : "Hero subtitle on the online room-creation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set up the game and share the code with friends"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოაწყვეთ თამაში და გაუზიარეთ კოდი მეგობრებს"
+          }
+        }
+      }
+    },
+    "createRoom.hero.title" : {
+      "comment" : "Hero title on the online room-creation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create a room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახის შექმნა"
           }
         }
       }
@@ -1027,6 +642,244 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "გუნდის შექმნა"
+          }
+        }
+      }
+    },
+    "feedback.category.bug" : {
+      "comment" : "Feedback category: a bug report.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bug"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ხარვეზი"
+          }
+        }
+      }
+    },
+    "feedback.category.idea" : {
+      "comment" : "Feedback category: a suggestion or idea.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Idea"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იდეა"
+          }
+        }
+      }
+    },
+    "feedback.category.label" : {
+      "comment" : "Label for the feedback type picker.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ტიპი"
+          }
+        }
+      }
+    },
+    "feedback.category.other" : {
+      "comment" : "Feedback category: anything else.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Other"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სხვა"
+          }
+        }
+      }
+    },
+    "feedback.category.praise" : {
+      "comment" : "Feedback category: praise.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Praise"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შექება"
+          }
+        }
+      }
+    },
+    "feedback.hero.subtitle" : {
+      "comment" : "Subtitle on the feedback form.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tell us what's working and what could be better."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გვითხარით, რა მუშაობს კარგად და რა შეიძლება გავაუმჯობესოთ."
+          }
+        }
+      }
+    },
+    "feedback.hero.title" : {
+      "comment" : "Headline on the feedback form.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'd love your feedback"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოგვწერეთ თქვენი აზრი"
+          }
+        }
+      }
+    },
+    "feedback.message.placeholder" : {
+      "comment" : "Placeholder for the feedback message field.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share your thoughts…"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაგვიზიარეთ თქვენი აზრები…"
+          }
+        }
+      }
+    },
+    "feedback.message.title" : {
+      "comment" : "Header above the feedback message field.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your message"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თქვენი შეტყობინება"
+          }
+        }
+      }
+    },
+    "feedback.submit" : {
+      "comment" : "Button that submits feedback.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Send feedback"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაგზავნა"
+          }
+        }
+      }
+    },
+    "feedback.success.done" : {
+      "comment" : "Button to dismiss the feedback success screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მზადაა"
+          }
+        }
+      }
+    },
+    "feedback.success.message" : {
+      "comment" : "Message shown after feedback is sent.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your feedback was sent — we read every message."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თქვენი უკუკავშირი გაიგზავნა — ჩვენ ვკითხულობთ ყველა შეტყობინებას."
+          }
+        }
+      }
+    },
+    "feedback.success.title" : {
+      "comment" : "Title shown after feedback is sent.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Thank you!"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გმადლობთ!"
+          }
+        }
+      }
+    },
+    "feedback.title" : {
+      "comment" : "Navigation title for the in-app feedback screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Feedback"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "უკუკავშირი"
           }
         }
       }
@@ -1499,6 +1352,23 @@
         }
       }
     },
+    "game.results.teamScore.accessibility" : {
+      "comment" : "Accessibility label for a team's score row: name, rank, points.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, rank %2$lld, %3$lld points"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@, ადგილი %2$lld, %3$lld ქულა"
+          }
+        }
+      }
+    },
     "game.results.totalPoints" : {
       "comment" : "Subtitle under the winner's total score on the final results screen.",
       "localizations" : {
@@ -1598,6 +1468,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "გამოტოვება"
+          }
+        }
+      }
+    },
+    "game.timer.accessibility.minutesSeconds" : {
+      "comment" : "Accessibility label for the remaining time when minutes remain.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld minutes %2$lld seconds remaining"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დარჩა %1$lld წუთი და %2$lld წამი"
+          }
+        }
+      }
+    },
+    "game.timer.accessibility.seconds" : {
+      "comment" : "Accessibility label for the remaining time under a minute.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld seconds remaining"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დარჩა %lld წამი"
           }
         }
       }
@@ -2221,6 +2125,40 @@
         }
       }
     },
+    "joinRoom.hero.subtitle" : {
+      "comment" : "Hero subtitle on the online join-room screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter the 6-character code from the host"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეიყვანეთ მასპინძლის 6-სიმბოლოიანი კოდი"
+          }
+        }
+      }
+    },
+    "joinRoom.hero.title" : {
+      "comment" : "Hero title on the online join-room screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Join a room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახში შესვლა"
+          }
+        }
+      }
+    },
     "joinRoom.join" : {
       "localizations" : {
         "en" : {
@@ -2692,6 +2630,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ვეძებთ ახლომდებარე ოთახებს…\nდარწმუნდი რომ ჰოსტმა „გახსნა“ დააჭირა."
+          }
+        }
+      }
+    },
+    "local.browser.empty.hint" : {
+      "comment" : "Hint under the nearby-browser empty state.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Make sure the host has started a nearby game and you're on the same Wi-Fi or have Bluetooth on"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დარწმუნდით, რომ მასპინძელმა დაიწყო ახლომდებარე თამაში და ხართ იმავე Wi-Fi-ზე ან ჩართული გაქვთ Bluetooth"
           }
         }
       }
@@ -3730,6 +3685,40 @@
         }
       }
     },
+    "onlineTurnResults.wordUnit.many" : {
+      "comment" : "Plural word unit after a score other than 1.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვა"
+          }
+        }
+      }
+    },
+    "onlineTurnResults.wordUnit.one" : {
+      "comment" : "Singular word unit after a score of 1.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "word"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვა"
+          }
+        }
+      }
+    },
     "onlineWordInput.enterWord" : {
       "localizations" : {
         "en" : {
@@ -4197,9 +4186,6 @@
           }
         }
       }
-    },
-    "s" : {
-
     },
     "settings.about.appName" : {
       "comment" : "The name of the app displayed in the about section.",
@@ -4817,6 +4803,40 @@
         }
       }
     },
+    "settings.defaultSkipping.description" : {
+      "comment" : "Footer explaining the default allow-skipping setting.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New games let players skip words by default."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ახალ თამაშებში მოთამაშეებს ნაგულისხმევად შეუძლიათ სიტყვის გამოტოვება."
+          }
+        }
+      }
+    },
+    "settings.defaultSkipping.title" : {
+      "comment" : "Defaults screen: default value of the allow-skipping toggle for new games.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Skipping"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვების დაშვება"
+          }
+        }
+      }
+    },
     "settings.defaultWordsPerPlayer.description" : {
       "comment" : "A description of the stepper that allows users to adjust the default number of words each player should add to their team.",
       "localizations" : {
@@ -5141,6 +5161,91 @@
         }
       }
     },
+    "settings.language.description" : {
+      "comment" : "Footer explaining the language setting.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose the language used throughout the app."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აირჩიეთ აპლიკაციის ენა."
+          }
+        }
+      }
+    },
+    "settings.language.english" : {
+      "comment" : "Language option: English.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "English"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ინგლისური"
+          }
+        }
+      }
+    },
+    "settings.language.georgian" : {
+      "comment" : "Language option: Georgian.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Georgian"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქართული"
+          }
+        }
+      }
+    },
+    "settings.language.system" : {
+      "comment" : "Language option: follow the system language.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "System"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სისტემური"
+          }
+        }
+      }
+    },
+    "settings.language.title" : {
+      "comment" : "Title for the language section in settings.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Language"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ენა"
+          }
+        }
+      }
+    },
     "settings.technologies.designbook" : {
       "comment" : "A technology used in the app.",
       "localizations" : {
@@ -5222,6 +5327,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ტესტ რეჟიმი"
+          }
+        }
+      }
+    },
+    "settings.timeUpSound.description" : {
+      "comment" : "Footer explaining the time's-up sound setting.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play a chime when a turn's timer runs out."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დაუკარით ხმა, როცა ხვედრის დრო იწურება."
+          }
+        }
+      }
+    },
+    "settings.timeUpSound.title" : {
+      "comment" : "Defaults screen: toggle title for the turn-timer end sound.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time's Up Sound"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დროის ამოწურვის ხმა"
           }
         }
       }
@@ -5852,6 +5991,40 @@
         }
       }
     },
+    "timerSettings.allowSkipping.description" : {
+      "comment" : "Explanation under the allow-skipping toggle.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Let players pass on a word and return it to the hat."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მიეცით მოთამაშეებს უფლება გამოტოვონ სიტყვა და დააბრუნონ ქუდში."
+          }
+        }
+      }
+    },
+    "timerSettings.allowSkipping.title" : {
+      "comment" : "Toggle title: whether players may skip words during this game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allow Skipping"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვების დაშვება"
+          }
+        }
+      }
+    },
     "timerSettings.headerDescription" : {
       "comment" : "Timer settings description.",
       "isCommentAutoGenerated" : true,
@@ -5940,6 +6113,24 @@
         }
       }
     },
+    "timerSettings.rules.title" : {
+      "comment" : "Section title above in-game rule toggles on the timer settings screen.",
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Rules"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის წესები"
+          }
+        }
+      }
+    },
     "timerSettings.secondsPerTeam" : {
       "comment" : "A label displayed above the slider that allows the user to select the duration of a round.",
       "extractionState" : "stale",
@@ -5976,8 +6167,107 @@
         }
       }
     },
-    "word" : {
-
+    "timerSettings.unit.seconds" : {
+      "comment" : "Seconds unit shown after the round duration.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "s"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წმ"
+          }
+        }
+      }
+    },
+    "wordGeneration.count" : {
+      "comment" : "Count of generated words; %lld is the number.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld words ready"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld სიტყვა მზადაა"
+          }
+        }
+      }
+    },
+    "wordGeneration.navTitle" : {
+      "comment" : "Navigation title for the automatic word-generation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები"
+          }
+        }
+      }
+    },
+    "wordGeneration.ready" : {
+      "comment" : "Status title once words are generated.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ready!"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მზადაა!"
+          }
+        }
+      }
+    },
+    "wordGeneration.subtitle" : {
+      "comment" : "Status subtitle while words are being generated.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drawing words from the hat…"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვებს ქუდიდან ვიღებთ…"
+          }
+        }
+      }
+    },
+    "wordGeneration.title" : {
+      "comment" : "Status title while words are being generated.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choosing words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვირჩევთ სიტყვებს"
+          }
+        }
+      }
     },
     "wordInput.addWord" : {
       "comment" : "Button title to add a word to the list.",
@@ -6219,9 +6509,6 @@
         }
       }
     },
-    "words" : {
-
-    },
     "wordSettings.headerDescription" : {
       "comment" : "Word settings header description.",
       "isCommentAutoGenerated" : true,
@@ -6343,6 +6630,125 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სიტყვები მოთამაშეზე"
+          }
+        }
+      }
+    },
+    "wordSource.automatic.description" : {
+      "comment" : "Description of the automatic word option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "We'll choose words from our database — no typing needed."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვებს ჩვენი ბაზიდან ავირჩევთ — შეყვანა არ დაგჭირდებათ."
+          }
+        }
+      }
+    },
+    "wordSource.automatic.title" : {
+      "comment" : "Title of the automatic word option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick for me"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ავტომატური არჩევა"
+          }
+        }
+      }
+    },
+    "wordSource.description" : {
+      "comment" : "Header subtitle on the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type your own words, or let the app pick them for you."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეიყვანეთ საკუთარი სიტყვები, ან მიანდეთ აპს არჩევა."
+          }
+        }
+      }
+    },
+    "wordSource.manual.description" : {
+      "comment" : "Description of the manual word-entry option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each player types in their own words."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თითოეული მოთამაშე თავის სიტყვებს თავად შეიყვანს."
+          }
+        }
+      }
+    },
+    "wordSource.manual.title" : {
+      "comment" : "Title of the manual word-entry option.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter manually"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ხელით შეყვანა"
+          }
+        }
+      }
+    },
+    "wordSource.navTitle" : {
+      "comment" : "Navigation title for the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები"
+          }
+        }
+      }
+    },
+    "wordSource.question" : {
+      "comment" : "Header on the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How do you want to add words?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როგორ გსურთ სიტყვების დამატება?"
           }
         }
       }

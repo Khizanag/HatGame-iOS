@@ -75,7 +75,7 @@ private extension OnlineWaitingView {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("online.playersStatus")
+                    Text(localized("online.playersStatus"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }

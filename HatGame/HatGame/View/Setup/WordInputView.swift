@@ -50,7 +50,7 @@ struct WordInputView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "wordInput.title"))
+            .navigationTitle(localized("wordInput.title"))
             .setDefaultStyle()
             .onAppear(perform: prepareCurrentPlayer)
             .onChange(of: currentPlayerIndex) { _, _ in prepareCurrentPlayer() }
@@ -95,10 +95,10 @@ private extension WordInputView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "wordInput.title"),
+            title: localized("wordInput.title"),
             description: currentPlayer.map { player in
                 String(
-                    format: String(localized: "wordInput.playerInstruction"),
+                    format: localized("wordInput.playerInstruction"),
                     player.name,
                     wordsPerPlayer
                 )
@@ -153,7 +153,7 @@ private extension WordInputView {
     var progressHeader: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             HStack {
-                Text("wordInput.wordsAdded")
+                Text(localized("wordInput.wordsAdded"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 Spacer()
@@ -212,7 +212,7 @@ private extension WordInputView {
     @ViewBuilder
     var actionButton: some View {
         if !isCurrentPlayerDone {
-            PrimaryButton(title: String(localized: "wordInput.addWord"), icon: "plus.circle.fill") {
+            PrimaryButton(title: localized("wordInput.addWord"), icon: "plus.circle.fill") {
                 handleAddWord()
             }
             .disabled(isAddWordButtonDisabled)
@@ -224,7 +224,7 @@ private extension WordInputView {
     }
 
     var nextActionTitle: String {
-        isLastPlayer ? String(localized: "wordInput.finish") : String(localized: "wordInput.nextPlayer")
+        isLastPlayer ? localized("wordInput.finish") : localized("wordInput.nextPlayer")
     }
 
     var nextActionIcon: String {
@@ -486,7 +486,7 @@ private struct WordsList: View {
                     Button(role: .destructive) {
                         onRemove(index)
                     } label: {
-                        Label(String(localized: "common.buttons.delete"), systemImage: "trash.fill")
+                        Label(localized("common.buttons.delete"), systemImage: "trash.fill")
                     }
                 }
             }
@@ -520,7 +520,7 @@ private struct WordRow: View {
                     .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("wordInput.removeWord"))
+            .accessibilityLabel(Text(localized("wordInput.removeWord")))
         }
         .padding(DesignBook.Spacing.md)
         .background(DesignBook.Color.Background.secondary)
@@ -538,17 +538,17 @@ private struct CompletionCard: View {
                     .font(DesignBook.IconFont.extraLarge)
                     .foregroundStyle(DesignBook.Color.Status.success)
 
-                Text("wordInput.allWordsAdded")
+                Text(localized("wordInput.allWordsAdded"))
                     .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 if let nextPlayerName {
-                    Text(String(format: String(localized: "wordInput.readyToPass"), nextPlayerName))
+                    Text(String(format: localized("wordInput.readyToPass"), nextPlayerName))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
                 } else {
-                    Text("wordInput.allPlayersEntered")
+                    Text(localized("wordInput.allPlayersEntered"))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                         .multilineTextAlignment(.center)
@@ -567,7 +567,7 @@ private struct WordsListCard: View {
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text(String(format: String(localized: "wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
+                Text(String(format: localized("wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 

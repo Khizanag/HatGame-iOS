@@ -74,6 +74,6 @@ private struct TurnScoreBadge: View {
                 }
         }
         .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: count)
-        .accessibilityLabel(Text("game.turn.score.accessibility \(count)"))
+        .accessibilityLabel(Text(localized("game.turn.score.accessibility \(count)")))
     }
 }

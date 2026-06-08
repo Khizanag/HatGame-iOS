@@ -24,6 +24,7 @@ struct HomeView: View {
                 heroBackdrop.ignoresSafeArea()
             }
             .toolbar { settingsToolbar }
+            .uiTestDeepLink(navigator)
     }
 }
 
@@ -51,6 +52,9 @@ private extension HomeView {
         }
         .onAppear {
             guard !reduceMotion else { return }
+            #if DEBUG
+            if UITestConfiguration.disablesAnimations { return }
+            #endif
             withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
                 isHeroFloating = true
             }
@@ -63,12 +67,12 @@ private extension HomeView {
                 .padding(.top, DesignBook.Spacing.lg)
 
             VStack(spacing: DesignBook.Spacing.xs) {
-                Text("home.title")
+                Text(localized("home.title"))
                     .font(DesignBook.Font.largeTitle)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
 
-                Text("home.subtitle")
+                Text(localized("home.subtitle"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -107,6 +111,8 @@ private extension HomeView {
                 .shadow(.large)
 
             Text("🎩")
+                // Unique hero glyph; no Dynamic Type token matches this size.
+                // swiftlint:disable:next no_inline_font
                 .font(.system(size: 88))
                 .offset(y: reduceMotion ? 0 : (isHeroFloating ? -6 : 6))
                 .accessibilityHidden(true)
@@ -116,7 +122,7 @@ private extension HomeView {
     var howToPlayCard: some View {
         FoldableCard(
             isExpanded: $isHowToPlayExpanded,
-            title: String(localized: "home.howToPlay.title"),
+            title: localized("home.howToPlay.title"),
             icon: "sparkles"
         ) {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -134,19 +140,19 @@ private extension HomeView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: String(localized: "home.localGame"), icon: "person.2.fill") {
+            PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill") {
                 DesignBook.Haptics.tap()
                 navigator.present(.teamSetup)
             }
             .navigationZoomSource(id: "teamSetup", in: zoomNamespace)
 
-            SecondaryButton(title: String(localized: "home.nearbyGame"), icon: "dot.radiowaves.left.and.right") {
+            SecondaryButton(title: localized("home.nearbyGame"), icon: "dot.radiowaves.left.and.right") {
                 DesignBook.Haptics.tap()
                 navigator.present(.localFlow)
             }
             .navigationZoomSource(id: "localFlow", in: zoomNamespace)
 
-            SecondaryButton(title: String(localized: "home.onlineGame"), icon: "wifi") {
+            SecondaryButton(title: localized("home.onlineGame"), icon: "wifi") {
                 DesignBook.Haptics.tap()
                 navigator.present(.onlineFlow)
             }
@@ -166,19 +172,19 @@ private extension HomeView {
                 Image(systemName: "gearshape")
                     .foregroundStyle(DesignBook.Color.Text.primary)
             }
-            .accessibilityLabel(Text("common.buttons.settings"))
+            .accessibilityLabel(Text(localized("common.buttons.settings")))
         }
     }
 
     var instructions: [(icon: String, text: String)] {
         [
-            (icon: "person.2.fill", text: String(localized: "home.instructions.createTeams")),
-            (icon: "text.bubble.fill", text: String(localized: "home.instructions.addWords")),
-            (icon: "shuffle.circle.fill", text: String(localized: "home.instructions.randomize")),
-            (icon: "1.circle.fill", text: String(localized: "home.instructions.round1")),
-            (icon: "2.circle.fill", text: String(localized: "home.instructions.round2")),
-            (icon: "3.circle.fill", text: String(localized: "home.instructions.round3")),
-            (icon: "trophy.fill", text: String(localized: "home.instructions.winner")),
+            (icon: "person.2.fill", text: localized("home.instructions.createTeams")),
+            (icon: "text.bubble.fill", text: localized("home.instructions.addWords")),
+            (icon: "shuffle.circle.fill", text: localized("home.instructions.randomize")),
+            (icon: "1.circle.fill", text: localized("home.instructions.round1")),
+            (icon: "2.circle.fill", text: localized("home.instructions.round2")),
+            (icon: "3.circle.fill", text: localized("home.instructions.round3")),
+            (icon: "trophy.fill", text: localized("home.instructions.winner")),
         ]
     }
 }

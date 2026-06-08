@@ -33,7 +33,7 @@ struct RoomJoinView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "joinRoom.title"))
+            .navigationTitle(localized("joinRoom.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .alert("common.error", isPresented: errorBinding) {
@@ -56,8 +56,8 @@ private extension RoomJoinView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 SetupHero(
                     systemImage: "person.2.wave.2.fill",
-                    title: String(localized: "joinRoom.hero.title"),
-                    subtitle: String(localized: "joinRoom.hero.subtitle")
+                    title: localized("joinRoom.hero.title"),
+                    subtitle: localized("joinRoom.hero.subtitle")
                 )
                 codeCard
                 nameCard
@@ -84,7 +84,7 @@ private extension RoomJoinView {
                     Image(systemName: "number")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("joinRoom.roomCode")
+                    Text(localized("joinRoom.roomCode"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -113,7 +113,7 @@ private extension RoomJoinView {
                         }
                     }
 
-                Text("joinRoom.codeHint")
+                Text(localized("joinRoom.codeHint"))
                     .font(DesignBook.Font.caption)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
@@ -127,7 +127,7 @@ private extension RoomJoinView {
                     Image(systemName: "person.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("joinRoom.yourName")
+                    Text(localized("joinRoom.yourName"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -153,7 +153,7 @@ private extension RoomJoinView {
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else {
-                PrimaryButton(title: String(localized: "joinRoom.join"), icon: "arrow.right.circle.fill") {
+                PrimaryButton(title: localized("joinRoom.join"), icon: "arrow.right.circle.fill") {
                     joinRoom()
                 }
                 .disabled(!canJoin)
@@ -167,7 +167,7 @@ private extension RoomJoinView {
         ToolbarItemGroup(placement: .keyboard) {
             Spacer()
             Button(action: joinRoom) {
-                Label(String(localized: "joinRoom.join"), systemImage: "arrow.right.circle.fill")
+                Label(localized("joinRoom.join"), systemImage: "arrow.right.circle.fill")
                     .labelStyle(.titleAndIcon)
                     .fontWeight(.semibold)
             }

@@ -24,6 +24,7 @@ final class AppConfiguration {
     private static let allowDuplicateWordsKey = "HatGame.allowDuplicateWords"
     private static let defaultSkippingEnabledKey = "HatGame.defaultSkippingEnabled"
     private static let isTimeUpSoundEnabledKey = "HatGame.isTimeUpSoundEnabled"
+    private static let languageKey = "HatGame.language"
 
     var isTestMode: Bool {
         didSet {
@@ -82,6 +83,26 @@ final class AppConfiguration {
         }
     }
 
+    /// The app's display language. Changing it overrides the bundle so all
+    /// localized strings switch on the next view refresh.
+    var language: AppLanguage {
+        didSet {
+            UserDefaults.standard.set(language.rawValue, forKey: Self.languageKey)
+            languageBundle = Self.bundle(for: language)
+            Self.persistPreferredLanguage(language)
+        }
+    }
+
+    /// The bundle backing the selected language, read via `Bundle.appLanguage`.
+    /// Observing it re-localizes views the instant the language changes.
+    private(set) var languageBundle: Bundle = .main
+
+    /// The locale matching the selected language (the system locale for `.system`).
+    var locale: Locale {
+        guard let code = language.languageCode else { return Locale.current }
+        return Locale(identifier: code)
+    }
+
     private init() {
         isTestMode = UserDefaults.standard.bool(forKey: Self.testModeKey)
         defaultWordsPerPlayer = UserDefaults.standard.object(forKey: Self.defaultWordsPerPlayerKey) as? Int ?? 10
@@ -105,6 +126,15 @@ final class AppConfiguration {
         allowDuplicateWords = UserDefaults.standard.object(forKey: Self.allowDuplicateWordsKey) as? Bool ?? false
         defaultSkippingEnabled = UserDefaults.standard.object(forKey: Self.defaultSkippingEnabledKey) as? Bool ?? true
         isTimeUpSoundEnabled = UserDefaults.standard.object(forKey: Self.isTimeUpSoundEnabledKey) as? Bool ?? true
+
+        if let raw = UserDefaults.standard.string(forKey: Self.languageKey),
+           let stored = AppLanguage(rawValue: raw) {
+            language = stored
+        } else {
+            language = .system
+        }
+        languageBundle = Self.bundle(for: language)
+        Self.persistPreferredLanguage(language)
     }
 
     func applyStoredAppIcon() {
@@ -131,5 +161,24 @@ final class AppConfiguration {
             }
         }
         #endif
+    }
+
+    /// The `.lproj` bundle for a language, or `.main` to follow the system.
+    private static func bundle(for language: AppLanguage) -> Bundle {
+        guard let code = language.languageCode,
+              let path = Bundle.main.path(forResource: code, ofType: "lproj"),
+              let bundle = Bundle(path: path)
+        else { return .main }
+        return bundle
+    }
+
+    /// Persists the choice as the preferred app language so a fresh launch
+    /// (before any view reads `languageBundle`) also starts in that language.
+    private static func persistPreferredLanguage(_ language: AppLanguage) {
+        if let code = language.languageCode {
+            UserDefaults.standard.set([code], forKey: "AppleLanguages")
+        } else {
+            UserDefaults.standard.removeObject(forKey: "AppleLanguages")
+        }
     }
 }

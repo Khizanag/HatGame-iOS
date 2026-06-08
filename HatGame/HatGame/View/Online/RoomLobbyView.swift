@@ -34,15 +34,15 @@ struct RoomLobbyView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "lobby.title"))
+            .navigationTitle(localized("lobby.title"))
             .setDefaultStyle()
             .toolbar { leaveToolbar }
             .sheet(isPresented: $showingTeamCreation) {
                 OnlineTeamCreationView()
             }
-            .alert(String(localized: "lobby.leave.title"), isPresented: $showingLeaveConfirmation) {
-                Button(String(localized: "common.buttons.cancel"), role: .cancel) { }
-                Button(String(localized: "lobby.leave.confirm"), role: .destructive) {
+            .alert(localized("lobby.leave.title"), isPresented: $showingLeaveConfirmation) {
+                Button(localized("common.buttons.cancel"), role: .cancel) { }
+                Button(localized("lobby.leave.confirm"), role: .destructive) {
                     leaveRoom()
                 }
             } message: {
@@ -97,14 +97,14 @@ private extension RoomLobbyView {
                 Image(systemName: "xmark")
                     .foregroundStyle(DesignBook.Color.Text.primary)
             }
-            .accessibilityLabel(Text("lobby.leave.title"))
+            .accessibilityLabel(Text(localized("lobby.leave.title")))
         }
     }
 
     var roomCodeCard: some View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
-                Text("lobby.shareCode")
+                Text(localized("lobby.shareCode"))
                     .font(DesignBook.Font.smallCaption)
                     .textCase(.uppercase)
                     .tracking(1.6)
@@ -114,7 +114,7 @@ private extension RoomLobbyView {
                     .font(.system(size: 44, weight: .bold, design: .monospaced))
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .kerning(8)
-                    .accessibilityLabel(Text("lobby.shareCode"))
+                    .accessibilityLabel(Text(localized("lobby.shareCode")))
 
                 GlassEffectContainer(spacing: DesignBook.Spacing.md) {
                     HStack(spacing: DesignBook.Spacing.md) {
@@ -129,8 +129,8 @@ private extension RoomLobbyView {
                             .buttonStyle(.glass)
 
                             ShareLink(
-                                item: String(format: String(localized: "lobby.shareMessage"), code),
-                                preview: SharePreview(String(localized: "online.title"))
+                                item: String(format: localized("lobby.shareMessage"), code),
+                                preview: SharePreview(localized("online.title"))
                             ) {
                                 Label("lobby.share", systemImage: "square.and.arrow.up")
                                     .font(DesignBook.Font.caption)
@@ -151,7 +151,7 @@ private extension RoomLobbyView {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("lobby.players")
+                    Text(localized("lobby.players"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                     Spacer()
@@ -192,7 +192,7 @@ private extension RoomLobbyView {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(DesignBook.Color.Status.success)
             } else {
-                Text("lobby.noTeam")
+                Text(localized("lobby.noTeam"))
                     .font(DesignBook.Font.caption)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
@@ -211,7 +211,7 @@ private extension RoomLobbyView {
     var teamsSection: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             HStack {
-                Text("lobby.teams")
+                Text(localized("lobby.teams"))
                     .font(DesignBook.Font.captionBold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                 Spacer()
@@ -269,7 +269,7 @@ private extension RoomLobbyView {
                 }
 
                 if players.isEmpty {
-                    Text("lobby.teamEmpty")
+                    Text(localized("lobby.teamEmpty"))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 } else {
@@ -311,7 +311,7 @@ private extension RoomLobbyView {
                                 .foregroundStyle(DesignBook.Color.Status.error)
                         }
                         .buttonStyle(.plain)
-                        .accessibilityLabel(Text("teamCard.delete"))
+                        .accessibilityLabel(Text(localized("teamCard.delete")))
                     }
                 }
             }
@@ -322,14 +322,14 @@ private extension RoomLobbyView {
     var actionFooter: some View {
         if isHost {
             VStack(spacing: DesignBook.Spacing.sm) {
-                PrimaryButton(title: String(localized: "lobby.startGame"), icon: "play.fill") {
+                PrimaryButton(title: localized("lobby.startGame"), icon: "play.fill") {
                     startGame()
                 }
                 .disabled(!canStartGame)
                 .opacity(canStartGame ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
 
                 if !canStartGame {
-                    Text("lobby.needMorePlayers")
+                    Text(localized("lobby.needMorePlayers"))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .multilineTextAlignment(.center)
@@ -342,10 +342,10 @@ private extension RoomLobbyView {
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .symbolEffect(.pulse, options: .repeating)
                 VStack(alignment: .leading, spacing: 2) {
-                    Text("lobby.waitingForHost")
+                    Text(localized("lobby.waitingForHost"))
                         .font(DesignBook.Font.bodyBold)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                    Text("lobby.waitingForHost.hint")
+                    Text(localized("lobby.waitingForHost.hint"))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }

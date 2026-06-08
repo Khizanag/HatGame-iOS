@@ -87,11 +87,11 @@ private extension OnlineGameFlowView {
                     .symbolEffect(.variableColor.iterative, options: .repeating)
             }
             .accessibilityHidden(true)
-            Text("online.session.joining")
+            Text(localized("online.session.joining"))
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
-            Text("online.session.joiningHint")
+            Text(localized("online.session.joiningHint"))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
@@ -106,9 +106,9 @@ private extension OnlineGameFlowView {
     var playingContent: some View {
         if !allPlayersSubmittedWords {
             if isAutomaticWords {
-                OnlineWaitingView(message: String(localized: "online.preparingGame"))
+                OnlineWaitingView(message: localized("online.preparingGame"))
             } else if roomManager.currentPlayer?.hasSubmittedWords == true {
-                OnlineWaitingView(message: String(localized: "online.waitingForOthers"))
+                OnlineWaitingView(message: localized("online.waitingForOthers"))
             } else {
                 OnlineWordInputView()
             }
@@ -125,7 +125,7 @@ private extension OnlineGameFlowView {
         case .turnResults: OnlineTurnResultsView()
         case .roundResults: OnlineRoundResultsView()
         case .finished: OnlineResultsView()
-        case nil: OnlineWaitingView(message: String(localized: "online.preparingGame"))
+        case nil: OnlineWaitingView(message: localized("online.preparingGame"))
         }
     }
 

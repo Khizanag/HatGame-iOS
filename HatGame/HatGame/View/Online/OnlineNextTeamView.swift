@@ -98,7 +98,7 @@ private extension OnlineNextTeamView {
             }
             .accessibilityHidden(true)
 
-            Text("game.nextTeam.title")
+            Text(localized("game.nextTeam.title"))
                 .font(DesignBook.Font.smallCaption)
                 .textCase(.uppercase)
                 .tracking(1.6)
@@ -111,7 +111,7 @@ private extension OnlineNextTeamView {
                     .multilineTextAlignment(.center)
 
                 if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
-                    Text(String(format: String(localized: "game.currentScoreLabel"), totalScore))
+                    Text(String(format: localized("game.currentScoreLabel"), totalScore))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(tint)
                 }
@@ -124,7 +124,7 @@ private extension OnlineNextTeamView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
-                    Text("onlineNextTeam.teamRoles")
+                    Text(localized("onlineNextTeam.teamRoles"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     Spacer()
@@ -149,7 +149,7 @@ private extension OnlineNextTeamView {
                             Image(systemName: "lightbulb.fill")
                                 .font(DesignBook.Font.caption)
                                 .foregroundStyle(DesignBook.Color.Text.accent)
-                            Text("game.nextTeam.role.guessing")
+                            Text(localized("game.nextTeam.role.guessing"))
                                 .font(DesignBook.Font.smallCaption)
                                 .textCase(.uppercase)
                                 .tracking(1.2)
@@ -166,7 +166,7 @@ private extension OnlineNextTeamView {
                                         .font(DesignBook.Font.body)
                                         .foregroundStyle(DesignBook.Color.Text.primary)
                                     if guesser.id == roomManager.currentPlayerId {
-                                        Text("onlineNextTeam.you")
+                                        Text(localized("onlineNextTeam.you"))
                                             .font(DesignBook.Font.captionBold)
                                             .foregroundStyle(DesignBook.Color.Text.accent)
                                     }
@@ -207,7 +207,7 @@ private extension OnlineNextTeamView {
                     .font(DesignBook.Font.bodyBold)
                     .foregroundStyle(tint)
                 if isMe {
-                    Text("onlineNextTeam.you")
+                    Text(localized("onlineNextTeam.you"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(.white)
                         .padding(.horizontal, DesignBook.Spacing.sm)
@@ -237,7 +237,7 @@ private extension OnlineNextTeamView {
                     Text(currentRound.title)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                    Text(String(format: String(localized: "game.wordsRemainingLabel"), remainingWordCount))
+                    Text(String(format: localized("game.wordsRemainingLabel"), remainingWordCount))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -249,13 +249,13 @@ private extension OnlineNextTeamView {
     @ViewBuilder
     var actionSection: some View {
         if isActivePlayer {
-            PrimaryButton(title: String(localized: "common.buttons.play"), icon: "play.fill") {
+            PrimaryButton(title: localized("common.buttons.play"), icon: "play.fill") {
                 startTurn()
             }
             .disabled(isLoading)
         } else if isMyTeamsTurn {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text(String(format: String(localized: "onlineNextTeam.waitingForName"), explainer?.name ?? ""))
+                Text(String(format: localized("onlineNextTeam.waitingForName"), explainer?.name ?? ""))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -263,7 +263,7 @@ private extension OnlineNextTeamView {
             }
         } else {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text(String(format: String(localized: "onlineNextTeam.spectating"), currentTeam?.name ?? ""))
+                Text(String(format: localized("onlineNextTeam.spectating"), currentTeam?.name ?? ""))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
@@ -290,9 +290,9 @@ private extension OnlineNextTeamView {
 private extension OnlineGameRound {
     var title: String {
         switch self {
-        case .first: String(localized: "round.first.title")
-        case .second: String(localized: "round.second.title")
-        case .third: String(localized: "round.third.title")
+        case .first: localized("round.first.title")
+        case .second: localized("round.second.title")
+        case .third: localized("round.third.title")
         }
     }
 }

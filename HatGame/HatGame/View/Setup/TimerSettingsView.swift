@@ -21,7 +21,7 @@ struct TimerSettingsView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "timerSettings.title"))
+            .navigationTitle(localized("timerSettings.title"))
             .setDefaultStyle()
             .onAppear {
                 selectedDuration = appConfiguration.defaultRoundDuration
@@ -60,16 +60,16 @@ private extension TimerSettingsView {
                     .contentTransition(.numericText(value: Double(selectedDuration)))
                     .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedDuration)
                     .foregroundStyle(DesignBook.Gradient.primary)
-                Text("s")
+                Text(localized("timerSettings.unit.seconds"))
                     .font(DesignBook.Font.title)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
 
-            Text("timerSettings.headerTitle")
+            Text(localized("timerSettings.headerTitle"))
                 .font(DesignBook.Font.headline)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
-            Text("timerSettings.headerDescription")
+            Text(localized("timerSettings.headerDescription"))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
@@ -104,7 +104,7 @@ private extension TimerSettingsView {
 
     var durationStepper: some View {
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
-            Text(String(localized: "common.tapOrHoldToAdjust"))
+            Text(localized("common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
@@ -116,17 +116,17 @@ private extension TimerSettingsView {
     var timerTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             LegendTag(
-                title: String(localized: "timerSettings.legend.lightning"),
+                title: localized("timerSettings.legend.lightning"),
                 range: "5-30s",
                 isHighlighted: selectedDuration.isBetween(5, and: 30)
             )
             LegendTag(
-                title: String(localized: "timerSettings.legend.classic"),
+                title: localized("timerSettings.legend.classic"),
                 range: "60s",
                 isHighlighted: selectedDuration == 60
             )
             LegendTag(
-                title: String(localized: "timerSettings.legend.marathon"),
+                title: localized("timerSettings.legend.marathon"),
                 range: "90-120s",
                 isHighlighted: selectedDuration.isBetween(90, and: 120)
             )
@@ -144,10 +144,10 @@ private extension TimerSettingsView {
                         .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text("timerSettings.allowSkipping.title")
+                        Text(localized("timerSettings.allowSkipping.title"))
                             .font(DesignBook.Font.headline)
                             .foregroundStyle(DesignBook.Color.Text.primary)
-                        Text("timerSettings.allowSkipping.description")
+                        Text(localized("timerSettings.allowSkipping.description"))
                             .font(DesignBook.Font.caption)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                             .fixedSize(horizontal: false, vertical: true)
@@ -162,7 +162,7 @@ private extension TimerSettingsView {
     }
 
     var continueButton: some View {
-        PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+        PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
             DesignBook.Haptics.tap()
             handleContinue()
         }

@@ -37,10 +37,10 @@ struct GameView: View {
             .onChange(of: scenePhase) { _, phase in
                 handleScenePhaseChange(phase)
             }
-            .alert(String(localized: "game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
+            .alert(localized("game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 giveUpAlertActions
             } message: {
-                Text("game.giveUp.confirmationMessage")
+                Text(localized("game.giveUp.confirmationMessage"))
             }
             .overlay {
                 if isPaused {
@@ -159,16 +159,16 @@ private extension GameView {
                     }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(isPaused ? Text("game.timer.resume") : Text("game.timer.paused"))
+            .accessibilityLabel(isPaused ? Text(localized("game.timer.resume")) : Text(localized("game.timer.paused")))
         }
     }
 
     @ViewBuilder
     var giveUpAlertActions: some View {
-        Button(String(localized: "common.buttons.cancel"), role: .cancel) {
+        Button(localized("common.buttons.cancel"), role: .cancel) {
             showingGiveUpConfirmation = false
         }
-        Button(String(localized: "game.giveUp.button"), role: .destructive) {
+        Button(localized("game.giveUp.button"), role: .destructive) {
             showingGiveUpConfirmation = false
             giveUpTurn()
         }

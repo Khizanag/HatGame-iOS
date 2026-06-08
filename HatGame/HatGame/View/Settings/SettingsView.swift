@@ -16,260 +16,223 @@ struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: DesignBook.Spacing.xl) {
-                appearanceSection
-                gameDefaultsSection
-                accessibilitySection
-                aboutSection
-            }
-            .paddingHorizontalDefault()
-            .padding(.top, DesignBook.Spacing.lg)
-            .padding(.bottom, DesignBook.Spacing.xxl)
+        List {
+            appearanceSection
+            languageSection
+            gameDefaultsSection
+            accessibilitySection
+            aboutSection
         }
-        .navigationTitle(String(localized: "settings.title"))
+        .listStyle(.insetGrouped)
+        .scrollContentBackground(.hidden)
+        .navigationTitle(localized("settings.title"))
         .setDefaultStyle()
     }
 }
 
-// MARK: - Subviews
+// MARK: - Sections
 private extension SettingsView {
     var appearanceSection: some View {
-        SettingsSection(
-            title: String(localized: "settings.appearance.title"),
-            footer: String(localized: "settings.appearance.description")
-        ) {
-            VStack(spacing: DesignBook.Spacing.md) {
-                ColorSchemePickerCard(
-                    selection: Binding(
-                        get: { appConfiguration.colorScheme },
-                        set: { appConfiguration.colorScheme = $0 }
-                    )
-                )
-                Button {
-                    DesignBook.Haptics.selection()
-                    navigator.push(.appIconSelection)
-                } label: {
-                    SettingsRow(
-                        icon: "app.gift.fill",
-                        title: String(localized: "settings.appIcon.title"),
-                        subtitle: appConfiguration.appIcon.title
-                    )
-                }
-                .buttonStyle(.plain)
-                .navigationZoomSource(id: "appIconSelection", in: zoomNamespace)
-            }
+        Section {
+            themeRow
+            appIconRow
+        } header: {
+            Text(localized("settings.appearance.title"))
+        } footer: {
+            Text(localized("settings.appearance.description"))
+        }
+    }
+
+    var languageSection: some View {
+        Section {
+            languageRow
+        } header: {
+            Text(localized("settings.language.title"))
+        } footer: {
+            Text(localized("settings.language.description"))
         }
     }
 
     var gameDefaultsSection: some View {
-        SettingsSection(
-            title: String(localized: "settings.defaults.sectionTitle"),
-            footer: String(localized: "settings.defaults.description")
-        ) {
-            Button {
-                DesignBook.Haptics.selection()
+        Section {
+            SettingsLinkRow(
+                icon: "slider.horizontal.3",
+                tint: .orange,
+                title: localized("settings.defaults.title")
+            ) {
                 navigator.push(.defaultsSettings)
-            } label: {
-                SettingsRow(
-                    icon: "slider.horizontal.3",
-                    iconColor: .orange,
-                    title: String(localized: "settings.defaults.title"),
-                    subtitle: defaultsSummary
-                )
             }
-            .buttonStyle(.plain)
+        } header: {
+            Text(localized("settings.defaults.sectionTitle"))
+        } footer: {
+            Text(localized("settings.defaults.description"))
         }
     }
 
     var accessibilitySection: some View {
-        SettingsSection(
-            title: String(localized: "settings.accessibility.title"),
-            footer: String(localized: "settings.handedness.description")
-        ) {
-            HandednessPickerCard(
-                selection: Binding(
-                    get: { appConfiguration.isRightHanded ? .right : .left },
-                    set: { appConfiguration.isRightHanded = ($0 == .right) }
-                )
-            )
+        Section {
+            handednessRow
+        } header: {
+            Text(localized("settings.accessibility.title"))
+        } footer: {
+            Text(localized("settings.handedness.description"))
         }
     }
 
     var aboutSection: some View {
-        SettingsSection(title: String(localized: "settings.about.sectionTitle")) {
-            VStack(spacing: DesignBook.Spacing.sm) {
-                Button {
-                    DesignBook.Haptics.selection()
-                    navigator.push(.developerInfo)
-                } label: {
-                    SettingsRow(
-                        icon: "person.circle.fill",
-                        iconColor: .purple,
-                        title: String(localized: "settings.developerInfo.title"),
-                        subtitle: String(localized: "settings.developerInfo.description")
-                    )
-                }
-                .buttonStyle(.plain)
-
-                FeedbackRow()
-                AppInfoRows()
+        Section {
+            SettingsLinkRow(
+                icon: "person.circle.fill",
+                tint: .purple,
+                title: localized("settings.developerInfo.title")
+            ) {
+                navigator.push(.developerInfo)
             }
-        }
-    }
 
-    var defaultsSummary: String {
-        String(
-            format: "%d words • %d seconds",
-            appConfiguration.defaultWordsPerPlayer,
-            appConfiguration.defaultRoundDuration
-        )
+            SettingsLinkRow(
+                icon: "envelope.fill",
+                tint: .blue,
+                title: localized("settings.feedback.title")
+            ) {
+                navigator.push(.feedback)
+            }
+
+            if let appVersion {
+                infoRow(icon: "number", tint: .blue, title: localized("settings.about.version"), value: appVersion)
+            }
+
+            if let appBuild {
+                infoRow(
+                    icon: "wrench.and.screwdriver",
+                    tint: .green,
+                    title: localized("settings.about.build"),
+                    value: appBuild
+                )
+            }
+        } header: {
+            Text(localized("settings.about.sectionTitle"))
+        }
     }
 }
 
-// MARK: - Subview types
-private struct ColorSchemePickerCard: View {
-    @Binding var selection: AppColorScheme
-
-    var body: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            SettingsCardHeader(icon: "paintbrush.fill", title: "settings.appearance.colorScheme")
-            SegmentedSelectionView(items: items, selection: $selection)
+// MARK: - Rows
+private extension SettingsView {
+    var themeRow: some View {
+        SettingsMenuRow(
+            icon: "paintbrush.fill",
+            title: localized("settings.appearance.colorScheme"),
+            value: appConfiguration.colorScheme.displayName
+        ) {
+            Picker(localized("settings.appearance.colorScheme"), selection: colorSchemeBinding) {
+                ForEach(AppColorScheme.allCases, id: \.self) { scheme in
+                    Label(scheme.displayName, systemImage: scheme.systemImage).tag(scheme)
+                }
+            }
+            .pickerStyle(.inline)
         }
-        .padding(DesignBook.Spacing.md)
-        .background(DesignBook.Color.Background.card)
-        .cornerRadius(DesignBook.Size.cardCornerRadius)
     }
 
-    private var items: [SegmentedSelectionItem<AppColorScheme>] {
-        [
-            SegmentedSelectionItem(
-                id: .light,
-                title: String(localized: "settings.appearance.light"),
-                subtitle: nil,
-                icon: Image(systemName: "sun.max.fill")
-            ),
-            SegmentedSelectionItem(
-                id: .dark,
-                title: String(localized: "settings.appearance.dark"),
-                subtitle: nil,
-                icon: Image(systemName: "moon.fill")
-            ),
-            SegmentedSelectionItem(
-                id: .system,
-                title: String(localized: "settings.appearance.system"),
-                subtitle: "settings.appearance.auto",
-                icon: Image(systemName: "circle.lefthalf.filled")
-            ),
-        ]
-    }
-}
-
-private struct HandednessPickerCard: View {
-    @Binding var selection: Handedness
-
-    var body: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            SettingsCardHeader(icon: "hand.raised.fill", title: "settings.handedness.title")
-            SegmentedSelectionView(items: items, selection: $selection)
+    var appIconRow: some View {
+        SettingsLinkRow(
+            icon: "app.gift.fill",
+            title: localized("settings.appIcon.title"),
+            value: appConfiguration.appIcon.title
+        ) {
+            navigator.push(.appIconSelection)
         }
-        .padding(DesignBook.Spacing.md)
-        .background(DesignBook.Color.Background.card)
-        .cornerRadius(DesignBook.Size.cardCornerRadius)
+        .navigationZoomSource(id: "appIconSelection", in: zoomNamespace)
     }
 
-    private var items: [SegmentedSelectionItem<Handedness>] {
-        [
-            SegmentedSelectionItem(
-                id: .left,
-                title: String(localized: "settings.handedness.left"),
-                subtitle: nil,
-                icon: Image(systemName: "hand.point.left.fill")
-            ),
-            SegmentedSelectionItem(
-                id: .right,
-                title: String(localized: "settings.handedness.right"),
-                subtitle: nil,
-                icon: Image(systemName: "hand.point.right.fill")
-            ),
-        ]
+    var languageRow: some View {
+        SettingsMenuRow(
+            icon: "globe",
+            title: localized("settings.language.title"),
+            value: "\(appConfiguration.language.flag)  \(appConfiguration.language.displayName)"
+        ) {
+            Picker(localized("settings.language.title"), selection: languageBinding) {
+                ForEach(AppLanguage.allCases) { language in
+                    Text(verbatim: "\(language.flag)  \(language.displayName)").tag(language)
+                }
+            }
+            .pickerStyle(.inline)
+        }
     }
-}
 
-private struct SettingsCardHeader: View {
-    let icon: String
-    let title: LocalizedStringKey
+    var handednessRow: some View {
+        SettingsMenuRow(
+            icon: "hand.raised.fill",
+            title: localized("settings.handedness.title"),
+            value: handedness.displayName
+        ) {
+            Picker(localized("settings.handedness.title"), selection: handednessBinding) {
+                ForEach(Handedness.allCases, id: \.self) { hand in
+                    Label(hand.displayName, systemImage: hand.systemImage).tag(hand)
+                }
+            }
+            .pickerStyle(.inline)
+        }
+    }
 
-    var body: some View {
-        HStack {
-            Image(systemName: icon)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.accent)
+    func infoRow(icon: String, tint: Color, title: String, value: String) -> some View {
+        HStack(spacing: DesignBook.Spacing.md) {
+            SettingsIconTile(systemImage: icon, tint: tint)
 
             Text(title)
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
-            Spacer()
+            Spacer(minLength: DesignBook.Spacing.sm)
+
+            Text(value)
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .monospacedDigit()
         }
     }
 }
 
-private struct FeedbackRow: View {
-    private static let mailtoURL = URL(string: "mailto:giga.khizanishvili@gmail.com?subject=Hat%20Game%20Feedback")
-
-    var body: some View {
-        Group {
-            if let mailtoURL = Self.mailtoURL {
-                Link(destination: mailtoURL) {
-                    SettingsRow(
-                        icon: "envelope.fill",
-                        iconColor: .blue,
-                        title: String(localized: "settings.feedback.title"),
-                        subtitle: String(localized: "settings.feedback.description")
-                    )
-                }
-                .buttonStyle(.plain)
-            }
-        }
-    }
-}
-
-private struct AppInfoRows: View {
-    var body: some View {
-        VStack(spacing: DesignBook.Spacing.sm) {
-            if let version = appVersion {
-                SettingsRow(
-                    icon: "number",
-                    iconColor: .blue,
-                    title: String(localized: "settings.about.version"),
-                    subtitle: version,
-                    showChevron: false
-                ) {
-                    EmptyView()
-                }
-            }
-
-            if let build = appBuild {
-                SettingsRow(
-                    icon: "wrench.and.screwdriver",
-                    iconColor: .green,
-                    title: String(localized: "settings.about.build"),
-                    subtitle: build,
-                    showChevron: false
-                ) {
-                    EmptyView()
-                }
-            }
-        }
+// MARK: - Derived state
+private extension SettingsView {
+    var handedness: Handedness {
+        appConfiguration.isRightHanded ? .right : .left
     }
 
-    private var appVersion: String? {
+    var appVersion: String? {
         Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
     }
 
-    private var appBuild: String? {
+    var appBuild: String? {
         Bundle.main.infoDictionary?["CFBundleVersion"] as? String
+    }
+
+    var colorSchemeBinding: Binding<AppColorScheme> {
+        Binding(
+            get: { appConfiguration.colorScheme },
+            set: {
+                DesignBook.Haptics.selection()
+                appConfiguration.colorScheme = $0
+            }
+        )
+    }
+
+    var languageBinding: Binding<AppLanguage> {
+        Binding(
+            get: { appConfiguration.language },
+            set: {
+                DesignBook.Haptics.selection()
+                appConfiguration.language = $0
+            }
+        )
+    }
+
+    var handednessBinding: Binding<Handedness> {
+        Binding(
+            get: { handedness },
+            set: {
+                DesignBook.Haptics.selection()
+                appConfiguration.isRightHanded = ($0 == .right)
+            }
+        )
     }
 }
 

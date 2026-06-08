@@ -35,8 +35,6 @@ struct TeamFormView: View {
 
     private let appConfiguration = AppConfiguration.shared
 
-    private var isKeyboardVisible: Bool { focusedField != nil }
-
     private var trimmedTeamName: String {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
@@ -66,15 +64,15 @@ struct TeamFormView: View {
         guard !trimmedTeamName.isEmpty, filledPlayerNames.count < requiredPlayers else {
             return nil
         }
-        return String(format: String(localized: "teamForm.validation.exactPlayers"), requiredPlayers)
+        return String(format: localized("teamForm.validation.exactPlayers"), requiredPlayers)
     }
 
     private var title: String {
-        team == nil ? String(localized: "teamForm.title.new") : String(localized: "teamForm.title.edit")
+        team == nil ? localized("teamForm.title.new") : localized("teamForm.title.edit")
     }
 
     private var primaryButtonTitle: String {
-        team == nil ? String(localized: "teamForm.primary.create") : String(localized: "teamForm.primary.save")
+        team == nil ? localized("teamForm.primary.create") : localized("teamForm.primary.save")
     }
 
     private var primaryButtonIcon: String {
@@ -107,6 +105,15 @@ struct TeamFormView: View {
         }
         .navigationTitle(title)
         .setDefaultStyle()
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button(action: dismiss) {
+                    Image(systemName: "xmark")
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                }
+                .accessibilityLabel(Text(localized("common.buttons.close")))
+            }
+        }
         .safeAreaInset(edge: .bottom) {
             stackedActions
                 .paddingHorizontalDefault()
@@ -173,7 +180,7 @@ private extension TeamFormView {
                     .font(DesignBook.IconFont.medium)
                     .foregroundStyle(DesignBook.Color.Text.accent)
 
-                Text("teamForm.teamColor")
+                Text(localized("teamForm.teamColor"))
                     .font(DesignBook.Font.captionBold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
 
@@ -287,21 +294,8 @@ private extension TeamFormView {
         }
     }
 
-    @ViewBuilder
     var stackedActions: some View {
-        if isKeyboardVisible {
-            HStack(spacing: DesignBook.Spacing.md) {
-                DestructiveButton(title: String(localized: "common.buttons.cancel"), action: dismiss)
-                    .frame(maxWidth: .infinity)
-                primarySubmitButton
-                    .frame(maxWidth: .infinity)
-            }
-        } else {
-            VStack(spacing: DesignBook.Spacing.md) {
-                primarySubmitButton
-                DestructiveButton(title: String(localized: "common.buttons.cancel"), action: dismiss)
-            }
-        }
+        primarySubmitButton
     }
 
     var primarySubmitButton: some View {
@@ -481,7 +475,7 @@ private struct TeamNameSuggestionRow: View {
             .scrollClipDisabled()
         }
         .accessibilityElement(children: .contain)
-        .accessibilityLabel(Text("teamForm.suggestions.accessibility"))
+        .accessibilityLabel(Text(localized("teamForm.suggestions.accessibility")))
     }
 
     private var header: some View {
@@ -490,7 +484,7 @@ private struct TeamNameSuggestionRow: View {
                 .font(DesignBook.Font.smallCaption)
                 .foregroundStyle(DesignBook.Color.Text.accent)
 
-            Text("teamForm.suggestions.title")
+            Text(localized("teamForm.suggestions.title"))
                 .font(DesignBook.Font.smallCaption)
                 .textCase(.uppercase)
                 .tracking(1.2)
@@ -508,7 +502,7 @@ private struct TeamNameSuggestionRow: View {
                     }
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text("teamForm.suggestions.shuffle"))
+            .accessibilityLabel(Text(localized("teamForm.suggestions.shuffle")))
         }
     }
 }
@@ -536,7 +530,7 @@ private struct SuggestionChip: View {
         }
         .buttonStyle(.plain)
         .accessibilityLabel(Text("\(text)"))
-        .accessibilityHint(Text("teamForm.suggestions.tap"))
+        .accessibilityHint(Text(localized("teamForm.suggestions.tap")))
     }
 }
 
@@ -556,7 +550,9 @@ private struct ColorSwatchButton: View {
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
-        .accessibilityLabel(isSelected ? Text("teamForm.color.swatch.selected") : Text("teamForm.color.swatch.unselected"))
+        .accessibilityLabel(localized(
+            isSelected ? "teamForm.color.swatch.selected" : "teamForm.color.swatch.unselected"
+        ))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 

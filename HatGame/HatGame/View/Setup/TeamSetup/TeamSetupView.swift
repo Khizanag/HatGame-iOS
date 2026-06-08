@@ -35,7 +35,7 @@ struct TeamSetupView: View {
     var body: some View {
         content
             .environment(\.editMode, $editMode)
-            .navigationTitle(String(localized: "teamSetup.title"))
+            .navigationTitle(localized("teamSetup.title"))
             .setDefaultStyle()
             .toolbar { toolbarContent }
             .sheet(isPresented: $isAddTeamSheetPresented) {
@@ -52,7 +52,7 @@ struct TeamSetupView: View {
             .sheet(isPresented: editTeamBinding) {
                 editTeamSheet
             }
-            .alert(String(localized: "teamSetup.deleteTeam.title"), isPresented: isDeleteTeamAlertPresented) {
+            .alert(localized("teamSetup.deleteTeam.title"), isPresented: isDeleteTeamAlertPresented) {
                 deleteTeamAlertActions
             } message: {
                 deleteTeamAlertMessage
@@ -83,8 +83,8 @@ private extension TeamSetupView {
 
     var headerCard: some View {
         HeaderCard(
-            title: String(localized: "teamSetup.title"),
-            description: String(localized: "teamSetup.description")
+            title: localized("teamSetup.title"),
+            description: localized("teamSetup.description")
         )
     }
 
@@ -109,15 +109,15 @@ private extension TeamSetupView {
 
     var emptyState: some View {
         ContentUnavailableView {
-            Label(String(localized: "teamSetup.empty.title"), systemImage: "person.3")
+            Label(localized("teamSetup.empty.title"), systemImage: "person.3")
         } description: {
             Text(String(
-                format: String(localized: "teamSetup.empty.description"),
+                format: localized("teamSetup.empty.description"),
                 gameManager.configuration.minTeams
             ))
         } actions: {
             SecondaryButton(
-                title: String(localized: "teamSetup.addTeam"),
+                title: localized("teamSetup.addTeam"),
                 icon: "plus.circle.fill"
             ) {
                 DesignBook.Haptics.tap()
@@ -129,7 +129,7 @@ private extension TeamSetupView {
 
     var continueSection: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            PrimaryButton(title: String(localized: "common.buttons.continue"), icon: "arrow.right.circle.fill") {
+            PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 DesignBook.Haptics.tap()
                 navigator.push(.wordSettings)
             }
@@ -143,7 +143,7 @@ private extension TeamSetupView {
     }
 
     var requirementText: some View {
-        Text(String(format: String(localized: "teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
+        Text(String(format: localized("teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
             .font(DesignBook.Font.caption)
             .foregroundStyle(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
@@ -166,8 +166,8 @@ private extension TeamSetupView {
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
-        .accessibilityLabel(Text(String(format: String(localized: "teamSetup.editTeam.a11y %@"), team.name)))
-        .accessibilityHint(Text("teamSetup.editTeam.a11yHint"))
+        .accessibilityLabel(Text(String(format: localized("teamSetup.editTeam.a11y %@"), team.name)))
+        .accessibilityHint(Text(localized("teamSetup.editTeam.a11yHint")))
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             deleteSwipeAction(for: team)
             editSwipeAction(for: team)
@@ -176,12 +176,12 @@ private extension TeamSetupView {
             Button {
                 editingTeam = team
             } label: {
-                Label(String(localized: "common.buttons.edit"), systemImage: "pencil")
+                Label(localized("common.buttons.edit"), systemImage: "pencil")
             }
             Button(role: .destructive) {
                 deletingTeam = team
             } label: {
-                Label(String(localized: "common.buttons.delete"), systemImage: "trash")
+                Label(localized("common.buttons.delete"), systemImage: "trash")
             }
         }
     }
@@ -190,7 +190,7 @@ private extension TeamSetupView {
         Button(role: .destructive) {
             deletingTeam = team
         } label: {
-            Label(String(localized: "teamCard.delete"), systemImage: "trash")
+            Label(localized("teamCard.delete"), systemImage: "trash")
         }
     }
 
@@ -198,14 +198,14 @@ private extension TeamSetupView {
         Button {
             editingTeam = team
         } label: {
-            Label(String(localized: "teamCard.edit"), systemImage: "pencil")
+            Label(localized("teamCard.edit"), systemImage: "pencil")
         }
         .tint(DesignBook.Color.Text.accent)
     }
 
     var addTeamButtonRow: some View {
         SecondaryButton(
-            title: String(localized: "teamSetup.addTeam"),
+            title: localized("teamSetup.addTeam"),
             icon: "plus.circle.fill"
         ) {
             DesignBook.Haptics.tap()
@@ -242,7 +242,7 @@ private extension TeamSetupView {
                 } label: {
                     Image(systemName: "plus")
                 }
-                .accessibilityLabel(Text("teamSetup.addTeam"))
+                .accessibilityLabel(Text(localized("teamSetup.addTeam")))
             }
         }
     }
@@ -289,10 +289,10 @@ private extension TeamSetupView {
 
     @ViewBuilder
     var deleteTeamAlertActions: some View {
-        Button(String(localized: "common.buttons.cancel"), role: .cancel) {
+        Button(localized("common.buttons.cancel"), role: .cancel) {
             deletingTeam = nil
         }
-        Button(String(localized: "teamSetup.deleteTeam.title"), role: .destructive) {
+        Button(localized("teamSetup.deleteTeam.title"), role: .destructive) {
             if let deletingTeam {
                 DesignBook.Haptics.rigid()
                 withAnimation(DesignBook.Motion.respectingReducedMotion(.smooth, reduceMotion: reduceMotion)) {
@@ -306,7 +306,7 @@ private extension TeamSetupView {
     @ViewBuilder
     var deleteTeamAlertMessage: some View {
         if let deletingTeam {
-            Text(String(format: String(localized: "teamSetup.deleteTeam.confirmation"), deletingTeam.name))
+            Text(String(format: localized("teamSetup.deleteTeam.confirmation"), deletingTeam.name))
         }
     }
 }

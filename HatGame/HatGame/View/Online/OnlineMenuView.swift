@@ -14,7 +14,7 @@ struct OnlineMenuView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "online.title"))
+            .navigationTitle(localized("online.title"))
             .setDefaultStyle()
     }
 }
@@ -39,11 +39,11 @@ private extension OnlineMenuView {
 
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: String(localized: "online.createRoom"), icon: "plus.circle.fill") {
+            PrimaryButton(title: localized("online.createRoom"), icon: "plus.circle.fill") {
                 DesignBook.Haptics.tap()
                 navigator.push(.createRoom)
             }
-            SecondaryButton(title: String(localized: "online.joinRoom"), icon: "arrow.right.circle") {
+            SecondaryButton(title: localized("online.joinRoom"), icon: "arrow.right.circle") {
                 DesignBook.Haptics.tap()
                 navigator.push(.joinRoom)
             }

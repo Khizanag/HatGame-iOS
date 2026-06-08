@@ -59,7 +59,7 @@ struct LocalSessionView: View {
                     navigator.popToRoot()
                 }
             } message: {
-                Text("local.session.hostLost.message")
+                Text(localized("local.session.hostLost.message"))
             }
     }
 
@@ -158,11 +158,11 @@ private extension LocalSessionView {
                     .symbolEffect(.variableColor.iterative, options: .repeating)
             }
             .accessibilityHidden(true)
-            Text("local.session.connecting")
+            Text(localized("local.session.connecting"))
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
-            Text("local.session.connectingHint")
+            Text(localized("local.session.connectingHint"))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
@@ -177,9 +177,9 @@ private extension LocalSessionView {
     var playingContent: some View {
         if !allPlayersSubmittedWords {
             if isAutomaticWords {
-                OnlineWaitingView(message: String(localized: "online.preparingGame"))
+                OnlineWaitingView(message: localized("online.preparingGame"))
             } else if roomManager.currentPlayer?.hasSubmittedWords == true {
-                OnlineWaitingView(message: String(localized: "online.waitingForOthers"))
+                OnlineWaitingView(message: localized("online.waitingForOthers"))
             } else {
                 OnlineWordInputView()
             }
@@ -196,7 +196,7 @@ private extension LocalSessionView {
         case .turnResults: OnlineTurnResultsView()
         case .roundResults: OnlineRoundResultsView()
         case .finished: OnlineResultsView()
-        case nil: OnlineWaitingView(message: String(localized: "online.preparingGame"))
+        case nil: OnlineWaitingView(message: localized("online.preparingGame"))
         }
     }
 }

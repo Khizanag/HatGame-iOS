@@ -27,7 +27,7 @@ struct AppIconSelectionView: View {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .navigationTitle(String(localized: "settings.appIcon.title"))
+        .navigationTitle(localized("settings.appIcon.title"))
         .setDefaultStyle()
         .navigationZoomDestination(id: "appIconSelection", in: zoomNamespace)
     }
@@ -36,14 +36,14 @@ struct AppIconSelectionView: View {
 // MARK: - Subviews
 private extension AppIconSelectionView {
     var descriptionText: some View {
-        Text("settings.appIcon.description")
+        Text(localized("settings.appIcon.description"))
             .font(DesignBook.Font.body)
             .foregroundStyle(DesignBook.Color.Text.secondary)
             .padding(.horizontal, DesignBook.Spacing.sm)
     }
 
     var iconGrid: some View {
-        SettingsSection(title: String(localized: "settings.appIcon.available")) {
+        SettingsSection(title: localized("settings.appIcon.available")) {
             LazyVGrid(
                 columns: [
                     GridItem(.flexible(), spacing: DesignBook.Spacing.md),
@@ -80,8 +80,8 @@ private struct CurrentIconCard: View {
 
     var body: some View {
         SettingsSection(
-            title: String(localized: "settings.appIcon.current"),
-            footer: String(localized: "settings.appIcon.current.description")
+            title: localized("settings.appIcon.current"),
+            footer: localized("settings.appIcon.current.description")
         ) {
             HStack(spacing: DesignBook.Spacing.md) {
                 IconPreview(icon: icon, size: 60, symbolSize: 30)

@@ -91,6 +91,27 @@ struct HatGameTests {
         #expect(manager.configuration.teams[1].name == "Beta")
     }
 
+    // MARK: - Runtime language switch
+    /// The in-app switcher resolves strings via `bundle: .appLanguage`, which
+    /// tracks `AppConfiguration.language`. Verify changing the language flips
+    /// the resolved value, then restore the original.
+    @Test func appLanguageBundleSwitchesLocalizedStrings() {
+        let config = AppConfiguration.shared
+        let original = config.language
+
+        config.language = .english
+        let english = String(localized: "settings.feedback.title", bundle: .appLanguage)
+
+        config.language = .georgian
+        let georgian = String(localized: "settings.feedback.title", bundle: .appLanguage)
+
+        config.language = original
+
+        #expect(english == "Send Feedback")
+        #expect(georgian == "უკუკავშირის გაგზავნა")
+        #expect(english != georgian)
+    }
+
     // MARK: - Helpers
     private func makeManager(isSkippingEnabled: Bool) -> GameManager {
         let teamId = UUID()

@@ -20,7 +20,7 @@ struct WordSettingsView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "wordSettings.title"))
+            .navigationTitle(localized("wordSettings.title"))
             .setDefaultStyle()
             .onAppear {
                 selectedWordCount = appConfiguration.defaultWordsPerPlayer
@@ -60,11 +60,11 @@ private extension WordSettingsView {
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
 
-            Text("wordSettings.headerTitle")
+            Text(localized("wordSettings.headerTitle"))
                 .font(DesignBook.Font.headline)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
-            Text("wordSettings.headerDescription")
+            Text(localized("wordSettings.headerDescription"))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
@@ -99,7 +99,7 @@ private extension WordSettingsView {
 
     var stepper: some View {
         Stepper(value: $selectedWordCount, in: 3...20) {
-            Text("common.tapOrHoldToAdjust")
+            Text(localized("common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
@@ -111,17 +111,17 @@ private extension WordSettingsView {
     var legendTags: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             LegendTag(
-                title: String(localized: "wordSettings.legend.short"),
+                title: localized("wordSettings.legend.short"),
                 range: "3-7",
                 isHighlighted: selectedWordCount.isBetween(3, and: 7)
             )
             LegendTag(
-                title: String(localized: "wordSettings.legend.balanced"),
+                title: localized("wordSettings.legend.balanced"),
                 range: "8-12",
                 isHighlighted: selectedWordCount.isBetween(8, and: 12)
             )
             LegendTag(
-                title: String(localized: "wordSettings.legend.epic"),
+                title: localized("wordSettings.legend.epic"),
                 range: "13-20",
                 isHighlighted: selectedWordCount.isBetween(13, and: 20)
             )
@@ -130,7 +130,7 @@ private extension WordSettingsView {
 
     var continueButton: some View {
         PrimaryButton(
-            title: String(localized: "common.buttons.continue"),
+            title: localized("common.buttons.continue"),
             icon: "arrow.right.circle.fill"
         ) {
             DesignBook.Haptics.tap()

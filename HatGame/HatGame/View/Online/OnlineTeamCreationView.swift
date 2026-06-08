@@ -33,7 +33,7 @@ struct OnlineTeamCreationView: View {
     var body: some View {
         NavigationStack {
             content
-                .navigationTitle(String(localized: "createTeam.title"))
+                .navigationTitle(localized("createTeam.title"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
@@ -92,7 +92,7 @@ private extension OnlineTeamCreationView {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("createTeam.teamName")
+                    Text(localized("createTeam.teamName"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -115,7 +115,7 @@ private extension OnlineTeamCreationView {
                     Image(systemName: "paintpalette.fill")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text("createTeam.teamColor")
+                    Text(localized("createTeam.teamColor"))
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                     Spacer()
@@ -200,7 +200,7 @@ private extension OnlineTeamCreationView {
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else {
-                PrimaryButton(title: String(localized: "createTeam.create"), icon: "plus.circle.fill") {
+                PrimaryButton(title: localized("createTeam.create"), icon: "plus.circle.fill") {
                     createTeam()
                 }
                 .disabled(!canCreate)
@@ -214,7 +214,7 @@ private extension OnlineTeamCreationView {
         ToolbarItemGroup(placement: .keyboard) {
             Spacer()
             Button(action: createTeam) {
-                Label(String(localized: "createTeam.create"), systemImage: "plus.circle.fill")
+                Label(localized("createTeam.create"), systemImage: "plus.circle.fill")
                     .labelStyle(.titleAndIcon)
                     .fontWeight(.semibold)
             }

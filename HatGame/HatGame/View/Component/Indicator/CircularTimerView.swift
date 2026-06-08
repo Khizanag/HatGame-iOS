@@ -48,8 +48,8 @@ struct CircularTimerView: View {
         let minutes = remainingSeconds / 60
         let seconds = remainingSeconds % 60
         return minutes > 0
-            ? "\(minutes) minutes \(seconds) seconds remaining"
-            : "\(seconds) seconds remaining"
+            ? String(format: localized("game.timer.accessibility.minutesSeconds"), minutes, seconds)
+            : String(format: localized("game.timer.accessibility.seconds"), seconds)
     }
 
     var body: some View {
@@ -91,6 +91,8 @@ private extension CircularTimerView {
     var timeLabel: some View {
         VStack(spacing: 0) {
             Text(formattedTime)
+                // Hero countdown numeral; unique size with no Dynamic Type token.
+                // swiftlint:disable:next no_inline_font
                 .font(.system(size: 38, weight: .bold, design: .rounded))
                 .monospacedDigit()
                 .foregroundStyle(displayColor)
@@ -99,7 +101,7 @@ private extension CircularTimerView {
                 .accessibilityLabel(accessibilityTimeLabel)
 
             if isPaused {
-                Text("game.timer.paused")
+                Text(localized("game.timer.paused"))
                     .font(DesignBook.Font.smallCaption)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .textCase(.uppercase)

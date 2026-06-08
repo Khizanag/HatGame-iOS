@@ -34,7 +34,7 @@ struct OnlineResultsView: View {
 
     var body: some View {
         content
-            .navigationTitle(String(localized: "onlineResults.title"))
+            .navigationTitle(localized("onlineResults.title"))
             .setDefaultStyle()
             .overlay {
                 if hasCelebrated {
@@ -87,7 +87,7 @@ private extension OnlineResultsView {
 
             if winners.count == 1, let winner = winners.first {
                 VStack(spacing: DesignBook.Spacing.sm) {
-                    Text("game.results.winner")
+                    Text(localized("game.results.winner"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                         .textCase(.uppercase)
@@ -104,7 +104,7 @@ private extension OnlineResultsView {
                         color: Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary
                     )
 
-                    Text("game.results.totalPoints")
+                    Text(localized("game.results.totalPoints"))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .textCase(.uppercase)
@@ -112,7 +112,7 @@ private extension OnlineResultsView {
                 }
             } else {
                 VStack(spacing: DesignBook.Spacing.md) {
-                    Text("game.results.winners")
+                    Text(localized("game.results.winners"))
                         .font(DesignBook.Font.title2)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     ForEach(winners, id: \.id) { winner in
@@ -146,7 +146,7 @@ private extension OnlineResultsView {
     var roundBreakdown: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("onlineResults.byRound")
+                Text(localized("onlineResults.byRound"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -186,7 +186,7 @@ private extension OnlineResultsView {
     var leaderboard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text("onlineResults.leaderboard")
+                Text(localized("onlineResults.leaderboard"))
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -206,7 +206,7 @@ private extension OnlineResultsView {
     }
 
     var actionSection: some View {
-        PrimaryButton(title: String(localized: "onlineResults.returnHome"), icon: "house.fill") {
+        PrimaryButton(title: localized("onlineResults.returnHome"), icon: "house.fill") {
             leaveRoom()
         }
     }
@@ -224,9 +224,9 @@ private extension OnlineResultsView {
 private extension OnlineGameRound {
     var title: String {
         switch self {
-        case .first: String(localized: "round.first.title")
-        case .second: String(localized: "round.second.title")
-        case .third: String(localized: "round.third.title")
+        case .first: localized("round.first.title")
+        case .second: localized("round.second.title")
+        case .third: localized("round.third.title")
         }
     }
 }

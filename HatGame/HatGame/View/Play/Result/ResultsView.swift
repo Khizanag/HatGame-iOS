@@ -146,7 +146,7 @@ private extension ResultsView {
 
     func singleWinnerLabel(winner: Team) -> some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            Text("game.results.winner")
+            Text(localized("game.results.winner"))
                 .font(DesignBook.Font.headline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .textCase(.uppercase)
@@ -163,7 +163,7 @@ private extension ResultsView {
                 color: winner.color
             )
 
-            Text("game.results.totalPoints")
+            Text(localized("game.results.totalPoints"))
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                 .textCase(.uppercase)
@@ -173,7 +173,7 @@ private extension ResultsView {
 
     var multipleWinnersLabel: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            Text("game.results.winners")
+            Text(localized("game.results.winners"))
                 .font(DesignBook.Font.title2)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
@@ -242,7 +242,7 @@ private extension ResultsView {
     var totalScoresSection: some View {
         FoldableCard(
             isExpanded: $isTotalScoresExpanded,
-            title: String(localized: "game.results.totalScores")
+            title: localized("game.results.totalScores")
         ) {
             totalScoresContent
         }
@@ -276,18 +276,18 @@ private extension ResultsView {
 
     var playAgainButton: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
-            PrimaryButton(title: String(localized: "game.results.playAgain"), icon: "arrow.counterclockwise.circle.fill") {
+            PrimaryButton(title: localized("game.results.playAgain"), icon: "arrow.counterclockwise.circle.fill") {
                 handlePlayAgain()
             }
 
-            Text("game.results.playAgain.note")
+            Text(localized("game.results.playAgain.note"))
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }
 
     var returnToMainButton: some View {
-        SecondaryButton(title: String(localized: "game.results.returnToMain"), icon: "house.fill") {
+        SecondaryButton(title: localized("game.results.returnToMain"), icon: "house.fill") {
             handleReturnToMain()
         }
     }
