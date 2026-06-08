@@ -23,7 +23,7 @@ struct SettingsView: View {
             accessibilitySection
             aboutSection
         }
-        .listStyle(.insetGrouped)
+        .groupedListStyle()
         .scrollContentBackground(.hidden)
         .navigationTitle(localized("settings.title"))
         .setDefaultStyle()

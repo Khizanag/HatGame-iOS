@@ -96,7 +96,7 @@ private extension RoomJoinView {
                     .multilineTextAlignment(.center)
                     .textCase(.uppercase)
                     .autocorrectionDisabled()
-                    .textInputAutocapitalization(.characters)
+                    .autocapitalizeCharacters()
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)

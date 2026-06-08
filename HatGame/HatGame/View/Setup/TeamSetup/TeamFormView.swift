@@ -106,7 +106,7 @@ struct TeamFormView: View {
         .navigationTitle(title)
         .setDefaultStyle()
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .trailingAction) {
                 Button(action: dismiss) {
                     Image(systemName: "xmark")
                         .foregroundStyle(DesignBook.Color.Text.primary)

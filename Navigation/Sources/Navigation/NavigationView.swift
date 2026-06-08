@@ -29,11 +29,11 @@ public struct NavigationView<RootContent: View>: View {
         }
         .environment(navigator)
         .environment(\.navZoomNamespace, zoomNamespace)
-        .fullScreenCover(item: $navigator.presentedPage) { page in
+        // Presented flows are deliberate (game setup, nearby, online). They are
+        // full-screen covers on iOS (left only via their own controls) and
+        // sheets on macOS, which has no full-screen cover.
+        .presentedCover(item: $navigator.presentedPage) { page in
             coverContent(for: page)
-                // Presented flows are deliberate (game setup, nearby, online) —
-                // they must be left via their own controls, never swiped away.
-                .interactiveDismissDisabled()
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()
@@ -42,6 +42,11 @@ public struct NavigationView<RootContent: View>: View {
 
     @ViewBuilder
     private func coverContent(for page: AnyPage) -> some View {
+        #if os(macOS)
+        page.view()
+            .environment(navigator)
+            .environment(\.navZoomNamespace, zoomNamespace)
+        #else
         if #available(iOS 18.0, *) {
             page.view()
                 .environment(navigator)
@@ -52,5 +57,25 @@ public struct NavigationView<RootContent: View>: View {
                 .environment(navigator)
                 .environment(\.navZoomNamespace, zoomNamespace)
         }
+        #endif
+    }
+}
+
+// MARK: - Cross-platform cover presentation
+private extension View {
+    /// Presents `item` as a full-screen cover on iOS (the default for deliberate
+    /// flows) and as a sheet on macOS, which has no full-screen cover.
+    @ViewBuilder
+    func presentedCover<Item: Identifiable, Cover: View>(
+        item: Binding<Item?>,
+        @ViewBuilder content: @escaping (Item) -> Cover
+    ) -> some View {
+        #if os(macOS)
+        sheet(item: item, content: content)
+        #else
+        fullScreenCover(item: item) { item in
+            content(item).interactiveDismissDisabled()
+        }
+        #endif
     }
 }
