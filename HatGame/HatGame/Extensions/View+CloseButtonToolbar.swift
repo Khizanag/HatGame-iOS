@@ -21,7 +21,7 @@ private struct NavigationButtonToolbarModifier: ViewModifier {
         content
             .toolbar {
                 if navigator.navigationPath.isEmpty {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .trailingAction) {
                         Button {
                             dismiss()
                         } label: {

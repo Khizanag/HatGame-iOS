@@ -7,6 +7,7 @@ let package = Package(
     name: "Navigation",
     platforms: [
         .iOS(.v17),
+        .macOS(.v15),
     ],
     products: [
         .library(

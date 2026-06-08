@@ -34,9 +34,9 @@ struct OnlineTeamCreationView: View {
         NavigationStack {
             content
                 .navigationTitle(localized("createTeam.title"))
-                .navigationBarTitleDisplayMode(.inline)
+                .inlineNavigationTitle()
                 .toolbar {
-                    ToolbarItem(placement: .topBarTrailing) {
+                    ToolbarItem(placement: .trailingAction) {
                         Button { dismiss() } label: {
                             Image(systemName: "xmark")
                                 .foregroundStyle(DesignBook.Color.Text.primary)

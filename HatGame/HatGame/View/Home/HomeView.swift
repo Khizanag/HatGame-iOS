@@ -169,7 +169,7 @@ private extension HomeView {
 
     @ToolbarContentBuilder
     var settingsToolbar: some ToolbarContent {
-        ToolbarItem(placement: .topBarTrailing) {
+        ToolbarItem(placement: .trailingAction) {
             Button {
                 DesignBook.Haptics.selection()
                 navigator.push(.settings)

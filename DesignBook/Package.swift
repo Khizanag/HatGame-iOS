@@ -7,6 +7,7 @@ let package = Package(
     name: "DesignBook",
     platforms: [
         .iOS(.v17),
+        .macOS(.v15),
     ],
     products: [
         .library(

@@ -20,7 +20,7 @@ struct DefaultsSettingsView: View {
             skippingSection
             soundSection
         }
-        .listStyle(.insetGrouped)
+        .groupedListStyle()
         .scrollContentBackground(.hidden)
         .navigationTitle(localized("settings.defaults.title"))
         .setDefaultStyle()

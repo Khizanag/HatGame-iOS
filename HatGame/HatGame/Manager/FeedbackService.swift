@@ -8,7 +8,9 @@
 import Foundation
 import Networking
 import Observation
+#if canImport(UIKit)
 import UIKit
+#endif
 
 /// What kind of feedback the user is sending. The raw value is what gets
 /// stored in Firebase; titles/icons are presentation only.
@@ -70,7 +72,7 @@ final class FeedbackService {
             message: trimmed,
             appVersion: Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
             build: Bundle.main.infoDictionary?["CFBundleVersion"] as? String,
-            systemVersion: UIDevice.current.systemVersion,
+            systemVersion: Self.systemVersion,
             deviceModel: Self.deviceModel,
             locale: Locale.current.identifier,
             deviceId: UserDefaults.standard.string(forKey: "HatGame.deviceId")
@@ -87,6 +89,15 @@ final class FeedbackService {
     /// Returns to the editing state after a failure so the user can retry.
     func resetAfterFailure() {
         if case .failed = state { state = .editing }
+    }
+
+    /// The OS version string, e.g. "26.0".
+    private static var systemVersion: String {
+        #if canImport(UIKit)
+        UIDevice.current.systemVersion
+        #else
+        ProcessInfo.processInfo.operatingSystemVersionString
+        #endif
     }
 
     /// The hardware model identifier, e.g. "iPhone17,2".

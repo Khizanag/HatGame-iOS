@@ -40,10 +40,14 @@ public extension View {
     /// A no-op when no namespace is available, so it is always safe to apply.
     @ViewBuilder
     func navigationZoomDestination(id: String, in namespace: Namespace.ID?) -> some View {
+        #if os(macOS)
+        self
+        #else
         if #available(iOS 18.0, *), let namespace {
             navigationTransition(.zoom(sourceID: id, in: namespace))
         } else {
             self
         }
+        #endif
     }
 }

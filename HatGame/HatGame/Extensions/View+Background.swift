@@ -23,7 +23,7 @@ private struct DefaultStyleModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .setDefaultBackground()
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .navigationButtonToolbar()
     }
 }

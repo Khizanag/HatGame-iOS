@@ -18,10 +18,10 @@ struct TeamSetupView: View {
     @State private var isAddTeamSheetPresented = false
     @State private var editingTeam: Team?
     @State private var deletingTeam: Team?
-    @State private var editMode: EditMode = .inactive
+    @State private var isEditing: Bool = false
 
     private var teams: [Team] { gameManager.configuration.teams }
-    private var isEditMode: Bool { editMode == .active }
+    private var isEditMode: Bool { isEditing }
     private var hasTeams: Bool { !teams.isEmpty }
     private var canAddMore: Bool { teams.count < gameManager.configuration.maxTeams }
     private var canReorder: Bool { teams.count >= 2 }
@@ -34,7 +34,7 @@ struct TeamSetupView: View {
     // MARK: - Body
     var body: some View {
         content
-            .environment(\.editMode, $editMode)
+            .editModeEnvironment(isEditing: $isEditing)
             .navigationTitle(localized("teamSetup.title"))
             .setDefaultStyle()
             .toolbar { toolbarContent }
@@ -229,13 +229,15 @@ private extension TeamSetupView {
 private extension TeamSetupView {
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
+        #if os(iOS)
         if canReorder {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .trailingAction) {
                 editToggleButton
             }
         }
+        #endif
         if canAddMore {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .trailingAction) {
                 Button {
                     DesignBook.Haptics.tap()
                     isAddTeamSheetPresented = true
@@ -251,7 +253,7 @@ private extension TeamSetupView {
         Button {
             DesignBook.Haptics.tap()
             withAnimation(DesignBook.Motion.respectingReducedMotion(.snappy, reduceMotion: reduceMotion)) {
-                editMode = isEditMode ? .inactive : .active
+                isEditing.toggle()
             }
         } label: {
             Text(isEditMode ? localized("common.buttons.done") : localized("common.buttons.edit"))

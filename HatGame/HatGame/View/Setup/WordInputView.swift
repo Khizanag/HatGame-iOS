@@ -172,7 +172,7 @@ private extension WordInputView {
         TextField("wordInput.enterWord", text: $currentWord)
             .textFieldStyle(.plain)
             .submitLabel(.next)
-            .textInputAutocapitalization(.words)
+            .autocapitalizeWords()
             .autocorrectionDisabled()
             .font(DesignBook.Font.body)
             .foregroundStyle(DesignBook.Color.Text.primary)

@@ -38,7 +38,7 @@ struct RandomizationView: View {
         .navigationTitle(localized("randomization.title"))
         .setDefaultStyle()
         .navigationBarBackButtonHidden(isShuffling)
-        .toolbar(isShuffling ? .hidden : .automatic, for: .navigationBar)
+        .hidesNavigationBar(isShuffling)
         .interactiveDismissDisabled(isShuffling)
     }
 }

@@ -38,10 +38,10 @@ struct WordGenerationView: View {
     var body: some View {
         content
             .navigationTitle(localized("wordGeneration.navTitle"))
-            .navigationBarTitleDisplayMode(.inline)
+            .inlineNavigationTitle()
             .setDefaultBackground()
             .navigationBarBackButtonHidden(phase == .generating)
-            .toolbar(phase == .generating ? .hidden : .automatic, for: .navigationBar)
+            .hidesNavigationBar(phase == .generating)
             .onAppear(perform: startIfNeeded)
             .onDisappear(perform: stopCycling)
     }
