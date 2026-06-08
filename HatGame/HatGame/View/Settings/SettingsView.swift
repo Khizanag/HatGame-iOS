@@ -121,6 +121,7 @@ private extension SettingsView {
         SettingsMenuRow(
             icon: "paintbrush.fill",
             title: localized("settings.appearance.colorScheme"),
+            valueSystemImage: appConfiguration.colorScheme.systemImage,
             value: appConfiguration.colorScheme.displayName
         ) {
             Picker(localized("settings.appearance.colorScheme"), selection: colorSchemeBinding) {
@@ -162,7 +163,8 @@ private extension SettingsView {
         SettingsMenuRow(
             icon: "hand.raised.fill",
             title: localized("settings.handedness.title"),
-            value: handedness.displayName
+            valueSystemImage: handedness.systemImage,
+            value: handednessShortValue
         ) {
             Picker(localized("settings.handedness.title"), selection: handednessBinding) {
                 ForEach(Handedness.allCases, id: \.self) { hand in
@@ -195,6 +197,13 @@ private extension SettingsView {
 private extension SettingsView {
     var handedness: Handedness {
         appConfiguration.isRightHanded ? .right : .left
+    }
+
+    /// Compact value for the trailing pill — "Right-handed" -> "Right" — while
+    /// the menu still lists the full descriptive names. Falls back to the full
+    /// string for locales that don't hyphenate.
+    var handednessShortValue: String {
+        handedness.displayName.split(separator: "-").first.map(String.init) ?? handedness.displayName
     }
 
     var appVersion: String? {
