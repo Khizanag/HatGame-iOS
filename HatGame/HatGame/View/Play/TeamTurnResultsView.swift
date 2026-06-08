@@ -143,7 +143,7 @@ private extension TeamTurnResultsView {
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 LazyVGrid(
-                    columns: [GridItem(.flexible()), GridItem(.flexible())],
+                    columns: [GridItem(.adaptive(minimum: 140))],
                     spacing: DesignBook.Spacing.sm
                 ) {
                     ForEach(guessedWords) { word in

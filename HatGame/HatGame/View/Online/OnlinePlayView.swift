@@ -168,6 +168,7 @@ private extension OnlinePlayView {
         } else {
             RoundedRectangle(cornerRadius: 32, style: .continuous)
                 .fill(DesignBook.Color.Background.card)
+                .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
                 .aspectRatio(1.05, contentMode: .fit)
                 .opacity(0.4)
         }

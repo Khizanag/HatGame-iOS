@@ -45,10 +45,7 @@ private extension AppIconSelectionView {
     var iconGrid: some View {
         SettingsSection(title: localized("settings.appIcon.available")) {
             LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: DesignBook.Spacing.md),
-                    GridItem(.flexible(), spacing: DesignBook.Spacing.md),
-                ],
+                columns: [GridItem(.adaptive(minimum: 150), spacing: DesignBook.Spacing.md)],
                 spacing: DesignBook.Spacing.lg
             ) {
                 ForEach(AppIcon.allCases) { icon in
