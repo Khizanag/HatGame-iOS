@@ -35,7 +35,11 @@ private extension SettingsView {
     var appearanceSection: some View {
         Section {
             themeRow
+            #if os(iOS)
+            // Alternate app icons are an iOS-only capability; the picker would
+            // be a no-op on macOS.
             appIconRow
+            #endif
         } header: {
             Text(localized("settings.appearance.title"))
         } footer: {
