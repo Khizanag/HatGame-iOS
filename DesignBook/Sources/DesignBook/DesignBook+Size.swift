@@ -48,5 +48,13 @@ extension DesignBook {
         // MARK: - Component-Specific Sizes
         public static let settingsIconBoxSize: CGFloat = 32
         public static let footerGradientHeight: CGFloat = 120
+
+        // MARK: - Layout Widths
+        /// Readable max width for a content column; centers the column on wide
+        /// windows (macOS / large iPad). A no-op on phone-width windows.
+        public static let maxContentWidth: CGFloat = 600
+        /// Max width of the gameplay word card, kept comfortably square and
+        /// proportional to the timer regardless of window width.
+        public static let wordCardMaxWidth: CGFloat = 440
     }
 }

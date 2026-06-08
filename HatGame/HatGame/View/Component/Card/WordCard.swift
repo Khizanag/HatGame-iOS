@@ -50,7 +50,7 @@ struct WordCard: View {
             hintOverlay
             wordContent
         }
-        .frame(maxWidth: .infinity)
+        .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
         .aspectRatio(1.05, contentMode: .fit)
         .offset(dragOffset)
         .rotationEffect(.degrees(reduceMotion ? 0 : Double(dragOffset.width / 18)))
