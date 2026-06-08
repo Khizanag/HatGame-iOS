@@ -23,12 +23,7 @@ struct LocalFlowView: View {
     init() {
         // Use the user's device name when available — anything more
         // specific lives in the room/player flow.
-        #if canImport(UIKit)
-        let displayName = UIDevice.current.name
-        #else
-        let displayName = Host.current().localizedName ?? "Mac"
-        #endif
-        let manager = LocalRoomManager(displayName: displayName)
+        let manager = LocalRoomManager(displayName: Platform.deviceDisplayName)
         _roomManager = State(initialValue: manager)
         _gameSyncManager = State(initialValue: LocalGameSyncManager(roomManager: manager))
     }
