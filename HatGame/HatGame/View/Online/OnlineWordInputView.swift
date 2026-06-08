@@ -64,7 +64,7 @@ private extension OnlineWordInputView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if !isFieldFocused {
+            if !isFieldFocused || (Platform.isMac && playerWords.count == wordsPerPlayer) {
                 primaryAction
                     .paddingHorizontalDefault()
                     .padding(.top, DesignBook.Spacing.md)
@@ -220,6 +220,7 @@ private extension OnlineWordInputView {
                 PrimaryButton(title: localized("onlineWordInput.submit"), icon: "paperplane.fill") {
                     submit()
                 }
+                .keyboardShortcut(.defaultAction)
             } else {
                 PrimaryButton(title: localized("wordInput.addWord"), icon: "plus.circle.fill") {
                     addWord()

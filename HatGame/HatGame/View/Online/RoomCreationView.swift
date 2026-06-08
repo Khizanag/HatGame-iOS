@@ -72,7 +72,7 @@ private extension RoomCreationView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil {
+            if focusedField == nil || Platform.isMac {
                 createButton
                     .paddingHorizontalDefault()
                     .padding(.top, DesignBook.Spacing.md)
@@ -166,6 +166,7 @@ private extension RoomCreationView {
                 }
                 .disabled(!canCreate)
                 .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+                .keyboardShortcut(.defaultAction)
             }
         }
     }

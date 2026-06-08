@@ -191,7 +191,7 @@ private extension WordInputView {
     @ViewBuilder
     var footer: some View {
         Group {
-            if isWordFieldFocused, !isCurrentPlayerDone {
+            if isWordFieldFocused, !isCurrentPlayerDone, !Platform.isMac {
                 HStack {
                     Spacer()
                     FloatingAddButton(

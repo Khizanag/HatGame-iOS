@@ -50,7 +50,7 @@ struct LocalHostSetupView: View {
         .setDefaultStyle()
         .toolbar { keyboardToolbar }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil {
+            if focusedField == nil || Platform.isMac {
                 hostButton
                     .paddingHorizontalDefault()
                     .padding(.top, DesignBook.Spacing.md)
@@ -192,6 +192,7 @@ private extension LocalHostSetupView {
                 }
                 .disabled(!canCreate)
                 .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
+                .keyboardShortcut(.defaultAction)
             }
         }
     }
