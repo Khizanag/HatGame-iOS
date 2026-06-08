@@ -186,15 +186,21 @@ private extension NextTeamView {
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     ForEach(Array(team.players.enumerated()), id: \.element.id) { index, player in
-                        playerSelectionRow(player: player, index: index, isSelected: selectedExplainerIndex == index)
-                            .onTapGesture {
-                                guard !isRandomizingExplainer else { return }
-                                DesignBook.Haptics.selection()
-                                withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
-                                    selectedExplainerIndex = index
-                                }
+                        Button {
+                            guard !isRandomizingExplainer else { return }
+                            DesignBook.Haptics.selection()
+                            withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+                                selectedExplainerIndex = index
                             }
-                            .allowsHitTesting(!isRandomizingExplainer)
+                        } label: {
+                            playerSelectionRow(
+                                player: player,
+                                index: index,
+                                isSelected: selectedExplainerIndex == index
+                            )
+                        }
+                        .buttonStyle(.plain)
+                        .disabled(isRandomizingExplainer)
                     }
                 }
             }
