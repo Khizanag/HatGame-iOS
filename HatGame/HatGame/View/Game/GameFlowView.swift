@@ -9,7 +9,7 @@ import Navigation
 import SwiftUI
 
 struct GameFlowView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(Navigator.self) private var presentingNavigator
     @State private var gameManager = GameManager()
     @State private var gameNavigator = Navigator()
 
@@ -25,7 +25,7 @@ struct GameFlowView: View {
         .environment(gameManager)
         .environment(gameNavigator)
         .onReceive(gameNavigator.pleaseDismissViewPublisher) {
-            dismiss()
+            presentingNavigator.presentedPage = nil
         }
     }
 }
