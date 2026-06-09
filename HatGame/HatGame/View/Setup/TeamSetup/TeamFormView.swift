@@ -104,17 +104,7 @@ struct TeamFormView: View {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .navigationTitle(title)
-        .setDefaultBackground()
-        .inlineNavigationTitle()
-        .toolbar {
-            ToolbarItem(placement: .trailingAction) {
-                Button(action: dismiss) {
-                    Image(systemName: "xmark")
-                        .foregroundStyle(DesignBook.Color.Text.primary)
-                }
-                .accessibilityLabel(Text(localized("common.buttons.close")))
-            }
-        }
+        .setDefaultStyle()
         .safeAreaInset(edge: .bottom) {
             stackedActions
                 .paddingHorizontalDefault()
@@ -425,11 +415,6 @@ private extension TeamFormView {
         )
 
         onPrimaryAction(updatedTeam)
-        dismissSheet()
-    }
-
-    func dismiss() {
-        DesignBook.Haptics.tap()
         dismissSheet()
     }
 }
