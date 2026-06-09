@@ -14,7 +14,7 @@ import SwiftUI
 /// `OnlineFlowView` but injects a `LocalRoomManager`/`LocalGameSyncManager`
 /// pair so the same gameplay views work over MC instead of Firebase.
 struct LocalFlowView: View {
-    @Environment(\.dismiss) private var dismiss
+    @Environment(Navigator.self) private var presentingNavigator
 
     @State private var navigator = Navigator()
     @State private var roomManager: LocalRoomManager
@@ -42,6 +42,6 @@ struct LocalFlowView: View {
         .environment(gameSyncManager as GameSyncManager)
         .environment(navigator)
         .environment(roomManager) // local-specific access for browser screen
-        .onReceive(navigator.pleaseDismissViewPublisher) { dismiss() }
+        .onReceive(navigator.pleaseDismissViewPublisher) { presentingNavigator.presentedPage = nil }
     }
 }

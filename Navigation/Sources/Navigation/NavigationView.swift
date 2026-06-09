@@ -18,6 +18,36 @@ public struct NavigationView<RootContent: View>: View {
     }
 
     public var body: some View {
+        #if os(macOS)
+        // macOS has no full-screen cover. Render deliberate flows (game setup,
+        // nearby, online) as a full-window layer over the root instead of a
+        // small floating sheet, so the game uses the whole window.
+        ZStack {
+            NavigationStack(path: $navigator.navigationPath) {
+                rootContent()
+                    // This IS the navigation stack wrapper — the one place the
+                    // app's single navigationDestination is allowed to live.
+                    // swiftlint:disable:next no_navigation_destination
+                    .navigationDestination(for: AnyPage.self) { page in
+                        page.view()
+                    }
+            }
+
+            if let page = navigator.presentedPage {
+                coverContent(for: page)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(.background)
+                    .transition(.opacity)
+                    .zIndex(1)
+            }
+        }
+        .animation(.default, value: navigator.presentedPage)
+        .environment(navigator)
+        .environment(\.navZoomNamespace, zoomNamespace)
+        .onReceive(navigator.pleaseDismissViewPublisher) {
+            navigator.presentedPage = nil
+        }
+        #else
         NavigationStack(path: $navigator.navigationPath) {
             rootContent()
                 // This IS the navigation stack wrapper — the one place the
@@ -29,15 +59,15 @@ public struct NavigationView<RootContent: View>: View {
         }
         .environment(navigator)
         .environment(\.navZoomNamespace, zoomNamespace)
-        // Presented flows are deliberate (game setup, nearby, online). They are
-        // full-screen covers on iOS (left only via their own controls) and
-        // sheets on macOS, which has no full-screen cover.
+        // Deliberate flows are full-screen covers on iOS, left only via their
+        // own controls.
         .presentedCover(item: $navigator.presentedPage) { page in
             coverContent(for: page)
         }
         .onReceive(navigator.pleaseDismissViewPublisher) {
             dismiss()
         }
+        #endif
     }
 
     @ViewBuilder
