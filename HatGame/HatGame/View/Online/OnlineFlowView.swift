@@ -10,7 +10,7 @@ import Networking
 import SwiftUI
 
 struct OnlineFlowView: View {
-    @Environment(Navigator.self) private var presentingNavigator
+    @Environment(\.dismiss) private var dismiss
     @State private var onlineNavigator = Navigator()
     @State private var roomManager = RoomManager()
     @State private var gameSyncManager = GameSyncManager()
@@ -29,7 +29,7 @@ struct OnlineFlowView: View {
         .environment(gameSyncManager)
         .environment(onlineNavigator)
         .onReceive(onlineNavigator.pleaseDismissViewPublisher) {
-            presentingNavigator.presentedPage = nil
+            dismiss()
         }
     }
 }
