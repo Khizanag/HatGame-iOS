@@ -104,7 +104,8 @@ struct TeamFormView: View {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .navigationTitle(title)
-        .setDefaultStyle()
+        .setDefaultBackground()
+        .inlineNavigationTitle()
         .toolbar {
             ToolbarItem(placement: .trailingAction) {
                 Button(action: dismiss) {
