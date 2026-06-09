@@ -28,6 +28,7 @@ private struct NavigationButtonToolbarModifier: ViewModifier {
                             Image(systemName: "xmark")
                                 .foregroundStyle(DesignBook.Color.Text.primary)
                         }
+                        .accessibilityLabel(Text(localized("common.buttons.close")))
                     }
                 }
             }
