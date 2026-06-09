@@ -64,14 +64,19 @@ public struct NavigationView<RootContent: View>: View {
 // MARK: - Cross-platform cover presentation
 private extension View {
     /// Presents `item` as a full-screen cover on iOS (the default for deliberate
-    /// flows) and as a sheet on macOS, which has no full-screen cover.
+    /// flows) and as a large page-sized sheet on macOS, which has no full-screen
+    /// cover. The sheet sits below the title bar, so the window keeps its close
+    /// and quit controls.
     @ViewBuilder
     func presentedCover<Item: Identifiable, Cover: View>(
         item: Binding<Item?>,
         @ViewBuilder content: @escaping (Item) -> Cover
     ) -> some View {
         #if os(macOS)
-        sheet(item: item, content: content)
+        sheet(item: item) { value in
+            content(value)
+                .presentationSizing(.page)
+        }
         #else
         fullScreenCover(item: item) { item in
             content(item).interactiveDismissDisabled()
