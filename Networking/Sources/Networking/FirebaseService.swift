@@ -36,15 +36,23 @@ public final class FirebaseService: @unchecked Sendable {
         return !url.isEmpty
     }
 
+    /// Every read and write goes through here: the database rules reject
+    /// unauthenticated access, so a session must exist before the operation
+    /// reaches the server.
+    private func requireReadySession() async throws {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await AuthGate.shared.ensureSignedIn()
+    }
+
     // MARK: - Room Operations
     public func createRoom(_ room: GameRoom) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let roomData = try encodeToDict(room)
         try await roomsRef.child(room.id).setValue(roomData)
     }
 
     public func getRoom(id: String) async throws -> GameRoom? {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         return try await withTimeout(seconds: 10) {
             try await withCheckedThrowingContinuation { continuation in
                 self.roomsRef.child(id).observeSingleEvent(of: .value) { snapshot in
@@ -66,16 +74,19 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     public func updateRoom(_ room: GameRoom) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let roomData = try encodeToDict(room)
         try await roomsRef.child(room.id).setValue(roomData)
     }
 
     public func deleteRoom(id: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         try await roomsRef.child(id).removeValue()
     }
 
+    /// Attaches the room listener. Callers reach this only after an awaited
+    /// `createRoom`/`getRoom`, so the anonymous session already exists — keep
+    /// that ordering or the listener is rejected by the rules.
     public func observeRoom(id: String, onChange: @escaping (GameRoom?) -> Void) -> DatabaseHandle {
         guard isAvailable else {
             onChange(nil)
@@ -102,37 +113,37 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Player Operations
     public func addPlayer(_ player: OnlinePlayer, toRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let playerData = try encodeToDict(player)
         try await roomsRef.child(roomId).child("players").child(player.id).setValue(playerData)
     }
 
     public func updatePlayer(_ player: OnlinePlayer, inRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let playerData = try encodeToDict(player)
         try await roomsRef.child(roomId).child("players").child(player.id).setValue(playerData)
     }
 
     public func removePlayer(playerId: String, fromRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         try await roomsRef.child(roomId).child("players").child(playerId).removeValue()
     }
 
     // MARK: - Team Operations
     public func addTeam(_ team: OnlineTeam, toRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let teamData = try encodeToDict(team)
         try await roomsRef.child(roomId).child("teams").child(team.id).setValue(teamData)
     }
 
     public func updateTeam(_ team: OnlineTeam, inRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let teamData = try encodeToDict(team)
         try await roomsRef.child(roomId).child("teams").child(team.id).setValue(teamData)
     }
 
     public func removeTeam(teamId: String, fromRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         try await roomsRef.child(roomId).child("teams").child(teamId).removeValue()
     }
 
@@ -148,7 +159,7 @@ public final class FirebaseService: @unchecked Sendable {
         teams: [OnlineTeam],
         inRoomId roomId: String
     ) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
 
         var updates: [String: Any] = [:]
         updates["players/\(playerId)/teamId"] = newTeamId as Any? ?? NSNull()
@@ -168,7 +179,7 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Word Operations
     public func addWords(_ words: [OnlineWord], toRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         var updates: [String: Any] = [:]
         for word in words {
             let wordData = try encodeToDict(word)
@@ -187,7 +198,7 @@ public final class FirebaseService: @unchecked Sendable {
         markSubmittedPlayerIds playerIds: [String],
         toRoomId roomId: String
     ) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         var updates: [String: Any] = [:]
         for word in words {
             updates["words/\(word.id)"] = try encodeToDict(word)
@@ -199,7 +210,7 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     public func getWords(forRoomId roomId: String) async throws -> [OnlineWord] {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         return try await withTimeout(seconds: 10) {
             try await withCheckedThrowingContinuation { continuation in
                 self.roomsRef.child(roomId).child("words").observeSingleEvent(of: .value) { snapshot in
@@ -224,26 +235,26 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Game State Operations
     public func updateGameState(_ state: OnlineGameState, forRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let stateData = try encodeToDict(state)
         try await roomsRef.child(roomId).child("gameState").setValue(stateData)
     }
 
     public func updateRoomStatus(_ status: RoomStatus, forRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         try await roomsRef.child(roomId).child("status").setValue(status.rawValue)
     }
 
     // MARK: - Feedback
     public func submitFeedback(_ feedback: Feedback) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let data = try encodeToDict(feedback)
         try await feedbackRef.child(feedback.id).setValue(data)
     }
 
     // MARK: - Room Code Generation
     public func generateUniqueRoomCode() async throws -> String {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await requireReadySession()
         let characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
         let code = String((0..<6).map { _ in characters.randomElement()! })
         return code
@@ -291,6 +302,7 @@ public enum NetworkingError: Error, LocalizedError {
     case decodingFailed
     case notAuthorized
     case firebaseNotConfigured
+    case authenticationFailed
     case timeout
 
     public var errorDescription: String? {
@@ -307,6 +319,8 @@ public enum NetworkingError: Error, LocalizedError {
             return "Not authorized to perform this action"
         case .firebaseNotConfigured:
             return "Firebase is not configured. Please check your GoogleService-Info.plist"
+        case .authenticationFailed:
+            return "Could not connect to the game service. Please try again"
         case .timeout:
             return "Operation timed out. Please check your internet connection"
         }
