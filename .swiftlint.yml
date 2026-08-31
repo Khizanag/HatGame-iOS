@@ -1,5 +1,4 @@
-# SwiftLint configuration — gigai personal-app conventions
-# Sourced from ~/gigai/orgs/personal/swiftlint-custom-rules.yml.
+# SwiftLint configuration for HatGame.
 # Goal: `swiftlint lint --strict` passes with zero violations.
 
 included:
@@ -35,7 +34,7 @@ disabled_rules:
   # `todo` flags every TODO/FIXME — too noisy for a polish pass.
   - todo
 
-# === Thresholds (gigai personal) ===
+# === Thresholds ===
 
 line_length:
   warning: 120
@@ -68,7 +67,7 @@ cyclomatic_complexity:
 nesting:
   type_level: 2
 
-# gigai convention: trailing commas are required in multi-line collections.
+# Trailing commas are required in multi-line collections.
 trailing_comma:
   mandatory_comma: true
 
@@ -81,7 +80,6 @@ identifier_name:
     - to
 
 # === Custom rules ===
-# Mirrored from ~/gigai/orgs/personal/swiftlint-custom-rules.yml.
 
 custom_rules:
   # === Code Style ===
