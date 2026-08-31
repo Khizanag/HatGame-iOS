@@ -36,6 +36,12 @@ playground.xcworkspace
 .snapshot-build/
 Screenshots/.diffs/
 
+# Local package resolution — the app's xcshareddata/swiftpm/Package.resolved
+# is the authoritative pin; these appear when building a package standalone.
+/DesignBook/Package.resolved
+/Navigation/Package.resolved
+/Networking/Package.resolved
+
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However

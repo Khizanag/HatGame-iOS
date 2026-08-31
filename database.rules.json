@@ -1,10 +1,16 @@
 {
   "rules": {
     "rooms": {
-      ".read": true,
-      ".write": true,
       "$roomId": {
-        ".validate": "$roomId.matches(/^[A-Z2-9]{6}$/)"
+        ".read": "auth != null",
+        ".write": "auth != null",
+        ".validate": "$roomId.matches(/^[A-Z2-9]{6}$/) && newData.hasChildren(['id', 'hostId', 'status'])"
+      }
+    },
+    "feedback": {
+      "$feedbackId": {
+        ".write": "auth != null && !data.exists()",
+        ".validate": "newData.hasChildren(['id'])"
       }
     }
   }
