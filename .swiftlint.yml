@@ -4,7 +4,7 @@
 included:
   - HatGame
   - HatGame-DesignBook/Sources
-  - Navigation/Sources
+  - HatGame-Navigation/Sources
   - Networking/Sources
 
 excluded:

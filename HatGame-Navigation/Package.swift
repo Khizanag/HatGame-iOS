@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Navigation",
+    name: "HatGame-Navigation",
     platforms: [
         .iOS(.v17),
         .macOS(.v15),
