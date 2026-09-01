@@ -4,7 +4,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "DesignBook",
+    name: "HatGame-DesignBook",
     platforms: [
         .iOS(.v17),
         .macOS(.v15),
