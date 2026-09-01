@@ -3,7 +3,7 @@
 
 included:
   - HatGame
-  - DesignBook/Sources
+  - HatGame-DesignBook/Sources
   - Navigation/Sources
   - Networking/Sources
 
