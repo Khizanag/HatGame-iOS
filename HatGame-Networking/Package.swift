@@ -3,7 +3,7 @@
 import PackageDescription
 
 let package = Package(
-    name: "Networking",
+    name: "HatGame-Networking",
     platforms: [
         .iOS(.v17),
         .macOS(.v15),

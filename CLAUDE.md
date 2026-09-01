@@ -76,10 +76,12 @@ Each mode's `*FlowView` is the seam. It:
 
 `GameManager` (`Manager/GameManager.swift`, `@Observable`) owns all pass-and-play logic: round iteration, team rotation, explainer-role locking, word pool, and per-team time preservation across rounds. It **owns** `HistoryManager` as a `let` (accessed via `gameManager.historyManager`, not injected separately). Other single-device managers: `GameConfiguration`, `SoundPlayer`, `WordDatabase` (4,943 Georgian quick-fill words from Wiktionary, bundled as `Resources/georgian-words.txt`), `TeamDefaultColorGenerator`, `TeamNameSuggestions`, `FeedbackService`.
 
-### Local Swift packages (repo-root siblings: `HatGame-Navigation/`, `Networking/`, `HatGame-DesignBook/`)
+### Local Swift packages (repo-root siblings: `HatGame-Navigation/`, `HatGame-Networking/`, `HatGame-DesignBook/`)
+
+Each directory and `Package.swift` name carries the `HatGame-` prefix; the library product and target names do not, so imports stay `import Navigation` / `import Networking` / `import DesignBook`.
 
 - **HatGame-Navigation** — the navigation system; module name stays `Navigation`. `Page<Content: View>` is a typed, `id`-keyed view factory; `AnyPage` type-erases it for the stack; `Navigator` (`@MainActor @Observable`) exposes `push`/`present`/`dismiss`/`popToRoot`. App-specific destinations are static factories in `HatGame/Navigation/Page.swift` (`extension Page`). swift-tools 6.2.
-- **Networking** — both multiplayer transports. Online: `FirebaseService` (singleton, Realtime Database under `/rooms/$roomId`), `RoomManager`, `GameSyncManager`, and `Online*` models (`GameRoom`, `OnlinePlayer`, `OnlineTeam`, `OnlineWord`, `OnlineGameState`, `Feedback`). Local: `LocalMultipeerService` (Bonjour `_hg-hat-game`), `LocalRoomManager`, `LocalGameSyncManager`, `LocalMessage`. Depends on firebase-ios-sdk 11+. swift-tools 6.0.
+- **HatGame-Networking** — both multiplayer transports; module name stays `Networking`. Online: `FirebaseService` (singleton, Realtime Database under `/rooms/$roomId`), `RoomManager`, `GameSyncManager`, and `Online*` models (`GameRoom`, `OnlinePlayer`, `OnlineTeam`, `OnlineWord`, `OnlineGameState`, `Feedback`). Local: `LocalMultipeerService` (Bonjour `_hg-hat-game`), `LocalRoomManager`, `LocalGameSyncManager`, `LocalMessage`. Depends on firebase-ios-sdk 11+. swift-tools 6.0.
 - **HatGame-DesignBook** — design tokens namespace + color assets bundle. Module name stays `DesignBook`. swift-tools 6.2.
 
 ## Conventions (enforced by SwiftLint custom rules — see `.swiftlint.yml`)
