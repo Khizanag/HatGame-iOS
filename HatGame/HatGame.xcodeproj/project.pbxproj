@@ -223,7 +223,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				AA0000000000000000000001 /* XCLocalSwiftPackageReference "../HatGame-DesignBook" */,
-				DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../Navigation" */,
+				DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../HatGame-Navigation" */,
 				AA0000000000000000000003 /* XCLocalSwiftPackageReference "../Networking" */,
 			);
 			preferredProjectObjectVersion = 77;
@@ -680,9 +680,9 @@
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../Networking;
 		};
-		DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../Navigation" */ = {
+		DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../HatGame-Navigation" */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = ../Navigation;
+			relativePath = "../HatGame-Navigation";
 		};
 /* End XCLocalSwiftPackageReference section */
 
@@ -699,7 +699,7 @@
 		};
 		C27047BB3C7F4864B77B427F /* Navigation */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../Navigation" */;
+			package = DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../HatGame-Navigation" */;
 			productName = Navigation;
 		};
 /* End XCSwiftPackageProductDependency section */
