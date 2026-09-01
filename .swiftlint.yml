@@ -5,7 +5,7 @@ included:
   - HatGame
   - HatGame-DesignBook/Sources
   - HatGame-Navigation/Sources
-  - Networking/Sources
+  - HatGame-Networking/Sources
 
 excluded:
   - "**/.build"

@@ -81,7 +81,7 @@ HatGame-iOS/
 │       ├── Localization/    # Localizable.xcstrings (en, ka)
 │       └── Assets.xcassets/
 ├── HatGame-Navigation/      # Local package — Navigator, Page<Content>, NavigationView
-├── Networking/              # Local package — Firebase + Multipeer transports
+├── HatGame-Networking/      # Local package — Firebase + Multipeer transports
 ├── HatGame-DesignBook/      # Local package — design tokens + color assets
 ├── database.rules.json      # Firebase Realtime Database security rules
 └── firebase.json / .firebaserc
