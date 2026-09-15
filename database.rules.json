@@ -1,10 +1,20 @@
 {
   "rules": {
+    // Default deny. Nothing outside the paths below is readable or writable.
+    ".read": false,
+    ".write": false,
+
     "rooms": {
-      ".read": true,
-      ".write": true,
+      // No read/write at this level: the rooms tree cannot be listed. A client
+      // must already know a room code to reach anything. Enumerating the whole
+      // tree in one request was the previous behavior.
       "$roomId": {
-        ".validate": "$roomId.matches(/^[A-Z2-9]{6}$/)"
+        // Access cascades to every descendant (players, teams, words,
+        // gameState, status), which is what the app writes through.
+        // The character class mirrors generateUniqueRoomCode exactly:
+        // A-Z without I and O, digits 2-9.
+        ".read": "$roomId.matches(/^[A-HJ-NP-Z2-9]{6}$/)",
+        ".write": "$roomId.matches(/^[A-HJ-NP-Z2-9]{6}$/)"
       }
     }
   }
