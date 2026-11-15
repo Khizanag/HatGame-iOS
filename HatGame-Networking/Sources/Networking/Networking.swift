@@ -61,5 +61,7 @@ public enum Networking {
     }
 }
 
-// Re-export models for convenience
+// The app keeps a single `import Networking`; the pure models and rules
+// live in GameCore so they can be tested without Firebase.
 @_exported import struct Foundation.UUID
+@_exported import GameCore

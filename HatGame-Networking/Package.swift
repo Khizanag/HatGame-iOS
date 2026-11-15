@@ -20,8 +20,12 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "GameCore"
+        ),
+        .target(
             name: "Networking",
             dependencies: [
+                "GameCore",
                 .product(name: "FirebaseDatabase", package: "firebase-ios-sdk"),
             ]
         ),

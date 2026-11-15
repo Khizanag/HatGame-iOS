@@ -1,6 +1,6 @@
 //
 //  Feedback.swift
-//  Networking
+//  GameCore
 //
 //  Created by Giga Khizanishvili on 01.06.26.
 //

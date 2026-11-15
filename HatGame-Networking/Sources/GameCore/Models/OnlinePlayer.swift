@@ -1,6 +1,6 @@
 //
 //  OnlinePlayer.swift
-//  Networking
+//  GameCore
 //
 //  Created by Giga Khizanishvili on 22.12.24.
 //

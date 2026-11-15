@@ -1,6 +1,6 @@
 //
 //  FirebaseDecoding.swift
-//  Networking
+//  GameCore
 //
 //  Created by Giga Khizanishvili on 21.05.26.
 //
