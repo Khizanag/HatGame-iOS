@@ -57,9 +57,12 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Room Operations
-    public func createRoom(_ room: GameRoom) async throws {
-        try await write { [self] in
-            _ = try await roomsRef.child(room.id).setValue(encodeToDict(room))
+    /// Creates the room unless its code is already in use. Returns `false`
+    /// on a collision so the caller can draw another code — a plain write
+    /// would silently replace someone else's room.
+    public func createRoom(_ room: GameRoom) async throws -> Bool {
+        try await transact { [self] in
+            try await runCreateIfAbsent(on: roomsRef.child(room.id), value: room)
         }
     }
 
@@ -235,14 +238,6 @@ public final class FirebaseService: @unchecked Sendable {
         try await write { [self] in
             _ = try await feedbackRef.child(feedback.id).setValue(encodeToDict(feedback))
         }
-    }
-
-    // MARK: - Room Code Generation
-    public func generateUniqueRoomCode() async throws -> String {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let characters = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
-        let code = String((0..<6).map { _ in characters.randomElement()! })
-        return code
     }
 }
 

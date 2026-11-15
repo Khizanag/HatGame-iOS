@@ -42,30 +42,29 @@ open class RoomManager {
     }
 
     // MARK: - Room Creation
+    /// Draws codes until one is free. With 32^6 codes a collision is rare, so
+    /// a handful of attempts is plenty.
     open func createRoom(hostName: String, settings: GameSettings) async throws -> String {
-        let roomCode = try await firebaseService.generateUniqueRoomCode()
-        let playerId = UUID().uuidString
-
         let host = OnlinePlayer(
-            id: playerId,
             deviceId: deviceId,
             name: hostName,
             isReady: true
         )
 
-        let room = GameRoom(
-            id: roomCode,
-            hostId: playerId,
-            status: .waiting,
-            settings: settings,
-            players: [host]
-        )
-
-        try await firebaseService.createRoom(room)
-        self.currentPlayerId = playerId
-        startObservingRoom(id: roomCode)
-
-        return roomCode
+        for _ in 0..<5 {
+            let room = GameRoom(
+                id: RoomCode.random(),
+                hostId: host.id,
+                status: .waiting,
+                settings: settings,
+                players: [host]
+            )
+            guard try await firebaseService.createRoom(room) else { continue }
+            self.currentPlayerId = host.id
+            startObservingRoom(id: room.id)
+            return room.id
+        }
+        throw NetworkingError.failedToGenerateRoomCode
     }
 
     // MARK: - Room Joining

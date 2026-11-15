@@ -54,6 +54,30 @@ func runTransaction<Value: Codable & Sendable>(
     }
 }
 
+/// Writes `value` at `reference` only if nothing is stored there yet.
+/// Returns `false` when the location is taken. A first invocation that sees
+/// an empty cache proposes the write; the server rejects it and re-runs the
+/// block with the stored value if one exists.
+func runCreateIfAbsent<Value: Encodable & Sendable>(
+    on reference: DatabaseReference,
+    value: Value
+) async throws -> Bool {
+    let object = try FirebaseCoding.object(from: value)
+    return try await withCheckedThrowingContinuation { continuation in
+        reference.runTransactionBlock({ currentData in
+            guard currentData.value == nil || currentData.value is NSNull else { return .abort() }
+            currentData.value = object
+            return .success(withValue: currentData)
+        }, andCompletionBlock: { error, committed, _ in
+            if let error {
+                continuation.resume(throwing: error)
+            } else {
+                continuation.resume(returning: committed)
+            }
+        }, withLocalEvents: false)
+    }
+}
+
 /// What the last transform invocation decided. Firebase may call the block
 /// several times on its own queue; only the final call matters.
 private final class TransactionOutcome<Value: Sendable>: Sendable {

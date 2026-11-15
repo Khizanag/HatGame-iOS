@@ -28,7 +28,7 @@ struct RoomJoinView: View {
     }
 
     private var canJoin: Bool {
-        !trimmedName.isEmpty && roomCode.count == 6 && !isJoining
+        !trimmedName.isEmpty && RoomCode.isValid(roomCode) && !isJoining
     }
 
     var body: some View {
@@ -91,6 +91,8 @@ private extension RoomJoinView {
 
                 TextField("joinRoom.enterCode", text: $roomCode)
                     .textFieldStyle(.plain)
+                    // Room-code entry: monospaced display size with no token match.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 32, weight: .bold, design: .monospaced))
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
@@ -102,12 +104,9 @@ private extension RoomJoinView {
                     .cornerRadius(DesignBook.Size.smallCardCornerRadius)
                     .focused($focusedField, equals: .code)
                     .onChange(of: roomCode) { _, newValue in
-                        let filtered = newValue.uppercased()
-                            .filter { $0.isLetter || $0.isNumber }
-                            .prefix(6)
-                        let next = String(filtered)
+                        let next = RoomCode.sanitized(newValue)
                         if next != roomCode { roomCode = next }
-                        if next.count == 6 {
+                        if RoomCode.isValid(next) {
                             DesignBook.Haptics.selection()
                             focusedField = .name
                         }
