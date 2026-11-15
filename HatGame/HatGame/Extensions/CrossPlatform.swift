@@ -14,11 +14,11 @@ import AppKit
 
 // MARK: - Navigation title
 extension View {
-    /// Applies an inline navigation-bar title on iOS. A no-op on macOS, which
-    /// has no navigation-bar title display mode.
+    /// Applies an inline navigation-bar title on iOS and visionOS. A no-op on
+    /// macOS, which has no navigation-bar title display mode.
     @ViewBuilder
     func inlineNavigationTitle() -> some View {
-        #if os(iOS)
+        #if !os(macOS)
         navigationBarTitleDisplayMode(.inline)
         #else
         self
@@ -28,11 +28,12 @@ extension View {
 
 // MARK: - List edit mode
 extension View {
-    /// Drives SwiftUI's list edit mode from a Bool on iOS (for reordering and
-    /// multi-delete). A no-op on macOS, where lists are directly reorderable.
+    /// Drives SwiftUI's list edit mode from a Bool on iOS and visionOS (for
+    /// reordering and multi-delete). A no-op on macOS, where lists are directly
+    /// reorderable.
     @ViewBuilder
     func editModeEnvironment(isEditing: Binding<Bool>) -> some View {
-        #if os(iOS)
+        #if !os(macOS)
         environment(\.editMode, Binding(
             get: { isEditing.wrappedValue ? .active : .inactive },
             set: { isEditing.wrappedValue = ($0 == .active) }
@@ -55,11 +56,11 @@ extension View {
         #endif
     }
 
-    /// Hides the navigation bar on iOS while `hidden` is true. A no-op on macOS,
-    /// which has no navigation bar to hide.
+    /// Hides the navigation bar on iOS and visionOS while `hidden` is true. A
+    /// no-op on macOS, which has no navigation bar to hide.
     @ViewBuilder
     func hidesNavigationBar(_ hidden: Bool) -> some View {
-        #if os(iOS)
+        #if !os(macOS)
         toolbar(hidden ? .hidden : .automatic, for: .navigationBar)
         #else
         self
@@ -67,37 +68,71 @@ extension View {
     }
 }
 
+// MARK: - Glass button styles
+extension View {
+    /// The Liquid Glass button style. visionOS has no `.glass` style (its
+    /// windows are already glass), so there it is the bordered style.
+    @ViewBuilder
+    func glassButtonStyle() -> some View {
+        #if os(visionOS)
+        buttonStyle(.bordered)
+        #else
+        buttonStyle(.glass)
+        #endif
+    }
+
+    /// The prominent Liquid Glass button style; bordered-prominent on visionOS.
+    @ViewBuilder
+    func glassProminentButtonStyle() -> some View {
+        #if os(visionOS)
+        buttonStyle(.borderedProminent)
+        #else
+        buttonStyle(.glassProminent)
+        #endif
+    }
+}
+
 // MARK: - Toolbar placement
 extension ToolbarItemPlacement {
-    /// A trailing action placement: the navigation bar's trailing edge on iOS,
-    /// the window toolbar on macOS.
+    /// A trailing action placement: the navigation bar's trailing edge on iOS
+    /// and visionOS, the window toolbar on macOS.
     static var trailingAction: ToolbarItemPlacement {
-        #if os(iOS)
+        #if !os(macOS)
         .topBarTrailing
         #else
         .automatic
+        #endif
+    }
+
+    /// The bar above the software keyboard. visionOS has no keyboard toolbar,
+    /// so there the items sit in the window's bottom ornament.
+    static var keyboardAccessory: ToolbarItemPlacement {
+        #if os(visionOS)
+        .bottomOrnament
+        #else
+        .keyboard
         #endif
     }
 }
 
 // MARK: - Text input autocapitalization
 extension View {
-    /// Uppercases typed characters on iOS. A no-op on macOS, whose text fields
-    /// have no input autocapitalization.
+    /// Uppercases typed characters on iOS and visionOS. A no-op on macOS, whose
+    /// text fields have no input autocapitalization.
     @ViewBuilder
     func autocapitalizeCharacters() -> some View {
-        #if os(iOS)
+        #if !os(macOS)
         textInputAutocapitalization(.characters)
         #else
         self
         #endif
     }
 
-    /// Capitalizes each typed word on iOS. A no-op on macOS, whose text fields
-    /// have no input autocapitalization.
+    /// Capitalizes each typed word on iOS and visionOS. A no-op on macOS, whose
+    /// text fields have no input autocapitalization.
     @ViewBuilder
     func autocapitalizeWords() -> some View {
-        #if os(iOS)
+        #if !os(macOS)
         textInputAutocapitalization(.words)
         #else
         self

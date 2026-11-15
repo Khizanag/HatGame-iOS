@@ -116,7 +116,7 @@ private extension GameView {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
                 }
-                .buttonStyle(.glass)
+                .glassButtonStyle()
                 .tint(DesignBook.Color.Status.warning)
                 .disabled(!engine.canSkip)
                 .opacity(engine.canSkip ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
@@ -130,7 +130,7 @@ private extension GameView {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
             }
-            .buttonStyle(.glassProminent)
+            .glassProminentButtonStyle()
             .tint(DesignBook.Color.Status.success)
             .disabled(engine.isPaused || engine.state.currentWord == nil)
             .keyboardShortcut(.rightArrow, modifiers: [])

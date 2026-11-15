@@ -26,7 +26,7 @@ struct DestructiveButton<Label: View>: View {
                 .padding(8)
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glassProminent)
+        .glassProminentButtonStyle()
         .tint(DesignBook.Color.Status.error)
     }
 }

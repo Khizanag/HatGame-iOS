@@ -179,7 +179,7 @@ private extension FeedbackView {
 
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
+        ToolbarItemGroup(placement: .keyboardAccessory) {
             Spacer()
             Button {
                 isMessageFocused = false

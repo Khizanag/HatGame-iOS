@@ -20,7 +20,7 @@ struct FloatingAddButton: View {
                 .font(DesignBook.IconFont.large)
                 .frame(width: DesignBook.Size.floatingButtonSize, height: DesignBook.Size.floatingButtonSize)
         }
-        .buttonStyle(.glassProminent)
+        .glassProminentButtonStyle()
         .disabled(isDisabled)
         .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
         .matchedGeometryEffect(id: "addButton", in: namespace)

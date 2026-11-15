@@ -26,7 +26,7 @@ struct PrimaryButton<Label: View>: View {
                 .padding(8)
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glassProminent)
+        .glassProminentButtonStyle()
     }
 }
 

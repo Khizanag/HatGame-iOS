@@ -225,7 +225,7 @@ private extension TeamSetupView {
 private extension TeamSetupView {
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
-        #if os(iOS)
+        #if !os(macOS)
         if canReorder {
             ToolbarItem(placement: .trailingAction) {
                 editToggleButton

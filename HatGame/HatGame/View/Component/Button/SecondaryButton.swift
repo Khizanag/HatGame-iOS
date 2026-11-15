@@ -26,7 +26,7 @@ struct SecondaryButton<Label: View>: View {
                 .padding(8)
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(.glass)
+        .glassButtonStyle()
     }
 }
 
