@@ -53,6 +53,9 @@ public final class LocalRoomManager: RoomManager {
     private var localPlayer: OnlinePlayer?
     /// True for the device that called createRoom.
     private var isLocalHost: Bool = false
+    /// Guest-only. The peer this guest joined; the only peer whose
+    /// disconnect ends the session and whose snapshots are trusted.
+    private var hostPeerID: MCPeerID?
 
     public var isHostInternal: Bool { isLocalHost }
 
@@ -99,11 +102,13 @@ public final class LocalRoomManager: RoomManager {
         self.localPlayer = player
         self.currentPlayerId = player.id
         self.isLocalHost = false
+        self.hostPeerID = host.id
         do {
             try await service.connect(to: host.id)
         } catch {
             self.localPlayer = nil
             self.currentPlayerId = nil
+            self.hostPeerID = nil
             throw error
         }
         service.stopBrowsing()
@@ -197,6 +202,7 @@ public final class LocalRoomManager: RoomManager {
         localPlayer = nil
         isConnected = false
         peerToPlayerId.removeAll()
+        hostPeerID = nil
     }
 
     // MARK: - Gameplay
@@ -306,15 +312,12 @@ private extension LocalRoomManager {
     func handlePeerStateChange(peer: MCPeerID, state: MCSessionState) {
         switch state {
         case .connected:
-            if isLocalHost {
-                // Wait for helloFromGuest before adding to players list.
-            } else {
-                // Guest just connected to host. Identify ourselves.
-                if let player = localPlayer {
-                    service.send(.helloFromGuest(player), to: [peer])
-                }
-                isConnected = true
+            // Hosts wait for helloFromGuest before adding the peer.
+            guard !isLocalHost, peer == hostPeerID else { return }
+            if let player = localPlayer {
+                service.send(.helloFromGuest(player), to: [peer])
             }
+            isConnected = true
         case .notConnected:
             if isLocalHost {
                 guard let playerId = peerToPlayerId.removeValue(forKey: peer),
@@ -322,8 +325,7 @@ private extension LocalRoomManager {
                       let next = RoomRules.playerLeft(playerId, from: room) else { return }
                 self.room = next
                 broadcastSnapshot()
-            } else if peer != service.localPeerID {
-                // Host went away.
+            } else if peer == hostPeerID {
                 isConnected = false
             }
         default:
@@ -334,11 +336,11 @@ private extension LocalRoomManager {
     func handleMessage(_ message: LocalMessage, fromPeer peer: MCPeerID) {
         switch message {
         case let .roomSnapshot(snapshot):
-            guard !isLocalHost else { return }
+            guard !isLocalHost, peer == hostPeerID else { return }
             self.room = snapshot
             self.isConnected = true
         case let .wordsSnapshot(snapshot):
-            guard !isLocalHost else { return }
+            guard !isLocalHost, peer == hostPeerID else { return }
             self.words = snapshot
         case let .helloFromGuest(player):
             admitGuest(player, fromPeer: peer)
