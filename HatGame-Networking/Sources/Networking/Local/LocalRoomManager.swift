@@ -86,18 +86,27 @@ public final class LocalRoomManager: RoomManager {
         service.startBrowsing()
     }
 
+    /// Stops discovery only; a connection to a host already made survives.
     public func stopBrowsingForHosts() {
-        service.stop()
+        service.stopBrowsing()
     }
 
+    /// Joins `host` over the session the browser found it with, returning
+    /// once the peers are connected. The hello and the host's first snapshot
+    /// follow from the `.connected` event.
     public func connectToHost(_ host: LocalMultipeerService.DiscoveredHost, playerName: String) async throws {
         let player = OnlinePlayer(deviceId: deviceId, name: playerName)
         self.localPlayer = player
         self.currentPlayerId = player.id
         self.isLocalHost = false
-        service.startBrowsing() // ensure session exists (if not already)
-        service.invite(host: host.id)
-        // Snapshot will arrive after the host receives helloFromGuest.
+        do {
+            try await service.connect(to: host.id)
+        } catch {
+            self.localPlayer = nil
+            self.currentPlayerId = nil
+            throw error
+        }
+        service.stopBrowsing()
     }
 
     // MARK: - RoomManager overrides
@@ -181,7 +190,7 @@ public final class LocalRoomManager: RoomManager {
     }
 
     public override func leaveRoom() async throws {
-        service.stop()
+        service.endSession()
         room = nil
         words = []
         currentPlayerId = nil
