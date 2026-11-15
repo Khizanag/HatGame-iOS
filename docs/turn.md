@@ -15,6 +15,8 @@ Before a team's turn, one player is designated the **explainer**; the rest are *
 - A turn normally starts with a **full** timer. The exception: a team that ended the previous round by emptying the hat resumes with its **carried-over leftover time** for its first turn of the new round. See [The Three Rounds](rounds.md#carrying-over-between-rounds).
 - In the final seconds the device gives **urgency haptics**, and a sound plays when time runs out.
 - If the app goes to the background mid-turn, the turn **auto-pauses** so the clock can't run down unseen; the player resumes manually.
+- The clock ends the turn exactly when its time is used up; the countdown never sits on 0 while the turn is still running.
+- A game in progress is saved as it goes. If the app is closed, Home offers to **resume** it; an interrupted turn comes back paused with the time it had left.
 
 ## Playing the word
 
@@ -23,7 +25,7 @@ The explainer sees the **current word** and conveys it to the guessers under the
 - **Got It** — the word was guessed. It scores **one point** for the team, leaves the hat, and the next random word from the hat appears.
 - **Skip** — pass on the current word (see [Skipping](#skipping)).
 - **Pause / Resume** — stop and restart the clock.
-- **Give Up** — end the turn early (after a confirmation). This is treated the same as the timer running out.
+- **Give Up** — end the turn early (after a confirmation). The clock pauses while the confirmation is up, so time can't run out behind it. Giving up is treated the same as the timer running out.
 
 The screen also shows the active team, the round, how many words have been guessed this turn, the countdown, and overall progress through the hat.
 

@@ -31,6 +31,7 @@ Because every word must be guessed before a round ends, every team gets multiple
 The team that ends a round by guessing the last word is rewarded with continuity into the next round:
 
 - **Leftover time is preserved.** Whatever time remained on that team's clock when the hat emptied is carried into its **first turn of the next round**. It is not given a fresh full timer for that turn.
+- **The carried time is what the clock showed.** The countdown shows whole seconds rounded up, and that is the amount carried — so a team that empties the hat with 0.4 seconds left (shown as 1) starts the next round with 1 second. A turn ends the instant its clock reaches zero, so emptying the hat always leaves at least 1 second to carry.
 - **The same explainer continues.** That team's explainer does **not** rotate at the round boundary — the same player keeps explaining.
 - **Every other team resets.** All other teams begin the new round with a **full** timer, and their explainer rotation is unaffected by the round change.
 

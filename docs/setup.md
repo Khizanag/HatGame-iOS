@@ -41,12 +41,16 @@ Choose how the hat is filled:
 
 - The device is passed from player to player. Each player privately adds their allotted number of words, then hands off to the next.
 - An **auto-fill** option can complete a player's remaining words from the built-in database.
-- Whether the same word may be added by more than one player is governed by the **Allow Duplicate Words** default setting.
+- Whether the same word may be added by more than one player is governed by the **Allow Duplicate Words** default setting. A player can never add the same word twice.
+- Words are compared ignoring capitalization and accents, so "Apple", "apple", and "Äpple" count as the same word.
+- Going back and saving a player's words again replaces them; it never adds a second copy.
 - The step is complete once every player has entered their words.
 
 ### Automatic generation
 
 - The app fills the hat directly from the built-in word database — enough words for the whole game — so no one types anything.
+- The database matches the app language: Georgian words for Georgian, English words for every other language. The same list powers auto-fill during manual entry.
+- If the word list can't be loaded, the app says so and offers manual entry instead of starting with an empty hat.
 
 ## 6. Randomize and start
 

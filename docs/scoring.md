@@ -29,8 +29,11 @@ After the third round ends:
 
 From the final results you can:
 
-- **Play Again** — keep the **same teams** and start over with **new words**. Players re-fill the hat (the previous words are cleared), then a fresh three-round game begins.
+- **Play Again** — a rematch: the **same teams** and the **same words**. Every score resets to zero, you choose (or randomize) the starting team again, and a fresh three-round game begins.
+- **New Words** — keep the **same teams** but empty the hat. The game returns to word settings, players add new words, then a fresh three-round game begins.
 - **Return to Main** — leave the game and go back to the home screen.
+
+Neither option carries anything over from the finished game: scores, explainer roles, and leftover time all start fresh.
 
 ## Worked example
 

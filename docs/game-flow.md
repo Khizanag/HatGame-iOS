@@ -19,8 +19,10 @@ flowchart TD
     TR -->|Continue: turns or rounds remain| NT
     TR -->|Continue: Round 3 finished| FR[Final Results]
     TR -. Check Standings .-> ST[/Standings/]
-    FR -->|Play Again: same teams, new words| WSRC
+    FR -->|Play Again: same teams and words| RND
+    FR -->|New Words: same teams| WS
     FR -->|Return to Main| Home
+    Home -->|Resume a saved game| NT
 ```
 
 ## The setup leg
@@ -54,9 +56,13 @@ After setup, the game repeats a three-screen cycle:
 
 So the single Next Team → Play → Turn Results cycle carries the whole game — all three rounds and every team's turns — until the final round's hat is empty.
 
+The loop is one screen that changes phase rather than a stack of pages, and it has no back navigation: once the game starts it only moves forward, so a stray swipe can never replay a hand-off or skip a team.
+
+The game is saved as it goes. If the app is closed mid-game, Home shows a **Resume** card that returns straight into the loop; an interrupted turn comes back paused.
+
 ## The end
 
-**Final Results** shows the total scores and the winner. From there, **Play Again** keeps the teams and loops back to collect new words, while **Return to Main** ends the game. See [Scoring and Winning](scoring.md).
+**Final Results** shows the total scores and the winner. From there, **Play Again** replays the same teams and words from zero (back to choosing the starting team), **New Words** keeps the teams and goes back to collect new words, and **Return to Main** ends the game. See [Scoring and Winning](scoring.md#play-again).
 
 ## See also
 
