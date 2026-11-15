@@ -39,27 +39,5 @@ extension DesignBook {
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
-
-        /// Urgency gradient used when the timer is running low.
-        public static let urgency = LinearGradient(
-            colors: [
-                SwiftUI.Color(red: 1.00, green: 0.36, blue: 0.36),
-                SwiftUI.Color(red: 1.00, green: 0.55, blue: 0.20),
-            ],
-            startPoint: .topLeading,
-            endPoint: .bottomTrailing
-        )
-
-        /// Builds a gradient stroke tinted to a team color.
-        public static func team(_ tint: SwiftUI.Color) -> LinearGradient {
-            LinearGradient(
-                colors: [
-                    tint.opacity(0.85),
-                    tint.opacity(0.55),
-                ],
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
-        }
     }
 }

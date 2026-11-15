@@ -10,7 +10,6 @@ import SwiftUI
 extension DesignBook {
     public enum Size {
         // MARK: - Button Sizes
-        public static let buttonHeight: CGFloat = 56
         public static let floatingButtonSize: CGFloat = 56
         public static let pauseButtonWidth: CGFloat = 216
         public static let touchTargetSize: CGFloat = 44
@@ -23,17 +22,14 @@ extension DesignBook {
 
         // MARK: - Icon Sizes
         public static let iconSize: CGFloat = 24
-        public static let smallIconSize: CGFloat = 20
         public static let mediumIconSize: CGFloat = 32
         public static let largeIconSize: CGFloat = 48
-        public static let extraLargeIconSize: CGFloat = 80
 
         // MARK: - Badge & Indicator Sizes
         public static let badgeSize: CGFloat = 24
         public static let colorSwatchSize: CGFloat = 44
         public static let playerNumberBadgeSize: CGFloat = 24
         public static let selectionIndicatorSize: CGFloat = 24
-        public static let rankIndicatorWidth: CGFloat = 40
 
         // MARK: - Dot Indicators
         public static let dotSmall: CGFloat = 6
@@ -44,12 +40,7 @@ extension DesignBook {
         public static let cardSmall: CGFloat = 50
         public static let cardMedium: CGFloat = 60
         public static let cardLarge: CGFloat = 70
-        public static let cardXLarge: CGFloat = 80
         public static let cardMassive: CGFloat = 100
-
-        // MARK: - Component-Specific Sizes
-        public static let settingsIconBoxSize: CGFloat = 32
-        public static let footerGradientHeight: CGFloat = 120
 
         // MARK: - Layout Widths
         /// Readable max width for a content column; centers the column on wide

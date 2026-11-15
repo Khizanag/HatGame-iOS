@@ -16,18 +16,10 @@ extension DesignBook {
         public static let smooth = SwiftUI.Animation.spring(response: 0.45, dampingFraction: 0.85)
         /// Playful bouncy spring for celebratory moments
         public static let bouncy = SwiftUI.Animation.spring(response: 0.5, dampingFraction: 0.62)
-        /// Subtle micro-interaction spring
-        public static let micro = SwiftUI.Animation.spring(response: 0.22, dampingFraction: 0.8)
 
         // MARK: - Eases
         public static let quick = SwiftUI.Animation.easeInOut(duration: 0.18)
         public static let standard = SwiftUI.Animation.easeInOut(duration: 0.3)
-        public static let slow = SwiftUI.Animation.easeInOut(duration: 0.5)
-
-        // MARK: - Durations
-        public static let durationFast: Double = 0.18
-        public static let durationStandard: Double = 0.3
-        public static let durationSlow: Double = 0.5
 
         /// Returns the given animation, or `nil` when Reduce Motion is enabled.
         public static func respectingReducedMotion(

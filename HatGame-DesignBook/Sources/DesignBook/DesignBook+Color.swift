@@ -28,13 +28,6 @@ extension DesignBook {
             public static let warning = SwiftUI.Color(.Status.warning)
         }
 
-        public enum Button {
-            public static let primary = SwiftUI.Color(.Button.primary)
-            public static let primaryPressed = SwiftUI.Color(.Button.primaryPressed)
-            public static let secondary = SwiftUI.Color(.Button.secondary)
-            public static let secondaryPressed = SwiftUI.Color(.Button.secondaryPressed)
-        }
-
         /// Foreground for glyphs and text on the brand gradients and on dimmed
         /// overlays, which stay dark-saturated in both appearances.
         public static let onGradient = SwiftUI.Color.white
