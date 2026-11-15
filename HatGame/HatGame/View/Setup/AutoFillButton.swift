@@ -14,6 +14,7 @@ struct AutoFillButton: View {
     let isDisabled: Bool
     let action: () -> Void
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button(action: action) {
@@ -21,7 +22,7 @@ struct AutoFillButton: View {
                 Image(systemName: isAutoFilling ? "sparkles" : "wand.and.stars")
                     .font(DesignBook.Font.body)
                     .fontWeight(.semibold)
-                    .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling)
+                    .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling && !reduceMotion)
                 Text(localized(isAutoFilling ? "wordInput.autoFill.thinking" : "wordInput.autoFill"))
                     .font(DesignBook.Font.body)
                     .fontWeight(.medium)

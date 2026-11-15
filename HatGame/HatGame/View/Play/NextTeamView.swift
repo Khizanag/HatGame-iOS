@@ -178,7 +178,11 @@ private extension NextTeamView {
                         Image(systemName: isRandomizingExplainer ? "sparkles" : "shuffle")
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.accent)
-                            .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingExplainer)
+                            .symbolEffect(
+                                .pulse,
+                                options: .repeating,
+                                isActive: isRandomizingExplainer && !reduceMotion
+                            )
                             .padding(DesignBook.Spacing.sm)
                             .background(DesignBook.Color.Background.secondary)
                             .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))

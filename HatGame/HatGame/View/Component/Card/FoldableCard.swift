@@ -18,6 +18,8 @@ struct FoldableCard<Content: View>: View {
     let descriptionFont: Font
     @ViewBuilder let content: () -> Content
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     // MARK: - Init
     init(
         isExpanded: Binding<Bool>,
@@ -55,7 +57,7 @@ struct FoldableCard<Content: View>: View {
 private extension FoldableCard {
     var headerButton: some View {
         Button {
-            withAnimation(.easeInOut) {
+            withAnimation(reduceMotion ? nil : .easeInOut) {
                 isExpanded.toggle()
             }
         } label: {

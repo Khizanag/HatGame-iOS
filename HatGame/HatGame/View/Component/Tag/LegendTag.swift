@@ -16,6 +16,8 @@ struct LegendTag: View {
     let range: String
     let isHighlighted: Bool
 
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             indicator
@@ -40,7 +42,7 @@ private extension LegendTag {
             )
             .frame(width: 6, height: 6)
             .scaleEffect(isHighlighted ? 1.25 : 1)
-            .animation(DesignBook.Motion.snappy, value: isHighlighted)
+            .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: isHighlighted)
     }
 
     var label: some View {

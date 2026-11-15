@@ -242,7 +242,7 @@ private extension WordCard {
 
     func reset() {
         DesignBook.Haptics.selection()
-        withAnimation(DesignBook.Motion.bouncy) {
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
             dragOffset = .zero
         }
     }
