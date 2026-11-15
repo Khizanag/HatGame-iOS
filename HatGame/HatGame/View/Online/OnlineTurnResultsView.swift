@@ -38,6 +38,13 @@ struct OnlineTurnResultsView: View {
         gameState?.activePlayerId == roomManager.currentPlayerId
     }
 
+    /// The host may move the game past an explainer who has gone offline,
+    /// so one backgrounded device cannot wedge the room.
+    private var canCoverForAwayExplainer: Bool {
+        guard roomManager.isHost, !isActivePlayer, let state = gameState else { return false }
+        return GameRules.isActivePlayerAway(state, players: room?.players ?? [])
+    }
+
     private var tint: Color {
         currentTeam.flatMap { Color(hex: $0.colorHex) } ?? DesignBook.Color.Text.accent
     }
@@ -181,7 +188,7 @@ private extension OnlineTurnResultsView {
 
     @ViewBuilder
     var actionSection: some View {
-        if isActivePlayer {
+        if isActivePlayer || canCoverForAwayExplainer {
             PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 continueFlow()
             }
@@ -205,7 +212,7 @@ private extension OnlineTurnResultsView {
     }
 
     func continueFlow() {
-        guard let room, let playerId = roomManager.currentPlayerId else { return }
+        guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
         DesignBook.Haptics.tap()
         Task {

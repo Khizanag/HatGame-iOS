@@ -89,7 +89,7 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         self.settings = try container.decode(GameSettings.self, forKey: .settings)
         self.teams = Self.canonicalOrder(try container.decodeFirebaseCollection([OnlineTeam].self, forKey: .teams))
         self.players = Self.canonicalOrder(
-            try container.decodeFirebaseCollection([OnlinePlayer].self, forKey: .players)
+            try container.decodeFirebaseCollection([PlayerRecord].self, forKey: .players).compactMap(\.player)
         )
         self.gameState = try container.decodeIfPresent(OnlineGameState.self, forKey: .gameState)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
@@ -128,6 +128,23 @@ public struct GameRoom: Codable, Identifiable, Sendable {
     private static func keyedById<Element: Identifiable>(_ elements: [Element]) -> [String: Element]
     where Element.ID == String {
         Dictionary(elements.map { ($0.id, $0) }, uniquingKeysWith: { _, latest in latest })
+    }
+}
+
+/// A `players/<id>` entry. A presence write that lands after its player was
+/// removed leaves a node holding only `isConnected`; it carries no `id` and
+/// is skipped rather than failing the whole room. Any entry that has an `id`
+/// must decode fully.
+private struct PlayerRecord: Decodable {
+    let player: OnlinePlayer?
+
+    private enum ProbeKeys: String, CodingKey {
+        case id
+    }
+
+    init(from decoder: Decoder) throws {
+        let probe = try decoder.container(keyedBy: ProbeKeys.self)
+        player = probe.contains(.id) ? try OnlinePlayer(from: decoder) : nil
     }
 }
 

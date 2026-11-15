@@ -126,7 +126,45 @@ public final class FirebaseService: @unchecked Sendable {
         inRoomId roomId: String
     ) async throws {
         try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("players").child(playerId).child(flag.rawValue).setValue(value)
+            _ = try await playerFlagRef(flag, playerId: playerId, roomId: roomId).setValue(value)
+        }
+    }
+
+    // MARK: - Presence
+    /// Reports this client's connection to the database: `true` once
+    /// connected, `false` whenever the link drops. Fires immediately.
+    public func observeConnection(_ onChange: @escaping (Bool) -> Void) -> DatabaseHandle? {
+        guard isAvailable else { return nil }
+        return database.reference(withPath: ".info/connected").observe(.value) { snapshot in
+            onChange(snapshot.value as? Bool == true)
+        }
+    }
+
+    public func removeConnectionObserver(_ handle: DatabaseHandle) {
+        database.reference(withPath: ".info/connected").removeObserver(withHandle: handle)
+    }
+
+    /// Marks the player online and asks the server to mark them offline the
+    /// moment this client's connection drops — including when the app is
+    /// suspended or killed.
+    public func armPresence(playerId: String, roomId: String) async throws {
+        try await write { [self] in
+            let flag = playerFlagRef(.isConnected, playerId: playerId, roomId: roomId)
+            _ = try await flag.onDisconnectSetValue(false)
+            _ = try await flag.setValue(true)
+        }
+    }
+
+    /// Cancels the pending server-side offline write. `markOffline` also
+    /// writes `false` now — only for a player who stays in an existing room,
+    /// since writing to a removed player would recreate a partial node.
+    public func disarmPresence(playerId: String, roomId: String, markOffline: Bool) async throws {
+        try await write { [self] in
+            let flag = playerFlagRef(.isConnected, playerId: playerId, roomId: roomId)
+            _ = try await flag.cancelDisconnectOperations()
+            if markOffline {
+                _ = try await flag.setValue(false)
+            }
         }
     }
 
@@ -251,6 +289,10 @@ public final class FirebaseService: @unchecked Sendable {
 
 // MARK: - Helpers
 private extension FirebaseService {
+    func playerFlagRef(_ flag: PlayerFlag, playerId: String, roomId: String) -> DatabaseReference {
+        roomsRef.child(roomId).child("players").child(playerId).child(flag.rawValue)
+    }
+
     func read<T: Sendable>(_ operation: @escaping @Sendable () async throws -> T) async throws -> T {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         return try await withTimeout(Timeouts.read, operation: operation)

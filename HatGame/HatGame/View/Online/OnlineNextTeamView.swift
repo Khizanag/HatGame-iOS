@@ -53,6 +53,13 @@ struct OnlineNextTeamView: View {
         return roomManager.currentPlayer?.teamId == teamId
     }
 
+    /// The host may move the game past an explainer who has gone offline,
+    /// so one backgrounded device cannot wedge the room.
+    private var canCoverForAwayExplainer: Bool {
+        guard roomManager.isHost, !isActivePlayer, let state = gameState else { return false }
+        return GameRules.isActivePlayerAway(state, players: room?.players ?? [])
+    }
+
     private var tint: Color {
         currentTeam.flatMap { Color(hex: $0.colorHex) } ?? DesignBook.Color.Text.accent
     }
@@ -257,23 +264,28 @@ private extension OnlineNextTeamView {
                 startTurn()
             }
             .disabled(isLoading)
-        } else if isMyTeamsTurn {
-            VStack(spacing: DesignBook.Spacing.sm) {
-                Text(String(format: localized("onlineNextTeam.waitingForName"), explainer?.name ?? ""))
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-                    .multilineTextAlignment(.center)
-                ProgressView()
-            }
         } else {
             VStack(spacing: DesignBook.Spacing.sm) {
-                Text(String(format: localized("onlineNextTeam.spectating"), currentTeam?.name ?? ""))
+                Text(waitingMessage)
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)
-                ProgressView()
+                if canCoverForAwayExplainer {
+                    SecondaryButton(title: localized("game.skip"), icon: "forward.end.fill") {
+                        skipAwayExplainer()
+                    }
+                    .disabled(isLoading)
+                } else {
+                    ProgressView()
+                }
             }
         }
+    }
+
+    var waitingMessage: String {
+        isMyTeamsTurn
+            ? String(format: localized("onlineNextTeam.waitingForName"), explainer?.name ?? "")
+            : String(format: localized("onlineNextTeam.spectating"), currentTeam?.name ?? "")
     }
 }
 
@@ -284,12 +296,22 @@ private extension OnlineNextTeamView {
     }
 
     func startTurn() {
-        guard let room, let playerId = roomManager.currentPlayerId else { return }
-        isLoading = true
         DesignBook.Haptics.confirm()
+        perform(.startTurn)
+    }
+
+    /// Host-only: forfeits the turn of an explainer who is offline.
+    func skipAwayExplainer() {
+        DesignBook.Haptics.rigid()
+        perform(.endTurn)
+    }
+
+    func perform(_ action: GameAction) {
+        guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
+        isLoading = true
         Task {
             do {
-                try await gameSyncManager.perform(.startTurn, room: room, playerId: playerId)
+                try await gameSyncManager.perform(action, room: room, playerId: playerId)
             } catch {
                 self.error = error
             }

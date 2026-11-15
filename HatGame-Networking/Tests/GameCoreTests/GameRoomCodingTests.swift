@@ -77,6 +77,33 @@ struct GameRoomCodingTests {
         #expect(decoded.players.map(\.id) == ["host"])
     }
 
+    @Test("A late presence write for a removed player does not break the room")
+    func presenceGhostIsSkipped() throws {
+        let json = """
+        {"id":"ABCDEF","hostId":"host","status":"playing","settings":{},"createdAt":0,
+         "players":{
+           "host":{"id":"host","deviceId":"d","name":"Host","isReady":true,"hasSubmittedWords":false,
+                   "isConnected":true,"joinedAt":0},
+           "gone":{"isConnected":false}}}
+        """
+
+        let decoded = try Fixture.decode(GameRoom.self, json: json)
+
+        #expect(decoded.players.map(\.id) == ["host"])
+    }
+
+    @Test("A player record with an id but missing fields still throws")
+    func incompletePlayerThrows() {
+        let json = """
+        {"id":"ABCDEF","hostId":"host","status":"waiting","settings":{},"createdAt":0,
+         "players":{"host":{"id":"host","name":"Host"}}}
+        """
+
+        #expect(throws: DecodingError.self) {
+            try Fixture.decode(GameRoom.self, json: json)
+        }
+    }
+
     @Test("Empty collections survive Firebase dropping them")
     func emptyCollectionsDecodeAsEmpty() throws {
         let json = """

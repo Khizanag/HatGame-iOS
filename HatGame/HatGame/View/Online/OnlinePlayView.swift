@@ -281,10 +281,17 @@ private extension OnlinePlayView {
         if previous > 0, remainingSeconds == 0 {
             SoundPlayer.shared.playTimeUp()
         }
-        guard remainingSeconds == 0, isActivePlayer else { return }
+        guard remainingSeconds == 0, isActivePlayer || isCoveringStalledTurn else { return }
         // Retried on every tick until the turn leaves `.playing`, so a failed
         // write cannot strand the room at zero.
         perform(.endTurn, surfacesErrors: false)
+    }
+
+    /// The host closes a turn its explainer left running well past zero —
+    /// a backgrounded or disconnected device never sends its own end.
+    var isCoveringStalledTurn: Bool {
+        guard roomManager.isHost, let state = gameState else { return false }
+        return GameRules.isStalled(state, now: Date())
     }
 
     func playUrgencyHaptics(from previous: Int, to current: Int) {

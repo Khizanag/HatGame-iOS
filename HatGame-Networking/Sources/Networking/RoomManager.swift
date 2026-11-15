@@ -40,6 +40,9 @@ open class RoomManager {
     /// Set while this device deletes or leaves the room, so its own write is
     /// not mistaken for the host closing it.
     @ObservationIgnored private var isLeaving = false
+    /// `.info/connected` observer that keeps this player's `isConnected`
+    /// accurate, so the host can cover for an explainer who drops out.
+    @ObservationIgnored private var connectivityHandle: DatabaseHandle?
     /// Stable per-device UUID kept in UserDefaults so reconnects map back
     /// to the same player record.
     internal var deviceId: String
@@ -65,6 +68,9 @@ open class RoomManager {
     isolated deinit {
         if let roomObserverHandle, let observedRoomId {
             firebaseService.removeObserver(handle: roomObserverHandle, forRoomId: observedRoomId)
+        }
+        if let connectivityHandle {
+            firebaseService.removeConnectionObserver(connectivityHandle)
         }
     }
 
@@ -126,6 +132,43 @@ open class RoomManager {
                 self?.apply(snapshot, forRoomId: id)
             }
         }
+        startPresence(forRoomId: id)
+    }
+
+    private func startPresence(forRoomId id: String) {
+        guard connectivityHandle == nil else { return }
+        connectivityHandle = firebaseService.observeConnection { [weak self] isOnline in
+            Task { @MainActor in
+                self?.handleConnectivity(isOnline, forRoomId: id)
+            }
+        }
+    }
+
+    /// Re-arms presence on every (re)connection while the room is still
+    /// there; a server-side `onDisconnect` lasts only for one connection.
+    private func handleConnectivity(_ isOnline: Bool, forRoomId id: String) {
+        guard isOnline,
+              observedRoomId == id,
+              !isLeaving,
+              connectionState == .joining || connectionState == .live,
+              let playerId = currentPlayerId else { return }
+        Task {
+            try? await firebaseService.armPresence(playerId: playerId, roomId: id)
+        }
+    }
+
+    /// Stops re-arming presence and cancels the server-side offline write.
+    /// Returns the cancelling write so a caller about to remove the player
+    /// can wait for it.
+    @discardableResult
+    private func stopPresence(markOffline: Bool) -> Task<Void, Never>? {
+        guard let connectivityHandle else { return nil }
+        firebaseService.removeConnectionObserver(connectivityHandle)
+        self.connectivityHandle = nil
+        guard let playerId = currentPlayerId, let roomId = observedRoomId else { return nil }
+        return Task { [firebaseService] in
+            try? await firebaseService.disarmPresence(playerId: playerId, roomId: roomId, markOffline: markOffline)
+        }
     }
 
     private func apply(_ snapshot: RoomSnapshot, forRoomId id: String) {
@@ -139,15 +182,18 @@ open class RoomManager {
             room = nil
             isConnected = false
             connectionState = .closed
+            stopPresence(markOffline: false)
         case .unreadable:
             isConnected = false
             connectionState = .unsupported
         }
     }
 
-    /// Detaches from the room without writing anything. Safe to call when
-    /// the room is already gone or was never received.
+    /// Detaches from the room. Safe to call when the room is already gone or
+    /// was never received. A player still in a live room is marked offline,
+    /// so the host can cover their turn.
     open func stopObserving() {
+        stopPresence(markOffline: connectionState == .live)
         if let roomObserverHandle, let observedRoomId {
             firebaseService.removeObserver(handle: roomObserverHandle, forRoomId: observedRoomId)
         }
@@ -194,10 +240,18 @@ open class RoomManager {
         if let playerId = currentPlayerId, let roomId, shouldWrite {
             isLeaving = true
             defer { isLeaving = false }
-            if wasHost {
-                try await firebaseService.deleteRoom(id: roomId)
-            } else {
-                try await firebaseService.removePlayer(playerId: playerId, fromRoomId: roomId)
+            // Cancel the server-side offline write first, or it could
+            // recreate this player's node after the removal below.
+            await stopPresence(markOffline: false)?.value
+            do {
+                if wasHost {
+                    try await firebaseService.deleteRoom(id: roomId)
+                } else {
+                    try await firebaseService.removePlayer(playerId: playerId, fromRoomId: roomId)
+                }
+            } catch {
+                startPresence(forRoomId: roomId)
+                throw error
             }
         }
 
