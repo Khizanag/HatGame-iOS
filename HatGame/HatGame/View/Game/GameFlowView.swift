@@ -55,8 +55,6 @@ struct GameFlowView: View {
     var body: some View {
         NavigationStack(path: Bindable(gameNavigator).navigationPath) {
             TeamSetupView()
-                // This flow's own stack wrapper — the one place its destinations are declared.
-                // swiftlint:disable:next no_navigation_destination
                 .navigationDestination(for: AnyPage.self) { page in
                     page.view()
                         .environment(gameManager)
