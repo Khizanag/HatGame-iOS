@@ -95,6 +95,7 @@ private extension TeamTurnResultsView {
                     .symbolEffect(.bounce, options: .nonRepeating, value: hasCelebrated)
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             Text(isCelebratory ? "game.turnResults.allWordsGuessed" : "game.turnResults.timeUp")
                 .font(DesignBook.Font.largeTitle)
@@ -115,7 +116,7 @@ private extension TeamTurnResultsView {
                 HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.sm) {
                     AnimatedScoreText(
                         value: guessedWords.count,
-                        font: .system(size: 64, weight: .bold, design: .rounded),
+                        font: DesignBook.Font.heroScore,
                         color: team.color,
                         duration: 0.7
                     )

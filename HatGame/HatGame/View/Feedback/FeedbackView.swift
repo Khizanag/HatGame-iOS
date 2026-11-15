@@ -161,6 +161,7 @@ private extension FeedbackView {
                     .symbolEffect(.bounce, options: reduceMotion ? .nonRepeating : .default)
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(localized("feedback.success.title"))

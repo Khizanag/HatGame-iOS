@@ -86,6 +86,7 @@ private extension HomeView {
     var hero: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             heroIcon
+                .decorativeHeroSizing()
                 .padding(.top, DesignBook.Spacing.lg)
 
             VStack(spacing: DesignBook.Spacing.xs) {
@@ -132,10 +133,8 @@ private extension HomeView {
                 }
                 .shadow(.large)
 
-            Text("🎩")
-                // Unique hero glyph; no Dynamic Type token matches this size.
-                // swiftlint:disable:next no_inline_font
-                .font(.system(size: 88))
+            Text(verbatim: "🎩")
+                .font(DesignBook.IconFont.emojiLarge)
                 .offset(y: reduceMotion ? 0 : (isHeroFloating ? -6 : 6))
                 .accessibilityHidden(true)
         }

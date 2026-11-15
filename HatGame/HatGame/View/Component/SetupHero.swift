@@ -38,6 +38,7 @@ struct SetupHero: View {
                     .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             Text(title)
                 .font(DesignBook.Font.title3)

@@ -48,10 +48,8 @@ private extension TimerSettingsView {
     var heroValueCard: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
-                Text("\(selectedDuration)")
-                    // Unique hero numeral; no Dynamic Type text-style token matches this size.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 96, weight: .bold, design: .rounded))
+                Text(verbatim: "\(selectedDuration)")
+                    .font(DesignBook.Font.heroNumber)
                     .monospacedDigit()
                     .contentTransition(.numericText(value: Double(selectedDuration)))
                     .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedDuration)

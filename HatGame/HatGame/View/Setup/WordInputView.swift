@@ -473,12 +473,14 @@ private struct WordRow: View {
     let text: String
     let onRemove: () -> Void
 
+    @ScaledMetric(relativeTo: .subheadline) private var badgeSize: CGFloat = DesignBook.Size.badgeSize
+
     var body: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
             Text(verbatim: "\(index + 1)")
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: DesignBook.Size.badgeSize, height: DesignBook.Size.badgeSize)
+                .frame(width: badgeSize, height: badgeSize)
                 .background(DesignBook.Color.Background.secondary)
                 .clipShape(Circle())
 

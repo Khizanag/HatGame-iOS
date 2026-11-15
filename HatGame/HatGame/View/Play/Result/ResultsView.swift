@@ -82,6 +82,7 @@ private extension ResultsView {
     var winnerCard: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             trophyIcon
+                .decorativeHeroSizing()
 
             if winners.count == 1, let winner = winners.first {
                 singleWinnerLabel(winner: winner)
@@ -156,7 +157,7 @@ private extension ResultsView {
 
             AnimatedScoreText(
                 value: scoreboard.totalScore(for: winner),
-                font: .system(size: 56, weight: .bold, design: .rounded),
+                font: DesignBook.Font.largeTitle,
                 color: winner.color
             )
 

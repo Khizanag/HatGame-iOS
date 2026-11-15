@@ -329,6 +329,7 @@ private struct RevealedTeamCard: View {
         GameCard {
             VStack(spacing: DesignBook.Spacing.lg) {
                 trophyIcon
+                    .decorativeHeroSizing()
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.startingTeam.selected"))
@@ -406,6 +407,7 @@ private struct ShufflingOverlay: View {
 
             VStack(spacing: DesignBook.Spacing.xl) {
                 hatBadge
+                    .decorativeHeroSizing()
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.shuffling.message"))

@@ -23,6 +23,7 @@ struct NextTeamView: View {
     @State private var isRandomizingExplainer: Bool = false
     /// Changing this starts an explainer shuffle; the task is cancelled on disappear.
     @State private var explainerShuffleId: UUID?
+    @ScaledMetric(relativeTo: .body) private var selectionIndicatorSize = DesignBook.Size.selectionIndicatorSize
 
     private var isFirstPlay: Bool { engine.state.canSelectExplainer(for: team) }
     private var currentExplainer: Player? { engine.state.explainer(for: team) }
@@ -85,6 +86,7 @@ private extension NextTeamView {
                     .font(DesignBook.IconFont.emoji)
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             Text(localized("game.nextTeam.title"))
                 .font(DesignBook.Font.smallCaption)
@@ -218,15 +220,12 @@ private extension NextTeamView {
                         isSelected ? team.color : DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.medium),
                         lineWidth: 2
                     )
-                    .frame(
-                        width: DesignBook.Size.selectionIndicatorSize,
-                        height: DesignBook.Size.selectionIndicatorSize
-                    )
+                    .frame(width: selectionIndicatorSize, height: selectionIndicatorSize)
 
                 if isSelected {
                     Circle()
                         .fill(team.color)
-                        .frame(width: 16, height: 16)
+                        .frame(width: selectionIndicatorSize * 2 / 3, height: selectionIndicatorSize * 2 / 3)
                 }
             }
 

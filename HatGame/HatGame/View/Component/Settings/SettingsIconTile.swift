@@ -14,11 +14,13 @@ struct SettingsIconTile: View {
     let systemImage: String
     var tint: Color = DesignBook.Color.Text.accent
 
+    @ScaledMetric(relativeTo: .body) private var tileSize: CGFloat = 32
+
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
                 .fill(tint.opacity(0.15))
-                .frame(width: 32, height: 32)
+                .frame(width: tileSize, height: tileSize)
 
             Image(systemName: systemImage)
                 .font(DesignBook.Font.body)

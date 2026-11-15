@@ -17,6 +17,9 @@ struct CircularIconContainer: View {
     let gradientColors: [Color]?
     let hasShadow: Bool
 
+    /// Grows the container with Dynamic Type at the same rate as its glyph.
+    @ScaledMetric(relativeTo: .body) private var scale: CGFloat = 1
+
     init(
         icon: String,
         size: CGFloat = DesignBook.Size.cardLarge,
@@ -46,17 +49,15 @@ struct CircularIconContainer: View {
                             endPoint: .bottomTrailing
                         )
                     )
-                    .frame(width: size, height: size)
+                    .frame(width: size * scale, height: size * scale)
             } else if let backgroundColor = backgroundColor {
                 Circle()
                     .fill(backgroundColor)
-                    .frame(width: size, height: size)
+                    .frame(width: size * scale, height: size * scale)
             }
 
             Image(systemName: icon)
-                // Icon size scales with the container's `size` parameter, so it is intentionally dynamic.
-                // swiftlint:disable:next no_inline_font
-                .font(.system(size: calculatedIconSize))
+                .font(DesignBook.IconFont.sized(calculatedIconSize))
                 .foregroundStyle(color)
         }
         .shadow(

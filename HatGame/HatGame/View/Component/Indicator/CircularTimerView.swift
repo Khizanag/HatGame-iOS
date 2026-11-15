@@ -96,11 +96,10 @@ private extension CircularTimerView {
 
     var timeLabel: some View {
         VStack(spacing: 0) {
-            Text(formattedTime)
-                // Hero countdown numeral; unique size with no Dynamic Type token.
-                // swiftlint:disable:next no_inline_font
-                .font(.system(size: 38, weight: .bold, design: .rounded))
-                .monospacedDigit()
+            Text(verbatim: formattedTime)
+                .font(DesignBook.Font.timer)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 .foregroundStyle(displayColor)
                 .contentTransition(.numericText())
                 .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: remainingSeconds)

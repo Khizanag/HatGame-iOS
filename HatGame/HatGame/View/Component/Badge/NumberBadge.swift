@@ -15,6 +15,8 @@ struct NumberBadge: View {
     let textColor: Color
     let font: Font
 
+    @ScaledMetric(relativeTo: .subheadline) private var scale: CGFloat = 1
+
     init(
         number: Int,
         size: CGFloat = DesignBook.Size.badgeSize,
@@ -30,10 +32,10 @@ struct NumberBadge: View {
     }
 
     var body: some View {
-        Text("\(number)")
+        Text(verbatim: "\(number)")
             .font(font)
             .foregroundStyle(textColor)
-            .frame(width: size, height: size)
+            .frame(width: size * scale, height: size * scale)
             .background(backgroundColor)
             .clipShape(Circle())
     }

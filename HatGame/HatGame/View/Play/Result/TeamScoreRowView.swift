@@ -15,6 +15,8 @@ struct TeamScoreRowView: View {
     let score: Int
     let isWinner: Bool
 
+    @ScaledMetric(relativeTo: .subheadline) private var rankBadgeSize: CGFloat = 32
+
     var body: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             rankBadge
@@ -54,14 +56,14 @@ private extension TeamScoreRowView {
         ZStack {
             Circle()
                 .fill(rankBackgroundColor)
-                .frame(width: 32, height: 32)
+                .frame(width: rankBadgeSize, height: rankBadgeSize)
 
             if rank == 1 {
                 Image(systemName: "crown.fill")
                     .font(DesignBook.Font.captionBold)
                     .foregroundStyle(rankForegroundColor)
             } else {
-                Text("\(rank)")
+                Text(verbatim: "\(rank)")
                     .font(DesignBook.Font.captionBold)
                     .foregroundStyle(rankForegroundColor)
                     .monospacedDigit()

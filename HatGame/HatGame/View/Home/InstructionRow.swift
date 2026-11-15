@@ -13,6 +13,8 @@ struct InstructionRow: View {
     let icon: String
     let text: String
 
+    @ScaledMetric(relativeTo: .subheadline) private var iconDiscSize: CGFloat = 32
+
     init(index: Int? = nil, icon: String, text: String) {
         self.index = index
         self.icon = icon
@@ -24,7 +26,7 @@ struct InstructionRow: View {
             ZStack {
                 Circle()
                     .fill(DesignBook.Color.Text.accent.opacity(0.14))
-                    .frame(width: 32, height: 32)
+                    .frame(width: iconDiscSize, height: iconDiscSize)
 
                 Image(systemName: icon)
                     .font(DesignBook.Font.captionBold)

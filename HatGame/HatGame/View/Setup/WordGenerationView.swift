@@ -86,6 +86,7 @@ private extension WordGenerationView {
         VStack(spacing: DesignBook.Spacing.xl) {
             Spacer(minLength: 0)
             hatHero
+                .decorativeHeroSizing()
             statusSection
             wordCard
             ProgressView(value: progress)

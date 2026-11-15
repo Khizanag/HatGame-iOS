@@ -136,7 +136,8 @@ private extension WordCard {
     func hintBadge(icon: String, label: LocalizedStringKey, color: Color, active: Bool) -> some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: icon)
-                .font(.system(size: 24, weight: .bold))
+                .font(DesignBook.IconFont.medium)
+                .fontWeight(.bold)
             Text(label)
                 .font(DesignBook.Font.captionBold)
                 .textCase(.uppercase)
@@ -161,7 +162,7 @@ private extension WordCard {
             Spacer(minLength: 0)
 
             Text(word)
-                .font(.system(size: 56, weight: .bold, design: .rounded))
+                .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.4)

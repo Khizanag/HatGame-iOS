@@ -32,6 +32,7 @@ struct TeamFormView: View {
     @State private var hasRevealedDetails: Bool = false
 
     @FocusState private var focusedField: Field?
+    @ScaledMetric(relativeTo: .subheadline) private var playerBadgeSize: CGFloat = 24
 
     private let appConfiguration = AppConfiguration.shared
 
@@ -261,7 +262,7 @@ private extension TeamFormView {
             Text(verbatim: "\(index + 1)")
                 .font(DesignBook.Font.captionBold)
                 .foregroundStyle(DesignBook.Color.Text.accent)
-                .frame(width: 24, height: 24)
+                .frame(width: playerBadgeSize, height: playerBadgeSize)
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
                 .clipShape(Circle())
                 .monospacedDigit()
