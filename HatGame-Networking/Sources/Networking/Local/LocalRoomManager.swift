@@ -341,7 +341,7 @@ public final class LocalRoomManager: RoomManager {
         guard var room else { return }
         guard !room.players.contains(where: { $0.id == player.id }) else { return }
         room.players.append(player)
-        self.room = room
+        self.room = room.canonicallyOrdered()
         broadcastSnapshot()
         broadcastWords()
     }
@@ -393,7 +393,7 @@ public final class LocalRoomManager: RoomManager {
         guard var room else { return }
         let team = OnlineTeam(name: name, colorHex: colorHex)
         room.teams.append(team)
-        self.room = room
+        self.room = room.canonicallyOrdered()
         broadcastSnapshot()
     }
 

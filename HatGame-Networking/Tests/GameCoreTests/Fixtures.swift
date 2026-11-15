@@ -27,12 +27,13 @@ enum Fixture {
         )
     }
 
-    static func team(_ id: String, players: [String] = []) -> OnlineTeam {
+    static func team(_ id: String, players: [String] = [], createdOffset: TimeInterval = 0) -> OnlineTeam {
         OnlineTeam(
             id: id,
             name: "Team \(id)",
             colorHex: "#FF0000",
-            playerIds: players
+            playerIds: players,
+            createdAt: epoch.addingTimeInterval(createdOffset)
         )
     }
 

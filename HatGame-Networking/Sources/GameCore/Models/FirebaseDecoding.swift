@@ -17,8 +17,9 @@ import Foundation
 ///    Swift model defines them as `[T]`.
 ///
 /// This helper bridges both cases: returns `[]` when the key is missing, an
-/// array when the value is stored as one, or the dictionary's values
-/// otherwise.
+/// array when the value is stored as one, or the dictionary's values sorted
+/// by key otherwise. Dictionary iteration order is per-process, so without
+/// the sort two devices decoding the same snapshot disagree on element order.
 extension KeyedDecodingContainer {
     func decodeFirebaseCollection<T: Decodable>(
         _ type: [T].Type,
@@ -29,7 +30,7 @@ extension KeyedDecodingContainer {
             return asArray
         }
         let asDict = try decode([String: T].self, forKey: key)
-        return Array(asDict.values)
+        return asDict.sorted { $0.key < $1.key }.map(\.value)
     }
 
     /// Convenience for primitive-keyed dictionaries that Firebase may also

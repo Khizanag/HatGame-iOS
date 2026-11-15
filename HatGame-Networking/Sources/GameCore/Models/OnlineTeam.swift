@@ -12,17 +12,22 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
     public var name: String
     public var colorHex: String
     public var playerIds: [String]
+    /// Orders teams identically on every device. Optional because rooms
+    /// created before the field existed omit it.
+    public let createdAt: Date?
 
     public init(
         id: String = UUID().uuidString,
         name: String,
         colorHex: String,
-        playerIds: [String] = []
+        playerIds: [String] = [],
+        createdAt: Date? = Date()
     ) {
         self.id = id
         self.name = name
         self.colorHex = colorHex
         self.playerIds = playerIds
+        self.createdAt = createdAt
     }
 
     public func hash(into hasher: inout Hasher) {
@@ -37,7 +42,7 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
     /// `playerIds` is omitted from the stored snapshot when empty
     /// (Firebase strips empty arrays). Custom decoder defaults to [].
     private enum CodingKeys: String, CodingKey {
-        case id, name, colorHex, playerIds
+        case id, name, colorHex, playerIds, createdAt
     }
 
     public init(from decoder: Decoder) throws {
@@ -46,5 +51,6 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
         self.name = try container.decode(String.self, forKey: .name)
         self.colorHex = try container.decode(String.self, forKey: .colorHex)
         self.playerIds = (try? container.decode([String].self, forKey: .playerIds)) ?? []
+        self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
     }
 }

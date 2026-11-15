@@ -38,10 +38,21 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         self.hostId = hostId
         self.status = status
         self.settings = settings
-        self.teams = teams
-        self.players = players
+        self.teams = Self.canonicalOrder(teams)
+        self.players = Self.canonicalOrder(players)
         self.gameState = gameState
         self.createdAt = createdAt
+    }
+
+    /// The same room with `teams` and `players` in canonical order. Every
+    /// mutation that appends or removes elements returns through here so the
+    /// Multipeer host's in-memory order matches what its guests decode —
+    /// `OnlineGameState.currentTeamIndex` indexes into `teams`.
+    public func canonicallyOrdered() -> GameRoom {
+        var copy = self
+        copy.teams = Self.canonicalOrder(teams)
+        copy.players = Self.canonicalOrder(players)
+        return copy
     }
 
     // MARK: - Codable
@@ -58,8 +69,10 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         self.hostId = try container.decode(String.self, forKey: .hostId)
         self.status = try container.decode(RoomStatus.self, forKey: .status)
         self.settings = try container.decode(GameSettings.self, forKey: .settings)
-        self.teams = try container.decodeFirebaseCollection([OnlineTeam].self, forKey: .teams)
-        self.players = try container.decodeFirebaseCollection([OnlinePlayer].self, forKey: .players)
+        self.teams = Self.canonicalOrder(try container.decodeFirebaseCollection([OnlineTeam].self, forKey: .teams))
+        self.players = Self.canonicalOrder(
+            try container.decodeFirebaseCollection([OnlinePlayer].self, forKey: .players)
+        )
         self.gameState = try container.decodeIfPresent(OnlineGameState.self, forKey: .gameState)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
     }
@@ -78,6 +91,20 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         try container.encode(Self.keyedById(players), forKey: .players)
         try container.encodeIfPresent(gameState, forKey: .gameState)
         try container.encode(createdAt, forKey: .createdAt)
+    }
+
+    private static func canonicalOrder(_ teams: [OnlineTeam]) -> [OnlineTeam] {
+        teams.sorted { lhs, rhs in
+            let lhsDate = lhs.createdAt ?? .distantPast
+            let rhsDate = rhs.createdAt ?? .distantPast
+            return lhsDate == rhsDate ? lhs.id < rhs.id : lhsDate < rhsDate
+        }
+    }
+
+    private static func canonicalOrder(_ players: [OnlinePlayer]) -> [OnlinePlayer] {
+        players.sorted { lhs, rhs in
+            lhs.joinedAt == rhs.joinedAt ? lhs.id < rhs.id : lhs.joinedAt < rhs.joinedAt
+        }
     }
 
     private static func keyedById<Element: Identifiable>(_ elements: [Element]) -> [String: Element]
