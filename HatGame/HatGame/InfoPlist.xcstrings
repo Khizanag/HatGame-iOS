@@ -1,0 +1,60 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "CFBundleDisplayName" : {
+      "comment" : "Bundle display name",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hat Game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქუდობანა"
+          }
+        }
+      }
+    },
+    "NSBluetoothAlwaysUsageDescription" : {
+      "comment" : "Privacy - Bluetooth Always Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hat Game uses Bluetooth to discover nearby devices for offline party play."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქუდობანა Bluetooth-ს იყენებს ახლომდებარე მოწყობილობების მოსაძებნად, რომ ინტერნეტის გარეშე ერთად ითამაშოთ."
+          }
+        }
+      }
+    },
+    "NSLocalNetworkUsageDescription" : {
+      "comment" : "Privacy - Local Network Usage Description",
+      "extractionState" : "extracted_with_value",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hat Game uses the local network to find and connect to nearby devices for offline party play."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქუდობანა ლოკალურ ქსელს იყენებს ახლომდებარე მოწყობილობების მოსაძებნად და მათთან დასაკავშირებლად, რომ ინტერნეტის გარეშე ერთად ითამაშოთ."
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.1"
+}
