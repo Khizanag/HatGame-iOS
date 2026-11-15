@@ -33,7 +33,7 @@ struct AppIconCard: View {
             .padding(DesignBook.Spacing.md)
             .frame(maxWidth: .infinity)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
             .overlay {
                 RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
                     .stroke(isSelected ? icon.displayColor : .clear, lineWidth: isSelected ? 2 : 0)

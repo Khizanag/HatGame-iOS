@@ -183,7 +183,7 @@ private extension NextTeamView {
                             .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingExplainer)
                             .padding(DesignBook.Spacing.sm)
                             .background(DesignBook.Color.Background.secondary)
-                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     }
                     .disabled(isRandomizingExplainer || team.players.count < 2)
                     .accessibilityLabel(Text(localized("game.nextTeam.shuffleExplainer")))
@@ -337,7 +337,7 @@ private extension NextTeamView {
         .padding(DesignBook.Spacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(team.color.opacity(DesignBook.Opacity.light))
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 
     var guessersList: some View {
@@ -359,7 +359,7 @@ private extension NextTeamView {
         .padding(DesignBook.Spacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 
     var buttonsSection: some View {

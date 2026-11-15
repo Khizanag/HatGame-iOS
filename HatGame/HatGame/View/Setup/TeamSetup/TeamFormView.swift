@@ -131,7 +131,7 @@ private extension TeamFormView {
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused($focusedField, equals: .teamName)
                     .onSubmit { focusedField = nil }
 
@@ -224,7 +224,7 @@ private extension TeamFormView {
                 .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
                 .padding(DesignBook.Spacing.sm)
                 .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                 .contentShape(Rectangle())
             }
         }
@@ -279,7 +279,7 @@ private extension TeamFormView {
             .foregroundStyle(DesignBook.Color.Text.primary)
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.secondary)
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
             .focused($focusedField, equals: .player(index))
             .onSubmit {
                 let nextIndex = index + 1

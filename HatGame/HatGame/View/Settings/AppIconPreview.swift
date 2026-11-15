@@ -22,7 +22,7 @@ struct AppIconPreview: View {
                 endPoint: .bottomTrailing
             )
             .frame(width: size, height: size)
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
             .shadow(color: icon.displayColor.opacity(0.3), radius: 8, x: 0, y: 4)
 
             Image(systemName: icon.iconSymbol)

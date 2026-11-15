@@ -112,7 +112,7 @@ private extension RandomizationView {
                     .padding(.horizontal, DesignBook.Spacing.md)
                     .padding(.vertical, DesignBook.Spacing.sm)
                     .background(DesignBook.Color.Text.accent.opacity(0.1))
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                 }
                 .buttonStyle(.plain)
                 .disabled(isRandomizingTeam)
@@ -391,7 +391,7 @@ private extension RevealedTeamCard {
         .padding(DesignBook.Spacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background(DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 }
 

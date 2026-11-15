@@ -101,7 +101,7 @@ private extension DeveloperInfoView {
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
 
@@ -130,7 +130,7 @@ private extension DeveloperInfoView {
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
 
@@ -161,7 +161,7 @@ private extension DeveloperInfoView {
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
 
@@ -204,7 +204,7 @@ private extension DeveloperInfoView {
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
 
@@ -250,13 +250,13 @@ private extension DeveloperInfoView {
                         }
                         .padding(DesignBook.Spacing.sm)
                         .background(Color.green.opacity(0.1))
-                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     }
                 }
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
 }

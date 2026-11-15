@@ -112,7 +112,7 @@ private extension FeedbackView {
                 .focused($isMessageFocused)
                 .padding(DesignBook.Spacing.md)
                 .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
             }
         }
     }

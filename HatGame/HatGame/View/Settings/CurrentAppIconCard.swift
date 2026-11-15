@@ -34,7 +34,7 @@ struct CurrentAppIconCard: View {
             }
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
 }

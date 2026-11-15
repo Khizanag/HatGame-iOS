@@ -156,7 +156,7 @@ private extension TeamTurnResultsView {
                             .padding(DesignBook.Spacing.sm)
                             .frame(maxWidth: .infinity)
                             .background(DesignBook.Color.Background.secondary)
-                            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     }
                 }
             }

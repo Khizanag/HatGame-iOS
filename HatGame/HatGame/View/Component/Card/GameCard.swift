@@ -20,7 +20,7 @@ struct GameCard<Content: View>: View {
             .padding(DesignBook.Spacing.md)
             .frame(maxWidth: .infinity)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
             .shadow(.large)
     }
 }

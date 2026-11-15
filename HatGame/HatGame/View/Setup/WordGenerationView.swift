@@ -166,7 +166,7 @@ private extension WordGenerationView {
             .padding(.vertical, DesignBook.Spacing.lg)
             .padding(.horizontal, DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.card)
-            .cornerRadius(DesignBook.Size.cardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
             .opacity(phase == .generating ? 1 : 0)
             .contentTransition(.opacity)
             .accessibilityHidden(true)

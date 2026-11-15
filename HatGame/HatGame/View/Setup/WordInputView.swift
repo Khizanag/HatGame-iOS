@@ -181,7 +181,7 @@ private extension WordInputView {
             .foregroundStyle(DesignBook.Color.Text.primary)
             .padding(DesignBook.Spacing.md)
             .background(DesignBook.Color.Background.secondary)
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
             .focused($isWordFieldFocused)
             .onSubmit {
                 guard !isAddWordButtonDisabled else { return }
@@ -500,7 +500,7 @@ private struct WordRow: View {
         }
         .padding(DesignBook.Spacing.md)
         .background(DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 }
 
