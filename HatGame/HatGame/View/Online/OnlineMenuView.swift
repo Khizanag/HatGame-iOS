@@ -7,10 +7,15 @@
 
 import DesignBook
 import Navigation
+import Networking
 import SwiftUI
 
 struct OnlineMenuView: View {
     @Environment(Navigator.self) private var navigator
+
+    /// A build without a database URL cannot reach any room, so the entry
+    /// point says so up front instead of failing four screens in.
+    private var isOnlineAvailable: Bool { Networking.isConfigured }
 
     var body: some View {
         content
@@ -31,10 +36,29 @@ private extension OnlineMenuView {
                 animation: .pulse
             )
             Spacer()
-            actionButtons
+            if isOnlineAvailable {
+                actionButtons
+            } else {
+                unavailableNotice
+            }
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.lg)
+    }
+
+    var unavailableNotice: some View {
+        GameCard {
+            HStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: "icloud.slash")
+                    .font(DesignBook.IconFont.medium)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                    .accessibilityHidden(true)
+                Text(NetworkingError.firebaseNotConfigured.localizedDescription)
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+            }
+        }
     }
 
     var actionButtons: some View {

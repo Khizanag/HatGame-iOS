@@ -30,7 +30,8 @@ public enum NetworkingError: Error, LocalizedError {
         case .notAuthorized:
             return "Not authorized to perform this action"
         case .firebaseNotConfigured:
-            return "Firebase is not configured. Please check your GoogleService-Info.plist"
+            // The developer diagnostic is logged by Networking.configure().
+            return "Online play isn't available in this version of the app. Play Nearby still works."
         case .timeout:
             return "Operation timed out. Please check your internet connection"
         case .unsupportedVersion:
