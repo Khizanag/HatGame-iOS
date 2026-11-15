@@ -148,6 +148,8 @@ private extension OnlineRoundResultsView {
                     HStack(spacing: DesignBook.Spacing.md) {
                         Text(verbatim: "\(rank + 1)")
                             .font(DesignBook.Font.captionBold)
+                            // White rank numeral sits on a colored team badge.
+                            // swiftlint:disable:next no_raw_foreground_white_black
                             .foregroundStyle(.white)
                             .frame(width: 28, height: 28)
                             .background {
@@ -273,7 +275,7 @@ private extension OnlineGameRound {
         switch self {
         case .first: localized("round.first.title")
         case .second: localized("round.second.title")
-        case .third: localized("round.third.title")
+        case .third, .unsupported: localized("round.third.title")
         }
     }
 
@@ -281,7 +283,7 @@ private extension OnlineGameRound {
         switch self {
         case .first: localized("round.first.description")
         case .second: localized("round.second.description")
-        case .third: localized("round.third.description")
+        case .third, .unsupported: localized("round.third.description")
         }
     }
 }

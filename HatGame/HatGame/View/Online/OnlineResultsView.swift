@@ -79,7 +79,9 @@ private extension OnlineResultsView {
                     .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.4), radius: 18, x: 0, y: 8)
 
                 Image(systemName: "trophy.fill")
-                    .font(.system(size: 44, weight: .bold))
+                    .font(DesignBook.IconFont.extraLarge.bold())
+                    // Trophy glyph sits on the celebration gradient disc.
+                    // swiftlint:disable:next no_raw_foreground_white_black
                     .foregroundStyle(.white)
                     .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: hasCelebrated)
             }
@@ -226,7 +228,7 @@ private extension OnlineGameRound {
         switch self {
         case .first: localized("round.first.title")
         case .second: localized("round.second.title")
-        case .third: localized("round.third.title")
+        case .third, .unsupported: localized("round.third.title")
         }
     }
 }

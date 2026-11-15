@@ -13,18 +13,35 @@ public enum GamePhase: String, Codable, Sendable {
     case turnResults
     case roundResults
     case finished
+    /// A phase written by a newer build; see `RoomStatus.unsupported`.
+    case unsupported
+
+    public init(from decoder: Decoder) throws {
+        let rawValue = try decoder.singleValueContainer().decode(String.self)
+        self = GamePhase(rawValue: rawValue) ?? .unsupported
+    }
 }
 
 public enum OnlineGameRound: Int, Codable, CaseIterable, Sendable {
+    /// A round written by a newer build; see `RoomStatus.unsupported`.
+    case unsupported = 0
     case first = 1
     case second = 2
     case third = 3
+
+    /// The playable rounds, in order. `unsupported` is deliberately absent.
+    public static let allCases: [OnlineGameRound] = [.first, .second, .third]
+
+    public init(from decoder: Decoder) throws {
+        let rawValue = try decoder.singleValueContainer().decode(Int.self)
+        self = OnlineGameRound(rawValue: rawValue) ?? .unsupported
+    }
 
     public var next: OnlineGameRound? {
         switch self {
         case .first: .second
         case .second: .third
-        case .third: nil
+        case .third, .unsupported: nil
         }
     }
 }
@@ -87,9 +104,14 @@ public struct OnlineGameState: Codable, Sendable {
         teamExplainerIndices[teamId] ?? 0
     }
 
+    public var isSupported: Bool {
+        phase != .unsupported && currentRound != .unsupported
+    }
+
     // MARK: - Codable
-    /// Firebase strips empty arrays/dicts and rewrites scores with
-    /// non-string keys. Custom decoder defaults each collection to empty.
+    /// Firebase strips empty arrays/dicts, so a missing collection decodes as
+    /// empty. A present-but-malformed value throws rather than silently
+    /// resetting — a reset would wipe every team's score.
     private enum CodingKeys: String, CodingKey {
         case currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
              remainingWordIds, allWordIds, scores, phase, activePlayerId,
@@ -100,15 +122,18 @@ public struct OnlineGameState: Codable, Sendable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.currentRound = try container.decode(OnlineGameRound.self, forKey: .currentRound)
         self.currentTeamIndex = try container.decode(Int.self, forKey: .currentTeamIndex)
-        self.teamExplainerIndices = (try? container.decode([String: Int].self, forKey: .teamExplainerIndices)) ?? [:]
+        self.teamExplainerIndices = try container.decodeIfPresent(
+            [String: Int].self,
+            forKey: .teamExplainerIndices
+        ) ?? [:]
         self.currentWordId = try container.decodeIfPresent(String.self, forKey: .currentWordId)
-        self.remainingWordIds = (try? container.decode([String].self, forKey: .remainingWordIds)) ?? []
-        self.allWordIds = (try? container.decode([String].self, forKey: .allWordIds)) ?? []
-        self.scores = (try? container.decode([String: [OnlineGameRound: Int]].self, forKey: .scores)) ?? [:]
+        self.remainingWordIds = try container.decodeIfPresent([String].self, forKey: .remainingWordIds) ?? []
+        self.allWordIds = try container.decodeIfPresent([String].self, forKey: .allWordIds) ?? []
+        self.scores = try container.decodeIfPresent([String: [OnlineGameRound: Int]].self, forKey: .scores) ?? [:]
         self.phase = try container.decode(GamePhase.self, forKey: .phase)
         self.activePlayerId = try container.decodeIfPresent(String.self, forKey: .activePlayerId)
         self.timerStartedAt = try container.decodeIfPresent(Date.self, forKey: .timerStartedAt)
         self.roundDuration = try container.decode(Int.self, forKey: .roundDuration)
-        self.isSkippingEnabled = (try? container.decode(Bool.self, forKey: .isSkippingEnabled)) ?? true
+        self.isSkippingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSkippingEnabled) ?? true
     }
 }

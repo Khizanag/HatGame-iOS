@@ -292,6 +292,7 @@ public enum NetworkingError: Error, LocalizedError {
     case notAuthorized
     case firebaseNotConfigured
     case timeout
+    case unsupportedVersion
 
     public var errorDescription: String? {
         switch self {
@@ -309,6 +310,8 @@ public enum NetworkingError: Error, LocalizedError {
             return "Firebase is not configured. Please check your GoogleService-Info.plist"
         case .timeout:
             return "Operation timed out. Please check your internet connection"
+        case .unsupportedVersion:
+            return "This room was created by a newer version of Hat Game. Update the app to join it."
         }
     }
 }

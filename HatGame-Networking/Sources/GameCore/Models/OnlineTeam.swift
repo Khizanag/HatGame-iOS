@@ -40,7 +40,7 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
 
     // MARK: - Codable
     /// `playerIds` is omitted from the stored snapshot when empty
-    /// (Firebase strips empty arrays). Custom decoder defaults to [].
+    /// (Firebase strips empty arrays): missing decodes as [], malformed throws.
     private enum CodingKeys: String, CodingKey {
         case id, name, colorHex, playerIds, createdAt
     }
@@ -50,7 +50,7 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
         self.id = try container.decode(String.self, forKey: .id)
         self.name = try container.decode(String.self, forKey: .name)
         self.colorHex = try container.decode(String.self, forKey: .colorHex)
-        self.playerIds = (try? container.decode([String].self, forKey: .playerIds)) ?? []
+        self.playerIds = try container.decodeIfPresent([String].self, forKey: .playerIds) ?? []
         self.createdAt = try container.decodeIfPresent(Date.self, forKey: .createdAt)
     }
 }

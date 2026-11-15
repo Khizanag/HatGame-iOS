@@ -12,6 +12,18 @@ public enum RoomStatus: String, Codable, Sendable {
     case setup
     case playing
     case finished
+    /// A status written by a newer build. Decoding never fails on it, so an
+    /// older client can show "update the app" instead of losing the room.
+    case unsupported
+
+    public init(from decoder: Decoder) throws {
+        let rawValue = try decoder.singleValueContainer().decode(String.self)
+        self = RoomStatus(rawValue: rawValue) ?? .unsupported
+    }
+
+    public var isLobby: Bool {
+        self == .waiting || self == .setup
+    }
 }
 
 public struct GameRoom: Codable, Identifiable, Sendable {
@@ -53,6 +65,12 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         copy.teams = Self.canonicalOrder(teams)
         copy.players = Self.canonicalOrder(players)
         return copy
+    }
+
+    /// False when a newer build wrote a status, phase, or round this build
+    /// cannot interpret.
+    public var isSupported: Bool {
+        status != .unsupported && gameState?.isSupported != false
     }
 
     // MARK: - Codable

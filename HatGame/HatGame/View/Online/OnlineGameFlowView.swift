@@ -18,6 +18,7 @@ import SwiftUI
 struct OnlineGameFlowView: View {
     @Environment(RoomManager.self) private var roomManager
     @Environment(GameSyncManager.self) private var gameSyncManager
+    @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var hasInitializedGame: Bool = false
@@ -52,16 +53,33 @@ struct OnlineGameFlowView: View {
 private extension OnlineGameFlowView {
     @ViewBuilder
     var content: some View {
-        switch roomStatus {
-        case .waiting, .setup:
-            RoomLobbyView().transition(.opacity)
-        case .playing:
-            playingContent.transition(.opacity)
-        case .finished:
-            OnlineResultsView().transition(.opacity)
-        case nil:
-            joiningState.transition(.opacity)
+        if room?.isSupported == false {
+            unsupportedState.transition(.opacity)
+        } else {
+            switch roomStatus {
+            case .waiting, .setup:
+                RoomLobbyView().transition(.opacity)
+            case .playing:
+                playingContent.transition(.opacity)
+            case .finished:
+                OnlineResultsView().transition(.opacity)
+            case .unsupported:
+                unsupportedState.transition(.opacity)
+            case nil:
+                joiningState.transition(.opacity)
+            }
         }
+    }
+
+    /// A newer build wrote a status, phase, or round this one can't read.
+    var unsupportedState: some View {
+        OnlineNoticeView(
+            symbol: "arrow.down.app",
+            title: localized("common.error"),
+            message: NetworkingError.unsupportedVersion.localizedDescription,
+            actionTitle: localized("local.session.hostLost.action"),
+            action: leaveUnsupportedRoom
+        )
     }
 
     /// First-load state before the Firebase room observer delivers a
@@ -126,7 +144,15 @@ private extension OnlineGameFlowView {
         case .turnResults: OnlineTurnResultsView()
         case .roundResults: OnlineRoundResultsView()
         case .finished: OnlineResultsView()
+        case .unsupported: unsupportedState
         case nil: OnlineWaitingView(message: localized("online.preparingGame"))
+        }
+    }
+
+    func leaveUnsupportedRoom() {
+        Task {
+            try? await roomManager.leaveRoom()
+            navigator.dismiss()
         }
     }
 

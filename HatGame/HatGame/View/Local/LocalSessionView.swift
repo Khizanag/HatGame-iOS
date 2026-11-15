@@ -55,10 +55,7 @@ struct LocalSessionView: View {
                 }
             }
             .alert("local.session.hostLost", isPresented: $showHostLostAlert) {
-                Button("local.session.hostLost.action", role: .cancel) {
-                    Task { try? await localRoomManager.leaveRoom() }
-                    navigator.popToRoot()
-                }
+                Button("local.session.hostLost.action", role: .cancel, action: leaveSession)
             } message: {
                 Text(localized("local.session.hostLost.message"))
             }
@@ -124,16 +121,38 @@ struct LocalSessionView: View {
 private extension LocalSessionView {
     @ViewBuilder
     var content: some View {
-        switch roomStatus {
-        case .waiting, .setup:
-            RoomLobbyView().transition(.opacity)
-        case .playing:
-            playingContent.transition(.opacity)
-        case .finished:
-            OnlineResultsView().transition(.opacity)
-        case nil:
-            connectingState.transition(.opacity)
+        if room?.isSupported == false {
+            unsupportedState.transition(.opacity)
+        } else {
+            switch roomStatus {
+            case .waiting, .setup:
+                RoomLobbyView().transition(.opacity)
+            case .playing:
+                playingContent.transition(.opacity)
+            case .finished:
+                OnlineResultsView().transition(.opacity)
+            case .unsupported:
+                unsupportedState.transition(.opacity)
+            case nil:
+                connectingState.transition(.opacity)
+            }
         }
+    }
+
+    /// The host runs a newer build whose snapshot this one can't read.
+    var unsupportedState: some View {
+        OnlineNoticeView(
+            symbol: "arrow.down.app",
+            title: localized("common.error"),
+            message: NetworkingError.unsupportedVersion.localizedDescription,
+            actionTitle: localized("local.session.hostLost.action"),
+            action: leaveSession
+        )
+    }
+
+    func leaveSession() {
+        Task { try? await localRoomManager.leaveRoom() }
+        navigator.popToRoot()
     }
 
     /// Shown while the snapshot from the host hasn't arrived yet — the
@@ -197,6 +216,7 @@ private extension LocalSessionView {
         case .turnResults: OnlineTurnResultsView()
         case .roundResults: OnlineRoundResultsView()
         case .finished: OnlineResultsView()
+        case .unsupported: unsupportedState
         case nil: OnlineWaitingView(message: localized("online.preparingGame"))
         }
     }

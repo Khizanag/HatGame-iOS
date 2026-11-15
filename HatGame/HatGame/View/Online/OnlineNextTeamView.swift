@@ -308,7 +308,7 @@ private extension OnlineGameRound {
         switch self {
         case .first: localized("round.first.title")
         case .second: localized("round.second.title")
-        case .third: localized("round.third.title")
+        case .third, .unsupported: localized("round.third.title")
         }
     }
 }
