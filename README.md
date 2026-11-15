@@ -1,4 +1,4 @@
-# Hat Game (iOS)
+# Hat Game
 
 A SwiftUI party game. Players explain words to their teammates against a timer across three rounds. Play on one device passed around the room, online with friends anywhere, or with people on the same Wi-Fi network.
 
@@ -54,7 +54,7 @@ After all three rounds, the highest total score wins.
 
 ## Technical overview
 
-- **Platform:** iOS 26.0+
+- **Platforms:** iOS, macOS, and visionOS 26.0+ — one multiplatform target.
 - **UI:** SwiftUI with the Observation framework (`@Observable`); Swift Concurrency throughout.
 - **Multiplayer:** Firebase Realtime Database (online) and MultipeerConnectivity (nearby).
 - **Modularization:** three local Swift packages — `Navigation`, `Networking`, `DesignBook`.
@@ -95,7 +95,7 @@ cd HatGame-iOS
 open HatGame/HatGame.xcodeproj
 ```
 
-Select an iOS 26 simulator (or a device) and run with ⌘R. Xcode resolves the three local packages automatically; there is no `.xcworkspace`.
+Select an iOS 26 simulator, a device, or My Mac, and run with ⌘R. Xcode resolves the three local packages automatically; there is no `.xcworkspace`.
 
 ## License
 

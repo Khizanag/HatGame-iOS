@@ -1,12 +1,12 @@
 # Development Guide
 
-Technical reference for the Hat Game iOS project — architecture, conventions, and workflows. For product-level rules and quick start, see [README.md](README.md). For the condensed agent reference, see [CLAUDE.md](CLAUDE.md).
+Technical reference for the Hat Game project — architecture, conventions, and workflows. For product-level rules and quick start, see [README.md](README.md). For the condensed agent reference, see [CLAUDE.md](CLAUDE.md).
 
-> Last updated: 2026-06-08.
+> Last updated: 2026-11-16.
 
 ## Technical stack
 
-- **Deployment target:** iOS 26.0.
+- **Platforms:** one multiplatform target for iOS, macOS, and visionOS, deployment target 26.0 on all three. Platform differences live in `Extensions/CrossPlatform.swift`.
 - **UI:** SwiftUI, Observation framework (`@Observable` — never `@ObservableObject`).
 - **Concurrency:** Swift Concurrency (`async`/`await`, `@MainActor`); app target builds in Swift 5 language mode with approachable concurrency enabled, packages use swift-tools 6.x.
 - **Persistence:** `UserDefaults` for settings; Firebase Realtime Database for online rooms; no local database.
@@ -139,16 +139,26 @@ xcodebuild ... test -only-testing:HatGameTests/HatGameTests/skippingDisabledKeep
 - **Nearby requirements:** `Info.plist` must keep `NSLocalNetworkUsageDescription`, `NSBluetoothAlwaysUsageDescription`, and `NSBonjourServices` (`_hg-hat-game._tcp` / `._udp`). Removing them breaks discovery.
 - **Logging:** `OSLog` with subsystem `com.khizanag.hat-game`.
 
+## App Store configuration
+
+- **Privacy manifest:** `HatGame/HatGame/PrivacyInfo.xcprivacy` declares the `UserDefaults` reason (`CA92.1`) and the data sent to Firebase. Update it, and the App Privacy answers in App Store Connect, whenever the app sends something new.
+- **Permission prompts and display name:** localized in `HatGame/HatGame/InfoPlist.xcstrings` (English and Georgian).
+- **App icons:** the primary `AppIcon` carries iOS and macOS sizes. The four alternates are iOS-only and compile through `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES`; actool writes `CFBundleIcons`, so never add it to `Info.plist` by hand. Icons must have no alpha channel — run `swift Scripts/flatten-icons.swift <png>...` on new artwork.
+- **Export compliance:** `ITSAppUsesNonExemptEncryption = NO` is set as a build setting.
+
 ## Build and run
 
-No `.xcworkspace` — build with `-project` (local packages resolve automatically). Scheme `HatGame`, iOS 26 destination.
+No `.xcworkspace` — build with `-project` (local packages resolve automatically). The shared scheme `HatGame` is committed; it tests `HatGameTests` and `HatGameUITests` and gathers coverage for the app target. Use an iOS 26 destination.
 
 ```bash
 xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
-  -destination 'platform=iOS Simulator,name=iPhone 16' build
+  -destination 'platform=iOS Simulator,name=iPhone 17' build
 
 xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
-  -destination 'platform=iOS Simulator,name=iPhone 16' test
+  -destination 'platform=iOS Simulator,name=iPhone 17' test
+
+xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
+  -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build
 
 swiftlint lint --strict
 ```
@@ -157,9 +167,12 @@ swiftlint lint --strict
 
 - Imperative commit subjects under ~72 characters; explain the *why* in the body only when non-obvious.
 - **No AI attribution** in commits or PRs — no "Generated with" footers, no `Co-Authored-By` trailers.
-- Work on branches (`feature/*`, `bugfix/*`, `hotfix/*`); never commit directly to `master`. Keep PRs focused.
+- Solo repo: commit directly to `main` and push. No feature branches or PRs.
 - Commit `GoogleService-Info.plist` (it is not a secret); the only sensitive value is the `FIREBASE_SERVICE_ACCOUNT` GitHub Actions secret used to deploy database rules.
 
 ## Continuous integration
 
-The single workflow (`.github/workflows/firebase-database-rules.yml`) deploys `database.rules.json` to Firebase when it changes on `master`. There is no build or test CI — run builds, tests, and SwiftLint locally before pushing.
+Two GitHub Actions workflows:
+
+- `.github/workflows/ci.yml` — on push to `main` and on demand: `swiftlint lint --strict`, `HatGameTests` on an iOS 26 simulator with the newest Xcode 26, and an unsigned macOS build.
+- `.github/workflows/firebase-database-rules.yml` — deploys `database.rules.json` to Firebase when it changes on `main`.
