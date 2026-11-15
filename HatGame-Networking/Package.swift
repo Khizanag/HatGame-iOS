@@ -33,5 +33,9 @@ let package = Package(
             name: "GameCoreTests",
             dependencies: ["GameCore"]
         ),
+        .testTarget(
+            name: "NetworkingTests",
+            dependencies: ["Networking"]
+        ),
     ]
 )

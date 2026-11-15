@@ -8,9 +8,20 @@
 import FirebaseCore
 import FirebaseDatabase
 import Foundation
+import OSLog
+
+private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "FirebaseService")
 
 public final class FirebaseService: @unchecked Sendable {
     public static let shared = FirebaseService()
+
+    /// Every read and write is bounded. With offline persistence enabled a
+    /// write's completion waits for the server, so without a bound an
+    /// offline device spins forever.
+    enum Timeouts {
+        static let read: Duration = .seconds(10)
+        static let write: Duration = .seconds(10)
+    }
 
     private var database: Database {
         Database.database()
@@ -38,36 +49,23 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Room Operations
     public func createRoom(_ room: GameRoom) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let roomData = try encodeToDict(room)
-        try await roomsRef.child(room.id).setValue(roomData)
+        try await write { [self] in
+            _ = try await roomsRef.child(room.id).setValue(encodeToDict(room))
+        }
     }
 
     public func getRoom(id: String) async throws -> GameRoom? {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        return try await withTimeout(seconds: 10) {
-            try await withCheckedThrowingContinuation { continuation in
-                self.roomsRef.child(id).observeSingleEvent(of: .value) { snapshot in
-                    guard snapshot.exists(), let data = snapshot.value else {
-                        continuation.resume(returning: nil)
-                        return
-                    }
-                    do {
-                        let room = try self.decode(GameRoom.self, from: data)
-                        continuation.resume(returning: room)
-                    } catch {
-                        continuation.resume(throwing: error)
-                    }
-                } withCancel: { error in
-                    continuation.resume(throwing: error)
-                }
-            }
+        try await read { [self] in
+            let snapshot = try await roomsRef.child(id).getData()
+            guard snapshot.exists(), let value = snapshot.value else { return nil }
+            return try decode(GameRoom.self, from: value)
         }
     }
 
     public func deleteRoom(id: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        try await roomsRef.child(id).removeValue()
+        try await write { [self] in
+            _ = try await roomsRef.child(id).removeValue()
+        }
     }
 
     public func observeRoom(id: String, onChange: @escaping (GameRoom?) -> Void) -> DatabaseHandle {
@@ -84,7 +82,7 @@ public final class FirebaseService: @unchecked Sendable {
                 let room = try self.decode(GameRoom.self, from: data)
                 onChange(room)
             } catch {
-                print("Failed to decode room: \(error)")
+                logger.error("Failed to decode room \(id, privacy: .public): \(error, privacy: .public)")
                 onChange(nil)
             }
         }
@@ -96,38 +94,34 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Player Operations
     public func addPlayer(_ player: OnlinePlayer, toRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let playerData = try encodeToDict(player)
-        try await roomsRef.child(roomId).child("players").child(player.id).setValue(playerData)
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("players").child(player.id).setValue(encodeToDict(player))
+        }
     }
 
     public func updatePlayer(_ player: OnlinePlayer, inRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let playerData = try encodeToDict(player)
-        try await roomsRef.child(roomId).child("players").child(player.id).setValue(playerData)
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("players").child(player.id).setValue(encodeToDict(player))
+        }
     }
 
     public func removePlayer(playerId: String, fromRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        try await roomsRef.child(roomId).child("players").child(playerId).removeValue()
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("players").child(playerId).removeValue()
+        }
     }
 
     // MARK: - Team Operations
     public func addTeam(_ team: OnlineTeam, toRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let teamData = try encodeToDict(team)
-        try await roomsRef.child(roomId).child("teams").child(team.id).setValue(teamData)
-    }
-
-    public func updateTeam(_ team: OnlineTeam, inRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let teamData = try encodeToDict(team)
-        try await roomsRef.child(roomId).child("teams").child(team.id).setValue(teamData)
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("teams").child(team.id).setValue(encodeToDict(team))
+        }
     }
 
     public func removeTeam(teamId: String, fromRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        try await roomsRef.child(roomId).child("teams").child(teamId).removeValue()
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("teams").child(teamId).removeValue()
+        }
     }
 
     /// Atomically reassigns a player to a team: clears the previous team's
@@ -142,33 +136,33 @@ public final class FirebaseService: @unchecked Sendable {
         teams: [OnlineTeam],
         inRoomId roomId: String
     ) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await write { [self] in
+            var updates: [String: Any] = [:]
+            updates["players/\(playerId)/teamId"] = newTeamId as Any? ?? NSNull()
 
-        var updates: [String: Any] = [:]
-        updates["players/\(playerId)/teamId"] = newTeamId as Any? ?? NSNull()
+            if let previousTeamId, let previous = teams.first(where: { $0.id == previousTeamId }) {
+                updates["teams/\(previousTeamId)/playerIds"] = previous.playerIds.filter { $0 != playerId }
+            }
 
-        if let previousTeamId, let previous = teams.first(where: { $0.id == previousTeamId }) {
-            updates["teams/\(previousTeamId)/playerIds"] = previous.playerIds.filter { $0 != playerId }
+            if let newTeamId, let next = teams.first(where: { $0.id == newTeamId }) {
+                var ids = next.playerIds.filter { $0 != playerId }
+                ids.append(playerId)
+                updates["teams/\(newTeamId)/playerIds"] = ids
+            }
+
+            _ = try await roomsRef.child(roomId).updateChildValues(updates)
         }
-
-        if let newTeamId, let next = teams.first(where: { $0.id == newTeamId }) {
-            var ids = next.playerIds.filter { $0 != playerId }
-            ids.append(playerId)
-            updates["teams/\(newTeamId)/playerIds"] = ids
-        }
-
-        try await roomsRef.child(roomId).updateChildValues(updates)
     }
 
     // MARK: - Word Operations
     public func addWords(_ words: [OnlineWord], toRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        var updates: [String: Any] = [:]
-        for word in words {
-            let wordData = try encodeToDict(word)
-            updates["words/\(word.id)"] = wordData
+        try await write { [self] in
+            var updates: [String: Any] = [:]
+            for word in words {
+                updates["words/\(word.id)"] = try encodeToDict(word)
+            }
+            _ = try await roomsRef.child(roomId).updateChildValues(updates)
         }
-        try await roomsRef.child(roomId).updateChildValues(updates)
     }
 
     /// Host-only automatic word source. Writes the generated pool AND flips
@@ -181,58 +175,48 @@ public final class FirebaseService: @unchecked Sendable {
         markSubmittedPlayerIds playerIds: [String],
         toRoomId roomId: String
     ) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        var updates: [String: Any] = [:]
-        for word in words {
-            updates["words/\(word.id)"] = try encodeToDict(word)
+        try await write { [self] in
+            var updates: [String: Any] = [:]
+            for word in words {
+                updates["words/\(word.id)"] = try encodeToDict(word)
+            }
+            for playerId in playerIds {
+                updates["players/\(playerId)/hasSubmittedWords"] = true
+            }
+            _ = try await roomsRef.child(roomId).updateChildValues(updates)
         }
-        for playerId in playerIds {
-            updates["players/\(playerId)/hasSubmittedWords"] = true
-        }
-        try await roomsRef.child(roomId).updateChildValues(updates)
     }
 
+    /// The room's word pool. A malformed entry throws rather than silently
+    /// shrinking the hat.
     public func getWords(forRoomId roomId: String) async throws -> [OnlineWord] {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        return try await withTimeout(seconds: 10) {
-            try await withCheckedThrowingContinuation { continuation in
-                self.roomsRef.child(roomId).child("words").observeSingleEvent(of: .value) { snapshot in
-                    guard snapshot.exists(), let data = snapshot.value as? [String: Any] else {
-                        continuation.resume(returning: [])
-                        return
-                    }
-
-                    var words: [OnlineWord] = []
-                    for (_, wordData) in data {
-                        if let word = try? self.decode(OnlineWord.self, from: wordData) {
-                            words.append(word)
-                        }
-                    }
-                    continuation.resume(returning: words)
-                } withCancel: { error in
-                    continuation.resume(throwing: error)
-                }
-            }
+        try await read { [self] in
+            let snapshot = try await roomsRef.child(roomId).child("words").getData()
+            guard snapshot.exists(), let value = snapshot.value else { return [] }
+            return try decode([String: OnlineWord].self, from: value)
+                .sorted { $0.key < $1.key }
+                .map(\.value)
         }
     }
 
     // MARK: - Game State Operations
     public func updateGameState(_ state: OnlineGameState, forRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let stateData = try encodeToDict(state)
-        try await roomsRef.child(roomId).child("gameState").setValue(stateData)
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("gameState").setValue(encodeToDict(state))
+        }
     }
 
     public func updateRoomStatus(_ status: RoomStatus, forRoomId roomId: String) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        try await roomsRef.child(roomId).child("status").setValue(status.rawValue)
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).child("status").setValue(status.rawValue)
+        }
     }
 
     // MARK: - Feedback
     public func submitFeedback(_ feedback: Feedback) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let data = try encodeToDict(feedback)
-        try await feedbackRef.child(feedback.id).setValue(data)
+        try await write { [self] in
+            _ = try await feedbackRef.child(feedback.id).setValue(encodeToDict(feedback))
+        }
     }
 
     // MARK: - Room Code Generation
@@ -242,9 +226,21 @@ public final class FirebaseService: @unchecked Sendable {
         let code = String((0..<6).map { _ in characters.randomElement()! })
         return code
     }
+}
 
-    // MARK: - Helpers
-    private func encodeToDict<T: Encodable>(_ value: T) throws -> [String: Any] {
+// MARK: - Helpers
+private extension FirebaseService {
+    func read<T: Sendable>(_ operation: @escaping @Sendable () async throws -> T) async throws -> T {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        return try await withTimeout(Timeouts.read, operation: operation)
+    }
+
+    func write(_ operation: @escaping @Sendable () async throws -> Void) async throws {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        try await withTimeout(Timeouts.write, operation: operation)
+    }
+
+    func encodeToDict<T: Encodable>(_ value: T) throws -> [String: Any] {
         let data = try JSONEncoder().encode(value)
         guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
             throw NetworkingError.encodingFailed
@@ -252,60 +248,8 @@ public final class FirebaseService: @unchecked Sendable {
         return dict
     }
 
-    private func decode<T: Decodable>(_ type: T.Type, from value: Any) throws -> T {
+    func decode<T: Decodable>(_ type: T.Type, from value: Any) throws -> T {
         let data = try JSONSerialization.data(withJSONObject: value)
         return try JSONDecoder().decode(type, from: data)
-    }
-
-    private func withTimeout<T: Sendable>(
-        seconds: TimeInterval,
-        operation: @Sendable @escaping () async throws -> T
-    ) async throws -> T {
-        try await withThrowingTaskGroup(of: T.self) { group in
-            group.addTask {
-                try await operation()
-            }
-
-            group.addTask {
-                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
-                throw NetworkingError.timeout
-            }
-
-            let result = try await group.next()!
-            group.cancelAll()
-            return result
-        }
-    }
-}
-
-public enum NetworkingError: Error, LocalizedError {
-    case roomNotFound
-    case failedToGenerateRoomCode
-    case encodingFailed
-    case decodingFailed
-    case notAuthorized
-    case firebaseNotConfigured
-    case timeout
-    case unsupportedVersion
-
-    public var errorDescription: String? {
-        switch self {
-        case .roomNotFound:
-            return "Room not found"
-        case .failedToGenerateRoomCode:
-            return "Failed to generate unique room code"
-        case .encodingFailed:
-            return "Failed to encode data"
-        case .decodingFailed:
-            return "Failed to decode data"
-        case .notAuthorized:
-            return "Not authorized to perform this action"
-        case .firebaseNotConfigured:
-            return "Firebase is not configured. Please check your GoogleService-Info.plist"
-        case .timeout:
-            return "Operation timed out. Please check your internet connection"
-        case .unsupportedVersion:
-            return "This room was created by a newer version of Hat Game. Update the app to join it."
-        }
     }
 }
