@@ -14,7 +14,7 @@ Canonical game rules (teams, the hat, 3 rounds, turns, scoring, the three modes)
 
 ## Commands
 
-The Xcode project has **no workspace** — it references the three packages as local SPM references, so always build with `-project` (never `-workspace`). Scheme is `HatGame`; the deployment target is iOS 26, so a destination on an iOS 26 simulator is required.
+The Xcode project has **no workspace** — it references the three packages as local SPM references, so always build with `-project` (never `-workspace`). Scheme is `HatGame`, committed as a shared scheme (`HatGame.xcodeproj/xcshareddata/xcschemes/`) that tests both test targets with app-target coverage on; the deployment target is iOS 26, so a destination on an iOS 26 simulator is required.
 
 ```bash
 # Build (prefer XcodeBuildMCP tools in this environment when available).
@@ -25,7 +25,7 @@ xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
 
 # macOS build (the target is multiplatform)
 xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
-  -destination 'platform=macOS' build
+  -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build
 
 # Run the full test suite (HatGameTests + HatGameUITests)
 xcodebuild -project HatGame/HatGame.xcodeproj -scheme HatGame \
@@ -100,9 +100,10 @@ All UI strings live in `HatGame/Localization/Localizable.xcstrings` (English + G
 
 ## Important notes / gotchas
 
-- **`README.md` and `DEVELOPMENT.md` are stale.** They claim iOS 15, Swift 5.9, "no external dependencies," and a `Managers/`/`Navigation/`/`DesignBook/` in-app layout. Reality: iOS 26, Firebase + Multipeer dependencies, three extracted packages, Swift Testing. Trust the code, not those docs — game rules live in `docs/`.
-- **Commit/PR messages must NOT include AI attribution.** Ignore the `🤖 Generated with Claude Code` / `Co-Authored-By: Claude` template shown in `DEVELOPMENT.md` — it contradicts the standing no-attribution rule for personal repos. Solo repo: commit directly to `main` and push — no feature branches or PRs.
+- **`README.md` and `DEVELOPMENT.md` are current** (updated 2026-11-16): product overview and the longer technical reference. When code and docs disagree, trust the code and fix the doc — game rules live in `docs/`.
+- **Commit/PR messages must NOT include AI attribution.** Solo repo: commit directly to `main` and push — no feature branches or PRs.
+- **App Store configuration:** `HatGame/PrivacyInfo.xcprivacy` declares the `UserDefaults` reason (`CA92.1`) and the data sent to Firebase — update it when the app sends anything new. `HatGame/InfoPlist.xcstrings` localizes the display name and permission prompts (en + ka). Alternate icons compile via `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` (iOS SDKs only); never hand-write `CFBundleIcons` in `Info.plist`. Icon PNGs must have no alpha channel — `swift Scripts/flatten-icons.swift <png>...`.
 - **Firebase gating:** `GoogleService-Info.plist` is committed, so online play works out of the box. Online code paths must gate on `Networking.isConfigured` / `FirebaseService.shared.isAvailable` (both require a non-empty `DATABASE_URL` in the plist) before reads/writes. Test mode: `AppConfiguration.shared.isTestMode` makes `GameManager` load `GameConfiguration.mockForTesting`.
 - **Multipeer requires** `NSLocalNetworkUsageDescription`, `NSBluetoothAlwaysUsageDescription`, and `NSBonjourServices` (`_hg-hat-game._tcp`/`._udp`) — already in `Info.plist`; keep them if touching local multiplayer.
-- **CI:** the only GitHub Actions workflow deploys Firebase Realtime Database rules when `database.rules.json` / `firebase.json` / `.firebaserc` change on `main`. There is no build/test CI. The `FIREBASE_SERVICE_ACCOUNT` GitHub secret is the only real secret.
+- **CI:** `.github/workflows/ci.yml` runs on push to `main` (and on demand): `swiftlint --strict`, `HatGameTests` on an iOS 26 simulator with the newest Xcode 26, and an unsigned macOS build. `firebase-database-rules.yml` deploys Realtime Database rules when `database.rules.json` / `firebase.json` / `.firebaserc` change on `main`. The `FIREBASE_SERVICE_ACCOUNT` GitHub secret is the only real secret.
 - Logging uses `OSLog` with subsystem `com.khizanag.hat-game`.
