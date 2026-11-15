@@ -31,7 +31,7 @@ struct OnlineNextTeamView: View {
     private var teamPlayers: [OnlinePlayer] {
         guard let team = currentTeam else { return [] }
         if !team.playerIds.isEmpty {
-            let lookup = Dictionary(uniqueKeysWithValues: players.map { ($0.id, $0) })
+            let lookup = Dictionary(players.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
             return team.playerIds.compactMap { lookup[$0] }
         }
         return players.filter { $0.teamId == team.id }
@@ -100,7 +100,7 @@ private extension OnlineNextTeamView {
             ZStack {
                 Circle().fill(tint.opacity(0.15)).frame(width: 120, height: 120)
                 Circle().strokeBorder(tint.opacity(0.4), lineWidth: 2).frame(width: 120, height: 120)
-                Text("🎯").font(.system(size: 72))
+                Text(verbatim: "🎯").font(DesignBook.IconFont.emoji)
             }
             .accessibilityHidden(true)
 
@@ -215,6 +215,8 @@ private extension OnlineNextTeamView {
                 if isMe {
                     Text(localized("onlineNextTeam.you"))
                         .font(DesignBook.Font.captionBold)
+                        // "You" badge sits on a capsule filled with the team color.
+                        // swiftlint:disable:next no_raw_foreground_white_black
                         .foregroundStyle(.white)
                         .padding(.horizontal, DesignBook.Spacing.sm)
                         .padding(.vertical, 2)

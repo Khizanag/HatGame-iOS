@@ -29,5 +29,9 @@ let package = Package(
                 .product(name: "FirebaseDatabase", package: "firebase-ios-sdk"),
             ]
         ),
+        .testTarget(
+            name: "GameCoreTests",
+            dependencies: ["GameCore"]
+        ),
     ]
 )

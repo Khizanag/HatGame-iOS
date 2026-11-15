@@ -63,6 +63,27 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         self.gameState = try container.decodeIfPresent(OnlineGameState.self, forKey: .gameState)
         self.createdAt = try container.decode(Date.self, forKey: .createdAt)
     }
+
+    /// Writes `players` and `teams` keyed by their own id. Every later write
+    /// addresses `players/<id>` and `teams/<id>`, so an array here would make
+    /// Realtime Database store the first element at `/0` and grow a second,
+    /// partial node for the same entity on the first child update.
+    public func encode(to encoder: Encoder) throws {
+        var container = encoder.container(keyedBy: CodingKeys.self)
+        try container.encode(id, forKey: .id)
+        try container.encode(hostId, forKey: .hostId)
+        try container.encode(status, forKey: .status)
+        try container.encode(settings, forKey: .settings)
+        try container.encode(Self.keyedById(teams), forKey: .teams)
+        try container.encode(Self.keyedById(players), forKey: .players)
+        try container.encodeIfPresent(gameState, forKey: .gameState)
+        try container.encode(createdAt, forKey: .createdAt)
+    }
+
+    private static func keyedById<Element: Identifiable>(_ elements: [Element]) -> [String: Element]
+    where Element.ID == String {
+        Dictionary(elements.map { ($0.id, $0) }, uniquingKeysWith: { _, latest in latest })
+    }
 }
 
 public struct GameSettings: Codable, Sendable {

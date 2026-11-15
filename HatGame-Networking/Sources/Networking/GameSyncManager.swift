@@ -198,7 +198,7 @@ open class GameSyncManager {
         // Prefer team.playerIds order (matches join order); fall back to a
         // filter on player.teamId for resilience to legacy data.
         if !team.playerIds.isEmpty {
-            let lookup = Dictionary(uniqueKeysWithValues: allPlayers.map { ($0.id, $0) })
+            let lookup = Dictionary(allPlayers.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
             return team.playerIds.compactMap { lookup[$0] }
         }
         return allPlayers.filter { $0.teamId == team.id }
