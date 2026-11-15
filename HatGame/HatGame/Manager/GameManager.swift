@@ -115,7 +115,9 @@ extension GameManager {
 
     /// New Words: same teams, the hat is emptied for fresh words.
     func startOverWithNewWords() {
-        configuration.words = []
         engine.newWords()
+        // The engine ignores this mid-game; keep the setup in step with it.
+        guard engine.phase == .setup else { return }
+        configuration.words = []
     }
 }

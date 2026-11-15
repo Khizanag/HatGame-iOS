@@ -73,8 +73,8 @@ struct HatGameTests {
     }
 
     // MARK: - Regression: idempotent transitions
-    /// Plan E1: a second start (double-tap, or back-swipe re-running it)
-    /// must not advance the round or wipe round-one scores.
+    /// A second start (a double tap on Start) must not advance the round or
+    /// wipe round-one scores.
     @Test func startTwiceStaysInRoundOne() throws {
         let manager = makeManager(isSkippingEnabled: true)
         manager.startGame(startingTeamIndex: 0)
@@ -88,9 +88,9 @@ struct HatGameTests {
         #expect(manager.engine.scoreboard.score(for: team, in: .first) == 1)
     }
 
-    /// Plan E1: re-running the turn hand-off (back-swipe from Next Team) must
-    /// not skip a team or rotate the explainer twice.
-    @Test func prepareForNewPlayIsIdempotent() throws {
+    /// Continuing past the turn results twice must not skip a team or rotate
+    /// the explainer twice.
+    @Test func continueAfterTurnTwiceAdvancesOnce() throws {
         let manager = makeTwoTeamManager()
         manager.startGame(startingTeamIndex: 0)
         let firstTeam = try #require(manager.engine.state.currentTeam)
@@ -104,27 +104,38 @@ struct HatGameTests {
         #expect(manager.engine.state.explainerIndex(for: firstTeam) == 1)
     }
 
-    /// Plan E2: Play Again must start from zero — no round 2/3 scores carried
-    /// over from the previous game.
+    /// Play Again starts from zero: no scores carry over from the finished game.
     @Test func rematchClearsPreviousGameScores() throws {
-        let manager = makeManager(isSkippingEnabled: true)
+        let manager = makeTwoTeamManager()
         manager.startGame(startingTeamIndex: 0)
         let team = try #require(manager.engine.state.currentTeam)
-        manager.engine.beginTurn(explainerIndex: 0)
-        while manager.engine.phase == .playing {
-            manager.engine.guess()
+        while manager.engine.phase != .finished {
+            manager.engine.beginTurn(explainerIndex: 0)
+            while manager.engine.phase == .playing {
+                manager.engine.guess()
+            }
+            manager.engine.continueAfterTurn()
         }
-        manager.engine.continueAfterTurn()
-        manager.engine.beginTurn()
-        manager.engine.guess()
-        #expect(manager.engine.scoreboard.score(for: team, in: .second) == 1)
+        #expect(manager.engine.scoreboard.score(for: team, in: .third) > 0)
 
         manager.rematch()
         manager.startGame(startingTeamIndex: 0)
 
-        #expect(manager.engine.scoreboard.score(for: team, in: .second) == 0)
         #expect(manager.engine.scoreboard.totalScore(for: team) == 0)
         #expect(manager.engine.state.round == .first)
+    }
+
+    /// Play Again is only offered on the final results; mid-game it changes nothing.
+    @Test func rematchMidGameIsIgnored() throws {
+        let manager = makeTwoTeamManager()
+        manager.startGame(startingTeamIndex: 0)
+        manager.engine.beginTurn(explainerIndex: 0)
+        manager.engine.guess()
+        let state = manager.engine.state
+
+        manager.rematch()
+
+        #expect(manager.engine.state == state)
     }
 }
 

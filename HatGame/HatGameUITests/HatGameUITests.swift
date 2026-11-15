@@ -70,7 +70,12 @@ final class HatGameUITests: XCTestCase {
 
         let restoredGotIt = relaunched.buttons["game.gotIt"]
         XCTAssertTrue(restoredGotIt.waitForExistence(timeout: 5))
-        XCTAssertFalse(restoredGotIt.isEnabled, "A restored turn should come back paused")
+        XCTAssertTrue(
+            relaunched.otherElements["game.pausedOverlay"].waitForExistence(timeout: 5)
+                || relaunched.descendants(matching: .any)["game.pausedOverlay"].exists,
+            "A restored turn should come back paused"
+        )
+        XCTAssertFalse(restoredGotIt.isEnabled)
 
         relaunched.terminate()
         launchClearingSavedGame().terminate()

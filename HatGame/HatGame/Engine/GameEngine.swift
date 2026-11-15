@@ -29,6 +29,9 @@ final class GameEngine {
     @ObservationIgnored private var tickTask: Task<Void, Never>?
     @ObservationIgnored private var persistTask: Task<Void, Never>?
 
+    /// Seconds of countdown between snapshots of a running turn.
+    private static let snapshotInterval = 5
+
     /// - Parameter state: A fresh `.setup` state, or a saved game. A saved game
     ///   that was mid-turn comes back paused with its remaining time.
     init(
@@ -38,7 +41,10 @@ final class GameEngine {
         store: any GameStore,
         sound: any SoundPlaying
     ) {
-        let restored = GameRules.pause(state, remaining: state.turn?.remaining ?? .zero)
+        var restored = GameRules.pause(state, remaining: state.turn?.remaining ?? .zero)
+        if restored.phase == .playing, (restored.turn?.remaining ?? .zero) <= .zero {
+            restored = GameRules.expire(restored)
+        }
         self.state = restored
         self.clock = clock
         self.now = Self.makeTimeline(for: clock)
@@ -88,6 +94,7 @@ extension GameEngine {
     }
 
     func pause() {
+        if expireIfTimeIsUp() { return }
         apply(GameRules.pause(state, remaining: liveRemaining()))
     }
 
@@ -104,6 +111,7 @@ extension GameEngine {
     }
 
     func giveUp() {
+        if expireIfTimeIsUp() { return }
         apply(GameRules.giveUp(state, remaining: liveRemaining()))
     }
 
@@ -150,6 +158,16 @@ private extension GameEngine {
         apply(GameRules.expire(state))
         remainingSeconds = 0
         sound.playTimeUp()
+    }
+
+    /// A tap that lands after the clock hit zero but before the tick ran is
+    /// treated as the time running out, so the turn never sits paused at zero.
+    func expireIfTimeIsUp() -> Bool {
+        guard state.phase == .playing, state.turn?.isPaused == false, liveRemaining() <= .zero else {
+            return false
+        }
+        expire()
+        return true
     }
 
     func liveRemaining() -> Duration {
@@ -207,6 +225,10 @@ private extension GameEngine {
             expire()
         } else {
             remainingSeconds = turnClock.displayedSeconds(at: current)
+            // Transitions already save; this bounds what a crash mid-turn loses.
+            if remainingSeconds.isMultiple(of: Self.snapshotInterval) {
+                persist()
+            }
         }
     }
 

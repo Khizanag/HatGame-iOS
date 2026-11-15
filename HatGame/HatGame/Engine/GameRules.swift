@@ -35,12 +35,15 @@ nonisolated enum GameRules {
     }
 
     /// Back to `.setup` with the same teams and words and every score cleared.
+    /// Only offered once the game is over, so a game in progress is never wiped.
     static func rematch(_ state: GameState) -> GameState {
-        resetProgress(state)
+        guard state.phase == .finished || state.phase == .setup else { return state }
+        return resetProgress(state)
     }
 
     /// Like `rematch`, but the hat is emptied so players add new words.
     static func newWords(_ state: GameState) -> GameState {
+        guard state.phase == .finished || state.phase == .setup else { return state }
         var next = resetProgress(state)
         next.words = []
         return next

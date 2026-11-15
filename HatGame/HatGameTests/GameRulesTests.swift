@@ -301,11 +301,19 @@ struct GameRulesTests {
 
     @Test("New words keeps teams and empties the hat")
     func newWordsEmptiesHat() {
-        let state = GameRules.newWords(Fixtures.started())
+        let state = GameRules.newWords(Fixtures.finished())
 
         #expect(state.phase == .setup)
         #expect(state.words.isEmpty)
         #expect(state.teams.count == 2)
+    }
+
+    @Test("Rematch and new words are ignored while a game is in progress")
+    func rematchAndNewWordsIgnoredMidGame() {
+        for state in [Fixtures.started(), Fixtures.playing()] {
+            #expect(GameRules.rematch(state) == state)
+            #expect(GameRules.newWords(state) == state)
+        }
     }
 
     // MARK: - Carry-over rounding

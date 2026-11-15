@@ -15,7 +15,7 @@ struct GameManagerTests {
     private let store = RecordingGameStore()
 
     // MARK: - Words
-    @Test("Saving a player's words twice replaces them instead of duplicating (E8)")
+    @Test("Saving a player's words twice replaces them instead of duplicating")
     func setWordsIsIdempotent() throws {
         let manager = makeManager()
         let player = try #require(manager.configuration.players.first)
@@ -81,9 +81,18 @@ struct GameManagerTests {
     // MARK: - Lifecycle
     @Test("New words empties the hat on both the setup and the engine")
     func startOverWithNewWords() {
-        let manager = makeManager(words: Fixtures.words())
+        let manager = makeManager(words: Fixtures.words(["solo"]))
         manager.startGame(startingTeamIndex: 0)
+        manager.startOverWithNewWords()
+        #expect(manager.configuration.words.count == 1)
 
+        while manager.engine.phase != .finished {
+            manager.engine.beginTurn(explainerIndex: 0)
+            while manager.engine.phase == .playing {
+                manager.engine.guess()
+            }
+            manager.engine.continueAfterTurn()
+        }
         manager.startOverWithNewWords()
 
         #expect(manager.configuration.words.isEmpty)

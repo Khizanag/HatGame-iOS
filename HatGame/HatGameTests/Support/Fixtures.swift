@@ -71,6 +71,16 @@ enum Fixtures {
             using: &generator
         )
     }
+
+    /// A game played to the end: the up team empties the hat in every round.
+    static func finished(
+        teams: [Team] = Fixtures.teams(),
+        words: [Word] = Fixtures.words(["solo"])
+    ) -> GameState {
+        GameRound.allCases.reduce(started(teams: teams, words: words)) { state, _ in
+            state.clearingRound()
+        }
+    }
 }
 
 // MARK: - Playing helpers
