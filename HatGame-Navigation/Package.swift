@@ -6,19 +6,20 @@ import PackageDescription
 let package = Package(
     name: "HatGame-Navigation",
     platforms: [
-        .iOS(.v17),
-        .macOS(.v15),
+        .iOS(.v26),
+        .macOS(.v26),
+        .visionOS(.v26),
     ],
     products: [
         .library(
             name: "Navigation",
             targets: ["Navigation"]
-        )
+        ),
     ],
     targets: [
         .target(
             name: "Navigation",
             dependencies: []
-        )
+        ),
     ]
 )

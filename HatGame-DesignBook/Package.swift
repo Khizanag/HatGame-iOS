@@ -6,22 +6,23 @@ import PackageDescription
 let package = Package(
     name: "HatGame-DesignBook",
     platforms: [
-        .iOS(.v17),
-        .macOS(.v15),
+        .iOS(.v26),
+        .macOS(.v26),
+        .visionOS(.v26),
     ],
     products: [
         .library(
             name: "DesignBook",
             targets: ["DesignBook"]
-        )
+        ),
     ],
     targets: [
         .target(
             name: "DesignBook",
             dependencies: [],
             resources: [
-                .process("Resources")
+                .process("Resources"),
             ]
-        )
+        ),
     ]
 )
