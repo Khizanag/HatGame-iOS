@@ -99,16 +99,3 @@ private final class TransactionOutcome<Value: Sendable>: Sendable {
         state.withLock { $0 = State(value: nil, error: error) }
     }
 }
-
-/// Codable ↔ the Foundation object graph the Firebase SDK reads and writes.
-enum FirebaseCoding {
-    static func object<T: Encodable>(from value: T) throws -> Any {
-        try JSONSerialization.jsonObject(with: JSONEncoder().encode(value), options: .fragmentsAllowed)
-    }
-
-    static func decodeIfPresent<T: Decodable>(_ type: T.Type, from value: Any?) throws -> T? {
-        guard let value, !(value is NSNull) else { return nil }
-        let data = try JSONSerialization.data(withJSONObject: value, options: .fragmentsAllowed)
-        return try JSONDecoder().decode(type, from: data)
-    }
-}

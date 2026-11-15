@@ -8,18 +8,10 @@
 import FirebaseCore
 import FirebaseDatabase
 import Foundation
+import GameCore
 import OSLog
 
 private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "FirebaseService")
-
-/// One delivery from a room observer.
-public enum RoomSnapshot: Sendable {
-    case room(GameRoom)
-    /// Nothing is stored at the room's path: it was deleted, or never existed.
-    case missing
-    /// Data exists but this build cannot decode it.
-    case unreadable
-}
 
 public final class FirebaseService: @unchecked Sendable {
     public static let shared = FirebaseService()
@@ -32,13 +24,6 @@ public final class FirebaseService: @unchecked Sendable {
         static let write: Duration = .seconds(10)
         /// Transactions may round-trip more than once under contention.
         static let transaction: Duration = .seconds(15)
-    }
-
-    /// Boolean leaves on a player node that are written on their own, so a
-    /// flag change never rewrites — and clobbers — the rest of the player.
-    public enum PlayerFlag: String, Sendable {
-        case hasSubmittedWords
-        case isConnected
     }
 
     private var database: Database {
@@ -79,7 +64,7 @@ public final class FirebaseService: @unchecked Sendable {
         try await read { [self] in
             let snapshot = try await roomsRef.child(id).getData()
             guard snapshot.exists(), let value = snapshot.value else { return nil }
-            return try decode(GameRoom.self, from: value)
+            return try FirebaseCoding.decode(GameRoom.self, from: value)
         }
     }
 
@@ -95,16 +80,11 @@ public final class FirebaseService: @unchecked Sendable {
             return nil
         }
         return roomsRef.child(id).observe(.value) { snapshot in
-            guard snapshot.exists(), let data = snapshot.value else {
-                onChange(.missing)
-                return
+            let classified = RoomSnapshot(storedValue: snapshot.exists() ? snapshot.value : nil)
+            if case .unreadable = classified {
+                logger.error("Failed to decode room \(id, privacy: .public)")
             }
-            do {
-                onChange(.room(try self.decode(GameRoom.self, from: data)))
-            } catch {
-                logger.error("Failed to decode room \(id, privacy: .public): \(error, privacy: .public)")
-                onChange(.unreadable)
-            }
+            onChange(classified)
         }
     }
 
@@ -114,9 +94,7 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Player Operations
     public func addPlayer(_ player: OnlinePlayer, toRoomId roomId: String) async throws {
-        try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("players").child(player.id).setValue(encodeToDict(player))
-        }
+        try await update(roomId: roomId, RoomWrites.addPlayer(player))
     }
 
     public func setPlayerFlag(
@@ -125,9 +103,7 @@ public final class FirebaseService: @unchecked Sendable {
         playerId: String,
         inRoomId roomId: String
     ) async throws {
-        try await write { [self] in
-            _ = try await playerFlagRef(flag, playerId: playerId, roomId: roomId).setValue(value)
-        }
+        try await update(roomId: roomId, RoomWrites.playerFlag(flag, to: value, playerId: playerId))
     }
 
     // MARK: - Presence
@@ -176,21 +152,13 @@ public final class FirebaseService: @unchecked Sendable {
 
     // MARK: - Team Operations
     public func addTeam(_ team: OnlineTeam, toRoomId roomId: String) async throws {
-        try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("teams").child(team.id).setValue(encodeToDict(team))
-        }
+        try await update(roomId: roomId, RoomWrites.addTeam(team))
     }
 
     /// Deletes the team and clears every member's `teamId` in one
     /// multi-path update, so no player is left pointing at a missing team.
     public func removeTeam(teamId: String, unassigning memberIds: [String], fromRoomId roomId: String) async throws {
-        try await write { [self] in
-            var updates: [String: Any] = ["teams/\(teamId)": NSNull()]
-            for memberId in memberIds {
-                updates["players/\(memberId)/teamId"] = NSNull()
-            }
-            _ = try await roomsRef.child(roomId).updateChildValues(updates)
-        }
+        try await update(roomId: roomId, RoomWrites.removeTeam(teamId, unassigning: memberIds))
     }
 
     /// Atomically reassigns a player to a team: clears the previous team's
@@ -205,22 +173,13 @@ public final class FirebaseService: @unchecked Sendable {
         teams: [OnlineTeam],
         inRoomId roomId: String
     ) async throws {
-        try await write { [self] in
-            var updates: [String: Any] = [:]
-            updates["players/\(playerId)/teamId"] = newTeamId as Any? ?? NSNull()
-
-            if let previousTeamId, let previous = teams.first(where: { $0.id == previousTeamId }) {
-                updates["teams/\(previousTeamId)/playerIds"] = previous.playerIds.filter { $0 != playerId }
-            }
-
-            if let newTeamId, let next = teams.first(where: { $0.id == newTeamId }) {
-                var ids = next.playerIds.filter { $0 != playerId }
-                ids.append(playerId)
-                updates["teams/\(newTeamId)/playerIds"] = ids
-            }
-
-            _ = try await roomsRef.child(roomId).updateChildValues(updates)
-        }
+        let updates = RoomWrites.reassign(
+            playerId: playerId,
+            previousTeamId: previousTeamId,
+            newTeamId: newTeamId,
+            teams: teams
+        )
+        try await update(roomId: roomId, updates)
     }
 
     // MARK: - Word Operations
@@ -235,16 +194,7 @@ public final class FirebaseService: @unchecked Sendable {
         markSubmittedPlayerIds playerIds: [String],
         toRoomId roomId: String
     ) async throws {
-        try await write { [self] in
-            var updates: [String: Any] = [:]
-            for word in words {
-                updates["words/\(word.id)"] = try encodeToDict(word)
-            }
-            for playerId in playerIds {
-                updates["players/\(playerId)/hasSubmittedWords"] = true
-            }
-            _ = try await roomsRef.child(roomId).updateChildValues(updates)
-        }
+        try await update(roomId: roomId, RoomWrites.fillWords(words, markSubmitted: playerIds))
     }
 
     /// The room's word pool. A malformed entry throws rather than silently
@@ -253,7 +203,7 @@ public final class FirebaseService: @unchecked Sendable {
         try await read { [self] in
             let snapshot = try await roomsRef.child(roomId).child("words").getData()
             guard snapshot.exists(), let value = snapshot.value else { return [] }
-            return try decode([String: OnlineWord].self, from: value)
+            return try FirebaseCoding.decode([String: OnlineWord].self, from: value)
                 .sorted { $0.key < $1.key }
                 .map(\.value)
         }
@@ -274,9 +224,7 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     public func updateRoomStatus(_ status: RoomStatus, forRoomId roomId: String) async throws {
-        try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("status").setValue(status.rawValue)
-        }
+        try await update(roomId: roomId, RoomWrites.status(status))
     }
 
     // MARK: - Feedback
@@ -294,8 +242,9 @@ public final class FirebaseService: @unchecked Sendable {
             deviceId: feedback.deviceId,
             createdAt: feedback.createdAt
         )
+        let box = UpdatesBox(updates: try FirebaseCoding.dictionary(from: bounded))
         try await write { [self] in
-            _ = try await feedbackRef.child(bounded.id).setValue(encodeToDict(bounded))
+            _ = try await feedbackRef.child(bounded.id).setValue(box.updates)
         }
     }
 }
@@ -304,6 +253,14 @@ public final class FirebaseService: @unchecked Sendable {
 private extension FirebaseService {
     func playerFlagRef(_ flag: PlayerFlag, playerId: String, roomId: String) -> DatabaseReference {
         roomsRef.child(roomId).child("players").child(playerId).child(flag.rawValue)
+    }
+
+    /// Sends one multi-path update built by `RoomWrites`.
+    func update(roomId: String, _ updates: RoomWrites.Updates) async throws {
+        let box = UpdatesBox(updates: updates)
+        try await write { [self] in
+            _ = try await roomsRef.child(roomId).updateChildValues(box.updates)
+        }
     }
 
     func read<T: Sendable>(_ operation: @escaping @Sendable () async throws -> T) async throws -> T {
@@ -320,17 +277,10 @@ private extension FirebaseService {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         return try await withTimeout(Timeouts.transaction, operation: operation)
     }
+}
 
-    func encodeToDict<T: Encodable>(_ value: T) throws -> [String: Any] {
-        let data = try JSONEncoder().encode(value)
-        guard let dict = try JSONSerialization.jsonObject(with: data) as? [String: Any] else {
-            throw NetworkingError.encodingFailed
-        }
-        return dict
-    }
-
-    func decode<T: Decodable>(_ type: T.Type, from value: Any) throws -> T {
-        let data = try JSONSerialization.data(withJSONObject: value)
-        return try JSONDecoder().decode(type, from: data)
-    }
+/// Carries a built update into the timed write. The dictionary holds only
+/// JSON-compatible Foundation values and is never mutated after building.
+private struct UpdatesBox: @unchecked Sendable {
+    let updates: RoomWrites.Updates
 }
