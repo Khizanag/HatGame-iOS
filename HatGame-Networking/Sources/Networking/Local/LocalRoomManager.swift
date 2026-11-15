@@ -169,10 +169,6 @@ public final class LocalRoomManager: RoomManager {
         try perform(.submitWords(submitted))
     }
 
-    public override func markWordsSubmitted() async throws {
-        // submitWords opens the gate in the same step on the host.
-    }
-
     public override func updateRoomStatus(_ status: RoomStatus) async throws {
         guard isLocalHost else { throw LocalError.hostOnly }
         guard var room else { return }

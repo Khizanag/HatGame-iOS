@@ -132,9 +132,15 @@ public final class FirebaseService: @unchecked Sendable {
         }
     }
 
-    public func removeTeam(teamId: String, fromRoomId roomId: String) async throws {
+    /// Deletes the team and clears every member's `teamId` in one
+    /// multi-path update, so no player is left pointing at a missing team.
+    public func removeTeam(teamId: String, unassigning memberIds: [String], fromRoomId roomId: String) async throws {
         try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("teams").child(teamId).removeValue()
+            var updates: [String: Any] = ["teams/\(teamId)": NSNull()]
+            for memberId in memberIds {
+                updates["players/\(memberId)/teamId"] = NSNull()
+            }
+            _ = try await roomsRef.child(roomId).updateChildValues(updates)
         }
     }
 
@@ -169,21 +175,12 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Word Operations
-    public func addWords(_ words: [OnlineWord], toRoomId roomId: String) async throws {
-        try await write { [self] in
-            var updates: [String: Any] = [:]
-            for word in words {
-                updates["words/\(word.id)"] = try encodeToDict(word)
-            }
-            _ = try await roomsRef.child(roomId).updateChildValues(updates)
-        }
-    }
-
-    /// Host-only automatic word source. Writes the generated pool AND flips
-    /// every listed player's `hasSubmittedWords` flag in a single multi-path
-    /// update — all-or-nothing, so a failure leaves no partial state to
-    /// recover from, and it touches only the flag leaf (never a full player
-    /// node), so concurrent edits to other fields are not clobbered.
+    /// Writes `words` AND flips every listed player's `hasSubmittedWords`
+    /// flag in a single multi-path update — all-or-nothing, so a failure
+    /// leaves no partial state to recover from, and it touches only the flag
+    /// leaf (never a full player node), so concurrent edits to other fields
+    /// are not clobbered. Serves both a player's own submission and the
+    /// host's automatic fill for everyone.
     public func fillWords(
         _ words: [OnlineWord],
         markSubmittedPlayerIds playerIds: [String],

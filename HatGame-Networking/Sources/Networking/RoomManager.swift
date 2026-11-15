@@ -131,11 +131,6 @@ open class RoomManager {
         )
     }
 
-    open func markWordsSubmitted() async throws {
-        guard let playerId = currentPlayerId, let roomId = room?.id else { return }
-        try await firebaseService.setPlayerFlag(.hasSubmittedWords, to: true, playerId: playerId, inRoomId: roomId)
-    }
-
     open func leaveRoom() async throws {
         guard let playerId = currentPlayerId, let roomId = room?.id else { return }
 
@@ -161,11 +156,12 @@ open class RoomManager {
     }
 
     open func removeTeam(teamId: String) async throws {
-        guard isHost, let roomId = room?.id else {
+        guard isHost, let room else {
             throw NetworkingError.notAuthorized
         }
 
-        try await firebaseService.removeTeam(teamId: teamId, fromRoomId: roomId)
+        let memberIds = RoomRules.members(ofTeam: teamId, in: room).map(\.id)
+        try await firebaseService.removeTeam(teamId: teamId, unassigning: memberIds, fromRoomId: room.id)
     }
 
     open func updateRoomStatus(_ status: RoomStatus) async throws {
@@ -185,12 +181,13 @@ open class RoomManager {
     }
 
     // MARK: - Word Submission
+    /// Adds the player's words and opens their submission gate in one
+    /// multi-path write, so a failure leaves neither half behind.
     open func submitWords(_ words: [String]) async throws {
         guard let playerId = currentPlayerId, let roomId = room?.id else { return }
 
         let onlineWords = words.map { OnlineWord(text: $0, addedByPlayerId: playerId) }
-        try await firebaseService.addWords(onlineWords, toRoomId: roomId)
-        try await markWordsSubmitted()
+        try await firebaseService.fillWords(onlineWords, markSubmittedPlayerIds: [playerId], toRoomId: roomId)
     }
 
     /// Host-only automatic word source. Atomically writes a host-generated
