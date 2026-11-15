@@ -112,7 +112,12 @@ final class AppConfiguration {
     ///   suite so they never touch the real defaults or `AppleLanguages`.
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
+        // Test Mode is a debug tool; a Release build ignores a stored flag.
+        #if DEBUG
         isTestMode = userDefaults.bool(forKey: Self.testModeKey)
+        #else
+        isTestMode = false
+        #endif
         defaultWordsPerPlayer = userDefaults.object(forKey: Self.defaultWordsPerPlayerKey) as? Int ?? 10
         defaultRoundDuration = userDefaults.object(forKey: Self.defaultRoundDurationKey) as? Int ?? 60
         isRightHanded = userDefaults.object(forKey: Self.isRightHandedKey) as? Bool ?? true

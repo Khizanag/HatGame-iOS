@@ -19,7 +19,9 @@ struct DeveloperInfoView: View {
                 technologiesSection
                 contactSection
                 creditsSection
+                #if DEBUG
                 testModeSection
+                #endif
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -178,6 +180,7 @@ private extension DeveloperInfoView {
         }
     }
 
+    #if DEBUG
     // MARK: - Test Mode Section
     var testModeSection: some View {
         SettingsSection(
@@ -207,6 +210,7 @@ private extension DeveloperInfoView {
             .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
     }
+    #endif
 
     // MARK: - Contact Section
     var contactSection: some View {
