@@ -107,7 +107,7 @@ private extension TeamScoreRowView {
     }
 
     var rankForegroundColor: Color {
-        rank == 1 ? .white : DesignBook.Color.Text.primary
+        rank == 1 ? DesignBook.Color.onAccent(for: color) : DesignBook.Color.Text.primary
     }
 
     var accessibilityLabel: Text {
