@@ -125,7 +125,7 @@ private extension TeamFormView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 FieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
 
-                TextField("teamForm.enterTeamName", text: teamNameBinding)
+                TextField(localized("teamForm.enterTeamName"), text: teamNameBinding)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
@@ -213,7 +213,7 @@ private extension TeamFormView {
                 }
 
                 ColorPicker(
-                    "teamForm.customColor",
+                    localized("teamForm.customColor"),
                     selection: Binding(
                         get: { teamColor },
                         set: { selectColor($0) }
@@ -268,7 +268,7 @@ private extension TeamFormView {
                 .monospacedDigit()
 
             TextField(
-                "teamForm.playerName",
+                localized("teamForm.playerName"),
                 text: Binding(
                     get: { playerNames[index] },
                     set: { playerNames[index] = $0 }
@@ -425,7 +425,7 @@ private extension TeamFormView {
 // MARK: - Subview types
 private struct FieldLabel: View {
     let icon: String
-    let title: LocalizedStringKey
+    let title: String.LocalizationValue
 
     var body: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
@@ -433,7 +433,7 @@ private struct FieldLabel: View {
                 .font(DesignBook.IconFont.medium)
                 .foregroundStyle(DesignBook.Color.Text.accent)
 
-            Text(title)
+            Text(localized(title))
                 .font(DesignBook.Font.captionBold)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
@@ -521,7 +521,7 @@ private struct SuggestionChip: View {
                 }
         }
         .buttonStyle(.plain)
-        .accessibilityLabel(Text("\(text)"))
+        .accessibilityLabel(Text(verbatim: text))
         .accessibilityHint(Text(localized("teamForm.suggestions.tap")))
     }
 }

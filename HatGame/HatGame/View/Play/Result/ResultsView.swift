@@ -26,7 +26,7 @@ struct ResultsView: View {
     var body: some View {
         content
             .navigationTitle(
-                String(localized: isFinal ? "game.results.gameOverTitle" : "game.results.roundResultsTitle")
+                localized(isFinal ? "game.results.gameOverTitle" : "game.results.roundResultsTitle")
             )
             .setDefaultStyle()
             .overlay(alignment: .top) {

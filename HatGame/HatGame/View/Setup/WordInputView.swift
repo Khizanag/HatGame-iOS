@@ -172,7 +172,7 @@ private extension WordInputView {
     }
 
     var wordTextField: some View {
-        TextField("wordInput.enterWord", text: $currentWord)
+        TextField(localized("wordInput.enterWord"), text: $currentWord)
             .textFieldStyle(.plain)
             .submitLabel(.next)
             .autocapitalizeWords()

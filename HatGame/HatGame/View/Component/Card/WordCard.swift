@@ -133,12 +133,12 @@ private extension WordCard {
         }
     }
 
-    func hintBadge(icon: String, label: LocalizedStringKey, color: Color, active: Bool) -> some View {
+    func hintBadge(icon: String, label: String.LocalizationValue, color: Color, active: Bool) -> some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: icon)
                 .font(DesignBook.IconFont.medium)
                 .fontWeight(.bold)
-            Text(label)
+            Text(localized(label))
                 .font(DesignBook.Font.captionBold)
                 .textCase(.uppercase)
                 .tracking(1.4)

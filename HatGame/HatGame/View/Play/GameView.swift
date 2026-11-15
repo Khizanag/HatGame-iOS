@@ -109,7 +109,7 @@ private extension GameView {
         HStack(spacing: DesignBook.Spacing.md) {
             if engine.state.settings.isSkippingEnabled {
                 Button(action: skipCurrentWord) {
-                    Label("game.skip", systemImage: "arrow.uturn.forward")
+                    Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
                         .font(DesignBook.Font.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
@@ -123,7 +123,7 @@ private extension GameView {
             }
 
             Button(action: markCurrentWordGuessed) {
-                Label("game.gotIt", systemImage: "checkmark.circle.fill")
+                Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
                     .font(DesignBook.Font.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
@@ -140,7 +140,7 @@ private extension GameView {
     var gameToolbar: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
             Button(action: presentGiveUpConfirmation) {
-                Label("game.giveUp.button", systemImage: "flag")
+                Label(localized("game.giveUp.button"), systemImage: "flag")
                     .foregroundStyle(DesignBook.Color.Status.error)
             }
             .buttonStyle(.plain)

@@ -250,7 +250,7 @@ private extension NextTeamView {
     }
 
     func roleBadge(isSelected: Bool) -> some View {
-        let text: LocalizedStringKey = isSelected ? "game.nextTeam.role.explaining" : "game.nextTeam.role.guessing"
+        let text = localized(isSelected ? "game.nextTeam.role.explaining" : "game.nextTeam.role.guessing")
         let fg: Color = isSelected ? team.color : DesignBook.Color.Text.secondary
         let bg: Color = isSelected ? team.color.opacity(0.15) : DesignBook.Color.Background.card
 
@@ -305,7 +305,7 @@ private extension NextTeamView {
     func roleSection<Content: View>(
         icon: String,
         iconColor: Color,
-        label: LocalizedStringKey,
+        label: String.LocalizationValue,
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
@@ -314,7 +314,7 @@ private extension NextTeamView {
                     .font(DesignBook.Font.caption)
                     .foregroundStyle(iconColor)
 
-                Text(label)
+                Text(localized(label))
                     .font(DesignBook.Font.smallCaption)
                     .textCase(.uppercase)
                     .tracking(1.2)

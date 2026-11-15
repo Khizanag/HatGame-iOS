@@ -21,8 +21,8 @@ struct ConnectivityMenuHero: View {
     }
 
     let symbol: String
-    let title: LocalizedStringKey
-    let description: LocalizedStringKey
+    let title: String.LocalizationValue
+    let description: String.LocalizationValue
     let animation: IconAnimation
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -67,10 +67,10 @@ struct ConnectivityMenuHero: View {
             .decorativeHeroSizing()
 
             VStack(spacing: DesignBook.Spacing.xs) {
-                Text(title)
+                Text(localized(title))
                     .font(DesignBook.Font.largeTitle)
                     .foregroundStyle(DesignBook.Color.Text.primary)
-                Text(description)
+                Text(localized(description))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .multilineTextAlignment(.center)

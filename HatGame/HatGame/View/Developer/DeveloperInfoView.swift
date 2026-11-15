@@ -165,14 +165,14 @@ private extension DeveloperInfoView {
         }
     }
 
-    func techBullet(_ text: String) -> some View {
+    func techBullet(_ text: String.LocalizationValue) -> some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
             Image(systemName: "checkmark.circle.fill")
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(.blue)
                 .padding(.top, 2)
 
-            Text(LocalizedStringKey(text))
+            Text(localized(text))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
@@ -238,7 +238,7 @@ private extension DeveloperInfoView {
                                 .font(DesignBook.Font.body)
                                 .foregroundStyle(.green)
 
-                            Text("GitHub: @gigakhizanishvili")
+                            Text(verbatim: "GitHub: @gigakhizanishvili")
                                 .font(DesignBook.Font.body)
                                 .foregroundStyle(.green)
 

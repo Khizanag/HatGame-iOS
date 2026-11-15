@@ -32,18 +32,7 @@ struct FeedbackView: View {
             .navigationTitle(localized("feedback.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
-            .alert("common.error", isPresented: errorBinding) {
-                Button("common.gotIt") { service.resetAfterFailure() }
-            } message: {
-                Text(service.errorMessage ?? "")
-            }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(
-            get: { service.errorMessage != nil },
-            set: { if !$0 { service.resetAfterFailure() } }
-        )
+            .errorAlert(message: service.errorMessage, onDismiss: service.resetAfterFailure)
     }
 }
 

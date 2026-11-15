@@ -57,7 +57,7 @@ struct SettingsMenuRow<MenuContent: View>: View {
                 .fixedSize()
             }
             .tint(DesignBook.Color.Text.primary)
-            .accessibilityLabel(Text("\(title), \(value)"))
+            .accessibilityLabel(Text(verbatim: "\(title), \(value)"))
         }
     }
 }

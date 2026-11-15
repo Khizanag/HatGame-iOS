@@ -17,7 +17,7 @@ struct RoleBadge: View {
         case you
         case noTeam
 
-        var titleKey: LocalizedStringKey {
+        var titleKey: String.LocalizationValue {
             switch self {
             case .host: "lobby.host"
             case .you: "onlineNextTeam.you"
@@ -45,7 +45,7 @@ struct RoleBadge: View {
     let style: Style
 
     var body: some View {
-        Text(style.titleKey)
+        Text(localized(style.titleKey))
             .font(DesignBook.Font.smallCaption)
             .textCase(.uppercase)
             .tracking(1.0)

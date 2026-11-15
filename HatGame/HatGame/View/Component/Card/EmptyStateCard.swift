@@ -14,8 +14,8 @@ import SwiftUI
 /// a list.
 struct EmptyStateCard: View {
     let symbol: String
-    let title: LocalizedStringKey
-    var caption: LocalizedStringKey?
+    let title: String.LocalizationValue
+    var caption: String.LocalizationValue?
     var animatesSymbol: Bool = false
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -31,12 +31,12 @@ struct EmptyStateCard: View {
                         options: .repeating,
                         isActive: animatesSymbol && !reduceMotion
                     )
-                Text(title)
+                Text(localized(title))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .multilineTextAlignment(.center)
                 if let caption {
-                    Text(caption)
+                    Text(localized(caption))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .multilineTextAlignment(.center)

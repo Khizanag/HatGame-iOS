@@ -22,7 +22,7 @@ struct AutoFillButton: View {
                     .font(DesignBook.Font.body)
                     .fontWeight(.semibold)
                     .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling)
-                Text(isAutoFilling ? "wordInput.autoFill.thinking" : "wordInput.autoFill")
+                Text(localized(isAutoFilling ? "wordInput.autoFill.thinking" : "wordInput.autoFill"))
                     .font(DesignBook.Font.body)
                     .fontWeight(.medium)
             }
