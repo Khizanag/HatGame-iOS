@@ -34,12 +34,10 @@ struct NextTeamView: View {
         content
             .setDefaultStyle()
             .sheet(isPresented: $isStandingsPresented) {
-                NavigationStack {
-                    ResultsView()
-                }
-                .environment(gameManager)
-                .environment(engine)
-                .environment(navigator)
+                StandingsSheet()
+                    .environment(gameManager)
+                    .environment(engine)
+                    .environment(navigator)
             }
             .onAppear {
                 if let explainerIndex = engine.state.explainerIndex(for: team) {

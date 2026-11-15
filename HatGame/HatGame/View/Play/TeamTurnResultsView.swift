@@ -38,12 +38,10 @@ struct TeamTurnResultsView: View {
                 }
             }
             .sheet(isPresented: $isStandingsPresented) {
-                NavigationStack {
-                    ResultsView()
-                }
-                .environment(gameManager)
-                .environment(engine)
-                .environment(navigator)
+                StandingsSheet()
+                    .environment(gameManager)
+                    .environment(engine)
+                    .environment(navigator)
             }
             .onChange(of: isStandingsPresented) { _, presented in
                 if !presented { confettiBurst += 1 }

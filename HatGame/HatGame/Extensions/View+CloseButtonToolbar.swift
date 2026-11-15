@@ -29,6 +29,7 @@ private struct NavigationButtonToolbarModifier: ViewModifier {
                                 .foregroundStyle(DesignBook.Color.Text.primary)
                         }
                         .accessibilityLabel(Text(localized("common.buttons.close")))
+                        .keyboardShortcut(.cancelAction)
                     }
                 }
             }
