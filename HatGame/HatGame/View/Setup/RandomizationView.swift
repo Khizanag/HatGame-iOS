@@ -412,18 +412,16 @@ private struct ShufflingOverlay: View {
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.shuffling.message"))
                         .font(DesignBook.Font.title2)
-                        // White on the dimmed shuffle overlay; DesignBook has no on-dark token yet.
-                        // swiftlint:disable:next no_raw_foreground_white_black
-                        .foregroundStyle(.white)
+                        .foregroundStyle(DesignBook.Color.onGradient)
 
                     ProgressDotIndicator(
                         count: 3,
                         currentIndex: 1,
                         dotSize: DesignBook.Size.dotMedium,
                         spacing: 4,
-                        completedColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
-                        currentColor: .white.opacity(DesignBook.Opacity.mostlyOpaque),
-                        pendingColor: .white.opacity(DesignBook.Opacity.mostlyOpaque)
+                        completedColor: DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque),
+                        currentColor: DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque),
+                        pendingColor: DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque)
                     )
                 }
             }

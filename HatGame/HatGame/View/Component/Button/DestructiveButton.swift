@@ -21,6 +21,8 @@ struct DestructiveButton<Label: View>: View {
         Button(action: action) {
             label()
                 .font(DesignBook.Font.headline)
+                // Footer buttons stack; past this size they would bury the screen.
+                .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .padding(8)
                 .frame(maxWidth: .infinity)
         }
@@ -42,7 +44,7 @@ extension DestructiveButton where Label == Text {
     VStack(spacing: DesignBook.Spacing.md) {
         DestructiveButton(title: "Cancel") {}
         DestructiveButton(title: "Delete") {}
-        DestructiveButton(action: {}) {
+        DestructiveButton {} label: {
             HStack {
                 Image(systemName: "trash")
                 Text("Delete Item")

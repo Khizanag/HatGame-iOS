@@ -556,15 +556,11 @@ private extension ColorSwatchButton {
         if isSelected {
             Image(systemName: "checkmark")
                 .font(DesignBook.Font.subheadlineBold)
-                // White on the team-colored swatch; DesignBook has no on-accent token yet.
-                // swiftlint:disable:next no_raw_foreground_white_black
-                .foregroundStyle(.white)
+                .foregroundStyle(DesignBook.Color.onAccent(for: color))
         } else if isDisabled {
             Image(systemName: "xmark")
                 .font(DesignBook.Font.footnoteBold)
-                // White on the team-colored swatch; DesignBook has no on-accent token yet.
-                // swiftlint:disable:next no_raw_foreground_white_black
-                .foregroundStyle(.white)
+                .foregroundStyle(DesignBook.Color.onAccent(for: color))
                 .opacity(DesignBook.Opacity.disabled)
         }
     }

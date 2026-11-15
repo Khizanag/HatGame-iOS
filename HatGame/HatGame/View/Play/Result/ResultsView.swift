@@ -134,9 +134,7 @@ private extension ResultsView {
             Image(systemName: "trophy.fill")
                 .font(DesignBook.IconFont.extraLarge)
                 .fontWeight(.bold)
-                // White on the celebration-gradient disc; DesignBook has no on-accent token yet.
-                // swiftlint:disable:next no_raw_foreground_white_black
-                .foregroundStyle(.white)
+                .foregroundStyle(DesignBook.Color.onGradient)
                 .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: hasCelebrated)
         }
         .accessibilityHidden(true)

@@ -57,11 +57,14 @@ struct ConnectivityMenuHero: View {
                     .shadow(.large)
 
                 Image(systemName: symbol)
-                    .font(.system(size: 60, weight: .bold))
+                    .font(DesignBook.IconFont.display)
                     .foregroundStyle(DesignBook.Gradient.primary)
-                    .modifier(IconAnimationModifier(animation: animation, isPulsing: isPulsing, reduceMotion: reduceMotion))
+                    .modifier(
+                        IconAnimationModifier(animation: animation, isPulsing: isPulsing, reduceMotion: reduceMotion)
+                    )
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(title)
