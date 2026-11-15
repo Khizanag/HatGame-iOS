@@ -79,14 +79,14 @@ struct WordCard: View {
 // MARK: - Subviews
 private extension WordCard {
     var cardBackground: some View {
-        RoundedRectangle(cornerRadius: 32, style: .continuous)
+        RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
             .fill(DesignBook.Color.Background.card)
             .overlay {
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
+                RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                     .fill(DesignBook.Gradient.brandBackdrop)
             }
             .overlay {
-                RoundedRectangle(cornerRadius: 32, style: .continuous)
+                RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                     .strokeBorder(
                         dragTint.opacity(abs(dragProgress) * 0.7),
                         lineWidth: 3

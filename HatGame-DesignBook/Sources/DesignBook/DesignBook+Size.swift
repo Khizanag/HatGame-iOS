@@ -18,6 +18,8 @@ extension DesignBook {
         // MARK: - Corner Radius
         public static let cardCornerRadius: CGFloat = 20
         public static let smallCardCornerRadius: CGFloat = 12
+        /// The gameplay word card and its placeholder.
+        public static let heroCardCornerRadius: CGFloat = 32
 
         // MARK: - Icon Sizes
         public static let iconSize: CGFloat = 24

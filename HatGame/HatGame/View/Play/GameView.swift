@@ -97,7 +97,7 @@ private extension GameView {
                 )
             )
         } else {
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
+            RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                 .fill(DesignBook.Color.Background.card)
                 .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
                 .aspectRatio(1.05, contentMode: .fit)
@@ -151,13 +151,7 @@ private extension GameView {
         ToolbarItem(placement: .primaryAction) {
             Button(action: togglePause) {
                 Image(systemName: engine.isPaused ? "play.fill" : "pause.fill")
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(DesignBook.Spacing.sm)
-                    .background {
-                        Circle().fill(DesignBook.Color.Background.card)
-                    }
             }
-            .buttonStyle(.plain)
             .accessibilityLabel(
                 engine.isPaused ? Text(localized("game.timer.resume")) : Text(localized("game.timer.pause"))
             )
