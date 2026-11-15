@@ -65,7 +65,7 @@ struct TeamFormView: View {
         guard !trimmedTeamName.isEmpty, filledPlayerNames.count < requiredPlayers else {
             return nil
         }
-        return String(format: localized("teamForm.validation.exactPlayers"), requiredPlayers)
+        return localized("teamForm.validation.exactPlayers \(requiredPlayers)")
     }
 
     private var title: String {

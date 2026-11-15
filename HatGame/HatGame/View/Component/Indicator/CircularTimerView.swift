@@ -54,8 +54,8 @@ struct CircularTimerView: View {
         let minutes = remainingSeconds / 60
         let seconds = remainingSeconds % 60
         return minutes > 0
-            ? String(format: localized("game.timer.accessibility.minutesSeconds"), minutes, seconds)
-            : String(format: localized("game.timer.accessibility.seconds"), seconds)
+            ? localized("game.timer.accessibility.minutesSeconds \(minutes) \(seconds)")
+            : localized("game.timer.accessibility.seconds \(seconds)")
     }
 
     var body: some View {

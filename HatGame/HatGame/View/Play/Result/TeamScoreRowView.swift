@@ -111,10 +111,7 @@ private extension TeamScoreRowView {
     }
 
     var accessibilityLabel: Text {
-        Text(String(
-            format: localized("game.results.teamScore.accessibility"),
-            name, rank, score
-        ))
+        Text(localized("game.results.teamScore.accessibility \(name) \(rank) \(score)"))
     }
 }
 

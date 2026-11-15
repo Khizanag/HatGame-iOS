@@ -268,7 +268,7 @@ private struct WordsReadyCard: View {
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
-                    Text(String(format: localized("randomization.wordsReady.count"), wordCount))
+                    Text(localized("randomization.wordsReady.count \(wordCount)"))
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -295,7 +295,7 @@ private struct TeamSelectionRow: View {
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
-                Text(String(format: localized("randomization.team.players"), team.players.count))
+                Text(localized("randomization.team.players \(team.players.count)"))
                     .font(DesignBook.Font.caption)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             }

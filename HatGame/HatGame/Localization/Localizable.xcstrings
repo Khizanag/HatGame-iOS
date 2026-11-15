@@ -1413,13 +1413,35 @@
         }
       }
     },
-    "game.results.teamScore.accessibility" : {
+    "game.results.teamScore.accessibility %@ %lld %lld" : {
       "comment" : "Accessibility label for a team's score row: name, rank, points.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@, rank %2$lld, %3$lld points"
+            "value" : "%1$@, rank %2$lld, %#@points@"
+          },
+          "substitutions" : {
+            "points" : {
+              "argNum" : 3,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg point"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg points"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ka" : {
@@ -1533,13 +1555,55 @@
         }
       }
     },
-    "game.timer.accessibility.minutesSeconds" : {
+    "game.timer.accessibility.minutesSeconds %lld %lld" : {
       "comment" : "Accessibility label for the remaining time when minutes remain.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$lld minutes %2$lld seconds remaining"
+            "value" : "%#@minutes@ %#@seconds@ remaining"
+          },
+          "substitutions" : {
+            "minutes" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg minute"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg minutes"
+                    }
+                  }
+                }
+              }
+            },
+            "seconds" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg second"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg seconds"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ka" : {
@@ -1550,19 +1614,43 @@
         }
       }
     },
-    "game.timer.accessibility.seconds" : {
+    "game.timer.accessibility.seconds %lld" : {
       "comment" : "Accessibility label for the remaining time under a minute.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld seconds remaining"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld second remaining"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld seconds remaining"
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "დარჩა %lld წამი"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "დარჩა %lld წამი"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "დარჩა %lld წამი"
+                }
+              }
+            }
           }
         }
       }
@@ -1622,15 +1710,39 @@
       "comment" : "Accessibility label for the score badge during a turn. The argument is the number of words guessed.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld words guessed this turn"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld word guessed this turn"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld words guessed this turn"
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld სიტყვა ამ ტურში"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა ამ ტურში"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა ამ ტურში"
+                }
+              }
+            }
           }
         }
       }
@@ -1757,8 +1869,25 @@
         }
       }
     },
+    "game.turnResults.wordUnit" : {
+      "comment" : "Unit label next to the big guessed-word count on the turn results hero when exactly one word was guessed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "word"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვა"
+          }
+        }
+      }
+    },
     "game.turnResults.wordsUnit" : {
-      "comment" : "Short unit label shown next to the big guessed-word count on the turn results hero. Always plural — the count carries the math.",
+      "comment" : "Unit label next to the big guessed-word count on the turn results hero for any count other than one.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -4218,19 +4347,43 @@
         }
       }
     },
-    "randomization.team.players" : {
+    "randomization.team.players %lld" : {
       "comment" : "Shows number of players in a team.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld players"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld player"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld players"
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld მოთამაშე"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld მოთამაშე"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld მოთამაშე"
+                }
+              }
+            }
           }
         }
       }
@@ -4271,19 +4424,43 @@
         }
       }
     },
-    "randomization.wordsReady.count" : {
+    "randomization.wordsReady.count %lld" : {
       "comment" : "Shows count of words ready to play.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld words collected and ready to play"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld word collected and ready to play"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld words collected and ready to play"
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld სიტყვა შეგროვებულია და მზადაა"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა შეგროვებულია და მზადაა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა შეგროვებულია და მზადაა"
+                }
+              }
+            }
           }
         }
       }
@@ -5997,19 +6174,43 @@
         }
       }
     },
-    "teamForm.validation.exactPlayers" : {
+    "teamForm.validation.exactPlayers %lld" : {
       "comment" : "Validation message when team must have exact number of players.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Must have exactly %d players"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Must have exactly %lld player"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Must have exactly %lld players"
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "უნდა იყოს ზუსტად %d მოთამაშე"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "უნდა იყოს ზუსტად %lld მოთამაშე"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "უნდა იყოს ზუსტად %lld მოთამაშე"
+                }
+              }
+            }
           }
         }
       }
@@ -6137,19 +6338,43 @@
         }
       }
     },
-    "teamSetup.empty.description" : {
+    "teamSetup.empty.description %lld" : {
       "comment" : "Description shown in the empty-teams state. %lld is the minimum team count.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add at least %lld teams to play."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add at least %lld team to play."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add at least %lld teams to play."
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სათამაშოდ დაამატეთ მინიმუმ %lld გუნდი."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "სათამაშოდ დაამატეთ მინიმუმ %lld გუნდი."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "სათამაშოდ დაამატეთ მინიმუმ %lld გუნდი."
+                }
+              }
+            }
           }
         }
       }
@@ -6171,19 +6396,43 @@
         }
       }
     },
-    "teamSetup.minTeamsRequired" : {
+    "teamSetup.minTeamsRequired %lld" : {
       "comment" : "A text instruction at the bottom of the view that explains the requirement for the user to have at least 2 teams to continue.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Add at least %lld teams to continue."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add at least %lld team to continue."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Add at least %lld teams to continue."
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გასაგრძელებლად დაამატეთ მინიმუმ %lld გუნდი."
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "გასაგრძელებლად დაამატეთ მინიმუმ %lld გუნდი."
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "გასაგრძელებლად დაამატეთ მინიმუმ %lld გუნდი."
+                }
+              }
+            }
           }
         }
       }
@@ -6435,19 +6684,43 @@
         }
       }
     },
-    "wordGeneration.count" : {
+    "wordGeneration.count %lld" : {
       "comment" : "Count of generated words; %lld is the number.",
       "localizations" : {
         "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld words ready"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld word ready"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld words ready"
+                }
+              }
+            }
           }
         },
         "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "%lld სიტყვა მზადაა"
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა მზადაა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა მზადაა"
+                }
+              }
+            }
           }
         }
       }
@@ -6707,13 +6980,35 @@
         }
       }
     },
-    "wordInput.playerInstruction" : {
+    "wordInput.playerInstruction %@ %lld" : {
       "comment" : "Instruction showing which player should add words.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "%1$@ - Add %2$lld words"
+            "value" : "%1$@ - Add %#@words@"
+          },
+          "substitutions" : {
+            "words" : {
+              "argNum" : 2,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg word"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "%arg words"
+                    }
+                  }
+                }
+              }
+            }
           }
         },
         "ka" : {

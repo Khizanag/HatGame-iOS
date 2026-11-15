@@ -146,7 +146,7 @@ private extension WordGenerationView {
 
             Text(phase == .generating
                 ? localized("wordGeneration.subtitle")
-                : String(format: localized("wordGeneration.count"), generatedCount))
+                : localized("wordGeneration.count \(generatedCount)"))
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
@@ -178,7 +178,7 @@ private extension WordGenerationView {
             navigator.push(.randomization)
         }
         .accessibilityFocused($readyControlFocused)
-        .accessibilityHint(Text(String(format: localized("wordGeneration.count"), generatedCount)))
+        .accessibilityHint(Text(localized("wordGeneration.count \(generatedCount)")))
     }
 }
 

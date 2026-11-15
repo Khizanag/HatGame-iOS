@@ -100,11 +100,7 @@ private extension WordInputView {
         HeaderCard(
             title: localized("wordInput.title"),
             description: currentPlayer.map { player in
-                String(
-                    format: localized("wordInput.playerInstruction"),
-                    player.name,
-                    wordsPerPlayer
-                )
+                localized("wordInput.playerInstruction \(player.name) \(wordsPerPlayer)")
             }
         ) {
             PlayerStepIndicator(

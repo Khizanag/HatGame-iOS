@@ -23,6 +23,10 @@ struct TeamTurnResultsView: View {
 
     private var isCelebratory: Bool { completionReason == .allWordsGuessed }
 
+    private var wordsUnit: String {
+        localized(guessedWords.count == 1 ? "game.turnResults.wordUnit" : "game.turnResults.wordsUnit")
+    }
+
     var body: some View {
         resultsScroll
             .setDefaultBackground()
@@ -120,7 +124,7 @@ private extension TeamTurnResultsView {
                         color: team.color,
                         duration: 0.7
                     )
-                    Text(localized("game.turnResults.wordsUnit"))
+                    Text(wordsUnit)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }

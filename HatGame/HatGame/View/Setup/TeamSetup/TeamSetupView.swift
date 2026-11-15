@@ -110,10 +110,7 @@ private extension TeamSetupView {
         ContentUnavailableView {
             Label(localized("teamSetup.empty.title"), systemImage: "person.3")
         } description: {
-            Text(String(
-                format: localized("teamSetup.empty.description"),
-                gameManager.configuration.minTeams
-            ))
+            Text(localized("teamSetup.empty.description \(gameManager.configuration.minTeams)"))
         } actions: {
             SecondaryButton(
                 title: localized("teamSetup.addTeam"),
@@ -142,7 +139,7 @@ private extension TeamSetupView {
     }
 
     var requirementText: some View {
-        Text(String(format: localized("teamSetup.minTeamsRequired"), gameManager.configuration.minTeams))
+        Text(localized("teamSetup.minTeamsRequired \(gameManager.configuration.minTeams)"))
             .font(DesignBook.Font.caption)
             .foregroundStyle(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
