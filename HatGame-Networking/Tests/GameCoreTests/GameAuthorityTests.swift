@@ -9,7 +9,7 @@ import Foundation
 @testable import GameCore
 import Testing
 
-@Suite("GameRules authority")
+@Suite("OnlineGameRules authority")
 struct GameAuthorityTests {
     /// Host "host" spectates; "exp" is explaining for team A; "other" waits.
     private static let teams = [
@@ -53,7 +53,7 @@ struct GameAuthorityTests {
         in phase: GamePhase,
         context: GameContext = context()
     ) -> Bool {
-        GameRules.canPerform(action, by: playerId, state: state(phase), context: context)
+        OnlineGameRules.canPerform(action, by: playerId, state: state(phase), context: context)
     }
 
     @Test("Only the explainer drives their turn", arguments: [
@@ -74,8 +74,8 @@ struct GameAuthorityTests {
 
     @Test("The host may end a turn only when the explainer is away or stalled")
     func hostEndsStalledTurn() {
-        let stalled = Self.context(secondsIn: 60 + GameRules.stallGraceSeconds + 1)
-        let barelyOver = Self.context(secondsIn: 60 + GameRules.stallGraceSeconds - 1)
+        let stalled = Self.context(secondsIn: 60 + OnlineGameRules.stallGraceSeconds + 1)
+        let barelyOver = Self.context(secondsIn: 60 + OnlineGameRules.stallGraceSeconds - 1)
         let away = Self.context(explainerOnline: false)
 
         #expect(!Self.allowed(.endTurn, by: "host", in: .playing))
@@ -112,8 +112,8 @@ struct GameAuthorityTests {
         let state = Self.state(.playing)
         let context = Self.context()
 
-        let byExplainer = GameRules.apply(.markGuessed(wordId: "w1"), by: "exp", to: state, context: context)
-        let byOther = GameRules.apply(.markGuessed(wordId: "w1"), by: "other", to: state, context: context)
+        let byExplainer = OnlineGameRules.apply(.markGuessed(wordId: "w1"), by: "exp", to: state, context: context)
+        let byOther = OnlineGameRules.apply(.markGuessed(wordId: "w1"), by: "other", to: state, context: context)
 
         #expect(byExplainer?.getScore(for: "A", in: .first) == 1)
         #expect(byOther == nil)
@@ -122,7 +122,7 @@ struct GameAuthorityTests {
     @Test("Reduce routes every action to its transition")
     func reduceRoutesEveryAction() {
         func reduced(_ phase: GamePhase, _ action: GameAction) -> OnlineGameState? {
-            GameRules.reduce(Self.state(phase), action, context: Self.context())
+            OnlineGameRules.reduce(Self.state(phase), action, context: Self.context())
         }
 
         #expect(reduced(.teamPrep, .startTurn)?.phase == .playing)

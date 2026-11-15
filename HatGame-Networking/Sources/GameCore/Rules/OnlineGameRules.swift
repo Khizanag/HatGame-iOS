@@ -1,5 +1,5 @@
 //
-//  GameRules.swift
+//  OnlineGameRules.swift
 //  GameCore
 //
 //  Created by Giga Khizanishvili on 16.11.26.
@@ -11,7 +11,7 @@ import Foundation
 /// and `docs/rounds.md`). Every transition returns `nil` when its
 /// precondition fails, so a stale or duplicated request is a no-op rather
 /// than a corrupting write.
-public enum GameRules {
+public enum OnlineGameRules {
     /// How long after the deadline a guess still counts, absorbing the time
     /// between the tap and the write landing.
     public static let guessGraceSeconds: TimeInterval = 2

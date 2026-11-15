@@ -8,7 +8,7 @@
 import Foundation
 
 /// A request to move an in-progress game forward. Both transports funnel
-/// every gameplay mutation through `GameRules.apply`, so the same action
+/// every gameplay mutation through `OnlineGameRules.apply`, so the same action
 /// produces the same state whether it runs inside a Firebase transaction or
 /// on the Multipeer host.
 public enum GameAction: Codable, Sendable, Equatable {

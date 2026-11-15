@@ -9,7 +9,7 @@ import Foundation
 import Observation
 
 /// Moves an online game forward. The transitions themselves live in
-/// `GameRules`; this type runs them inside Firebase transactions, so each
+/// `OnlineGameRules`; this type runs them inside Firebase transactions, so each
 /// one applies to the live state rather than a possibly stale local copy.
 @MainActor
 @Observable
@@ -24,7 +24,7 @@ open class GameSyncManager {
     @discardableResult
     open func initializeGame(room: GameRoom, words: [OnlineWord]) async throws -> Bool {
         guard room.gameState == nil,
-              let state = GameRules.initialState(
+              let state = OnlineGameRules.initialState(
                   teams: room.teams,
                   players: room.players,
                   wordIds: words.map(\.id).shuffled(),
@@ -45,11 +45,11 @@ open class GameSyncManager {
         // Cheap local check first: skip the round trip for an action the
         // player could not take even against the state on screen.
         guard let cached = room.gameState,
-              GameRules.canPerform(action, by: playerId, state: cached, context: GameContext(room: room))
+              OnlineGameRules.canPerform(action, by: playerId, state: cached, context: GameContext(room: room))
         else { return false }
         let committed = try await firebaseService.transactGameState(roomId: room.id) { current in
             current.flatMap { live in
-                GameRules.apply(action, by: playerId, to: live, context: GameContext(room: room, now: Date()))
+                OnlineGameRules.apply(action, by: playerId, to: live, context: GameContext(room: room, now: Date()))
             }
         }
         guard let next = committed else { return false }

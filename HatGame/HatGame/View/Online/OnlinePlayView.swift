@@ -31,7 +31,7 @@ struct OnlinePlayView: View {
     private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        gameState.flatMap { GameRules.currentTeam($0, teams: teams) }
+        gameState.flatMap { OnlineGameRules.currentTeam($0, teams: teams) }
     }
 
     private var isActivePlayer: Bool {
@@ -291,7 +291,7 @@ private extension OnlinePlayView {
     /// a backgrounded or disconnected device never sends its own end.
     var isCoveringStalledTurn: Bool {
         guard roomManager.isHost, let state = gameState else { return false }
-        return GameRules.isStalled(state, now: Date())
+        return OnlineGameRules.isStalled(state, now: Date())
     }
 
     func playUrgencyHaptics(from previous: Int, to current: Int) {

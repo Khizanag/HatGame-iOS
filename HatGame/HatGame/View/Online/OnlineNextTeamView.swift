@@ -24,12 +24,12 @@ struct OnlineNextTeamView: View {
     private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        gameState.flatMap { GameRules.currentTeam($0, teams: teams) }
+        gameState.flatMap { OnlineGameRules.currentTeam($0, teams: teams) }
     }
 
     private var teamPlayers: [OnlinePlayer] {
         guard let team = currentTeam else { return [] }
-        return GameRules.playersInTeam(team, allPlayers: players)
+        return OnlineGameRules.playersInTeam(team, allPlayers: players)
     }
 
     /// The player the synced state names as explainer — the same id that
@@ -57,7 +57,7 @@ struct OnlineNextTeamView: View {
     /// so one backgrounded device cannot wedge the room.
     private var canCoverForAwayExplainer: Bool {
         guard roomManager.isHost, !isActivePlayer, let state = gameState else { return false }
-        return GameRules.isActivePlayerAway(state, players: room?.players ?? [])
+        return OnlineGameRules.isActivePlayerAway(state, players: room?.players ?? [])
     }
 
     private var tint: Color {

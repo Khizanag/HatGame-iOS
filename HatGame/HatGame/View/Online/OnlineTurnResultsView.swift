@@ -24,7 +24,7 @@ struct OnlineTurnResultsView: View {
     private var teams: [OnlineTeam] { room?.teams ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        gameState.flatMap { GameRules.currentTeam($0, teams: teams) }
+        gameState.flatMap { OnlineGameRules.currentTeam($0, teams: teams) }
     }
 
     private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
@@ -42,7 +42,7 @@ struct OnlineTurnResultsView: View {
     /// so one backgrounded device cannot wedge the room.
     private var canCoverForAwayExplainer: Bool {
         guard roomManager.isHost, !isActivePlayer, let state = gameState else { return false }
-        return GameRules.isActivePlayerAway(state, players: room?.players ?? [])
+        return OnlineGameRules.isActivePlayerAway(state, players: room?.players ?? [])
     }
 
     private var tint: Color {

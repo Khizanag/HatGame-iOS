@@ -12,7 +12,7 @@ import Foundation
 ///
 /// Authority model: only the host mutates the canonical room state. Guests
 /// emit `ClientAction`s; the host checks them against `RoomRules` /
-/// `GameRules`, mutates its in-memory `GameRoom`, then broadcasts a fresh
+/// `OnlineGameRules`, mutates its in-memory `GameRoom`, then broadcasts a fresh
 /// `roomSnapshot` (and `wordsSnapshot` when the words pool changes). Every
 /// peer renders from the snapshot it last received.
 public enum LocalMessage: Codable, Sendable {
@@ -32,6 +32,6 @@ public enum LocalMessage: Codable, Sendable {
 public enum ClientAction: Codable, Sendable {
     /// Lobby and word-pool changes, checked by `RoomRules`.
     case room(RoomAction)
-    /// Gameplay transitions, checked by `GameRules`.
+    /// Gameplay transitions, checked by `OnlineGameRules`.
     case game(GameAction)
 }

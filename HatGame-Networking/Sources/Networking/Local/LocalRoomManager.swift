@@ -16,7 +16,7 @@ private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "Local
 /// of Firebase. Authority model is identical to the Firebase path: only the
 /// host mutates canonical state; guests post `ClientAction`s and wait for
 /// the host's broadcast `roomSnapshot` to apply locally. Every mutation runs
-/// through `RoomRules` / `GameRules`, so a guest can do exactly what the
+/// through `RoomRules` / `OnlineGameRules`, so a guest can do exactly what the
 /// same player could do online and nothing more.
 ///
 /// One instance is created per local-play session. Hosts create it via
@@ -204,7 +204,7 @@ public final class LocalRoomManager: RoomManager {
         guard isLocalHost,
               var room,
               room.gameState == nil,
-              let state = GameRules.initialState(
+              let state = OnlineGameRules.initialState(
                   teams: room.teams,
                   players: room.players,
                   wordIds: wordIds,
@@ -216,13 +216,13 @@ public final class LocalRoomManager: RoomManager {
         return true
     }
 
-    /// Host-only. Applies a gameplay action through `GameRules` and
+    /// Host-only. Applies a gameplay action through `OnlineGameRules` and
     /// broadcasts the result. Serves the host's own taps and every guest's.
     func applyGameAction(_ action: GameAction, by playerId: String) -> Bool {
         guard isLocalHost,
               var room,
               let state = room.gameState,
-              let next = GameRules.apply(action, by: playerId, to: state, context: GameContext(room: room))
+              let next = OnlineGameRules.apply(action, by: playerId, to: state, context: GameContext(room: room))
         else { return false }
         room.gameState = next
         if next.phase == .finished {

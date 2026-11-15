@@ -1,5 +1,5 @@
 //
-//  GameRulesTests.swift
+//  OnlineGameRulesTests.swift
 //  GameCoreTests
 //
 //  Created by Giga Khizanishvili on 16.11.26.
@@ -35,28 +35,28 @@ private enum Table {
     static func initial(words: [String] = words, isSkippingEnabled: Bool = true) throws -> OnlineGameState {
         let settings = GameSettings(roundDuration: 60, isSkippingEnabled: isSkippingEnabled)
         return try #require(
-            GameRules.initialState(teams: teams, players: players, wordIds: words, settings: settings)
+            OnlineGameRules.initialState(teams: teams, players: players, wordIds: words, settings: settings)
         )
     }
 
     static func playing(words: [String] = words, isSkippingEnabled: Bool = true) throws -> OnlineGameState {
         let state = try initial(words: words, isSkippingEnabled: isSkippingEnabled)
-        return try #require(GameRules.startTurn(state, now: Fixture.epoch))
+        return try #require(OnlineGameRules.startTurn(state, now: Fixture.epoch))
     }
 
     /// Plays one turn for the current team: start, time's up, continue.
     static func passTurn(_ state: OnlineGameState) throws -> OnlineGameState {
-        let started = try #require(GameRules.startTurn(state, now: Fixture.epoch))
-        let ended = try #require(GameRules.endTurn(started))
-        return try #require(GameRules.advanceAfterTurnResults(ended, teams: teams, players: players))
+        let started = try #require(OnlineGameRules.startTurn(state, now: Fixture.epoch))
+        let ended = try #require(OnlineGameRules.endTurn(started))
+        return try #require(OnlineGameRules.advanceAfterTurnResults(ended, teams: teams, players: players))
     }
 
     /// Guesses every remaining word in the current turn.
     static func clearHat(_ state: OnlineGameState) throws -> OnlineGameState {
-        var current = try #require(GameRules.startTurn(state, now: Fixture.epoch))
+        var current = try #require(OnlineGameRules.startTurn(state, now: Fixture.epoch))
         while let wordId = current.currentWordId, current.phase == .playing {
             current = try #require(
-                GameRules.markGuessed(current, expectedWordId: wordId, teams: teams, now: Fixture.epoch)
+                OnlineGameRules.markGuessed(current, expectedWordId: wordId, teams: teams, now: Fixture.epoch)
             )
         }
         return current
@@ -64,7 +64,7 @@ private enum Table {
 }
 
 // MARK: - Setup
-@Suite("GameRules setup")
+@Suite("OnlineGameRules setup")
 struct GameRulesSetupTests {
     @Test("Initial state starts team A with its first player explaining")
     func initialState() throws {
@@ -87,13 +87,13 @@ struct GameRulesSetupTests {
         let settings = GameSettings()
         let players = Table.players
 
-        #expect(GameRules.initialState(teams: [], players: players, wordIds: ["w"], settings: settings) == nil)
-        #expect(GameRules.initialState(teams: Table.teams, players: players, wordIds: [], settings: settings) == nil)
+        #expect(OnlineGameRules.initialState(teams: [], players: players, wordIds: ["w"], settings: settings) == nil)
+        #expect(OnlineGameRules.initialState(teams: Table.teams, players: players, wordIds: [], settings: settings) == nil)
     }
 }
 
 // MARK: - Turn
-@Suite("GameRules turn")
+@Suite("OnlineGameRules turn")
 struct GameRulesTurnTests {
     @Test("Start turn anchors the timer")
     func startTurn() throws {
@@ -101,7 +101,7 @@ struct GameRulesTurnTests {
 
         #expect(state.phase == .playing)
         #expect(state.timerStartedAt == Fixture.epoch)
-        #expect(GameRules.deadline(state) == Fixture.epoch.addingTimeInterval(60))
+        #expect(OnlineGameRules.deadline(state) == Fixture.epoch.addingTimeInterval(60))
     }
 
     @Test("Start turn is rejected outside team prep or without an explainer")
@@ -112,9 +112,9 @@ struct GameRulesTurnTests {
         var emptyHat = try Table.initial()
         emptyHat.remainingWordIds = []
 
-        #expect(GameRules.startTurn(playing, now: Fixture.epoch) == nil)
-        #expect(GameRules.startTurn(noExplainer, now: Fixture.epoch) == nil)
-        #expect(GameRules.startTurn(emptyHat, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(playing, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(noExplainer, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(emptyHat, now: Fixture.epoch) == nil)
     }
 
     @Test("Got it scores the current team and draws the next word")
@@ -122,7 +122,7 @@ struct GameRulesTurnTests {
         let state = try Table.playing()
 
         let next = try #require(
-            GameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch)
+            OnlineGameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch)
         )
 
         #expect(next.getScore(for: "A", in: .first) == 1)
@@ -136,10 +136,10 @@ struct GameRulesTurnTests {
     func doubleTapScoresOnce() throws {
         let state = try Table.playing()
         let once = try #require(
-            GameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch)
+            OnlineGameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch)
         )
 
-        let twice = GameRules.markGuessed(once, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch)
+        let twice = OnlineGameRules.markGuessed(once, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch)
 
         #expect(twice == nil)
         #expect(once.getScore(for: "A", in: .first) == 1)
@@ -148,18 +148,18 @@ struct GameRulesTurnTests {
     @Test("A guess after the deadline grace is rejected; within it, accepted")
     func guessDeadline() throws {
         let state = try Table.playing()
-        let withinGrace = Fixture.epoch.addingTimeInterval(60 + GameRules.guessGraceSeconds)
+        let withinGrace = Fixture.epoch.addingTimeInterval(60 + OnlineGameRules.guessGraceSeconds)
         let pastGrace = withinGrace.addingTimeInterval(0.5)
 
-        #expect(GameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: withinGrace) != nil)
-        #expect(GameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: pastGrace) == nil)
+        #expect(OnlineGameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: withinGrace) != nil)
+        #expect(OnlineGameRules.markGuessed(state, expectedWordId: "w1", teams: Table.teams, now: pastGrace) == nil)
     }
 
     @Test("A guess that arrives after the turn ended does not rewind it")
     func guessAfterTurnEnded() throws {
-        let ended = try #require(GameRules.endTurn(try Table.playing()))
+        let ended = try #require(OnlineGameRules.endTurn(try Table.playing()))
 
-        #expect(GameRules.markGuessed(ended, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.markGuessed(ended, expectedWordId: "w1", teams: Table.teams, now: Fixture.epoch) == nil)
     }
 
     @Test("Guessing the last word empties the hat and ends the turn")
@@ -167,7 +167,7 @@ struct GameRulesTurnTests {
         let state = try Table.playing(words: ["only"])
 
         let next = try #require(
-            GameRules.markGuessed(state, expectedWordId: "only", teams: Table.teams, now: Fixture.epoch)
+            OnlineGameRules.markGuessed(state, expectedWordId: "only", teams: Table.teams, now: Fixture.epoch)
         )
 
         #expect(next.phase == .turnResults)
@@ -180,7 +180,7 @@ struct GameRulesTurnTests {
     func skip() throws {
         let state = try Table.playing()
 
-        let next = try #require(GameRules.skip(state, expectedWordId: "w1"))
+        let next = try #require(OnlineGameRules.skip(state, expectedWordId: "w1"))
 
         #expect(next.remainingWordIds == ["w2", "w3", "w4", "w1"])
         #expect(next.currentWordId == "w2")
@@ -194,21 +194,21 @@ struct GameRulesTurnTests {
         let running = try Table.playing()
         let prep = try Table.initial()
 
-        #expect(GameRules.skip(disabled, expectedWordId: "w1") == nil)
-        #expect(GameRules.skip(lastWord, expectedWordId: "only") == nil)
-        #expect(GameRules.skip(running, expectedWordId: "w2") == nil)
-        #expect(GameRules.skip(prep, expectedWordId: "w1") == nil)
+        #expect(OnlineGameRules.skip(disabled, expectedWordId: "w1") == nil)
+        #expect(OnlineGameRules.skip(lastWord, expectedWordId: "only") == nil)
+        #expect(OnlineGameRules.skip(running, expectedWordId: "w2") == nil)
+        #expect(OnlineGameRules.skip(prep, expectedWordId: "w1") == nil)
     }
 
     @Test("End turn closes a running turn or forfeits one in team prep")
     func endTurn() throws {
-        let fromPlaying = try #require(GameRules.endTurn(try Table.playing()))
-        let fromPrep = try #require(GameRules.endTurn(try Table.initial()))
+        let fromPlaying = try #require(OnlineGameRules.endTurn(try Table.playing()))
+        let fromPrep = try #require(OnlineGameRules.endTurn(try Table.initial()))
 
         #expect(fromPlaying.phase == .turnResults)
         #expect(fromPlaying.timerStartedAt == nil)
         #expect(fromPrep.phase == .turnResults)
-        #expect(GameRules.endTurn(fromPlaying) == nil)
+        #expect(OnlineGameRules.endTurn(fromPlaying) == nil)
     }
 
     @Test("Transitions refuse states written by a newer build")
@@ -218,14 +218,14 @@ struct GameRulesTurnTests {
         var round = try Table.playing()
         round.currentRound = .unsupported
 
-        #expect(GameRules.endTurn(state) == nil)
-        #expect(GameRules.skip(round, expectedWordId: "w1") == nil)
-        #expect(GameRules.reduce(state, .startTurn, context: Table.context()) == nil)
+        #expect(OnlineGameRules.endTurn(state) == nil)
+        #expect(OnlineGameRules.skip(round, expectedWordId: "w1") == nil)
+        #expect(OnlineGameRules.reduce(state, .startTurn, context: Table.context()) == nil)
     }
 }
 
 // MARK: - Advancement
-@Suite("GameRules advancement")
+@Suite("OnlineGameRules advancement")
 struct GameRulesAdvancementTests {
     @Test("Turn results pass the hat to the next team and rotate the previous explainer")
     func passesToNextTeam() throws {
@@ -256,7 +256,7 @@ struct GameRulesAdvancementTests {
         let cleared = try Table.clearHat(try Table.initial())
 
         let results = try #require(
-            GameRules.advanceAfterTurnResults(cleared, teams: Table.teams, players: Table.players)
+            OnlineGameRules.advanceAfterTurnResults(cleared, teams: Table.teams, players: Table.players)
         )
 
         #expect(results.phase == .roundResults)
@@ -270,11 +270,11 @@ struct GameRulesAdvancementTests {
         let afterTurn = try Table.passTurn(try Table.initial())
         let cleared = try Table.clearHat(afterTurn)
         let roundResults = try #require(
-            GameRules.advanceAfterTurnResults(cleared, teams: Table.teams, players: Table.players)
+            OnlineGameRules.advanceAfterTurnResults(cleared, teams: Table.teams, players: Table.players)
         )
 
         let next = try #require(
-            GameRules.advanceAfterRoundResults(
+            OnlineGameRules.advanceAfterRoundResults(
                 roundResults,
                 teams: Table.teams,
                 players: Table.players,
@@ -298,10 +298,10 @@ struct GameRulesAdvancementTests {
         for _ in OnlineGameRound.allCases {
             let cleared = try Table.clearHat(state)
             let results = try #require(
-                GameRules.advanceAfterTurnResults(cleared, teams: Table.teams, players: Table.players)
+                OnlineGameRules.advanceAfterTurnResults(cleared, teams: Table.teams, players: Table.players)
             )
             state = try #require(
-                GameRules.advanceAfterRoundResults(results, teams: Table.teams, players: Table.players)
+                OnlineGameRules.advanceAfterRoundResults(results, teams: Table.teams, players: Table.players)
             )
         }
 
@@ -314,21 +314,21 @@ struct GameRulesAdvancementTests {
     func advancePreconditions() throws {
         let prep = try Table.initial()
 
-        #expect(GameRules.advanceAfterTurnResults(prep, teams: Table.teams, players: Table.players) == nil)
-        #expect(GameRules.advanceAfterTurnResults(
-            try #require(GameRules.endTurn(prep)),
+        #expect(OnlineGameRules.advanceAfterTurnResults(prep, teams: Table.teams, players: Table.players) == nil)
+        #expect(OnlineGameRules.advanceAfterTurnResults(
+            try #require(OnlineGameRules.endTurn(prep)),
             teams: [],
             players: Table.players
         ) == nil)
-        #expect(GameRules.advanceAfterRoundResults(prep, teams: Table.teams, players: Table.players) == nil)
+        #expect(OnlineGameRules.advanceAfterRoundResults(prep, teams: Table.teams, players: Table.players) == nil)
     }
 
     @Test("A team with no players leaves the explainer empty")
     func emptyTeamHasNoExplainer() throws {
         let teams = [Table.teams[0], Fixture.team("C")]
-        let state = try #require(GameRules.endTurn(try Table.initial()))
+        let state = try #require(OnlineGameRules.endTurn(try Table.initial()))
 
-        let next = try #require(GameRules.advanceAfterTurnResults(state, teams: teams, players: Table.players))
+        let next = try #require(OnlineGameRules.advanceAfterTurnResults(state, teams: teams, players: Table.players))
 
         #expect(next.currentTeamIndex == 1)
         #expect(next.activePlayerId == nil)
@@ -336,7 +336,7 @@ struct GameRulesAdvancementTests {
 }
 
 // MARK: - Queries
-@Suite("GameRules queries")
+@Suite("OnlineGameRules queries")
 struct GameRulesQueryTests {
     @Test("Team membership follows player.teamId; playerIds only orders it")
     func playersInTeam() {
@@ -348,7 +348,7 @@ struct GameRulesQueryTests {
             Fixture.player("b1", team: "B", joinedOffset: 3),
         ]
 
-        let members = GameRules.playersInTeam(team, allPlayers: players).map(\.id)
+        let members = OnlineGameRules.playersInTeam(team, allPlayers: players).map(\.id)
 
         #expect(members == ["a3", "a1", "a2"])
     }
@@ -358,7 +358,7 @@ struct GameRulesQueryTests {
         var state = try Table.initial()
         state.teamExplainerIndices["B"] = 5
 
-        let explainer = GameRules.explainer(for: Table.teams[1], state: state, players: Table.players)
+        let explainer = OnlineGameRules.explainer(for: Table.teams[1], state: state, players: Table.players)
 
         #expect(explainer?.id == "b2")
     }
@@ -368,12 +368,12 @@ struct GameRulesQueryTests {
         var state = try Table.initial()
         let offline = Table.players.map { Fixture.player($0.id, team: $0.teamId, isConnected: $0.id != "a1") }
 
-        #expect(!GameRules.isActivePlayerAway(state, players: Table.players))
-        #expect(GameRules.isActivePlayerAway(state, players: offline))
+        #expect(!OnlineGameRules.isActivePlayerAway(state, players: Table.players))
+        #expect(OnlineGameRules.isActivePlayerAway(state, players: offline))
         state.activePlayerId = "nobody"
-        #expect(GameRules.isActivePlayerAway(state, players: Table.players))
+        #expect(OnlineGameRules.isActivePlayerAway(state, players: Table.players))
         state.activePlayerId = nil
-        #expect(GameRules.isActivePlayerAway(state, players: Table.players))
+        #expect(OnlineGameRules.isActivePlayerAway(state, players: Table.players))
     }
 
     @Test("Current team is nil for an out-of-range index")
@@ -381,6 +381,6 @@ struct GameRulesQueryTests {
         var state = try Table.initial()
         state.currentTeamIndex = 7
 
-        #expect(GameRules.currentTeam(state, teams: Table.teams) == nil)
+        #expect(OnlineGameRules.currentTeam(state, teams: Table.teams) == nil)
     }
 }
