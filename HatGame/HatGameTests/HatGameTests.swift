@@ -112,6 +112,58 @@ struct HatGameTests {
         #expect(english != georgian)
     }
 
+    // MARK: - Regression: idempotent transitions
+    /// Plan E1: a second `start()` (double-tap, or back-swipe re-running it)
+    /// must not advance the round or wipe round-one scores.
+    @Test func startTwiceStaysInRoundOne() {
+        let manager = makeManager(isSkippingEnabled: true)
+        manager.start()
+        manager.commitWordGuess()
+        let team = manager.currentTeam
+
+        manager.start()
+
+        #expect(manager.currentRound == .first)
+        #expect(manager.getScore(for: team, in: .first) == 1)
+    }
+
+    /// Plan E1: re-running the turn hand-off (back-swipe from Next Team) must
+    /// not skip a team or rotate the explainer twice.
+    @Test func prepareForNewPlayIsIdempotent() {
+        let manager = makeTwoTeamManager()
+        manager.start()
+        let firstTeam = manager.currentTeam
+        manager.setExplainer(playerIndex: 0, for: firstTeam)
+        manager.markPlayEndedWithTimeOut()
+
+        manager.prepareForNewPlay()
+        manager.prepareForNewPlay()
+
+        #expect(manager.currentTeam.id != firstTeam.id)
+        #expect(manager.getExplainerIndex(for: firstTeam) == 1)
+    }
+
+    /// Plan E2: Play Again must start from zero — no round 2/3 scores carried
+    /// over from the previous game.
+    @Test func rematchClearsPreviousGameScores() {
+        let manager = makeManager(isSkippingEnabled: true)
+        manager.start()
+        let team = manager.currentTeam
+        while manager.currentWord != nil {
+            manager.commitWordGuess()
+        }
+        manager.markPlayEndedWithTimeRemaining()
+        manager.prepareForNewPlay()
+        manager.commitWordGuess()
+        #expect(manager.getScore(for: team, in: .second) == 1)
+
+        manager.resetForRematch()
+        manager.start()
+
+        #expect(manager.getScore(for: team, in: .second) == 0)
+        #expect(manager.getTotalScore(for: team) == 0)
+    }
+
     // MARK: - Helpers
     private func makeManager(isSkippingEnabled: Bool) -> GameManager {
         let teamId = UUID()
@@ -126,6 +178,28 @@ struct HatGameTests {
         let configuration = GameConfiguration(
             isSkippingEnabled: isSkippingEnabled,
             teams: [team],
+            words: [Word(text: "one"), Word(text: "two"), Word(text: "three")]
+        )
+        return GameManager(configuration: configuration)
+    }
+
+    private func makeTwoTeamManager() -> GameManager {
+        let alphaId = UUID()
+        let betaId = UUID()
+        let alpha = Team(
+            id: alphaId,
+            name: "Alpha",
+            players: [Player(name: "Alice", teamId: alphaId), Player(name: "Bob", teamId: alphaId)],
+            color: .blue
+        )
+        let beta = Team(
+            id: betaId,
+            name: "Beta",
+            players: [Player(name: "Carol", teamId: betaId), Player(name: "Dan", teamId: betaId)],
+            color: .red
+        )
+        let configuration = GameConfiguration(
+            teams: [alpha, beta],
             words: [Word(text: "one"), Word(text: "two"), Word(text: "three")]
         )
         return GameManager(configuration: configuration)
