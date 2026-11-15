@@ -50,6 +50,8 @@ private extension OnlineWaitingView {
                     .frame(width: 96, height: 96)
                     .shadow(.medium)
                 Image(systemName: "hourglass")
+                    // Waiting hero glyph; off-token size with no Dynamic Type match.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 44, weight: .bold))
                     .foregroundStyle(DesignBook.Gradient.primary)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)

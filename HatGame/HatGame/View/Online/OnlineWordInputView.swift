@@ -26,7 +26,9 @@ struct OnlineWordInputView: View {
 
     private var wordsPerPlayer: Int { roomManager.room?.settings.wordsPerPlayer ?? 5 }
     private var trimmed: String { currentWord.trimmingCharacters(in: .whitespacesAndNewlines) }
-    private var canAdd: Bool { !trimmed.isEmpty && playerWords.count < wordsPerPlayer && !playerWords.contains(trimmed) }
+    private var canAdd: Bool {
+        !trimmed.isEmpty && playerWords.count < wordsPerPlayer && !playerWords.contains(trimmed)
+    }
     private var canSubmit: Bool { playerWords.count == wordsPerPlayer && !isSubmitting }
 
     var body: some View {
@@ -78,6 +80,8 @@ private extension OnlineWordInputView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: "text.bubble.fill")
+                    // Header glyph; off-token size with no Dynamic Type match.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 40))
                     .foregroundStyle(DesignBook.Color.Text.accent)
                 Text(localized("onlineWordInput.instruction"))

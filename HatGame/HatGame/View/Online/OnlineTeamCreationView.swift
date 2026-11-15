@@ -162,10 +162,14 @@ private extension OnlineTeamCreationView {
                     if isSelected {
                         Image(systemName: "checkmark")
                             .font(DesignBook.Font.subheadlineBold)
+                            // Mark sits on the swatch's own team color.
+                            // swiftlint:disable:next no_raw_foreground_white_black
                             .foregroundStyle(.white)
                     } else if isUsed {
                         Image(systemName: "xmark")
                             .font(DesignBook.Font.footnoteBold)
+                            // Mark sits on the swatch's own team color.
+                            // swiftlint:disable:next no_raw_foreground_white_black
                             .foregroundStyle(.white)
                             .opacity(DesignBook.Opacity.disabled)
                     }
@@ -185,11 +189,8 @@ private extension OnlineTeamCreationView {
     }
 
     func selectAvailableColor() {
-        for color in TeamDefaultColorGenerator.defaultColors {
-            if !isColorUsedByOtherTeam(color) {
-                teamColor = color
-                return
-            }
+        if let color = TeamDefaultColorGenerator.defaultColors.first(where: { !isColorUsedByOtherTeam($0) }) {
+            teamColor = color
         }
     }
 
