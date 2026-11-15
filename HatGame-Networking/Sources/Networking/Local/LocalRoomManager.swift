@@ -15,7 +15,9 @@ private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "Local
 /// `RoomManager` whose transport is Apple's `MultipeerConnectivity` instead
 /// of Firebase. Authority model is identical to the Firebase path: only the
 /// host mutates canonical state; guests post `ClientAction`s and wait for
-/// the host's broadcast `roomSnapshot` to apply locally.
+/// the host's broadcast `roomSnapshot` to apply locally. Every mutation runs
+/// through `RoomRules` / `GameRules`, so a guest can do exactly what the
+/// same player could do online and nothing more.
 ///
 /// One instance is created per local-play session. Hosts create it via
 /// `createRoom(...)`; guests create it via `connectToHost(_:playerName:)`.
@@ -44,12 +46,15 @@ public final class LocalRoomManager: RoomManager {
 
     private let service: LocalMultipeerService
     /// Map MC peer → playerId so we can route ClientActions back to the
-    /// correct OnlinePlayer record. Host-side only.
+    /// correct OnlinePlayer record. Host-side only; an entry exists only for
+    /// a peer whose hello was accepted.
     private var peerToPlayerId: [MCPeerID: String] = [:]
     /// Player record for the local user. Set in createRoom / connectToHost.
     private var localPlayer: OnlinePlayer?
     /// True for the device that called createRoom.
     private var isLocalHost: Bool = false
+
+    public var isHostInternal: Bool { isLocalHost }
 
     public init(displayName: String) {
         self.service = LocalMultipeerService(displayName: displayName)
@@ -126,35 +131,53 @@ public final class LocalRoomManager: RoomManager {
         throw LocalError.notImplementedForLocal
     }
 
-    public override func updatePlayerReady(_ isReady: Bool) async throws {
-        if isLocalHost {
-            updateLocalPlayer { $0.isReady = isReady }
-        } else {
-            // For now ready is implicit; no remote message needed.
-        }
-    }
-
     public override func joinTeam(teamId: String) async throws {
-        if isLocalHost {
-            applyJoinTeam(playerId: currentPlayerId ?? "", teamId: teamId)
-        } else {
-            service.send(.clientAction(.joinTeam(teamId: teamId)))
-        }
+        try perform(.joinTeam(teamId: teamId))
     }
 
     public override func leaveTeam() async throws {
-        if isLocalHost {
-            applyLeaveTeam(playerId: currentPlayerId ?? "")
-        } else {
-            service.send(.clientAction(.leaveTeam))
-        }
+        try perform(.leaveTeam)
+    }
+
+    public override func createTeam(name: String, colorHex: String) async throws {
+        try perform(.createTeam(name: name, colorHex: colorHex))
+    }
+
+    public override func removeTeam(teamId: String) async throws {
+        try perform(.removeTeam(teamId: teamId))
+    }
+
+    public override func startGame() async throws {
+        try perform(.startGame)
+    }
+
+    public override func submitWords(_ submitted: [String]) async throws {
+        try perform(.submitWords(submitted))
     }
 
     public override func markWordsSubmitted() async throws {
-        if isLocalHost {
-            updateLocalPlayer { $0.hasSubmittedWords = true }
-        }
-        // Guests: submitWords already toggles this on the host side.
+        // submitWords opens the gate in the same step on the host.
+    }
+
+    public override func updateRoomStatus(_ status: RoomStatus) async throws {
+        guard isLocalHost else { throw LocalError.hostOnly }
+        guard var room else { return }
+        room.status = status
+        self.room = room
+        broadcastSnapshot()
+    }
+
+    public override func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
+        guard isLocalHost else { throw LocalError.hostOnly }
+        guard let room, let next = RoomRules.markAllWordsSubmitted(in: room) else { return }
+        words.append(contentsOf: texts.map { OnlineWord(text: $0, addedByPlayerId: hostPlayerId) })
+        self.room = next
+        broadcastWords()
+        broadcastSnapshot()
+    }
+
+    public override func getWords() async throws -> [OnlineWord] {
+        words
     }
 
     public override func leaveRoom() async throws {
@@ -167,94 +190,12 @@ public final class LocalRoomManager: RoomManager {
         peerToPlayerId.removeAll()
     }
 
-    public override func createTeam(name: String, colorHex: String) async throws {
-        if isLocalHost {
-            applyCreateTeam(name: name, colorHex: colorHex)
-        } else {
-            service.send(.clientAction(.createTeam(name: name, colorHex: colorHex)))
-        }
-    }
-
-    public override func removeTeam(teamId: String) async throws {
-        if isLocalHost {
-            applyRemoveTeam(teamId: teamId)
-        } else {
-            service.send(.clientAction(.removeTeam(teamId: teamId)))
-        }
-    }
-
-    public override func updateSettings(_ settings: GameSettings) async throws {
-        guard isLocalHost else { throw LocalError.hostOnly }
-        guard var room else { return }
-        room.settings = settings
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    public override func updateRoomStatus(_ status: RoomStatus) async throws {
-        guard isLocalHost else { throw LocalError.hostOnly }
-        applyRoomStatus(status)
-    }
-
-    public override func startGame() async throws {
-        if isLocalHost {
-            applyRoomStatus(.playing)
-        } else {
-            service.send(.clientAction(.startGame))
-        }
-    }
-
-    public override func submitWords(_ submitted: [String]) async throws {
-        if isLocalHost {
-            applySubmitWords(playerId: currentPlayerId ?? "", words: submitted)
-        } else {
-            service.send(.clientAction(.submitWords(submitted)))
-        }
-    }
-
-    public override func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
-        guard isLocalHost else { throw LocalError.hostOnly }
-        let onlineWords = texts.map { OnlineWord(text: $0, addedByPlayerId: hostPlayerId) }
-        self.words.append(contentsOf: onlineWords)
-        guard var room else { return }
-        for index in room.players.indices {
-            room.players[index].hasSubmittedWords = true
-        }
-        self.room = room
-        broadcastSnapshot()
-        broadcastWords()
-    }
-
-    public override func updateGameState(_ state: OnlineGameState) async throws {
-        guard isLocalHost else { throw LocalError.hostOnly }
-        guard var room else { return }
-        room.gameState = state
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    public override func getWords() async throws -> [OnlineWord] {
-        words
-    }
-
-    // MARK: - Host-side mutators
-    public var isHostInternal: Bool { isLocalHost }
-
-    func broadcastSnapshot() {
-        guard isLocalHost, let room else { return }
-        service.send(.roomSnapshot(room))
-    }
-
-    func broadcastWords() {
-        guard isLocalHost else { return }
-        service.send(.wordsSnapshot(words))
-    }
-
+    // MARK: - Gameplay
     /// Called by `LocalGameSyncManager` on guest devices to forward a
     /// gameplay action to the host.
     func forwardGameAction(_ action: GameAction) {
         guard !isLocalHost else { return }
-        service.send(.clientAction(Self.legacyClientAction(for: action)))
+        service.send(.clientAction(.game(action)))
     }
 
     /// Host-only. Seeds the first game state from the shuffled word pool.
@@ -275,7 +216,7 @@ public final class LocalRoomManager: RoomManager {
     }
 
     /// Host-only. Applies a gameplay action through `GameRules` and
-    /// broadcasts the result.
+    /// broadcasts the result. Serves the host's own taps and every guest's.
     func applyGameAction(_ action: GameAction, by playerId: String) -> Bool {
         guard isLocalHost,
               var room,
@@ -290,25 +231,74 @@ public final class LocalRoomManager: RoomManager {
         broadcastSnapshot()
         return true
     }
+}
 
-    private static func legacyClientAction(for action: GameAction) -> ClientAction {
+// MARK: - Lobby actions
+private extension LocalRoomManager {
+    /// Host: apply directly. Guest: forward to the host, refusing host-only
+    /// actions up front so the UI gets an error instead of silence.
+    func perform(_ action: RoomAction) throws {
+        if isLocalHost {
+            guard let playerId = currentPlayerId else { return }
+            applyRoomAction(action, by: playerId)
+            return
+        }
         switch action {
-        case .startTurn: .startTurn
-        case .markGuessed: .markWordGuessed
-        case .skip: .skipWord
-        case .endTurn: .endTurn
-        case .advanceAfterTurnResults: .advanceAfterTurnResults
-        case .advanceAfterRoundResults: .advanceAfterRoundResults
+        case .createTeam, .removeTeam, .startGame:
+            throw LocalError.hostOnly
+        case .joinTeam, .leaveTeam, .submitWords:
+            service.send(.clientAction(.room(action)))
         }
     }
 
-    private func handlePeerStateChange(peer: MCPeerID, state: MCSessionState) {
+    @discardableResult
+    func applyRoomAction(_ action: RoomAction, by playerId: String) -> Bool {
+        guard isLocalHost, let room, RoomRules.canPerform(action, by: playerId, in: room) else { return false }
+        var addedWords: [OnlineWord] = []
+        let next: GameRoom?
+        switch action {
+        case let .joinTeam(teamId):
+            next = RoomRules.joinTeam(teamId, playerId: playerId, in: room)
+        case .leaveTeam:
+            next = RoomRules.leaveTeam(playerId: playerId, in: room)
+        case let .createTeam(name, colorHex):
+            next = RoomRules.createTeam(OnlineTeam(name: name, colorHex: colorHex), in: room)
+        case let .removeTeam(teamId):
+            next = RoomRules.removeTeam(teamId, in: room)
+        case .startGame:
+            next = RoomRules.startGame(room)
+        case let .submitWords(texts):
+            next = RoomRules.submitWords(playerId: playerId, in: room)
+            addedWords = texts.map { OnlineWord(text: $0, addedByPlayerId: playerId) }
+        }
+        guard let next else { return false }
+        self.room = next
+        if !addedWords.isEmpty {
+            words.append(contentsOf: addedWords)
+            broadcastWords()
+        }
+        broadcastSnapshot()
+        return true
+    }
+}
+
+// MARK: - Transport events
+private extension LocalRoomManager {
+    func broadcastSnapshot() {
+        guard isLocalHost, let room else { return }
+        service.send(.roomSnapshot(room))
+    }
+
+    func broadcastWords() {
+        guard isLocalHost else { return }
+        service.send(.wordsSnapshot(words))
+    }
+
+    func handlePeerStateChange(peer: MCPeerID, state: MCSessionState) {
         switch state {
         case .connected:
             if isLocalHost {
                 // Wait for helloFromGuest before adding to players list.
-                // Once we have the guest's OnlinePlayer record, the
-                // handleMessage path appends it and broadcasts.
             } else {
                 // Guest just connected to host. Identify ourselves.
                 if let player = localPlayer {
@@ -318,9 +308,11 @@ public final class LocalRoomManager: RoomManager {
             }
         case .notConnected:
             if isLocalHost {
-                if let playerId = peerToPlayerId.removeValue(forKey: peer) {
-                    applyPlayerLeft(playerId: playerId)
-                }
+                guard let playerId = peerToPlayerId.removeValue(forKey: peer),
+                      let room,
+                      let next = RoomRules.playerLeft(playerId, from: room) else { return }
+                self.room = next
+                broadcastSnapshot()
             } else if peer != service.localPeerID {
                 // Host went away.
                 isConnected = false
@@ -330,143 +322,42 @@ public final class LocalRoomManager: RoomManager {
         }
     }
 
-    private func handleMessage(_ message: LocalMessage, fromPeer peer: MCPeerID) {
+    func handleMessage(_ message: LocalMessage, fromPeer peer: MCPeerID) {
         switch message {
-        case .roomSnapshot(let snapshot):
-            // Guest path: trust the host.
+        case let .roomSnapshot(snapshot):
             guard !isLocalHost else { return }
             self.room = snapshot
             self.isConnected = true
-        case .wordsSnapshot(let snapshot):
+        case let .wordsSnapshot(snapshot):
             guard !isLocalHost else { return }
             self.words = snapshot
-        case .helloFromGuest(let player):
-            // Host path: register the new guest and broadcast — but only while
-            // still in the lobby. Adding a player mid-game would reopen the
-            // word-submission gate and yank everyone back to setup, so late
-            // joiners are ignored (mirrors the Firebase joinRoom status guard).
-            guard isLocalHost else { return }
-            guard let status = room?.status, status == .waiting || status == .setup else { return }
-            peerToPlayerId[peer] = player.id
-            applyAddPlayer(player)
-        case .clientAction(let action):
+        case let .helloFromGuest(player):
+            admitGuest(player, fromPeer: peer)
+        case let .clientAction(action):
             guard isLocalHost, let playerId = peerToPlayerId[peer] else { return }
-            applyAction(action, playerId: playerId)
+            switch action {
+            case let .room(roomAction):
+                applyRoomAction(roomAction, by: playerId)
+            case let .game(gameAction):
+                _ = applyGameAction(gameAction, by: playerId)
+            }
         }
     }
 
-    private func applyAction(_ action: ClientAction, playerId: String) {
-        switch action {
-        case .joinTeam(let teamId): applyJoinTeam(playerId: playerId, teamId: teamId)
-        case .leaveTeam: applyLeaveTeam(playerId: playerId)
-        case .createTeam(let name, let colorHex): applyCreateTeam(name: name, colorHex: colorHex)
-        case .removeTeam(let teamId): applyRemoveTeam(teamId: teamId)
-        case .startGame: applyRoomStatus(.playing)
-        case .submitWords(let words): applySubmitWords(playerId: playerId, words: words)
-        case .startTurn, .markWordGuessed, .skipWord, .endTurn,
-             .advanceAfterTurnResults, .advanceAfterRoundResults:
-            // These are routed through LocalGameSyncManager.applyOnHost.
-            break
+    /// Host-only. A peer gets an identity only once `RoomRules` admits the
+    /// player it announced: the lobby must be open and the id unused, so a
+    /// guest cannot claim the host's (or anyone's) id, and one peer cannot
+    /// register twice.
+    func admitGuest(_ player: OnlinePlayer, fromPeer peer: MCPeerID) {
+        guard isLocalHost,
+              peerToPlayerId[peer] == nil,
+              let room,
+              let next = RoomRules.addPlayer(player, to: room) else {
+            logger.info("Rejected hello from \(peer.displayName, privacy: .public)")
+            return
         }
-    }
-
-    // MARK: - State mutations (host-side)
-    private func updateLocalPlayer(_ mutate: (inout OnlinePlayer) -> Void) {
-        guard var room, let playerId = currentPlayerId else { return }
-        guard let index = room.players.firstIndex(where: { $0.id == playerId }) else { return }
-        var player = room.players[index]
-        mutate(&player)
-        room.players[index] = player
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    private func applyAddPlayer(_ player: OnlinePlayer) {
-        guard var room else { return }
-        guard !room.players.contains(where: { $0.id == player.id }) else { return }
-        room.players.append(player)
-        self.room = room.canonicallyOrdered()
-        broadcastSnapshot()
-        broadcastWords()
-    }
-
-    private func applyPlayerLeft(playerId: String) {
-        guard var room else { return }
-        room.players.removeAll { $0.id == playerId }
-        // Also yank from any team's playerIds.
-        for index in room.teams.indices {
-            room.teams[index].playerIds.removeAll { $0 == playerId }
-        }
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    private func applyJoinTeam(playerId: String, teamId: String) {
-        guard var room else { return }
-        // Strip from previous team, attach to new.
-        if let previousTeamId = room.players.first(where: { $0.id == playerId })?.teamId,
-           previousTeamId != teamId,
-           let previousIndex = room.teams.firstIndex(where: { $0.id == previousTeamId }) {
-            room.teams[previousIndex].playerIds.removeAll { $0 == playerId }
-        }
-        if let teamIndex = room.teams.firstIndex(where: { $0.id == teamId }),
-           !room.teams[teamIndex].playerIds.contains(playerId) {
-            room.teams[teamIndex].playerIds.append(playerId)
-        }
-        if let playerIndex = room.players.firstIndex(where: { $0.id == playerId }) {
-            room.players[playerIndex].teamId = teamId
-        }
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    private func applyLeaveTeam(playerId: String) {
-        guard var room else { return }
-        if let previousTeamId = room.players.first(where: { $0.id == playerId })?.teamId,
-           let previousIndex = room.teams.firstIndex(where: { $0.id == previousTeamId }) {
-            room.teams[previousIndex].playerIds.removeAll { $0 == playerId }
-        }
-        if let playerIndex = room.players.firstIndex(where: { $0.id == playerId }) {
-            room.players[playerIndex].teamId = nil
-        }
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    private func applyCreateTeam(name: String, colorHex: String) {
-        guard var room else { return }
-        let team = OnlineTeam(name: name, colorHex: colorHex)
-        room.teams.append(team)
-        self.room = room.canonicallyOrdered()
-        broadcastSnapshot()
-    }
-
-    private func applyRemoveTeam(teamId: String) {
-        guard var room else { return }
-        room.teams.removeAll { $0.id == teamId }
-        // Unassign any players in that team.
-        for index in room.players.indices where room.players[index].teamId == teamId {
-            room.players[index].teamId = nil
-        }
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    private func applyRoomStatus(_ status: RoomStatus) {
-        guard var room else { return }
-        room.status = status
-        self.room = room
-        broadcastSnapshot()
-    }
-
-    private func applySubmitWords(playerId: String, words: [String]) {
-        let onlineWords = words.map { OnlineWord(text: $0, addedByPlayerId: playerId) }
-        self.words.append(contentsOf: onlineWords)
-        guard var room else { return }
-        if let index = room.players.firstIndex(where: { $0.id == playerId }) {
-            room.players[index].hasSubmittedWords = true
-        }
-        self.room = room
+        peerToPlayerId[peer] = player.id
+        self.room = next
         broadcastSnapshot()
         broadcastWords()
     }

@@ -11,10 +11,10 @@ import Foundation
 /// local-play session.
 ///
 /// Authority model: only the host mutates the canonical room state. Guests
-/// emit `ClientAction`s; the host applies them, mutates its in-memory
-/// `GameRoom`, then broadcasts a fresh `roomSnapshot` (and `wordsSnapshot`
-/// when the words pool changes). Every peer renders from the snapshot it
-/// last received.
+/// emit `ClientAction`s; the host checks them against `RoomRules` /
+/// `GameRules`, mutates its in-memory `GameRoom`, then broadcasts a fresh
+/// `roomSnapshot` (and `wordsSnapshot` when the words pool changes). Every
+/// peer renders from the snapshot it last received.
 public enum LocalMessage: Codable, Sendable {
     /// Host → all peers. Full room envelope after a state change.
     case roomSnapshot(GameRoom)
@@ -24,29 +24,14 @@ public enum LocalMessage: Codable, Sendable {
     /// Guest → host. Identifies the player attached to this MC peer so the
     /// host can add them to the room's players list.
     case helloFromGuest(OnlinePlayer)
-    /// Guest → host. A request to mutate state. Host validates against the
-    /// authority model before applying.
+    /// Guest → host. A request to mutate state, attributed to the player the
+    /// sending peer registered as.
     case clientAction(ClientAction)
 }
 
 public enum ClientAction: Codable, Sendable {
-    // Lobby
-    case joinTeam(teamId: String)
-    case leaveTeam
-    case createTeam(name: String, colorHex: String)
-    case removeTeam(teamId: String)
-    case startGame
-
-    // Word submission
-    case submitWords([String])
-
-    // Turn lifecycle
-    case startTurn
-    case markWordGuessed
-    case skipWord
-    case endTurn
-
-    // Phase advancement
-    case advanceAfterTurnResults
-    case advanceAfterRoundResults
+    /// Lobby and word-pool changes, checked by `RoomRules`.
+    case room(RoomAction)
+    /// Gameplay transitions, checked by `GameRules`.
+    case game(GameAction)
 }

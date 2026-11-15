@@ -109,12 +109,6 @@ open class RoomManager {
     }
 
     // MARK: - Player Actions
-    open func updatePlayerReady(_ isReady: Bool) async throws {
-        guard var player = currentPlayer, let roomId = room?.id else { return }
-        player.isReady = isReady
-        try await firebaseService.updatePlayer(player, inRoomId: roomId)
-    }
-
     open func joinTeam(teamId: String) async throws {
         guard let player = currentPlayer, let room else { return }
         try await firebaseService.reassignPlayerToTeam(
@@ -175,15 +169,6 @@ open class RoomManager {
         try await firebaseService.removeTeam(teamId: teamId, fromRoomId: roomId)
     }
 
-    open func updateSettings(_ settings: GameSettings) async throws {
-        guard isHost, var room = room else {
-            throw NetworkingError.notAuthorized
-        }
-
-        room.settings = settings
-        try await firebaseService.updateRoom(room)
-    }
-
     open func updateRoomStatus(_ status: RoomStatus) async throws {
         guard isHost, let roomId = room?.id else {
             throw NetworkingError.notAuthorized
@@ -221,12 +206,7 @@ open class RoomManager {
         try await firebaseService.fillWords(onlineWords, markSubmittedPlayerIds: playerIds, toRoomId: roomId)
     }
 
-    // MARK: - Game State
-    open func updateGameState(_ state: OnlineGameState) async throws {
-        guard let roomId = room?.id else { return }
-        try await firebaseService.updateGameState(state, forRoomId: roomId)
-    }
-
+    // MARK: - Words
     open func getWords() async throws -> [OnlineWord] {
         guard let roomId = room?.id else { return [] }
         return try await firebaseService.getWords(forRoomId: roomId)

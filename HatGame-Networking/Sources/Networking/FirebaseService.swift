@@ -65,12 +65,6 @@ public final class FirebaseService: @unchecked Sendable {
         }
     }
 
-    public func updateRoom(_ room: GameRoom) async throws {
-        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
-        let roomData = try encodeToDict(room)
-        try await roomsRef.child(room.id).setValue(roomData)
-    }
-
     public func deleteRoom(id: String) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         try await roomsRef.child(id).removeValue()
