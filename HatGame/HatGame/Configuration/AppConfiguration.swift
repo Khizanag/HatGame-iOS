@@ -12,7 +12,7 @@ import SwiftUI
 import UIKit
 #endif
 
-private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "AppConfiguration")
+nonisolated private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "AppConfiguration")
 
 @Observable
 final class AppConfiguration {
