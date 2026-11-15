@@ -1,12 +1,13 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 
 import PackageDescription
 
 let package = Package(
     name: "HatGame-Networking",
     platforms: [
-        .iOS(.v17),
-        .macOS(.v15),
+        .iOS(.v26),
+        .macOS(.v26),
+        .visionOS(.v26),
     ],
     products: [
         .library(
@@ -15,7 +16,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/firebase/firebase-ios-sdk.git", from: "11.0.0"),
+        .package(url: "https://github.com/firebase/firebase-ios-sdk", from: "11.0.0"),
     ],
     targets: [
         .target(
