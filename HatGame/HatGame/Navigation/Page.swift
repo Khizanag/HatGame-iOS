@@ -1,5 +1,5 @@
 //
-//  Page+App.swift
+//  Page.swift
 //  HatGame
 //
 //  Created by Giga Khizanishvili on 15.11.25.
@@ -88,36 +88,17 @@ extension Page {
         }
     }
 
-    static func play(round: GameRound) -> Page<GameView> {
-        Page<GameView>(id: "play-\(round.rawValue)") {
-            GameView(round: round)
+    /// The single-device game loop (next team, turn, results) as one page.
+    static var gameLoop: Page<GameLoopView> {
+        Page<GameLoopView>(id: "gameLoop") {
+            GameLoopView()
         }
     }
 
-    static func teamTurnResults(
-        guessedWords: [Word],
-        completionReason: PlayCompletionReason
-    ) -> Page<TeamTurnResultsView> {
-        Page<TeamTurnResultsView>(id: "teamTurnResults-\(guessedWords.hashValue)") {
-            TeamTurnResultsView(guessedWords: guessedWords, completionReason: completionReason)
-        }
-    }
-
-    static func nextTeam(round: GameRound, team: Team) -> Page<NextTeamView> {
-        Page<NextTeamView>(id: "nextTeam-\(round.rawValue)-\(team.id)") {
-            NextTeamView(round: round, team: team)
-        }
-    }
-
-    static var roundResults: Page<ResultsView> {
-        Page<ResultsView>(id: "roundResults") {
-            ResultsView()
-        }
-    }
-
-    static var finalResults: Page<ResultsView> {
-        Page<ResultsView>(id: "finalResults") {
-            ResultsView()
+    /// Re-enters a saved single-device game, straight into its game loop.
+    static func resumeGame(_ state: GameState) -> Page<GameFlowView> {
+        Page<GameFlowView>(id: "resumeGame") {
+            GameFlowView(launch: .resume(state))
         }
     }
 

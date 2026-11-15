@@ -17,17 +17,19 @@ struct WordInputView: View {
     @State private var currentPlayerIndex: Int = 0
     @State private var playerWords: [String] = []
     @State private var currentWord: String = ""
-    @State private var shouldScrollToTextField: Bool = false
-    @State private var shouldScrollToLatestWord: Bool = false
     @State private var isAutoFilling: Bool = false
+    /// Each new request schedules one scroll; a newer request supersedes it.
+    @State private var scrollRequest: ScrollRequest?
+    /// Bumped to (re)focus the word field after a short settle delay.
+    @State private var focusRequest: Int = 0
+    /// The words an auto-fill is adding; its task is cancelled on disappear.
+    @State private var autoFillRequest: AutoFillRequest?
 
     @FocusState private var isWordFieldFocused: Bool
     @Namespace private var addButtonNamespace
 
-    private let appConfiguration = AppConfiguration.shared
-
     private var allPlayers: [Player] {
-        gameManager.configuration.teams.flatMap(\.players)
+        gameManager.configuration.players
     }
 
     private var currentPlayer: Player? {
@@ -52,8 +54,16 @@ struct WordInputView: View {
         content
             .navigationTitle(localized("wordInput.title"))
             .setDefaultStyle()
-            .onAppear(perform: prepareCurrentPlayer)
-            .onChange(of: currentPlayerIndex) { _, _ in prepareCurrentPlayer() }
+            .task(id: currentPlayerIndex) {
+                loadCurrentPlayerWords()
+            }
+            .task(id: focusRequest) {
+                guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }
+                isWordFieldFocused = true
+            }
+            .task(id: autoFillRequest) {
+                await runAutoFill()
+            }
     }
 }
 
@@ -70,25 +80,18 @@ private extension WordInputView {
                 .padding(.bottom, DesignBook.Spacing.xxl)
             }
             .safeAreaInset(edge: .bottom) { footer }
-            .onAppear { scrollToTextField(proxy: proxy, delay: 0.5) }
+            .onAppear { requestScrollToTextField(after: .milliseconds(500)) }
             .onChange(of: isWordFieldFocused) { _, focused in
-                if focused { scrollToTextField(proxy: proxy, delay: 0.2) }
+                if focused { requestScrollToTextField(after: .milliseconds(200)) }
             }
             .onChange(of: playerWords.count) { _, _ in
-                scrollToTextField(proxy: proxy, delay: 0.15)
+                requestScrollToTextField(after: .milliseconds(150))
             }
             .onChange(of: currentPlayerIndex) { _, _ in
-                scrollToTextField(proxy: proxy, delay: 0.4)
+                requestScrollToTextField(after: .milliseconds(400))
             }
-            .onChange(of: shouldScrollToTextField) { _, scroll in
-                guard scroll else { return }
-                scrollToTextField(proxy: proxy, delay: 0.1)
-                shouldScrollToTextField = false
-            }
-            .onChange(of: shouldScrollToLatestWord) { _, scroll in
-                guard scroll else { return }
-                scrollToLatestWord(proxy: proxy)
-                shouldScrollToLatestWord = false
+            .task(id: scrollRequest) {
+                await performScroll(with: proxy)
             }
         }
     }
@@ -136,13 +139,13 @@ private extension WordInputView {
 
                 AutoFillButton(
                     isAutoFilling: isAutoFilling,
-                    isDisabled: isCurrentPlayerDone || isAutoFilling,
+                    isDisabled: isCurrentPlayerDone || isAutoFilling || WordDatabase.words.isEmpty,
                     action: handleAutoFillWords
                 )
 
                 if !playerWords.isEmpty {
                     WordsList(playerWords: playerWords, onRemove: removeWord)
-                        .transition(.move(edge: .top).combined(with: .opacity))
+                        .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 }
 
                 wordTextField
@@ -183,9 +186,9 @@ private extension WordInputView {
             .onSubmit {
                 guard !isAddWordButtonDisabled else { return }
                 handleAddWord()
-                shouldScrollToTextField = true
+                requestScrollToTextField(after: .milliseconds(100))
             }
-            .id("wordTextField")
+            .id(ScrollTarget.textField)
     }
 
     @ViewBuilder
@@ -234,61 +237,89 @@ private extension WordInputView {
 
 // MARK: - Scrolling
 private extension WordInputView {
-    func scrollToTextField(proxy: ScrollViewProxy, delay: TimeInterval = 0.2) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
-                proxy.scrollTo("wordTextField", anchor: .center)
-            }
+    enum ScrollTarget {
+        static let textField = "wordTextField"
+
+        static func word(at index: Int) -> String {
+            "word_\(index)"
         }
     }
 
-    func scrollToLatestWord(proxy: ScrollViewProxy) {
+    struct ScrollRequest: Equatable {
+        let id = UUID()
+        let target: String
+        let anchor: UnitPoint
+        let delay: Duration
+    }
+
+    func requestScrollToTextField(after delay: Duration) {
+        scrollRequest = ScrollRequest(target: ScrollTarget.textField, anchor: .center, delay: delay)
+    }
+
+    func requestScrollToLatestWord() {
         guard !playerWords.isEmpty else { return }
-        let latestIndex = playerWords.count - 1
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
-                proxy.scrollTo("word_\(latestIndex)", anchor: .top)
-            }
+        scrollRequest = ScrollRequest(
+            target: ScrollTarget.word(at: playerWords.count - 1),
+            anchor: .top,
+            delay: .milliseconds(300)
+        )
+    }
+
+    func performScroll(with proxy: ScrollViewProxy) async {
+        guard let request = scrollRequest,
+              (try? await Task.sleep(for: request.delay)) != nil
+        else { return }
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            proxy.scrollTo(request.target, anchor: request.anchor)
         }
     }
 }
 
 // MARK: - Actions
 private extension WordInputView {
-    func prepareCurrentPlayer() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            isWordFieldFocused = true
-        }
+    struct AutoFillRequest: Equatable {
+        let id = UUID()
+        let words: [String]
+    }
+
+    /// Shows what this player already saved (after going back), so saving
+    /// again replaces their words instead of adding a second copy.
+    func loadCurrentPlayerWords() {
+        guard let currentPlayer else { return }
+        playerWords = gameManager.configuration.words
+            .filter { $0.authorId == currentPlayer.id }
+            .map(\.text)
+        focusRequest += 1
     }
 
     func handleAddWord() {
+        guard let currentPlayer else { return }
         let trimmed = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isCurrentPlayerDone else { return }
         // Signal silent duplicate rejections so the input doesn't feel dead.
-        guard !playerWords.contains(trimmed) else {
+        guard !WordEntryRules.isDuplicate(
+            trimmed,
+            ownWords: playerWords,
+            otherPlayersWords: gameManager.wordTexts(excluding: currentPlayer),
+            allowsDuplicates: gameManager.configuration.allowsDuplicateWords
+        ) else {
             DesignBook.Haptics.warning()
             return
         }
 
         DesignBook.Haptics.tap()
-        let animation = reduceMotion ? nil : DesignBook.Motion.bouncy
-        withAnimation(animation) {
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
             playerWords.append(trimmed)
         }
         currentWord = ""
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            shouldScrollToLatestWord = true
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            isWordFieldFocused = true
-        }
+        requestScrollToLatestWord()
+        focusRequest += 1
     }
 
     func removeWord(at index: Int) {
+        guard playerWords.indices.contains(index) else { return }
         DesignBook.Haptics.soft()
-        let animation = reduceMotion ? nil : DesignBook.Motion.snappy
-        _ = withAnimation(animation) {
+        _ = withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             playerWords.remove(at: index)
         }
     }
@@ -296,49 +327,62 @@ private extension WordInputView {
     func handleSaveWords() {
         guard let currentPlayer else { return }
         DesignBook.Haptics.confirm()
-        gameManager.addWords(playerWords, by: currentPlayer)
+        autoFillRequest = nil
+        gameManager.setWords(playerWords, for: currentPlayer)
 
         if isLastPlayer {
             navigator.push(.randomization)
         } else {
             currentPlayerIndex += 1
-            playerWords = []
         }
     }
 
     func handleAutoFillWords() {
-        let remainingCount = wordsPerPlayer - playerWords.count
-        guard remainingCount > 0, !isAutoFilling else { return }
+        guard let currentPlayer, !isAutoFilling else { return }
+        let excluded = playerWords + (
+            gameManager.configuration.allowsDuplicateWords ? [] : gameManager.wordTexts(excluding: currentPlayer)
+        )
+        let words = WordEntryRules.distinct(
+            WordDatabase.words.shuffled(),
+            excluding: excluded,
+            limit: wordsPerPlayer - playerWords.count
+        )
+        guard !words.isEmpty else {
+            DesignBook.Haptics.warning()
+            return
+        }
 
         DesignBook.Haptics.tap()
         isWordFieldFocused = false
-
-        var excluded = Set(playerWords)
-        if !appConfiguration.allowDuplicateWords {
-            excluded.formUnion(gameManager.getAllUsedWords())
-        }
-
-        let newWords = WordDatabase.words
-            .filter { !excluded.contains($0) }
-            .shuffled()
-            .prefix(remainingCount)
-
-        withAnimation(.easeInOut(duration: 0.3)) {
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isAutoFilling = true
         }
+        autoFillRequest = AutoFillRequest(words: words)
+    }
 
-        for (index, word) in newWords.enumerated() {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(index) * 0.3 + 0.5) {
-                withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
-                    playerWords.append(word)
-                }
-                if index == newWords.count - 1 {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-                        withAnimation(.easeInOut(duration: 0.3)) {
-                            isAutoFilling = false
-                        }
-                    }
-                }
+    /// Adds the auto-filled words one by one. Each append re-checks capacity
+    /// and duplicates, since the player can still edit the list meanwhile.
+    func runAutoFill() async {
+        guard let request = autoFillRequest else { return }
+        defer {
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+                isAutoFilling = false
+            }
+        }
+        for (index, word) in request.words.enumerated() {
+            if !reduceMotion {
+                let delay: Duration = index == 0 ? .milliseconds(500) : .milliseconds(300)
+                guard (try? await Task.sleep(for: delay)) != nil else { return }
+            }
+            guard !isCurrentPlayerDone else { return }
+            guard !WordEntryRules.isDuplicate(
+                word,
+                ownWords: playerWords,
+                otherPlayersWords: [],
+                allowsDuplicates: true
+            ) else { continue }
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
+                playerWords.append(word)
             }
         }
     }
@@ -504,13 +548,6 @@ private struct WordsListCard: View {
                 WordsList(playerWords: playerWords, onRemove: onRemove)
             }
         }
-    }
-}
-
-// MARK: - Safe collection subscript
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
     }
 }
 

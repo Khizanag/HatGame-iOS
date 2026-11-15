@@ -21,17 +21,11 @@ struct TeamDefaultColorGenerator {
         Color(red: 0.5, green: 0.3, blue: 0.2),
     ]
 
+    /// The first palette color no team in `configuration` uses yet, or the
+    /// first palette color when all are taken.
     func generateDefaultColor(for configuration: GameConfiguration) -> Color {
-        let occupiedColors = configuration.teams.map { $0.color }
-
-        for color in Self.defaultColors {
-            if !isColorOccupied(color, in: occupiedColors) {
-                return color
-            }
-        }
-
-        // If all default colors are occupied, return the first one
-        return Self.defaultColors[0]
+        let occupiedColors = configuration.teams.map(\.color)
+        return Self.defaultColors.first { !isColorOccupied($0, in: occupiedColors) } ?? Self.defaultColors[0]
     }
 
     private func isColorOccupied(_ color: Color, in occupiedColors: [Color]) -> Bool {

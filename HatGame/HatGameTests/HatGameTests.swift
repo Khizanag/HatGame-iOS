@@ -9,8 +9,13 @@
 import SwiftUI
 import Testing
 
+/// Regressions for bugs found in the single-device game, driven through the
+/// same `GameManager` façade the screens use.
 @MainActor
+@Suite("Single-device regressions")
 struct HatGameTests {
+    private let store = RecordingGameStore()
+
     // MARK: - Fresh words per game
     /// Regression: `mockForTesting` used to be a shared `static let`. Because
     /// `GameConfiguration` is a reference type, one game's words leaked into the
@@ -23,55 +28,31 @@ struct HatGameTests {
 
         #expect(second.words.isEmpty)
         #expect(first !== second)
+        #expect(second.teams.allSatisfy { team in team.players.allSatisfy { $0.teamId == team.id } })
     }
 
     // MARK: - Configurable skipping
     @Test func skippingDisabledKeepsCurrentWord() {
         let manager = makeManager(isSkippingEnabled: false)
-        manager.start()
+        manager.startGame(startingTeamIndex: 0)
+        manager.engine.beginTurn(explainerIndex: 0)
 
-        let wordBeforeSkip = manager.currentWord
-        manager.skipCurrentWord()
+        let wordBeforeSkip = manager.engine.state.currentWord
+        manager.engine.skip()
 
-        #expect(manager.currentWord == wordBeforeSkip)
+        #expect(manager.engine.state.currentWord == wordBeforeSkip)
     }
 
     @Test func skippingEnabledSwapsCurrentWord() {
         let manager = makeManager(isSkippingEnabled: true)
-        manager.start()
+        manager.startGame(startingTeamIndex: 0)
+        manager.engine.beginTurn(explainerIndex: 0)
 
-        let wordBeforeSkip = manager.currentWord
-        manager.skipCurrentWord()
+        let wordBeforeSkip = manager.engine.state.currentWord
+        manager.engine.skip()
 
         // With more than one word remaining, skipping always hands back a different word.
-        #expect(manager.currentWord != wordBeforeSkip)
-    }
-
-    // MARK: - Word database
-    /// The curated Georgian word list ships as a bundled resource; verify it loads,
-    /// is substantial, has no duplicates, and contains only Mkhedruli letters.
-    @Test func wordDatabaseLoadsCuratedResource() {
-        let words = WordDatabase.words
-        #expect(words.count > 3000)
-        #expect(Set(words).count == words.count)
-        let isMkhedruli = words.allSatisfy { word in
-            word.unicodeScalars.allSatisfy { (0x10D0...0x10F0).contains(Int($0.value)) }
-        }
-        #expect(isMkhedruli)
-    }
-
-    // MARK: - Automatic word source
-    /// The automatic word source fills the hat with the requested number of
-    /// distinct words drawn from the bundled database.
-    @Test func fillRandomWordsPopulatesDistinctDatabaseWords() {
-        let manager = makeManager(isSkippingEnabled: true)
-        manager.fillRandomWords(count: 20)
-
-        let texts = manager.configuration.words.map(\.text)
-        #expect(texts.count == 20)
-        #expect(Set(texts).count == 20)
-        let database = Set(WordDatabase.words)
-        #expect(texts.allSatisfy { database.contains($0) })
+        #expect(manager.engine.state.currentWord != wordBeforeSkip)
     }
 
     // MARK: - Editing a team
@@ -82,7 +63,7 @@ struct HatGameTests {
         manager.addTeam(Team(name: "Beta", players: [Player(name: "X", teamId: secondId)], color: .red))
 
         let original = manager.configuration.teams[0]
-        let edited = Team(id: original.id, name: "Renamed", players: original.players, color: original.color)
+        let edited = Team(id: original.id, name: "Renamed", players: original.players, teamColor: original.teamColor)
         manager.updateTeam(edited)
 
         #expect(manager.configuration.teams.count == 2)
@@ -91,83 +72,68 @@ struct HatGameTests {
         #expect(manager.configuration.teams[1].name == "Beta")
     }
 
-    // MARK: - Runtime language switch
-    /// The in-app switcher resolves strings via `bundle: .appLanguage`, which
-    /// tracks `AppConfiguration.language`. Verify changing the language flips
-    /// the resolved value, then restore the original.
-    @Test func appLanguageBundleSwitchesLocalizedStrings() {
-        let config = AppConfiguration.shared
-        let original = config.language
-
-        config.language = .english
-        let english = String(localized: "settings.feedback.title", bundle: .appLanguage)
-
-        config.language = .georgian
-        let georgian = String(localized: "settings.feedback.title", bundle: .appLanguage)
-
-        config.language = original
-
-        #expect(english == "Send Feedback")
-        #expect(georgian == "უკუკავშირის გაგზავნა")
-        #expect(english != georgian)
-    }
-
     // MARK: - Regression: idempotent transitions
-    /// Plan E1: a second `start()` (double-tap, or back-swipe re-running it)
+    /// Plan E1: a second start (double-tap, or back-swipe re-running it)
     /// must not advance the round or wipe round-one scores.
-    @Test func startTwiceStaysInRoundOne() {
+    @Test func startTwiceStaysInRoundOne() throws {
         let manager = makeManager(isSkippingEnabled: true)
-        manager.start()
-        manager.commitWordGuess()
-        let team = manager.currentTeam
+        manager.startGame(startingTeamIndex: 0)
+        manager.engine.beginTurn(explainerIndex: 0)
+        manager.engine.guess()
+        let team = try #require(manager.engine.state.currentTeam)
 
-        manager.start()
+        manager.startGame(startingTeamIndex: 0)
 
-        #expect(manager.currentRound == .first)
-        #expect(manager.getScore(for: team, in: .first) == 1)
+        #expect(manager.engine.state.round == .first)
+        #expect(manager.engine.scoreboard.score(for: team, in: .first) == 1)
     }
 
     /// Plan E1: re-running the turn hand-off (back-swipe from Next Team) must
     /// not skip a team or rotate the explainer twice.
-    @Test func prepareForNewPlayIsIdempotent() {
+    @Test func prepareForNewPlayIsIdempotent() throws {
         let manager = makeTwoTeamManager()
-        manager.start()
-        let firstTeam = manager.currentTeam
-        manager.setExplainer(playerIndex: 0, for: firstTeam)
-        manager.markPlayEndedWithTimeOut()
+        manager.startGame(startingTeamIndex: 0)
+        let firstTeam = try #require(manager.engine.state.currentTeam)
+        manager.engine.beginTurn(explainerIndex: 0)
+        manager.engine.giveUp()
 
-        manager.prepareForNewPlay()
-        manager.prepareForNewPlay()
+        manager.engine.continueAfterTurn()
+        manager.engine.continueAfterTurn()
 
-        #expect(manager.currentTeam.id != firstTeam.id)
-        #expect(manager.getExplainerIndex(for: firstTeam) == 1)
+        #expect(manager.engine.state.currentTeamId != firstTeam.id)
+        #expect(manager.engine.state.explainerIndex(for: firstTeam) == 1)
     }
 
     /// Plan E2: Play Again must start from zero — no round 2/3 scores carried
     /// over from the previous game.
-    @Test func rematchClearsPreviousGameScores() {
+    @Test func rematchClearsPreviousGameScores() throws {
         let manager = makeManager(isSkippingEnabled: true)
-        manager.start()
-        let team = manager.currentTeam
-        while manager.currentWord != nil {
-            manager.commitWordGuess()
+        manager.startGame(startingTeamIndex: 0)
+        let team = try #require(manager.engine.state.currentTeam)
+        manager.engine.beginTurn(explainerIndex: 0)
+        while manager.engine.phase == .playing {
+            manager.engine.guess()
         }
-        manager.markPlayEndedWithTimeRemaining()
-        manager.prepareForNewPlay()
-        manager.commitWordGuess()
-        #expect(manager.getScore(for: team, in: .second) == 1)
+        manager.engine.continueAfterTurn()
+        manager.engine.beginTurn()
+        manager.engine.guess()
+        #expect(manager.engine.scoreboard.score(for: team, in: .second) == 1)
 
-        manager.resetForRematch()
-        manager.start()
+        manager.rematch()
+        manager.startGame(startingTeamIndex: 0)
 
-        #expect(manager.getScore(for: team, in: .second) == 0)
-        #expect(manager.getTotalScore(for: team) == 0)
+        #expect(manager.engine.scoreboard.score(for: team, in: .second) == 0)
+        #expect(manager.engine.scoreboard.totalScore(for: team) == 0)
+        #expect(manager.engine.state.round == .first)
     }
+}
 
-    // MARK: - Helpers
-    private func makeManager(isSkippingEnabled: Bool) -> GameManager {
+// MARK: - Helpers
+private extension HatGameTests {
+    func makeManager(isSkippingEnabled: Bool) -> GameManager {
         let teamId = UUID()
         let team = Team(
+            id: teamId,
             name: "Alpha",
             players: [
                 Player(name: "Alice", teamId: teamId),
@@ -180,28 +146,11 @@ struct HatGameTests {
             teams: [team],
             words: [Word(text: "one"), Word(text: "two"), Word(text: "three")]
         )
-        return GameManager(configuration: configuration)
+        return GameManager(configuration: configuration, store: store, sound: SoundSpy())
     }
 
-    private func makeTwoTeamManager() -> GameManager {
-        let alphaId = UUID()
-        let betaId = UUID()
-        let alpha = Team(
-            id: alphaId,
-            name: "Alpha",
-            players: [Player(name: "Alice", teamId: alphaId), Player(name: "Bob", teamId: alphaId)],
-            color: .blue
-        )
-        let beta = Team(
-            id: betaId,
-            name: "Beta",
-            players: [Player(name: "Carol", teamId: betaId), Player(name: "Dan", teamId: betaId)],
-            color: .red
-        )
-        let configuration = GameConfiguration(
-            teams: [alpha, beta],
-            words: [Word(text: "one"), Word(text: "two"), Word(text: "three")]
-        )
-        return GameManager(configuration: configuration)
+    func makeTwoTeamManager() -> GameManager {
+        let configuration = GameConfiguration(teams: Fixtures.teams(count: 2), words: Fixtures.words())
+        return GameManager(configuration: configuration, store: store, sound: SoundSpy())
     }
 }

@@ -18,9 +18,15 @@ struct RandomizationView: View {
     @State private var isRandomizingTeam: Bool = false
     @State private var selectedStartingTeamIndex: Int = 0
     @State private var showTeamReveal: Bool = false
+    /// Changing this starts a starting-team shuffle; the task is cancelled on disappear.
+    @State private var teamShuffleId: UUID?
 
-    private var selectedTeam: Team {
-        gameManager.configuration.teams[selectedStartingTeamIndex]
+    private var selectedTeam: Team? {
+        gameManager.configuration.teams[safe: selectedStartingTeamIndex]
+    }
+
+    private var canStart: Bool {
+        !gameManager.configuration.words.isEmpty && selectedTeam != nil
     }
 
     var body: some View {
@@ -40,6 +46,12 @@ struct RandomizationView: View {
         .navigationBarBackButtonHidden(isShuffling)
         .hidesNavigationBar(isShuffling)
         .interactiveDismissDisabled(isShuffling)
+        .task(id: teamShuffleId) {
+            await shuffleStartingTeam()
+        }
+        .task(id: isShuffling) {
+            await startGameAfterShuffle()
+        }
     }
 }
 
@@ -69,9 +81,9 @@ private extension RandomizationView {
         VStack(spacing: DesignBook.Spacing.md) {
             startingTeamHeader
 
-            if showTeamReveal {
+            if showTeamReveal, let selectedTeam {
                 RevealedTeamCard(team: selectedTeam, isRevealed: showTeamReveal)
-                    .transition(.scale.combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .scale.combined(with: .opacity))
             } else {
                 teamsList
             }
@@ -130,7 +142,8 @@ private extension RandomizationView {
             icon: "play.fill",
             action: shuffleAndStart
         )
-        .disabled(isShuffling || isRandomizingTeam)
+        .disabled(isShuffling || isRandomizingTeam || !canStart)
+        .accessibilityIdentifier("randomization.start")
     }
 }
 
@@ -145,49 +158,57 @@ private extension RandomizationView {
     }
 
     func randomizeStartingTeam() {
-        guard !isRandomizingTeam else { return }
+        guard !isRandomizingTeam, !gameManager.configuration.teams.isEmpty else { return }
         DesignBook.Haptics.tap()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isRandomizingTeam = true
             showTeamReveal = false
         }
-
-        var cycleCount = 0
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-            cycleCount += 1
-            let teamCount = gameManager.configuration.teams.count
-            withAnimation(.easeInOut(duration: 0.1)) {
-                selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
-            }
-            if cycleCount % 3 == 0 {
-                Task { @MainActor in DesignBook.Haptics.selection() }
-            }
-            guard cycleCount >= 20 else { return }
-            timer.invalidate()
-            finalizeRandomTeamSelection(teamCount: teamCount)
-        }
+        teamShuffleId = UUID()
     }
 
-    func finalizeRandomTeamSelection(teamCount: Int) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-                selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
-                isRandomizingTeam = false
-                showTeamReveal = true
+    /// Cycles the highlight through the teams with haptics, then reveals a
+    /// random pick. Reduce Motion skips straight to the reveal.
+    func shuffleStartingTeam() async {
+        let teamCount = gameManager.configuration.teams.count
+        guard teamShuffleId != nil, teamCount > 0 else { return }
+        if !reduceMotion {
+            for cycle in 1...20 {
+                guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
+                }
+                if cycle.isMultiple(of: 3) {
+                    DesignBook.Haptics.selection()
+                }
             }
-            DesignBook.Haptics.success()
+            guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }
         }
+        withAnimation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.6)) {
+            selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
+            isRandomizingTeam = false
+            showTeamReveal = true
+        }
+        DesignBook.Haptics.success()
     }
 
     func shuffleAndStart() {
+        guard !isShuffling, canStart else { return }
         DesignBook.Haptics.confirm()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isShuffling = true
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
-            gameManager.start(startingTeamIndex: selectedStartingTeamIndex)
-            navigator.push(.nextTeam(round: .first, team: gameManager.currentTeam))
+    }
+
+    /// Lets the shuffle animation play, then starts the game and enters the loop.
+    func startGameAfterShuffle() async {
+        guard isShuffling else { return }
+        guard (try? await Task.sleep(for: reduceMotion ? .milliseconds(600) : .milliseconds(2500))) != nil else {
+            return
         }
+        gameManager.startGame(startingTeamIndex: selectedStartingTeamIndex)
+        guard gameManager.engine.phase == .nextTeam else { return }
+        navigator.push(.gameLoop)
     }
 }
 
@@ -238,7 +259,7 @@ private struct WordsReadyCard: View {
                         .frame(width: 50, height: 50)
 
                     Image(systemName: "checkmark.circle.fill")
-                        .font(.system(size: 28))
+                        .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Status.success)
                 }
 
@@ -329,8 +350,11 @@ private struct RevealedTeamCard: View {
             .padding(DesignBook.Spacing.lg)
         }
     }
+}
 
-    private var trophyIcon: some View {
+// MARK: - RevealedTeamCard subviews
+private extension RevealedTeamCard {
+    var trophyIcon: some View {
         ZStack {
             Circle()
                 .fill(
@@ -343,13 +367,13 @@ private struct RevealedTeamCard: View {
                 .frame(width: 80, height: 80)
 
             Image(systemName: "trophy.fill")
-                .font(.system(size: 40))
+                .font(DesignBook.IconFont.large)
                 .foregroundStyle(team.color)
                 .symbolEffect(.bounce, value: isRevealed)
         }
     }
 
-    private var playersList: some View {
+    var playersList: some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             ForEach(team.players) { player in
                 HStack(spacing: DesignBook.Spacing.sm) {
@@ -386,6 +410,8 @@ private struct ShufflingOverlay: View {
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.shuffling.message"))
                         .font(DesignBook.Font.title2)
+                        // White on the dimmed shuffle overlay; DesignBook has no on-dark token yet.
+                        // swiftlint:disable:next no_raw_foreground_white_black
                         .foregroundStyle(.white)
 
                     ProgressDotIndicator(
@@ -407,8 +433,11 @@ private struct ShufflingOverlay: View {
             }
         }
     }
+}
 
-    private var hatBadge: some View {
+// MARK: - ShufflingOverlay subviews
+private extension ShufflingOverlay {
+    var hatBadge: some View {
         ZStack {
             Circle()
                 .fill(DesignBook.Gradient.primary)
@@ -418,13 +447,13 @@ private struct ShufflingOverlay: View {
 
             disc
 
-            Text("🎩")
-                .font(.system(size: 72))
+            Text(verbatim: "🎩")
+                .font(DesignBook.IconFont.emoji)
                 .rotation3DEffect(.degrees(rotationAngle), axis: (x: 0.2, y: 1.0, z: 0.0))
         }
     }
 
-    private var disc: some View {
+    var disc: some View {
         ZStack {
             if reduceTransparency {
                 Circle().fill(DesignBook.Color.Background.card)

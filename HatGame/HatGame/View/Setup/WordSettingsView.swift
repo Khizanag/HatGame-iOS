@@ -14,12 +14,14 @@ struct WordSettingsView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var selectedWordCount: Int = AppConfiguration.shared.defaultWordsPerPlayer
+    @State private var selectedWordCount: Int = GameDefaults.standard.wordsPerPlayer
+    @State private var hasLoadedConfiguration = false
 
     var body: some View {
         content
             .navigationTitle(localized("wordSettings.title"))
             .setDefaultStyle()
+            .onAppear(perform: loadConfiguration)
     }
 }
 
@@ -45,6 +47,8 @@ private extension WordSettingsView {
         VStack(spacing: DesignBook.Spacing.md) {
             HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
                 Text("\(selectedWordCount)")
+                    // Unique hero numeral; no Dynamic Type text-style token matches this size.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 96, weight: .bold, design: .rounded))
                     .monospacedDigit()
                     .contentTransition(.numericText(value: Double(selectedWordCount)))
@@ -143,6 +147,13 @@ private extension WordSettingsView {
                 }
             }
         )
+    }
+
+    /// Starts from the game's configuration, which carries the user's defaults.
+    func loadConfiguration() {
+        guard !hasLoadedConfiguration else { return }
+        hasLoadedConfiguration = true
+        selectedWordCount = gameManager.configuration.wordsPerPlayer
     }
 
     func handleContinue() {

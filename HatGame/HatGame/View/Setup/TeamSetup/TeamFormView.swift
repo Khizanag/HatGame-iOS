@@ -197,7 +197,9 @@ private extension TeamFormView {
             }
 
             LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: DesignBook.Size.colorSwatchSize), spacing: DesignBook.Spacing.md)],
+                columns: [
+                    GridItem(.adaptive(minimum: DesignBook.Size.colorSwatchSize), spacing: DesignBook.Spacing.md),
+                ],
                 spacing: DesignBook.Spacing.md
             ) {
                 ForEach(suggestedColorOptions.indices, id: \.self) { index in
@@ -463,8 +465,11 @@ private struct TeamNameSuggestionRow: View {
         .accessibilityElement(children: .contain)
         .accessibilityLabel(Text(localized("teamForm.suggestions.accessibility")))
     }
+}
 
-    private var header: some View {
+// MARK: - TeamNameSuggestionRow subviews
+private extension TeamNameSuggestionRow {
+    var header: some View {
         HStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: "wand.and.stars")
                 .font(DesignBook.Font.smallCaption)
@@ -541,16 +546,23 @@ private struct ColorSwatchButton: View {
         ))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
+}
 
+// MARK: - ColorSwatchButton subviews
+private extension ColorSwatchButton {
     @ViewBuilder
-    private var overlay: some View {
+    var overlay: some View {
         if isSelected {
             Image(systemName: "checkmark")
                 .font(DesignBook.Font.subheadlineBold)
+                // White on the team-colored swatch; DesignBook has no on-accent token yet.
+                // swiftlint:disable:next no_raw_foreground_white_black
                 .foregroundStyle(.white)
         } else if isDisabled {
             Image(systemName: "xmark")
                 .font(DesignBook.Font.footnoteBold)
+                // White on the team-colored swatch; DesignBook has no on-accent token yet.
+                // swiftlint:disable:next no_raw_foreground_white_black
                 .foregroundStyle(.white)
                 .opacity(DesignBook.Opacity.disabled)
         }

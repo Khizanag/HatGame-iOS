@@ -16,31 +16,36 @@ enum WordSource: CaseIterable {
     case automatic
 }
 
+/// The user's defaults for a new game. Injected into `GameConfiguration`
+/// so the setup flow never reads the `AppConfiguration` singleton itself.
+nonisolated struct GameDefaults: Sendable, Equatable {
+    var wordsPerPlayer = 10
+    var roundDuration = 60
+    var isSkippingEnabled = true
+    var allowsDuplicateWords = false
+
+    static let standard = GameDefaults()
+}
+
+/// The single-device game being set up: teams, words, and settings. Once the
+/// game starts, `GameEngine` owns a frozen copy as its `GameState`.
 @Observable
 final class GameConfiguration {
     let minTeams = 2
     let maxTeams: Int
-    let minTeamMembers = 2 // Minimum 2 players per team (one explains, others guess)
     let maxTeamMembers: Int
-    var playersPerTeam: Int // Fixed number of players each team must have
+    var playersPerTeam: Int
     var wordsPerPlayer: Int
     var roundDuration: Int
     var isSkippingEnabled: Bool
+    /// Whether two players may put the same word in the hat.
+    let allowsDuplicateWords: Bool
     var wordSource: WordSource
     var teams: [Team] = []
     var words: [Word] = []
 
-    static let rounds: [GameRound] = [.first, .second, .third]
-
-    var teamColors: [Color] {
-        TeamDefaultColorGenerator.defaultColors
-    }
-
-    func teamColor(for index: Int) -> Color {
-        teamColors[index % teamColors.count]
-    }
-
     init(
+        defaults: GameDefaults = .standard,
         maxTeams: Int = 6,
         maxTeamMembers: Int = 6,
         playersPerTeam: Int = 2,
@@ -54,12 +59,44 @@ final class GameConfiguration {
         self.maxTeams = maxTeams
         self.maxTeamMembers = maxTeamMembers
         self.playersPerTeam = playersPerTeam
-        self.wordsPerPlayer = wordsPerPlayer ?? AppConfiguration.shared.defaultWordsPerPlayer
-        self.roundDuration = roundDuration ?? AppConfiguration.shared.defaultRoundDuration
-        self.isSkippingEnabled = isSkippingEnabled ?? AppConfiguration.shared.defaultSkippingEnabled
+        self.wordsPerPlayer = wordsPerPlayer ?? defaults.wordsPerPlayer
+        self.roundDuration = roundDuration ?? defaults.roundDuration
+        self.isSkippingEnabled = isSkippingEnabled ?? defaults.isSkippingEnabled
+        self.allowsDuplicateWords = defaults.allowsDuplicateWords
         self.wordSource = wordSource
         self.teams = teams
         self.words = words
+    }
+
+    var players: [Player] {
+        teams.flatMap(\.players)
+    }
+
+    var settings: GameState.Settings {
+        GameState.Settings(roundDuration: roundDuration, isSkippingEnabled: isSkippingEnabled)
+    }
+
+    /// A not-yet-started game with this configuration's teams, words, and settings.
+    func makeGameState() -> GameState {
+        GameState(settings: settings, teams: teams, words: words)
+    }
+}
+
+// MARK: - Restoring
+extension GameConfiguration {
+    /// Rebuilds the setup a saved game was started from, so Play Again and
+    /// New Words keep working after a relaunch.
+    convenience init(restoring state: GameState, defaults: GameDefaults) {
+        let playerCount = state.teams.flatMap(\.players).count
+        self.init(
+            defaults: defaults,
+            playersPerTeam: state.teams.first?.players.count ?? 2,
+            wordsPerPlayer: playerCount > 0 ? max(1, state.words.count / playerCount) : nil,
+            roundDuration: state.settings.roundDuration,
+            isSkippingEnabled: state.settings.isSkippingEnabled,
+            teams: state.teams,
+            words: state.words
+        )
     }
 }
 
@@ -74,6 +111,7 @@ extension GameConfiguration {
     private static func makeMockForTesting() -> GameConfiguration {
         let team1Id = UUID()
         let team1 = Team(
+            id: team1Id,
             name: "Alpha",
             players: [
                 .init(name: "Alice", teamId: team1Id),
@@ -84,6 +122,7 @@ extension GameConfiguration {
 
         let team2Id = UUID()
         let team2 = Team(
+            id: team2Id,
             name: "Beta",
             players: [
                 .init(name: "John", teamId: team2Id),
@@ -99,7 +138,7 @@ extension GameConfiguration {
             wordsPerPlayer: 3,
             roundDuration: 10,
             teams: [team1, team2],
-            words: [ ]
+            words: []
         )
     }
 }

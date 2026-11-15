@@ -11,6 +11,7 @@ import SwiftUI
 
 struct ResultsView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(GameEngine.self) private var engine
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
@@ -18,16 +19,9 @@ struct ResultsView: View {
     @State private var expandedRounds: Set<GameRound> = []
     @State private var hasCelebrated = false
 
-    private var round: GameRound? { gameManager.currentRound }
-    private var isFinal: Bool { round == nil }
-
-    private var winners: [Team] {
-        let sortedTeams = gameManager.getSortedTeamsByTotalScore()
-        guard let topScore = sortedTeams.first.map({ gameManager.getTotalScore(for: $0) }) else {
-            return []
-        }
-        return sortedTeams.filter { gameManager.getTotalScore(for: $0) == topScore }
-    }
+    private var isFinal: Bool { engine.phase == .finished }
+    private var scoreboard: Scoreboard { engine.scoreboard }
+    private var winners: [Team] { scoreboard.winners }
 
     var body: some View {
         content
@@ -137,7 +131,10 @@ private extension ResultsView {
                 .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.55), radius: 22, x: 0, y: 10)
 
             Image(systemName: "trophy.fill")
-                .font(.system(size: 44, weight: .bold))
+                .font(DesignBook.IconFont.extraLarge)
+                .fontWeight(.bold)
+                // White on the celebration-gradient disc; DesignBook has no on-accent token yet.
+                // swiftlint:disable:next no_raw_foreground_white_black
                 .foregroundStyle(.white)
                 .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: hasCelebrated)
         }
@@ -158,7 +155,7 @@ private extension ResultsView {
                 .multilineTextAlignment(.center)
 
             AnimatedScoreText(
-                value: gameManager.getTotalScore(for: winner),
+                value: scoreboard.totalScore(for: winner),
                 font: .system(size: 56, weight: .bold, design: .rounded),
                 color: winner.color
             )
@@ -185,7 +182,7 @@ private extension ResultsView {
                             .foregroundStyle(winner.color)
 
                         AnimatedScoreText(
-                            value: gameManager.getTotalScore(for: winner),
+                            value: scoreboard.totalScore(for: winner),
                             font: DesignBook.Font.title2,
                             color: winner.color
                         )
@@ -200,7 +197,7 @@ private extension ResultsView {
 private extension ResultsView {
     var allRoundsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
-            ForEach(gameManager.getStartedRounds(), id: \.rawValue) { round in
+            ForEach(engine.state.startedRounds, id: \.rawValue) { round in
                 roundSection(for: round)
             }
         }
@@ -228,11 +225,11 @@ private extension ResultsView {
 
     func roundScores(for round: GameRound) -> some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            ForEach(Array(gameManager.getSortedTeamsByRoundScore(for: round).enumerated()), id: \.element.id) { index, team in
+            ForEach(Array(scoreboard.ranking(in: round).enumerated()), id: \.element.id) { index, team in
                 TeamScoreRowView(
                     team: team,
                     rank: index + 1,
-                    score: gameManager.getScore(for: team, in: round),
+                    score: scoreboard.score(for: team, in: round),
                     isWinner: index == 0
                 )
             }
@@ -250,11 +247,11 @@ private extension ResultsView {
 
     var totalScoresContent: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            ForEach(Array(gameManager.getSortedTeamsByTotalScore().enumerated()), id: \.element.id) { index, team in
+            ForEach(Array(scoreboard.totalRanking().enumerated()), id: \.element.id) { index, team in
                 TeamScoreRowView(
                     team: team,
                     rank: index + 1,
-                    score: gameManager.getTotalScore(for: team),
+                    score: scoreboard.totalScore(for: team),
                     isWinner: index == 0
                 )
             }
@@ -280,6 +277,7 @@ private extension ResultsView {
             PrimaryButton(title: localized("game.results.playAgain"), icon: "arrow.counterclockwise.circle.fill") {
                 handlePlayAgain()
             }
+            .accessibilityIdentifier("results.playAgain")
 
             Text(localized("game.results.playAgain.note"))
                 .font(DesignBook.Font.caption)
@@ -300,23 +298,21 @@ private extension ResultsView {
     }
 
     func handleAppear() {
-        if !isFinal, let currentRound = round {
-            expandedRounds = [currentRound]
-        } else if isFinal {
-            expandedRounds = Set(GameRound.allCases)
-        }
+        expandedRounds = isFinal ? Set(GameRound.allCases) : [engine.state.round]
     }
 
+    /// Same teams and words, scores reset; back to choosing who starts.
     func handlePlayAgain() {
         DesignBook.Haptics.tap()
-        gameManager.resetForRematch()
+        gameManager.rematch()
         navigator.dismissToRoot()
         navigator.push(.randomization)
     }
 
+    /// Same teams, an empty hat; back to word settings to collect new words.
     func handleNewWords() {
         DesignBook.Haptics.tap()
-        gameManager.resetForNewGame()
+        gameManager.startOverWithNewWords()
         navigator.dismissToRoot()
         navigator.push(.wordSettings)
     }
@@ -335,4 +331,5 @@ private extension ResultsView {
     }
     .environment(Navigator())
     .environment(GameManager())
+    .environment(GameManager().engine)
 }

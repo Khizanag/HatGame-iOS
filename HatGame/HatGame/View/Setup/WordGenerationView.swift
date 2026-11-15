@@ -23,10 +23,14 @@ struct WordGenerationView: View {
     @State private var generatedCount: Int = 0
     @State private var hasStarted = false
     @State private var isHatFloating = false
-    @State private var cycleTimer: Timer?
     @AccessibilityFocusState private var readyControlFocused: Bool
 
-    private enum Phase { case generating, ready }
+    private enum Phase {
+        case generating
+        case ready
+        /// The word list for the current language is missing or empty.
+        case unavailable
+    }
 
     /// Total words to draw. Reached only after team setup, so there are always
     /// at least two teams of players; `max(1,)` is a defensive floor.
@@ -42,14 +46,43 @@ struct WordGenerationView: View {
             .setDefaultBackground()
             .navigationBarBackButtonHidden(phase == .generating)
             .hidesNavigationBar(phase == .generating)
-            .onAppear(perform: startIfNeeded)
-            .onDisappear(perform: stopCycling)
+            .task {
+                await generateIfNeeded()
+            }
     }
 }
 
 // MARK: - Layout
 private extension WordGenerationView {
+    @ViewBuilder
     var content: some View {
+        if phase == .unavailable {
+            unavailableContent
+        } else {
+            generationContent
+        }
+    }
+
+    var unavailableContent: some View {
+        VStack(spacing: DesignBook.Spacing.xl) {
+            Spacer(minLength: 0)
+            ContentUnavailableView {
+                Label(localized("wordGeneration.unavailable.title"), systemImage: "exclamationmark.triangle")
+            } description: {
+                Text(localized("wordGeneration.unavailable.message"))
+            }
+            Spacer(minLength: 0)
+            PrimaryButton(title: localized("wordGeneration.unavailable.enterManually"), icon: "pencil") {
+                DesignBook.Haptics.tap()
+                gameManager.configuration.wordSource = .manual
+                navigator.replace(with: .wordInput)
+            }
+        }
+        .paddingHorizontalDefault()
+        .padding(.bottom, DesignBook.Spacing.xl)
+    }
+
+    var generationContent: some View {
         VStack(spacing: DesignBook.Spacing.xl) {
             Spacer(minLength: 0)
             hatHero
@@ -150,9 +183,20 @@ private extension WordGenerationView {
 
 // MARK: - Generation
 private extension WordGenerationView {
-    func startIfNeeded() {
+    /// Draws a sequence of words, each materializing out of a blur so the
+    /// generation is visible, then fills the hat. Reduce Motion keeps the
+    /// reveal but swaps the blur for a calm cross-fade through fewer words.
+    /// Runs as the view's task, so leaving the screen cancels it.
+    func generateIfNeeded() async {
         guard !hasStarted else { return }
         hasStarted = true
+
+        let pool = WordDatabase.words
+        guard !pool.isEmpty else {
+            DesignBook.Haptics.error()
+            phase = .unavailable
+            return
+        }
 
         if !reduceMotion {
             withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
@@ -160,34 +204,27 @@ private extension WordGenerationView {
             }
         }
 
-        let words = WordDatabase.words
-        guard !words.isEmpty else {
-            finish()
-            return
-        }
-
-        // Draw a sequence of words, each materializing out of a blur so the
-        // generation is visible. Reduce Motion keeps the reveal but swaps the
-        // blur for a calm opacity cross-fade through fewer words.
         let drawCount = reduceMotion ? 5 : 14
-        let interval = reduceMotion ? 0.34 : 0.16
-        var draws = 1
-        drawWord(from: words)
-
-        cycleTimer = Timer.scheduledTimer(withTimeInterval: interval, repeats: true) { _ in
-            draws += 1
-            drawWord(from: words)
-            withAnimation(.linear(duration: interval)) {
-                progress = min(1, Double(draws) / Double(drawCount))
+        let interval: Duration = reduceMotion ? .milliseconds(340) : .milliseconds(160)
+        drawWord(from: pool)
+        for draw in 2...drawCount {
+            guard (try? await Task.sleep(for: interval)) != nil else {
+                hasStarted = false
+                return
             }
-            if !reduceMotion, draws.isMultiple(of: 3) {
-                Task { @MainActor in DesignBook.Haptics.selection() }
+            drawWord(from: pool)
+            withAnimation(reduceMotion ? nil : .linear(duration: 0.16)) {
+                progress = Double(draw) / Double(drawCount)
             }
-            if draws >= drawCount {
-                stopCycling()
-                finish()
+            if !reduceMotion, draw.isMultiple(of: 3) {
+                DesignBook.Haptics.selection()
             }
         }
+        finish(from: pool)
+
+        // Move VoiceOver to the now-actionable Continue button once it is on screen.
+        guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
+        readyControlFocused = true
     }
 
     /// Draws one random word, sharpening it into focus from a blur — or a calm
@@ -206,23 +243,14 @@ private extension WordGenerationView {
         }
     }
 
-    func finish() {
-        gameManager.fillRandomWords(count: targetCount)
+    func finish(from pool: [String]) {
+        gameManager.fillRandomWords(count: targetCount, from: pool)
         generatedCount = gameManager.configuration.words.count
-        Task { @MainActor in DesignBook.Haptics.success() }
+        DesignBook.Haptics.success()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
             progress = 1
             phase = .ready
         }
-        // Move VoiceOver to the now-actionable Continue button once it is on screen.
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-            readyControlFocused = true
-        }
-    }
-
-    func stopCycling() {
-        cycleTimer?.invalidate()
-        cycleTimer = nil
     }
 }
 

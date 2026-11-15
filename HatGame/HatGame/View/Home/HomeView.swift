@@ -16,8 +16,11 @@ struct HomeView: View {
     @SceneStorage("HomeView.howToPlay.expanded.v2") private var isHowToPlayExpanded: Bool = false
     @AppStorage("HomeView.hasSeenHowToPlay") private var hasSeenHowToPlay: Bool = false
     @State private var isHeroFloating: Bool = false
+    /// The single-device game saved mid-play, offered for resuming.
+    @State private var savedGame: GameState?
+    @State private var isDiscardConfirmationPresented = false
 
-    private let appConfiguration = AppConfiguration.shared
+    private let gameStore = FileGameStore.shared
 
     var body: some View {
         content
@@ -26,6 +29,16 @@ struct HomeView: View {
             }
             .toolbar { settingsToolbar }
             .uiTestDeepLink(navigator)
+            // Re-check whenever a flow closes: it may have saved, finished, or replaced a game.
+            .task(id: navigator.presentedPage?.id) {
+                await loadSavedGame()
+            }
+            .alert(localized("home.resume.discard.title"), isPresented: $isDiscardConfirmationPresented) {
+                Button(localized("common.buttons.cancel"), role: .cancel) {}
+                Button(localized("home.resume.discard"), role: .destructive, action: discardSavedGame)
+            } message: {
+                Text(localized("home.resume.discard.message"))
+            }
     }
 }
 
@@ -43,6 +56,10 @@ private extension HomeView {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.xl) {
                 hero
+                if let savedGame {
+                    resumeCard(for: savedGame)
+                        .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
+                }
                 howToPlayCard
                 Spacer().frame(height: DesignBook.Spacing.xl)
             }
@@ -124,6 +141,59 @@ private extension HomeView {
         }
     }
 
+    func resumeCard(for state: GameState) -> some View {
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                HStack(spacing: DesignBook.Spacing.md) {
+                    CircularIconContainer(
+                        icon: "hourglass",
+                        size: 48,
+                        iconSize: 22,
+                        color: DesignBook.Color.Text.accent,
+                        backgroundColor: DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight)
+                    )
+                    .accessibilityHidden(true)
+
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        Text(localized("home.resume.title"))
+                            .font(DesignBook.Font.headline)
+                            .foregroundStyle(DesignBook.Color.Text.primary)
+                        Text(resumeSubtitle(for: state))
+                            .font(DesignBook.Font.caption)
+                            .foregroundStyle(DesignBook.Color.Text.secondary)
+                    }
+                    .accessibilityElement(children: .combine)
+
+                    Spacer(minLength: 0)
+                }
+
+                HStack(spacing: DesignBook.Spacing.md) {
+                    SecondaryButton(title: localized("home.resume.discard"), icon: "trash") {
+                        DesignBook.Haptics.tap()
+                        isDiscardConfirmationPresented = true
+                    }
+                    .accessibilityIdentifier("home.discardButton")
+
+                    PrimaryButton(title: localized("home.resume.button"), icon: "play.fill") {
+                        DesignBook.Haptics.tap()
+                        navigator.present(.resumeGame(state))
+                    }
+                    .navigationZoomSource(id: "resumeGame", in: zoomNamespace)
+                    .accessibilityIdentifier("home.resumeButton")
+                }
+            }
+        }
+        .paddingHorizontalDefault()
+    }
+
+    func resumeSubtitle(for state: GameState) -> String {
+        String(
+            format: localized("home.resume.subtitle"),
+            state.round.rawValue,
+            state.currentTeam?.name ?? ""
+        )
+    }
+
     var howToPlayCard: some View {
         FoldableCard(
             isExpanded: $isHowToPlayExpanded,
@@ -191,6 +261,32 @@ private extension HomeView {
             (icon: "3.circle.fill", text: localized("home.instructions.round3")),
             (icon: "trophy.fill", text: localized("home.instructions.winner")),
         ]
+    }
+}
+
+// MARK: - Saved game
+private extension HomeView {
+    func loadSavedGame() async {
+        guard navigator.presentedPage == nil else { return }
+        #if DEBUG
+        if UITestConfiguration.consumeSavedGameReset() {
+            await gameStore.clear()
+        }
+        #endif
+        let state = await gameStore.load()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
+            savedGame = state.flatMap { $0.phase.isInProgress ? $0 : nil }
+        }
+    }
+
+    func discardSavedGame() {
+        DesignBook.Haptics.rigid()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
+            savedGame = nil
+        }
+        Task {
+            await gameStore.clear()
+        }
     }
 }
 

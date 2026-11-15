@@ -42,6 +42,17 @@ enum UITestConfiguration {
         CommandLine.arguments.contains("-uiTestDisableAnimations")
     }
 
+    private static var hasResetSavedGame = false
+
+    /// True once per launch when `-uiTestResetState` asks to start without a
+    /// saved game; the relaunch half of a restore test omits the flag.
+    @MainActor
+    static func consumeSavedGameReset() -> Bool {
+        guard CommandLine.arguments.contains("-uiTestResetState"), !hasResetSavedGame else { return false }
+        hasResetSavedGame = true
+        return true
+    }
+
     @MainActor
     static func deepLink(using navigator: Navigator) {
         guard navigator.navigationPath.isEmpty else { return }
@@ -52,6 +63,8 @@ enum UITestConfiguration {
             navigator.push(.defaultsSettings)
         case "appIcon":
             navigator.push(.appIconSelection)
+        case "game":
+            navigator.present(.uiTestGame)
         default:
             break
         }
@@ -66,6 +79,44 @@ enum UITestConfiguration {
             return nil
         }
         return arguments[index + 1]
+    }
+}
+// MARK: - UI test game
+extension GameConfiguration {
+    /// Two teams of two and a two-word hat: the shortest game that still
+    /// exercises turns, rotation, and every round.
+    static var uiTestGame: GameConfiguration {
+        let alphaId = UUID()
+        let betaId = UUID()
+        return GameConfiguration(
+            wordsPerPlayer: 1,
+            roundDuration: 60,
+            isSkippingEnabled: true,
+            teams: [
+                Team(
+                    id: alphaId,
+                    name: "Alpha",
+                    players: [Player(name: "Ann", teamId: alphaId), Player(name: "Ben", teamId: alphaId)],
+                    color: TeamDefaultColorGenerator.defaultColors[0]
+                ),
+                Team(
+                    id: betaId,
+                    name: "Beta",
+                    players: [Player(name: "Cat", teamId: betaId), Player(name: "Dan", teamId: betaId)],
+                    color: TeamDefaultColorGenerator.defaultColors[1]
+                ),
+            ],
+            words: [Word(text: "apple"), Word(text: "river")]
+        )
+    }
+}
+
+// MARK: - UI test pages
+extension Page {
+    static var uiTestGame: Page<GameFlowView> {
+        Page<GameFlowView>(id: "uiTestGame") {
+            GameFlowView(launch: .uiTestGame)
+        }
     }
 }
 #endif

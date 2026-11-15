@@ -14,13 +14,15 @@ struct TimerSettingsView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var selectedDuration: Int = AppConfiguration.shared.defaultRoundDuration
-    @State private var isSkippingEnabled: Bool = AppConfiguration.shared.defaultSkippingEnabled
+    @State private var selectedDuration: Int = GameDefaults.standard.roundDuration
+    @State private var isSkippingEnabled: Bool = GameDefaults.standard.isSkippingEnabled
+    @State private var hasLoadedConfiguration = false
 
     var body: some View {
         content
             .navigationTitle(localized("timerSettings.title"))
             .setDefaultStyle()
+            .onAppear(perform: loadConfiguration)
     }
 }
 
@@ -172,6 +174,14 @@ private extension TimerSettingsView {
                 }
             }
         )
+    }
+
+    /// Starts from the game's configuration, which carries the user's defaults.
+    func loadConfiguration() {
+        guard !hasLoadedConfiguration else { return }
+        hasLoadedConfiguration = true
+        selectedDuration = gameManager.configuration.roundDuration
+        isSkippingEnabled = gameManager.configuration.isSkippingEnabled
     }
 
     func handleContinue() {

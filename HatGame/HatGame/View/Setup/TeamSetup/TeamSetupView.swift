@@ -13,7 +13,6 @@ struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    private let appConfiguration = AppConfiguration.shared
 
     @State private var isAddTeamSheetPresented = false
     @State private var editingTeam: Team?

@@ -2103,6 +2103,108 @@
         }
       }
     },
+    "home.resume.button" : {
+      "comment" : "Button that resumes the saved game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაგრძელება"
+          }
+        }
+      }
+    },
+    "home.resume.discard" : {
+      "comment" : "Button that deletes the saved game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წაშლა"
+          }
+        }
+      }
+    },
+    "home.resume.discard.message" : {
+      "comment" : "Message of the alert confirming the saved game is deleted.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The game in progress and its scores will be lost."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მიმდინარე თამაში და მისი ქულები დაიკარგება."
+          }
+        }
+      }
+    },
+    "home.resume.discard.title" : {
+      "comment" : "Title of the alert confirming the saved game is deleted.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard saved game?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წავშალოთ შენახული თამაში?"
+          }
+        }
+      }
+    },
+    "home.resume.subtitle" : {
+      "comment" : "Subtitle of the resume card. 1: round number, 2: the team that is up.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round %1$lld · %2$@'s turn"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რაუნდი %1$lld · რიგშია %2$@"
+          }
+        }
+      }
+    },
+    "home.resume.title" : {
+      "comment" : "Title of the Home card offering to resume a saved single-device game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game in progress"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მიმდინარე თამაში"
+          }
+        }
+      }
+    },
     "home.startGame" : {
       "comment" : "A button label to start a new game.",
       "extractionState" : "stale",
@@ -6414,6 +6516,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ვირჩევთ სიტყვებს"
+          }
+        }
+      }
+    },
+    "wordGeneration.unavailable.enterManually" : {
+      "comment" : "Button switching from automatic to manual word entry.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Words Manually"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვების ხელით შეყვანა"
+          }
+        }
+      }
+    },
+    "wordGeneration.unavailable.message" : {
+      "comment" : "Explains the missing word list and the manual alternative.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The built-in word list couldn't be loaded. Enter the words yourselves instead."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჩაშენებული სიტყვების სია ვერ ჩაიტვირთა. სანაცვლოდ სიტყვები თავად შეიყვანეთ."
+          }
+        }
+      }
+    },
+    "wordGeneration.unavailable.title" : {
+      "comment" : "Shown when the built-in word list for the app language is missing.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No words available"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები ვერ მოიძებნა"
           }
         }
       }

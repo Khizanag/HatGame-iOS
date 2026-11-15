@@ -11,8 +11,10 @@ import SwiftUI
 
 struct TeamTurnResultsView: View {
     @Environment(GameManager.self) private var gameManager
+    @Environment(GameEngine.self) private var engine
     @Environment(Navigator.self) private var navigator
 
+    let team: Team
     let guessedWords: [Word]
     let completionReason: PlayCompletionReason
     @State private var isStandingsPresented = false
@@ -24,7 +26,6 @@ struct TeamTurnResultsView: View {
     var body: some View {
         resultsScroll
             .setDefaultBackground()
-            .navigationBarBackButtonHidden()
             .overlay {
                 if isCelebratory {
                     ConfettiView(isActive: hasCelebrated, retriggerId: confettiBurst)
@@ -37,6 +38,7 @@ struct TeamTurnResultsView: View {
                     ResultsView()
                 }
                 .environment(gameManager)
+                .environment(engine)
                 .environment(navigator)
             }
             .onChange(of: isStandingsPresented) { _, presented in
@@ -71,8 +73,7 @@ private extension TeamTurnResultsView {
     }
 
     var header: some View {
-        let team = gameManager.currentTeam
-        return VStack(spacing: DesignBook.Spacing.sm) {
+        VStack(spacing: DesignBook.Spacing.sm) {
             ZStack {
                 Circle()
                     .fill(team.color.opacity(0.12))
@@ -88,7 +89,8 @@ private extension TeamTurnResultsView {
                     .frame(width: 88, height: 88)
 
                 Image(systemName: isCelebratory ? "sparkles" : "hourglass")
-                    .font(.system(size: 38, weight: .bold))
+                    .font(DesignBook.IconFont.large)
+                    .fontWeight(.bold)
                     .foregroundStyle(team.color)
                     .symbolEffect(.bounce, options: .nonRepeating, value: hasCelebrated)
             }
@@ -98,12 +100,12 @@ private extension TeamTurnResultsView {
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
+                .accessibilityIdentifier("turnResults.title")
         }
     }
 
     var resultsCard: some View {
-        let team = gameManager.currentTeam
-        return GameCard {
+        GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Text(String(format: localized("game.turnResults.teamTitle"), team.name))
                     .font(DesignBook.Font.headline)
@@ -185,19 +187,9 @@ private extension TeamTurnResultsView {
 
             PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 DesignBook.Haptics.tap()
-                gameManager.prepareForNewPlay()
-
-                if let round = gameManager.currentRound {
-                    navigator.push(
-                        .nextTeam(
-                            round: round,
-                            team: gameManager.currentTeam
-                        )
-                    )
-                } else {
-                    navigator.push(.finalResults)
-                }
+                engine.continueAfterTurn()
             }
+            .accessibilityIdentifier("turnResults.continue")
         }
     }
 }

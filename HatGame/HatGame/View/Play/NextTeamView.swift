@@ -12,6 +12,7 @@ import SwiftUI
 struct NextTeamView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(GameManager.self) private var gameManager
+    @Environment(GameEngine.self) private var engine
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let round: GameRound
@@ -20,16 +21,13 @@ struct NextTeamView: View {
     @State private var isStandingsPresented = false
     @State private var selectedExplainerIndex: Int = 0
     @State private var isRandomizingExplainer: Bool = false
+    /// Changing this starts an explainer shuffle; the task is cancelled on disappear.
+    @State private var explainerShuffleId: UUID?
 
-    private var isFirstPlay: Bool { gameManager.canSelectRoles(for: team) }
-    private var currentExplainer: Player? { gameManager.getExplainer(for: team) }
-    private var currentGuessers: [Player] { gameManager.getGuessers(for: team) }
-
-    private var hasGameStarted: Bool {
-        gameManager.configuration.teams.contains { team in
-            gameManager.getTotalScore(for: team) > 0
-        }
-    }
+    private var isFirstPlay: Bool { engine.state.canSelectExplainer(for: team) }
+    private var currentExplainer: Player? { engine.state.explainer(for: team) }
+    private var currentGuessers: [Player] { engine.state.guessers(for: team) }
+    private var hasGameStarted: Bool { engine.scoreboard.hasAnyScore }
 
     var body: some View {
         content
@@ -39,12 +37,16 @@ struct NextTeamView: View {
                     ResultsView()
                 }
                 .environment(gameManager)
+                .environment(engine)
                 .environment(navigator)
             }
             .onAppear {
-                if let explainerIndex = gameManager.getExplainerIndex(for: team) {
+                if let explainerIndex = engine.state.explainerIndex(for: team) {
                     selectedExplainerIndex = explainerIndex
                 }
+            }
+            .task(id: explainerShuffleId) {
+                await shuffleExplainer()
             }
     }
 }
@@ -79,8 +81,8 @@ private extension NextTeamView {
                     .strokeBorder(team.color.opacity(0.4), lineWidth: 2)
                     .frame(width: 120, height: 120)
 
-                Text("🎯")
-                    .font(.system(size: 72))
+                Text(verbatim: "🎯")
+                    .font(DesignBook.IconFont.emoji)
             }
             .accessibilityHidden(true)
 
@@ -100,7 +102,7 @@ private extension NextTeamView {
                     Image(systemName: "star.fill")
                         .font(DesignBook.Font.captionBold)
                     AnimatedScoreText(
-                        value: gameManager.getTotalScore(for: team),
+                        value: engine.scoreboard.totalScore(for: team),
                         font: DesignBook.Font.headline,
                         color: team.color
                     )
@@ -136,7 +138,8 @@ private extension NextTeamView {
                     Text(round.title)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                    Text(String(format: localized("game.wordsRemainingLabel"), gameManager.remainingWordCount))
+                        .accessibilityIdentifier("nextTeam.roundTitle")
+                    Text(String(format: localized("game.wordsRemainingLabel"), engine.state.remainingWordCount))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
@@ -215,7 +218,10 @@ private extension NextTeamView {
                         isSelected ? team.color : DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.medium),
                         lineWidth: 2
                     )
-                    .frame(width: DesignBook.Size.selectionIndicatorSize, height: DesignBook.Size.selectionIndicatorSize)
+                    .frame(
+                        width: DesignBook.Size.selectionIndicatorSize,
+                        height: DesignBook.Size.selectionIndicatorSize
+                    )
 
                 if isSelected {
                     Circle()
@@ -366,51 +372,47 @@ private extension NextTeamView {
 
             PrimaryButton(title: localized("common.buttons.play"), icon: "play.fill") {
                 DesignBook.Haptics.confirm()
-                if isFirstPlay {
-                    gameManager.setExplainer(playerIndex: selectedExplainerIndex, for: team)
-                }
-                navigator.push(.play(round: round))
+                engine.beginTurn(explainerIndex: isFirstPlay ? selectedExplainerIndex : nil)
             }
             .disabled(isRandomizingExplainer)
+            .accessibilityIdentifier("nextTeam.play")
         }
     }
 }
 
 // MARK: - Actions
 private extension NextTeamView {
-    /// Cycles the explainer highlight through the team's players with a
-    /// short haptic-rich animation, then settles on a final random pick —
-    /// mirroring the "which team starts" randomizer for visual consistency.
+    /// Starts the "who explains" shuffle: the highlight cycles through the
+    /// players with haptics, then settles on a random pick — mirroring the
+    /// starting-team randomizer. Reduce Motion skips straight to the pick.
     func randomizeExplainer() {
         guard !isRandomizingExplainer, team.players.count > 1 else { return }
         DesignBook.Haptics.tap()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isRandomizingExplainer = true
         }
-
-        let playerCount = team.players.count
-        var cycleCount = 0
-        Timer.scheduledTimer(withTimeInterval: 0.1, repeats: true) { timer in
-            cycleCount += 1
-            withAnimation(.easeInOut(duration: 0.1)) {
-                selectedExplainerIndex = Int.random(in: 0..<playerCount)
-            }
-            if cycleCount % 3 == 0 {
-                Task { @MainActor in DesignBook.Haptics.selection() }
-            }
-            guard cycleCount >= 20 else { return }
-            timer.invalidate()
-            finalizeExplainerRandomization(playerCount: playerCount)
-        }
+        explainerShuffleId = UUID()
     }
 
-    func finalizeExplainerRandomization(playerCount: Int) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            withAnimation(.spring(response: 0.5, dampingFraction: 0.6)) {
-                selectedExplainerIndex = Int.random(in: 0..<playerCount)
-                isRandomizingExplainer = false
+    func shuffleExplainer() async {
+        guard explainerShuffleId != nil, team.players.count > 1 else { return }
+        let playerCount = team.players.count
+        if !reduceMotion {
+            for cycle in 1...20 {
+                guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
+                withAnimation(.easeInOut(duration: 0.1)) {
+                    selectedExplainerIndex = Int.random(in: 0..<playerCount)
+                }
+                if cycle.isMultiple(of: 3) {
+                    DesignBook.Haptics.selection()
+                }
             }
-            DesignBook.Haptics.success()
+            guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }
         }
+        withAnimation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.6)) {
+            selectedExplainerIndex = Int.random(in: 0..<playerCount)
+            isRandomizingExplainer = false
+        }
+        DesignBook.Haptics.success()
     }
 }
