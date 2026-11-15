@@ -6,6 +6,7 @@ included:
   - HatGame-DesignBook/Sources
   - HatGame-Navigation/Sources
   - HatGame-Networking/Sources
+  - HatGame-*/Package.swift
 
 excluded:
   - "**/.build"
@@ -109,7 +110,7 @@ custom_rules:
     regex: '\.navigationDestination\(for:'
     message: "Only the navigation stack wrapper should declare navigationDestination. Use navigator.push() instead."
     severity: warning
-    excluded: "CoordinatedNavigationStack\\.swift|NavigationStack\\.swift|RootNavigationStack\\.swift"
+    excluded: "(Game|Online|Local)FlowView\\.swift"
 
   # === Design System ===
 
