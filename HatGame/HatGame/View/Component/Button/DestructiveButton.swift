@@ -47,7 +47,7 @@ extension DestructiveButton where Label == Text {
         DestructiveButton {} label: {
             HStack {
                 Image(systemName: "trash")
-                Text("Delete Item")
+                Text(verbatim: "Delete Item")
             }
         }
     }

@@ -69,13 +69,13 @@ private extension SettingsSection {
                 title: "Appearance",
                 footer: "Customize the look and feel of the app"
             ) {
-                Label("Theme", systemImage: "paintbrush")
-                Label("App Icon", systemImage: "app.gift.fill")
+                Label(String("Theme"), systemImage: "paintbrush")
+                Label(String("App Icon"), systemImage: "app.gift.fill")
             }
 
             SettingsSection(title: "Game Defaults") {
-                Label("Words per Player", systemImage: "text.bubble")
-                Label("Round Duration", systemImage: "timer")
+                Label(String("Words per Player"), systemImage: "text.bubble")
+                Label(String("Round Duration"), systemImage: "timer")
             }
         }
         .paddingHorizontalDefault()

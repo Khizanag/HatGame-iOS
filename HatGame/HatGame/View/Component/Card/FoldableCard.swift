@@ -106,7 +106,7 @@ private extension FoldableCard {
             isExpanded: .constant(true),
             title: "How to Play"
         ) {
-            Text("Content here")
+            Text(verbatim: "Content here")
         }
 
        FoldableCard(
@@ -114,7 +114,7 @@ private extension FoldableCard {
            title: "Round 1",
            description: "No restrictions"
        ) {
-           Text("Round content here")
+           Text(verbatim: "Round content here")
        }
     }
     .padding()

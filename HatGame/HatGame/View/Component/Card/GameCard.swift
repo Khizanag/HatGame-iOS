@@ -28,7 +28,7 @@ struct GameCard<Content: View>: View {
 // MARK: - Preview
 #Preview {
     GameCard {
-        Text("Card Content")
+        Text(verbatim: "Card Content")
             .foregroundStyle(DesignBook.Color.Text.primary)
     }
     .padding()
