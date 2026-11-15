@@ -934,13 +934,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Swipe right if guessed, swipe left to skip."
+            "value" : "Double-tap if guessed. Swipe up or down for more actions."
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "გადაასრიალე მარჯვნივ თუ გამოიცანი, მარცხნივ — გამოსატოვებლად."
+            "value" : "ორჯერ შეეხე, თუ გამოიცანი. სხვა მოქმედებებისთვის გადაასრიალე ზემოთ ან ქვემოთ."
           }
         }
       }

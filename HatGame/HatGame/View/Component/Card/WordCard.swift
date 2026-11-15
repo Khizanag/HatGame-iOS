@@ -61,12 +61,12 @@ struct WordCard: View {
         .accessibilityLabel(Text(localized("game.card.accessibility.word \(word)")))
         .accessibilityHint(Text(localized("game.card.accessibility.hint")))
         .accessibilityAddTraits(.isButton)
-        .accessibilityAction(named: Text(localized("game.gotIt"))) {
-            onGuessed()
-        }
-        .accessibilityAction(named: Text(localized("game.skip"))) {
-            guard isSkipEnabled else { return }
-            onSkip()
+        .accessibilityAction(.default, onGuessed)
+        .accessibilityActions {
+            Button(localized("game.gotIt"), action: onGuessed)
+            if isSkipEnabled {
+                Button(localized("game.skip"), action: onSkip)
+            }
         }
     }
 
