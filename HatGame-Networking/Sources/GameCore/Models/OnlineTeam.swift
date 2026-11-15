@@ -24,7 +24,7 @@ public struct OnlineTeam: Codable, Identifiable, Hashable, Sendable {
         createdAt: Date? = Date()
     ) {
         self.id = id
-        self.name = name
+        self.name = RoomLimits.name(name)
         self.colorHex = colorHex
         self.playerIds = playerIds
         self.createdAt = createdAt

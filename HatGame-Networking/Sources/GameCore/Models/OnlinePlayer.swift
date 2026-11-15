@@ -29,7 +29,7 @@ public struct OnlinePlayer: Codable, Identifiable, Hashable, Sendable {
     ) {
         self.id = id
         self.deviceId = deviceId
-        self.name = name
+        self.name = RoomLimits.name(name)
         self.teamId = teamId
         self.isReady = isReady
         self.hasSubmittedWords = hasSubmittedWords

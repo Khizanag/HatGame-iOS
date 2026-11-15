@@ -18,7 +18,7 @@ public struct OnlineWord: Codable, Identifiable, Hashable, Sendable {
         addedByPlayerId: String
     ) {
         self.id = id
-        self.text = text
+        self.text = RoomLimits.word(text)
         self.addedByPlayerId = addedByPlayerId
     }
 

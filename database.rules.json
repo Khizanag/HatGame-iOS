@@ -11,10 +11,80 @@
       "$roomId": {
         // Access cascades to every descendant (players, teams, words,
         // gameState, status), which is what the app writes through.
-        // The character class mirrors generateUniqueRoomCode exactly:
+        // The character class mirrors RoomCode.alphabet exactly:
         // A-Z without I and O, digits 2-9.
         ".read": "$roomId.matches(/^[A-HJ-NP-Z2-9]{6}$/)",
-        ".write": "$roomId.matches(/^[A-HJ-NP-Z2-9]{6}$/)"
+        ".write": "$roomId.matches(/^[A-HJ-NP-Z2-9]{6}$/)",
+
+        // .validate runs on the merged result of every write, so leaf and
+        // multi-path updates pass as long as the room stays whole; it never
+        // runs on deletes, so leaving and closing rooms are unaffected.
+        // Length caps mirror RoomLimits in GameCore.
+        ".validate": "newData.hasChildren(['id', 'hostId', 'status', 'settings', 'createdAt']) && newData.child('id').val() === $roomId",
+        "id": { ".validate": "newData.isString()" },
+        "hostId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "status": { ".validate": "newData.isString() && newData.val().length <= 32" },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "settings": { ".validate": "newData.hasChildren()" },
+
+        "players": {
+          "$playerId": {
+            // Also refuses a lone isConnected write for a player who has
+            // already left, which would otherwise recreate a partial node.
+            ".validate": "newData.hasChildren(['id', 'deviceId', 'name', 'joinedAt']) && newData.child('id').val() === $playerId",
+            "id": { ".validate": "newData.isString()" },
+            "deviceId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
+            "teamId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+            "isReady": { ".validate": "newData.isBoolean()" },
+            "hasSubmittedWords": { ".validate": "newData.isBoolean()" },
+            "isConnected": { ".validate": "newData.isBoolean()" },
+            "joinedAt": { ".validate": "newData.isNumber()" }
+          }
+        },
+
+        "teams": {
+          "$teamId": {
+            ".validate": "newData.hasChildren(['id', 'name', 'colorHex']) && newData.child('id').val() === $teamId",
+            "id": { ".validate": "newData.isString()" },
+            "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
+            "colorHex": { ".validate": "newData.isString() && newData.val().length <= 16" },
+            "createdAt": { ".validate": "newData.isNumber()" }
+          }
+        },
+
+        "words": {
+          "$wordId": {
+            ".validate": "newData.hasChildren(['id', 'text', 'addedByPlayerId']) && newData.child('id').val() === $wordId",
+            "id": { ".validate": "newData.isString()" },
+            "text": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200" },
+            "addedByPlayerId": { ".validate": "newData.isString() && newData.val().length <= 64" }
+          }
+        },
+
+        "gameState": {
+          ".validate": "newData.hasChildren(['currentRound', 'currentTeamIndex', 'phase', 'roundDuration'])"
+        }
+      }
+    },
+
+    "feedback": {
+      // Write-only and create-only: nobody can read feedback back, and an
+      // existing entry can be neither replaced nor deleted.
+      "$feedbackId": {
+        ".write": "!data.exists() && $feedbackId.length <= 64",
+        ".validate": "newData.hasChildren(['id', 'category', 'message', 'createdAt']) && newData.child('id').val() === $feedbackId",
+        "id": { ".validate": "newData.isString()" },
+        "category": { ".validate": "newData.isString() && newData.val().length <= 32" },
+        "message": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 5000" },
+        "appVersion": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "build": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "systemVersion": { ".validate": "newData.isString() && newData.val().length <= 256" },
+        "deviceModel": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "locale": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "deviceId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        "createdAt": { ".validate": "newData.isNumber()" },
+        "$other": { ".validate": false }
       }
     }
   }

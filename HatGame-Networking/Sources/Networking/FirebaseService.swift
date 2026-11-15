@@ -280,9 +280,22 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Feedback
+    /// Create-only: the rules refuse to overwrite an existing entry.
     public func submitFeedback(_ feedback: Feedback) async throws {
+        let bounded = Feedback(
+            id: feedback.id,
+            category: feedback.category,
+            message: RoomLimits.feedback(feedback.message),
+            appVersion: feedback.appVersion,
+            build: feedback.build,
+            systemVersion: feedback.systemVersion,
+            deviceModel: feedback.deviceModel,
+            locale: feedback.locale,
+            deviceId: feedback.deviceId,
+            createdAt: feedback.createdAt
+        )
         try await write { [self] in
-            _ = try await feedbackRef.child(feedback.id).setValue(encodeToDict(feedback))
+            _ = try await feedbackRef.child(bounded.id).setValue(encodeToDict(bounded))
         }
     }
 }
