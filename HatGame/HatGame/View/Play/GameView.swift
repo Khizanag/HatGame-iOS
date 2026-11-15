@@ -79,6 +79,9 @@ private extension GameView {
         }
         .padding(.top, DesignBook.Spacing.lg)
         .paddingHorizontalDefault()
+        // The turn is one fixed, non-scrolling screen; past this size the
+        // timer, card, and buttons can no longer all fit.
+        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
     }
 
     @ViewBuilder

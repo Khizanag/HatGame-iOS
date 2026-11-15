@@ -19,13 +19,15 @@ struct GameSettingsToggleRow: View {
     @Binding var isOn: Bool
     var tint: Color = DesignBook.Color.Text.accent
 
+    @ScaledMetric(relativeTo: .title3) private var iconWidth = DesignBook.Size.iconSize
+
     var body: some View {
         Toggle(isOn: $isOn) {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: icon)
                     .font(DesignBook.IconFont.small)
                     .foregroundStyle(tint)
-                    .frame(width: DesignBook.Size.iconSize)
+                    .frame(width: iconWidth)
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text(title)

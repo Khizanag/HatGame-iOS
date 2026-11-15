@@ -14,6 +14,8 @@ import SwiftUI
 /// flows look and behave the same.
 struct GameSettingsRow: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @ScaledMetric(relativeTo: .title3) private var iconWidth = DesignBook.Size.iconSize
 
     let icon: String
     let title: String
@@ -22,34 +24,62 @@ struct GameSettingsRow: View {
     let step: Int
     var suffix: String?
 
+    private var formattedValue: String {
+        suffix.map { "\(value) \($0)" } ?? "\(value)"
+    }
+
     var body: some View {
-        Stepper(value: $value, in: range, step: step) {
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: icon)
-                    .font(DesignBook.IconFont.small)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .frame(width: DesignBook.Size.iconSize)
-
-                Text(title)
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-
-                Spacer(minLength: DesignBook.Spacing.sm)
-
-                Text(valueText)
-                    .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-                    .monospacedDigit()
-                    .contentTransition(.numericText(value: Double(value)))
-                    .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: value)
+        content
+            .onChange(of: value) { _, _ in
+                DesignBook.Haptics.selection()
             }
-        }
-        .onChange(of: value) { _, _ in
-            DesignBook.Haptics.selection()
+    }
+}
+
+// MARK: - Layout
+private extension GameSettingsRow {
+    @ViewBuilder
+    var content: some View {
+        if dynamicTypeSize.isAccessibilitySize {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                titleLabel
+                HStack {
+                    valueLabel
+                    Spacer(minLength: DesignBook.Spacing.sm)
+                    Stepper(title, value: $value, in: range, step: step)
+                        .labelsHidden()
+                }
+            }
+        } else {
+            Stepper(value: $value, in: range, step: step) {
+                HStack(spacing: DesignBook.Spacing.sm) {
+                    titleLabel
+                    Spacer(minLength: DesignBook.Spacing.sm)
+                    valueLabel
+                }
+            }
         }
     }
 
-    private var valueText: String {
-        suffix.map { "\(value) \($0)" } ?? "\(value)"
+    var titleLabel: some View {
+        HStack(spacing: DesignBook.Spacing.sm) {
+            Image(systemName: icon)
+                .font(DesignBook.IconFont.small)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+                .frame(width: iconWidth)
+
+            Text(title)
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+        }
+    }
+
+    var valueLabel: some View {
+        Text(formattedValue)
+            .font(DesignBook.Font.headline)
+            .foregroundStyle(DesignBook.Color.Text.accent)
+            .monospacedDigit()
+            .contentTransition(.numericText(value: Double(value)))
+            .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: value)
     }
 }

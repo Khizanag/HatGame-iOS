@@ -18,6 +18,8 @@ struct SettingsLinkRow: View {
     var value: String?
     let action: () -> Void
 
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+
     var body: some View {
         Button {
             DesignBook.Haptics.selection()
@@ -26,18 +28,18 @@ struct SettingsLinkRow: View {
             HStack(spacing: DesignBook.Spacing.md) {
                 SettingsIconTile(systemImage: icon, tint: tint)
 
-                Text(title)
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .lineLimit(1)
-                    .layoutPriority(1)
-
-                Spacer(minLength: DesignBook.Spacing.sm)
-
-                if let value {
-                    Text(value)
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                if dynamicTypeSize.isAccessibilitySize {
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        titleText
+                        valueText
+                    }
+                    Spacer(minLength: 0)
+                } else {
+                    titleText
+                        .lineLimit(1)
+                        .layoutPriority(1)
+                    Spacer(minLength: DesignBook.Spacing.sm)
+                    valueText
                         .lineLimit(1)
                 }
 
@@ -49,5 +51,23 @@ struct SettingsLinkRow: View {
             .contentShape(.rect)
         }
         .buttonStyle(.plain)
+    }
+}
+
+// MARK: - Subviews
+private extension SettingsLinkRow {
+    var titleText: some View {
+        Text(title)
+            .font(DesignBook.Font.body)
+            .foregroundStyle(DesignBook.Color.Text.primary)
+    }
+
+    @ViewBuilder
+    var valueText: some View {
+        if let value {
+            Text(value)
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
+        }
     }
 }
