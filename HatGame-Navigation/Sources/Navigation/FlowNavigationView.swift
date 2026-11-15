@@ -1,5 +1,5 @@
 //
-//  NavigationView.swift
+//  FlowNavigationView.swift
 //  Navigation Package
 //
 //  Created by Giga Khizanishvili on 15.11.25.
@@ -7,7 +7,10 @@
 
 import SwiftUI
 
-public struct NavigationView<RootContent: View>: View {
+/// The app's navigation root: owns a `Navigator`, routes `AnyPage` pushes
+/// through one `navigationDestination`, and presents flows as covers.
+/// Named to stay clear of SwiftUI's deprecated `NavigationView`.
+public struct FlowNavigationView<RootContent: View>: View {
     @State private var navigator = Navigator()
     @Namespace private var zoomNamespace
     @ViewBuilder private let rootContent: () -> RootContent
@@ -20,9 +23,7 @@ public struct NavigationView<RootContent: View>: View {
     public var body: some View {
         NavigationStack(path: $navigator.navigationPath) {
             rootContent()
-                // This IS the navigation stack wrapper — the one place the
-                // app's single navigationDestination is allowed to live.
-                // swiftlint:disable:next no_navigation_destination
+                // The one place the app's root navigationDestination lives.
                 .navigationDestination(for: AnyPage.self) { page in
                     page.view()
                 }

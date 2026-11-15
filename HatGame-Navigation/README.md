@@ -10,7 +10,7 @@ Navigation provides a struct-based navigation system that uses static extensions
 
 - **Page**: A struct representing a navigable page with an ID and view builder
 - **Navigator**: Navigation coordinator that manages navigation state
-- **NavigationView**: Navigation wrapper that handles navigation stack and modal presentations
+- **FlowNavigationView**: Navigation wrapper that handles navigation stack and modal presentations
 
 ## Usage
 
@@ -48,14 +48,14 @@ extension Page {
 }
 ```
 
-Use NavigationView in your app:
+Use FlowNavigationView in your app:
 
 ```swift
 @main
 struct MyApp: App {
     var body: some Scene {
         WindowGroup {
-            NavigationView {
+            FlowNavigationView {
                 Page.home.view()
             }
         }

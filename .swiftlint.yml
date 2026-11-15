@@ -110,7 +110,7 @@ custom_rules:
     regex: '\.navigationDestination\(for:'
     message: "Only the navigation stack wrapper should declare navigationDestination. Use navigator.push() instead."
     severity: warning
-    excluded: "(Game|Online|Local)FlowView\\.swift"
+    excluded: "(Game|Online|Local)FlowView\\.swift|NavigationView\\.swift"
 
   # === Design System ===
 

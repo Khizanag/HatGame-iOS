@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// The shared zoom-transition namespace owned by `NavigationView`, exposed so
+/// The shared zoom-transition namespace owned by `FlowNavigationView`, exposed so
 /// source views (buttons/rows) can mark themselves as the zoom source for the
 /// destination they present.
 private struct NavZoomNamespaceKey: EnvironmentKey {

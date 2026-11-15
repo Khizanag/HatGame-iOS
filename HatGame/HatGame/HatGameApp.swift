@@ -21,10 +21,9 @@ struct HatGameApp: App {
 
     var body: some Scene {
         WindowGroup {
-            // Disambiguate from SwiftUI's deprecated NavigationView — this
-            // is the Navigation package wrapper, which owns a Navigator and
-            // routes AnyPage destinations + full-screen covers underneath.
-            Navigation.NavigationView {
+            // The Navigation package root: owns a Navigator and routes
+            // AnyPage destinations + full-screen covers underneath.
+            FlowNavigationView {
                 HomeView()
             }
             .environment(roomManager)
@@ -53,7 +52,7 @@ struct HatGameApp: App {
         // Navigator-owning stack so its sub-pages (defaults, app icon,
         // developer info, feedback) push within the Settings window.
         Settings {
-            Navigation.NavigationView {
+            FlowNavigationView {
                 SettingsView()
             }
             .environment(\.locale, appConfiguration.locale)
