@@ -104,6 +104,7 @@ private extension CircularTimerView {
                 .contentTransition(.numericText())
                 .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: remainingSeconds)
                 .accessibilityLabel(accessibilityTimeLabel)
+                .accessibilityAddTraits(.updatesFrequently)
 
             if isPaused {
                 Text(localized("game.timer.paused"))

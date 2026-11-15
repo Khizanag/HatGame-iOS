@@ -29,6 +29,8 @@ struct TeamTurnResultsView: View {
 
     var body: some View {
         resultsScroll
+            .navigationTitle(localized("game.turnResults.title"))
+            .inlineNavigationTitle()
             .setDefaultBackground()
             .overlay {
                 if isCelebratory {

@@ -23,6 +23,8 @@ struct GameView: View {
 
     var body: some View {
         content
+            .navigationTitle(engine.state.round.title)
+            .inlineNavigationTitle()
             .setDefaultBackground()
             .toolbar { gameToolbar }
             .onChange(of: engine.remainingSeconds) { _, seconds in

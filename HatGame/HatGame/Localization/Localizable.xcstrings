@@ -7349,6 +7349,261 @@
           }
         }
       }
+    },
+    "common.state.expanded" : {
+      "comment" : "VoiceOver value for a disclosure control that is open.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Expanded"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაშლილი"
+          }
+        }
+      }
+    },
+    "common.state.collapsed" : {
+      "comment" : "VoiceOver value for a disclosure control that is closed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Collapsed"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აკეცილი"
+          }
+        }
+      }
+    },
+    "game.progress.value %lld %lld" : {
+      "comment" : "VoiceOver value for the game progress bar: words played out of the total.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld of %2$lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%2$lld-დან %1$lld"
+          }
+        }
+      }
+    },
+    "game.turnResults.title" : {
+      "comment" : "Navigation title of the turn results screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn Results"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ხვედრის შედეგები"
+          }
+        }
+      }
+    },
+    "teamForm.color.swatch.taken" : {
+      "comment" : "VoiceOver value for a team color another team already uses.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Used by another team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სხვა გუნდს უკავია"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.blue" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Blue"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ლურჯი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.red" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Red"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წითელი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.green" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Green"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მწვანე"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.orange" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Orange"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ნარინჯისფერი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.purple" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Purple"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იისფერი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.teal" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Teal"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ფირუზისფერი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.pink" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pink"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვარდისფერი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.violet" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Violet"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იასამნისფერი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.yellow" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yellow"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყვითელი"
+          }
+        }
+      }
+    },
+    "teamForm.color.name.brown" : {
+      "comment" : "VoiceOver name of a team color swatch.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Brown"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყავისფერი"
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

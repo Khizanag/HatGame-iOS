@@ -408,6 +408,7 @@ private struct ShufflingOverlay: View {
             VStack(spacing: DesignBook.Spacing.xl) {
                 hatBadge
                     .decorativeHeroSizing()
+                    .accessibilityHidden(true)
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.shuffling.message"))

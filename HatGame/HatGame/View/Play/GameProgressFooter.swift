@@ -34,5 +34,8 @@ struct GameProgressFooter: View {
                 .tint(tint)
         }
         .padding(.bottom, DesignBook.Spacing.sm)
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(localized("game.progress.title")))
+        .accessibilityValue(Text(localized("game.progress.value \(passed) \(total)")))
     }
 }

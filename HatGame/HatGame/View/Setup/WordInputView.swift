@@ -430,6 +430,7 @@ private struct FloatingAddButton: View {
         .disabled(isDisabled)
         .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
         .matchedGeometryEffect(id: "addButton", in: namespace)
+        .accessibilityLabel(Text(localized("wordInput.addWord")))
     }
 }
 

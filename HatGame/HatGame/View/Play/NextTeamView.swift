@@ -32,6 +32,7 @@ struct NextTeamView: View {
 
     var body: some View {
         content
+            .navigationTitle(localized("game.nextTeam.title"))
             .setDefaultStyle()
             .sheet(isPresented: $isStandingsPresented) {
                 StandingsSheet()

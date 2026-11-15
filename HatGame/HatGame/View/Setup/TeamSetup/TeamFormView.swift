@@ -76,6 +76,10 @@ struct TeamFormView: View {
         team == nil ? localized("teamForm.primary.create") : localized("teamForm.primary.save")
     }
 
+    private var colorSectionState: String {
+        localized(isColorSectionExpanded ? "common.state.expanded" : "common.state.collapsed")
+    }
+
     private var primaryButtonIcon: String {
         team == nil ? "plus.circle.fill" : "checkmark.circle.fill"
     }
@@ -189,6 +193,7 @@ private extension TeamFormView {
             }
         }
         .buttonStyle(.plain)
+        .accessibilityValue(Text(colorSectionState))
     }
 
     var colorPicker: some View {
@@ -206,6 +211,7 @@ private extension TeamFormView {
                 ForEach(suggestedColorOptions.indices, id: \.self) { index in
                     ColorSwatchButton(
                         color: suggestedColorOptions[index],
+                        name: TeamColorName.name(forPaletteIndex: index),
                         isSelected: isColorSelected(suggestedColorOptions[index]),
                         isDisabled: isColorOccupiedByOtherTeam(suggestedColorOptions[index]),
                         onSelect: { selectColor(suggestedColorOptions[index]) }
@@ -528,6 +534,7 @@ private struct SuggestionChip: View {
 
 private struct ColorSwatchButton: View {
     let color: Color
+    let name: String
     let isSelected: Bool
     let isDisabled: Bool
     let onSelect: () -> Void
@@ -542,9 +549,8 @@ private struct ColorSwatchButton: View {
         }
         .buttonStyle(.plain)
         .disabled(isDisabled)
-        .accessibilityLabel(localized(
-            isSelected ? "teamForm.color.swatch.selected" : "teamForm.color.swatch.unselected"
-        ))
+        .accessibilityLabel(Text(name))
+        .accessibilityValue(isDisabled ? Text(localized("teamForm.color.swatch.taken")) : Text(verbatim: ""))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
 }
