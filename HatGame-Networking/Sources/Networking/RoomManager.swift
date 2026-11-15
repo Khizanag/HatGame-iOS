@@ -132,9 +132,8 @@ open class RoomManager {
     }
 
     open func markWordsSubmitted() async throws {
-        guard var player = currentPlayer, let roomId = room?.id else { return }
-        player.hasSubmittedWords = true
-        try await firebaseService.updatePlayer(player, inRoomId: roomId)
+        guard let playerId = currentPlayerId, let roomId = room?.id else { return }
+        try await firebaseService.setPlayerFlag(.hasSubmittedWords, to: true, playerId: playerId, inRoomId: roomId)
     }
 
     open func leaveRoom() async throws {

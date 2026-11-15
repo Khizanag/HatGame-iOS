@@ -9,8 +9,8 @@ import Foundation
 import Observation
 
 /// Moves an online game forward. The transitions themselves live in
-/// `GameRules`; this type only decides who may run them and persists the
-/// result to Firebase.
+/// `GameRules`; this type runs them inside Firebase transactions, so each
+/// one applies to the live state rather than a possibly stale local copy.
 @MainActor
 @Observable
 open class GameSyncManager {
@@ -30,8 +30,10 @@ open class GameSyncManager {
                   wordIds: words.map(\.id).shuffled(),
                   settings: room.settings
               ) else { return false }
-        try await firebaseService.updateGameState(state, forRoomId: room.id)
-        return true
+        let committed = try await firebaseService.transactGameState(roomId: room.id) { current in
+            current == nil ? state : nil
+        }
+        return committed != nil
     }
 
     // MARK: - Gameplay
@@ -40,10 +42,17 @@ open class GameSyncManager {
     /// tap, or a guess after time ran out.
     @discardableResult
     open func perform(_ action: GameAction, room: GameRoom, playerId: String) async throws -> Bool {
-        guard let state = room.gameState,
-              let next = GameRules.apply(action, by: playerId, to: state, context: GameContext(room: room))
+        // Cheap local check first: skip the round trip for an action the
+        // player could not take even against the state on screen.
+        guard let cached = room.gameState,
+              GameRules.canPerform(action, by: playerId, state: cached, context: GameContext(room: room))
         else { return false }
-        try await firebaseService.updateGameState(next, forRoomId: room.id)
+        let committed = try await firebaseService.transactGameState(roomId: room.id) { current in
+            current.flatMap { live in
+                GameRules.apply(action, by: playerId, to: live, context: GameContext(room: room, now: Date()))
+            }
+        }
+        guard let next = committed else { return false }
         if next.phase == .finished {
             try await firebaseService.updateRoomStatus(.finished, forRoomId: room.id)
         }

@@ -21,6 +21,15 @@ public final class FirebaseService: @unchecked Sendable {
     enum Timeouts {
         static let read: Duration = .seconds(10)
         static let write: Duration = .seconds(10)
+        /// Transactions may round-trip more than once under contention.
+        static let transaction: Duration = .seconds(15)
+    }
+
+    /// Boolean leaves on a player node that are written on their own, so a
+    /// flag change never rewrites — and clobbers — the rest of the player.
+    public enum PlayerFlag: String, Sendable {
+        case hasSubmittedWords
+        case isConnected
     }
 
     private var database: Database {
@@ -99,9 +108,14 @@ public final class FirebaseService: @unchecked Sendable {
         }
     }
 
-    public func updatePlayer(_ player: OnlinePlayer, inRoomId roomId: String) async throws {
+    public func setPlayerFlag(
+        _ flag: PlayerFlag,
+        to value: Bool,
+        playerId: String,
+        inRoomId roomId: String
+    ) async throws {
         try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("players").child(player.id).setValue(encodeToDict(player))
+            _ = try await roomsRef.child(roomId).child("players").child(playerId).child(flag.rawValue).setValue(value)
         }
     }
 
@@ -200,9 +214,16 @@ public final class FirebaseService: @unchecked Sendable {
     }
 
     // MARK: - Game State Operations
-    public func updateGameState(_ state: OnlineGameState, forRoomId roomId: String) async throws {
-        try await write { [self] in
-            _ = try await roomsRef.child(roomId).child("gameState").setValue(encodeToDict(state))
+    /// Replaces the room's game state with `transform(liveState)` atomically.
+    /// `transform` runs against the server's current value — re-running if
+    /// another client wrote first — and returns `nil` to reject. Returns the
+    /// committed state, or `nil` when rejected.
+    public func transactGameState(
+        roomId: String,
+        _ transform: @escaping @Sendable (OnlineGameState?) -> OnlineGameState?
+    ) async throws -> OnlineGameState? {
+        try await transact { [self] in
+            try await runTransaction(on: roomsRef.child(roomId).child("gameState"), transform)
         }
     }
 
@@ -238,6 +259,11 @@ private extension FirebaseService {
     func write(_ operation: @escaping @Sendable () async throws -> Void) async throws {
         guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
         try await withTimeout(Timeouts.write, operation: operation)
+    }
+
+    func transact<T: Sendable>(_ operation: @escaping @Sendable () async throws -> T) async throws -> T {
+        guard isAvailable else { throw NetworkingError.firebaseNotConfigured }
+        return try await withTimeout(Timeouts.transaction, operation: operation)
     }
 
     func encodeToDict<T: Encodable>(_ value: T) throws -> [String: Any] {

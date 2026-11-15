@@ -22,6 +22,8 @@ struct OnlinePlayView: View {
     @State private var words: [String: OnlineWord] = [:]
     @State private var hasPlayedFinalWarning: Bool = false
     @State private var wordLoadFailed: Bool = false
+    @State private var isSubmitting: Bool = false
+    @State private var error: Error?
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -71,10 +73,19 @@ struct OnlinePlayView: View {
             }
             .alert(localized("game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 Button(localized("common.buttons.cancel"), role: .cancel) { }
-                Button(localized("game.giveUp.button"), role: .destructive) { endTurn() }
+                Button(localized("game.giveUp.button"), role: .destructive) { giveUp() }
             } message: {
                 Text(localized("game.giveUp.confirmationMessage"))
             }
+            .alert(localized("common.error"), isPresented: errorBinding) {
+                Button(localized("common.gotIt")) { error = nil }
+            } message: {
+                Text(error?.localizedDescription ?? "")
+            }
+    }
+
+    private var errorBinding: Binding<Bool> {
+        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
     }
 }
 
@@ -199,7 +210,7 @@ private extension OnlinePlayView {
                 }
                 .buttonStyle(.glass)
                 .tint(DesignBook.Color.Status.warning)
-                .disabled(!isSkipEnabled)
+                .disabled(!isSkipEnabled || isSubmitting)
                 .opacity(isSkipEnabled ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                 .keyboardShortcut(.leftArrow, modifiers: [])
             }
@@ -212,7 +223,7 @@ private extension OnlinePlayView {
             }
             .buttonStyle(.glassProminent)
             .tint(DesignBook.Color.Status.success)
-            .disabled(currentWord == nil)
+            .disabled(currentWord == nil || isSubmitting)
             .keyboardShortcut(.rightArrow, modifiers: [])
         }
     }
@@ -271,7 +282,9 @@ private extension OnlinePlayView {
             SoundPlayer.shared.playTimeUp()
         }
         guard remainingSeconds == 0, isActivePlayer else { return }
-        endTurn()
+        // Retried on every tick until the turn leaves `.playing`, so a failed
+        // write cannot strand the room at zero.
+        perform(.endTurn, surfacesErrors: false)
     }
 
     func playUrgencyHaptics(from previous: Int, to current: Int) {
@@ -313,28 +326,36 @@ private extension OnlinePlayView {
 // MARK: - Actions
 private extension OnlinePlayView {
     func markGuessed() {
-        guard isActivePlayer, let wordId = gameState?.currentWordId else { return }
+        guard isActivePlayer, !isSubmitting, let wordId = gameState?.currentWordId else { return }
         DesignBook.Haptics.confirm()
         perform(.markGuessed(wordId: wordId))
     }
 
     func skipCurrentWord() {
-        guard isActivePlayer, isSkipEnabled, let wordId = gameState?.currentWordId else { return }
+        guard isActivePlayer, !isSubmitting, isSkipEnabled, let wordId = gameState?.currentWordId else { return }
         DesignBook.Haptics.soft()
         perform(.skip(wordId: wordId))
     }
 
-    func endTurn() {
+    func giveUp() {
         guard isActivePlayer else { return }
-        stopTimerLoop()
         DesignBook.Haptics.rigid()
         perform(.endTurn)
     }
 
-    func perform(_ action: GameAction) {
-        guard let room, let playerId = roomManager.currentPlayerId else { return }
+    /// One write in flight at a time: a second tap while the first is
+    /// pending is dropped here, and one that slips through is rejected by
+    /// the rules because the word has already moved on.
+    func perform(_ action: GameAction, surfacesErrors: Bool = true) {
+        guard !isSubmitting, let room, let playerId = roomManager.currentPlayerId else { return }
+        isSubmitting = true
         Task {
-            try? await gameSyncManager.perform(action, room: room, playerId: playerId)
+            do {
+                try await gameSyncManager.perform(action, room: room, playerId: playerId)
+            } catch {
+                if surfacesErrors { self.error = error }
+            }
+            isSubmitting = false
         }
     }
 }
