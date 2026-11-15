@@ -18,13 +18,21 @@ import Synchronization
 /// When `transform(nil)` rejects, the unchanged empty value is committed
 /// instead of aborting: if the server holds data, it refuses the stale
 /// write and re-runs `transform` with the real value.
-func runTransaction<Value: Codable & Sendable>(
+///
+/// A value written by a newer schema is never rewritten: the transaction
+/// aborts with `NetworkingError.unsupportedVersion`. Keys this build does
+/// not know are carried into the replacement unchanged.
+func runTransaction<Value: VersionedNode>(
     on reference: DatabaseReference,
     _ transform: @escaping @Sendable (Value?) -> Value?
 ) async throws -> Value? {
     let outcome = TransactionOutcome<Value>()
     return try await withCheckedThrowingContinuation { continuation in
         reference.runTransactionBlock({ currentData in
+            if let version = WireSchema.storedVersion(of: currentData.value), !WireSchema.isSupported(version) {
+                outcome.record(error: NetworkingError.unsupportedVersion)
+                return .abort()
+            }
             let current: Value?
             do {
                 current = try FirebaseCoding.decodeIfPresent(Value.self, from: currentData.value)
@@ -37,7 +45,7 @@ func runTransaction<Value: Codable & Sendable>(
                 return current == nil ? .success(withValue: currentData) : .abort()
             }
             do {
-                currentData.value = try FirebaseCoding.object(from: next)
+                currentData.value = try FirebaseCoding.object(from: next, preservingUnknownKeysIn: currentData.value)
             } catch {
                 outcome.record(error: error)
                 return .abort()

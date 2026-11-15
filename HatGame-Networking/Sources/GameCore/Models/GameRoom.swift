@@ -29,6 +29,8 @@ public enum RoomStatus: String, Codable, Sendable {
 public struct GameRoom: Codable, Identifiable, Sendable {
     public let id: String
     public let hostId: String
+    /// The wire generation that created this room; see `WireSchema`.
+    public let schemaVersion: Int
     public var status: RoomStatus
     public var settings: GameSettings
     public var teams: [OnlineTeam]
@@ -39,6 +41,7 @@ public struct GameRoom: Codable, Identifiable, Sendable {
     public init(
         id: String,
         hostId: String,
+        schemaVersion: Int = WireSchema.currentVersion,
         status: RoomStatus = .waiting,
         settings: GameSettings = GameSettings(),
         teams: [OnlineTeam] = [],
@@ -48,6 +51,7 @@ public struct GameRoom: Codable, Identifiable, Sendable {
     ) {
         self.id = id
         self.hostId = hostId
+        self.schemaVersion = schemaVersion
         self.status = status
         self.settings = settings
         self.teams = Self.canonicalOrder(teams)
@@ -67,10 +71,10 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         return copy
     }
 
-    /// False when a newer build wrote a status, phase, or round this build
-    /// cannot interpret.
+    /// False when a newer build wrote a schema, status, phase, or round this
+    /// build cannot interpret.
     public var isSupported: Bool {
-        status != .unsupported && gameState?.isSupported != false
+        WireSchema.isSupported(schemaVersion) && status != .unsupported && gameState?.isSupported != false
     }
 
     // MARK: - Codable
@@ -78,13 +82,15 @@ public struct GameRoom: Codable, Identifiable, Sendable {
     /// rewrites collections that were stored under child paths as
     /// dictionaries keyed by their child ID. Custom decoder handles both.
     private enum CodingKeys: String, CodingKey {
-        case id, hostId, status, settings, teams, players, gameState, createdAt
+        case id, hostId, schemaVersion, status, settings, teams, players, gameState, createdAt
     }
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.hostId = try container.decode(String.self, forKey: .hostId)
+        // Rooms written before versioning are the first generation.
+        self.schemaVersion = try container.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
         self.status = try container.decode(RoomStatus.self, forKey: .status)
         self.settings = try container.decode(GameSettings.self, forKey: .settings)
         self.teams = Self.canonicalOrder(try container.decodeFirebaseCollection([OnlineTeam].self, forKey: .teams))
@@ -103,6 +109,7 @@ public struct GameRoom: Codable, Identifiable, Sendable {
         var container = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(id, forKey: .id)
         try container.encode(hostId, forKey: .hostId)
+        try container.encode(schemaVersion, forKey: .schemaVersion)
         try container.encode(status, forKey: .status)
         try container.encode(settings, forKey: .settings)
         try container.encode(Self.keyedById(teams), forKey: .teams)

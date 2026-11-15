@@ -46,7 +46,9 @@ public enum OnlineGameRound: Int, Codable, CaseIterable, Sendable {
     }
 }
 
-public struct OnlineGameState: Codable, Sendable {
+public struct OnlineGameState: VersionedNode {
+    /// The wire generation that wrote this state; see `WireSchema`.
+    public var schemaVersion: Int
     public var currentRound: OnlineGameRound
     public var currentTeamIndex: Int
     /// Per-team explainer index. Each team rotates its own explainer
@@ -65,6 +67,7 @@ public struct OnlineGameState: Codable, Sendable {
     public var isSkippingEnabled: Bool
 
     public init(
+        schemaVersion: Int = WireSchema.currentVersion,
         currentRound: OnlineGameRound = .first,
         currentTeamIndex: Int = 0,
         teamExplainerIndices: [String: Int] = [:],
@@ -78,6 +81,7 @@ public struct OnlineGameState: Codable, Sendable {
         roundDuration: Int = 60,
         isSkippingEnabled: Bool = true
     ) {
+        self.schemaVersion = schemaVersion
         self.currentRound = currentRound
         self.currentTeamIndex = currentTeamIndex
         self.teamExplainerIndices = teamExplainerIndices
@@ -104,22 +108,30 @@ public struct OnlineGameState: Codable, Sendable {
         teamExplainerIndices[teamId] ?? 0
     }
 
+    /// False when a newer build wrote this state: its schema, phase, or
+    /// round is beyond what this build understands.
     public var isSupported: Bool {
-        phase != .unsupported && currentRound != .unsupported
+        WireSchema.isSupported(schemaVersion) && phase != .unsupported && currentRound != .unsupported
     }
 
     // MARK: - Codable
     /// Firebase strips empty arrays/dicts, so a missing collection decodes as
     /// empty. A present-but-malformed value throws rather than silently
     /// resetting — a reset would wipe every team's score.
-    private enum CodingKeys: String, CodingKey {
-        case currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
+    private enum CodingKeys: String, CodingKey, CaseIterable {
+        case schemaVersion, currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
              remainingWordIds, allWordIds, scores, phase, activePlayerId,
              timerStartedAt, roundDuration, isSkippingEnabled
     }
 
+    public static var knownKeys: Set<String> {
+        Set(CodingKeys.allCases.map(\.stringValue))
+    }
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
+        // States written before versioning are the first generation.
+        self.schemaVersion = try container.decodeIfPresent(Int.self, forKey: .schemaVersion) ?? 1
         self.currentRound = try container.decode(OnlineGameRound.self, forKey: .currentRound)
         self.currentTeamIndex = try container.decode(Int.self, forKey: .currentTeamIndex)
         self.teamExplainerIndices = try container.decodeIfPresent(

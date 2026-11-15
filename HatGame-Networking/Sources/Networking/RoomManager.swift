@@ -105,6 +105,9 @@ open class RoomManager {
         guard let existingRoom = try await firebaseService.getRoom(id: code) else {
             throw NetworkingError.roomNotFound
         }
+        guard existingRoom.isSupported else {
+            throw NetworkingError.unsupportedVersion
+        }
 
         guard existingRoom.status == .waiting || existingRoom.status == .setup else {
             throw RoomError.gameAlreadyStarted
