@@ -24,7 +24,6 @@ struct TeamFormView: View {
     @State private var teamName: String = ""
     @State private var playerNames: [String] = []
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
-    @State private var isColorSectionExpanded: Bool = false
     @State private var nameSuggestions: [String] = TeamNameSuggestions.random()
     /// True once the user types/picks a team name themselves — stops auto-deriving it from members.
     @State private var hasEditedTeamName: Bool = false
@@ -33,8 +32,6 @@ struct TeamFormView: View {
 
     @FocusState private var focusedField: Field?
     @ScaledMetric(relativeTo: .subheadline) private var playerBadgeSize: CGFloat = 24
-
-    private let appConfiguration = AppConfiguration.shared
 
     private var trimmedTeamName: String {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -76,8 +73,11 @@ struct TeamFormView: View {
         team == nil ? localized("teamForm.primary.create") : localized("teamForm.primary.save")
     }
 
-    private var colorSectionState: String {
-        localized(isColorSectionExpanded ? "common.state.expanded" : "common.state.collapsed")
+    /// Colors the other teams already use; the team being edited is excluded.
+    private var otherTeamColors: [Color] {
+        gameManager.configuration.teams
+            .filter { $0.id != team?.id }
+            .map(\.color)
     }
 
     private var primaryButtonIcon: String {
@@ -100,7 +100,7 @@ struct TeamFormView: View {
                 if hasRevealedDetails {
                     teamNameCard
                         .transition(.opacity.combined(with: .move(edge: .top)))
-                    teamColorCard
+                    TeamColorCard(color: $teamColor, occupiedColors: otherTeamColors)
                         .transition(.opacity.combined(with: .move(edge: .top)))
                 }
             }
@@ -127,7 +127,7 @@ private extension TeamFormView {
     var teamNameCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                FieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
+                TeamFormFieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
 
                 TextField(localized("teamForm.enterTeamName"), text: teamNameBinding)
                     .textFieldStyle(.plain)
@@ -152,95 +152,11 @@ private extension TeamFormView {
         .animation(reduceMotion ? nil : DesignBook.Motion.standard, value: showNameSuggestions)
     }
 
-    var teamColorCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                colorCardHeader
-
-                if isColorSectionExpanded {
-                    colorPicker
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                }
-            }
-        }
-    }
-
-    var colorCardHeader: some View {
-        Button {
-            withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
-                isColorSectionExpanded.toggle()
-            }
-        } label: {
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: "paintpalette.fill")
-                    .font(DesignBook.IconFont.medium)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-
-                Text(localized("teamForm.teamColor"))
-                    .font(DesignBook.Font.captionBold)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-
-                Spacer()
-
-                if !isColorSectionExpanded {
-                    Circle()
-                        .fill(teamColor)
-                        .frame(width: 24, height: 24)
-                }
-
-                Image(systemName: isColorSectionExpanded ? "chevron.up" : "chevron.down")
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-            }
-        }
-        .buttonStyle(.plain)
-        .accessibilityValue(Text(colorSectionState))
-    }
-
-    var colorPicker: some View {
-        HStack {
-            if appConfiguration.isRightHanded {
-                Spacer()
-            }
-
-            LazyVGrid(
-                columns: [
-                    GridItem(.adaptive(minimum: DesignBook.Size.colorSwatchSize), spacing: DesignBook.Spacing.md),
-                ],
-                spacing: DesignBook.Spacing.md
-            ) {
-                ForEach(suggestedColorOptions.indices, id: \.self) { index in
-                    ColorSwatchButton(
-                        color: suggestedColorOptions[index],
-                        name: TeamColorName.name(forPaletteIndex: index),
-                        isSelected: isColorSelected(suggestedColorOptions[index]),
-                        isDisabled: isColorOccupiedByOtherTeam(suggestedColorOptions[index]),
-                        onSelect: { selectColor(suggestedColorOptions[index]) }
-                    )
-                }
-
-                ColorPicker(
-                    localized("teamForm.customColor"),
-                    selection: Binding(
-                        get: { teamColor },
-                        set: { selectColor($0) }
-                    ),
-                    supportsOpacity: true
-                )
-                .labelsHidden()
-                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
-                .padding(DesignBook.Spacing.sm)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-                .contentShape(Rectangle())
-            }
-        }
-    }
-
     var playersCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
-                    FieldLabel(icon: "person.2.fill", title: "teamForm.players")
+                    TeamFormFieldLabel(icon: "person.2.fill", title: "teamForm.players")
                     Spacer()
                     Text(verbatim: "\(filledPlayerNames.count)/\(requiredPlayers)")
                         .font(DesignBook.Font.captionBold)
@@ -303,10 +219,6 @@ private extension TeamFormView {
             .disabled(!canSave)
             .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
     }
-
-    var suggestedColorOptions: [Color] {
-        TeamDefaultColorGenerator.defaultColors
-    }
 }
 
 // MARK: - Derived state
@@ -327,18 +239,6 @@ private extension TeamFormView {
                 hasEditedTeamName = true
             }
         )
-    }
-
-    func isColorSelected(_ color: Color) -> Bool {
-        teamColor.isApproximatelyEqual(to: color)
-    }
-
-    func isColorOccupiedByOtherTeam(_ color: Color) -> Bool {
-        gameManager.configuration.teams.contains { other in
-            // Skip the current team if editing.
-            if other.id == team?.id { return false }
-            return color.isApproximatelyEqual(to: other.color)
-        }
     }
 }
 
@@ -363,14 +263,6 @@ private extension TeamFormView {
             withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
                 hasRevealedDetails = true
             }
-        }
-    }
-
-    func selectColor(_ color: Color) {
-        DesignBook.Haptics.selection()
-        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
-            teamColor = color
-            isColorSectionExpanded = false
         }
     }
 
@@ -425,149 +317,5 @@ private extension TeamFormView {
 
         onPrimaryAction(updatedTeam)
         dismissSheet()
-    }
-}
-
-// MARK: - Subview types
-private struct FieldLabel: View {
-    let icon: String
-    let title: String.LocalizationValue
-
-    var body: some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            Image(systemName: icon)
-                .font(DesignBook.IconFont.medium)
-                .foregroundStyle(DesignBook.Color.Text.accent)
-
-            Text(localized(title))
-                .font(DesignBook.Font.captionBold)
-                .foregroundStyle(DesignBook.Color.Text.secondary)
-        }
-    }
-}
-
-/// Inline row of tappable team-name suggestions with a shuffle button.
-/// Appears below the team-name field when it's focused and empty.
-private struct TeamNameSuggestionRow: View {
-    let suggestions: [String]
-    let onPick: (String) -> Void
-    let onRefresh: () -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            header
-
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    ForEach(suggestions, id: \.self) { suggestion in
-                        SuggestionChip(text: suggestion) {
-                            onPick(suggestion)
-                        }
-                    }
-                }
-                .padding(.vertical, 2)
-            }
-            .scrollClipDisabled()
-        }
-        .accessibilityElement(children: .contain)
-        .accessibilityLabel(Text(localized("teamForm.suggestions.accessibility")))
-    }
-}
-
-// MARK: - TeamNameSuggestionRow subviews
-private extension TeamNameSuggestionRow {
-    var header: some View {
-        HStack(spacing: DesignBook.Spacing.xs) {
-            Image(systemName: "wand.and.stars")
-                .font(DesignBook.Font.smallCaption)
-                .foregroundStyle(DesignBook.Color.Text.accent)
-
-            Text(localized("teamForm.suggestions.title"))
-                .font(DesignBook.Font.smallCaption)
-                .textCase(.uppercase)
-                .tracking(1.2)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-
-            Spacer()
-
-            Button(action: onRefresh) {
-                Image(systemName: "shuffle")
-                    .font(DesignBook.Font.captionBold)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-                    .padding(6)
-                    .background {
-                        Circle().fill(DesignBook.Color.Text.accent.opacity(0.12))
-                    }
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(localized("teamForm.suggestions.shuffle")))
-        }
-    }
-}
-
-private struct SuggestionChip: View {
-    let text: String
-    let onTap: () -> Void
-
-    var body: some View {
-        Button(action: onTap) {
-            Text(text)
-                .font(DesignBook.Font.captionBold)
-                .foregroundStyle(DesignBook.Color.Text.accent)
-                .lineLimit(1)
-                .padding(.horizontal, DesignBook.Spacing.md)
-                .padding(.vertical, DesignBook.Spacing.sm)
-                .background {
-                    Capsule()
-                        .fill(DesignBook.Color.Text.accent.opacity(0.10))
-                        .overlay {
-                            Capsule()
-                                .strokeBorder(DesignBook.Color.Text.accent.opacity(0.30), lineWidth: 1)
-                        }
-                }
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(verbatim: text))
-        .accessibilityHint(Text(localized("teamForm.suggestions.tap")))
-    }
-}
-
-private struct ColorSwatchButton: View {
-    let color: Color
-    let name: String
-    let isSelected: Bool
-    let isDisabled: Bool
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect) {
-            Circle()
-                .fill(color)
-                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
-                .overlay(overlay)
-                .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
-        }
-        .buttonStyle(.plain)
-        .disabled(isDisabled)
-        .accessibilityLabel(Text(name))
-        .accessibilityValue(isDisabled ? Text(localized("teamForm.color.swatch.taken")) : Text(verbatim: ""))
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
-    }
-}
-
-// MARK: - ColorSwatchButton subviews
-private extension ColorSwatchButton {
-    @ViewBuilder
-    var overlay: some View {
-        if isSelected {
-            Image(systemName: "checkmark")
-                .font(DesignBook.Font.subheadlineBold)
-                .foregroundStyle(DesignBook.Color.onAccent(for: color))
-        } else if isDisabled {
-            Image(systemName: "xmark")
-                .font(DesignBook.Font.footnoteBold)
-                .foregroundStyle(DesignBook.Color.onAccent(for: color))
-                .opacity(DesignBook.Opacity.disabled)
-        }
     }
 }

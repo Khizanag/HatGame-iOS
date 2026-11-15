@@ -115,8 +115,8 @@ private extension WordInputView {
         if currentPlayer != nil {
             if isCurrentPlayerDone {
                 VStack(spacing: DesignBook.Spacing.md) {
-                    CompletionCard(nextPlayerName: nextPlayerName)
-                    WordsListCard(
+                    WordInputCompletionCard(nextPlayerName: nextPlayerName)
+                    PlayerWordsCard(
                         playerWords: playerWords,
                         wordsPerPlayer: wordsPerPlayer,
                         onRemove: removeWord
@@ -140,7 +140,7 @@ private extension WordInputView {
                 )
 
                 if !playerWords.isEmpty {
-                    WordsList(playerWords: playerWords, onRemove: removeWord)
+                    PlayerWordsList(playerWords: playerWords, onRemove: removeWord)
                         .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 }
 
@@ -379,172 +379,6 @@ private extension WordInputView {
             ) else { continue }
             withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
                 playerWords.append(word)
-            }
-        }
-    }
-}
-
-// MARK: - Subview types
-private struct PlayerStepIndicator: View {
-    let playerCount: Int
-    let currentIndex: Int
-
-    var body: some View {
-        HStack(spacing: DesignBook.Spacing.xs) {
-            ForEach(0..<playerCount, id: \.self) { index in
-                Capsule()
-                    .fill(color(for: index))
-                    .frame(height: 6)
-                    .overlay {
-                        if index == currentIndex {
-                            Capsule().stroke(DesignBook.Color.Text.accent, lineWidth: 2)
-                        }
-                    }
-            }
-        }
-    }
-
-    private func color(for index: Int) -> Color {
-        if index < currentIndex {
-            DesignBook.Color.Status.success
-        } else if index == currentIndex {
-            DesignBook.Color.Text.accent
-        } else {
-            DesignBook.Color.Background.secondary
-        }
-    }
-}
-
-private struct FloatingAddButton: View {
-    let action: () -> Void
-    let isDisabled: Bool
-    let namespace: Namespace.ID
-
-    var body: some View {
-        Button(action: action) {
-            Image(systemName: "plus.circle.fill")
-                .font(DesignBook.IconFont.large)
-                .frame(width: DesignBook.Size.floatingButtonSize, height: DesignBook.Size.floatingButtonSize)
-        }
-        .buttonStyle(.glassProminent)
-        .disabled(isDisabled)
-        .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
-        .matchedGeometryEffect(id: "addButton", in: namespace)
-        .accessibilityLabel(Text(localized("wordInput.addWord")))
-    }
-}
-
-private struct WordsList: View {
-    let playerWords: [String]
-    let onRemove: (Int) -> Void
-
-    var body: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            ForEach(playerWords.indices, id: \.self) { index in
-                WordRow(
-                    index: index,
-                    text: playerWords[index],
-                    onRemove: { onRemove(index) }
-                )
-                .id("word_\(index)")
-                .transition(
-                    .asymmetric(
-                        insertion: .scale.combined(with: .opacity),
-                        removal: .scale.combined(with: .opacity)
-                    )
-                )
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        onRemove(index)
-                    } label: {
-                        Label(localized("common.buttons.delete"), systemImage: "trash.fill")
-                    }
-                }
-            }
-        }
-    }
-}
-
-private struct WordRow: View {
-    let index: Int
-    let text: String
-    let onRemove: () -> Void
-
-    @ScaledMetric(relativeTo: .subheadline) private var badgeSize: CGFloat = DesignBook.Size.badgeSize
-
-    var body: some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.caption)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: badgeSize, height: badgeSize)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(Circle())
-
-            Text(text)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-
-            Spacer()
-
-            Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .font(DesignBook.IconFont.small)
-                    .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(localized("wordInput.removeWord")))
-        }
-        .padding(DesignBook.Spacing.md)
-        .background(DesignBook.Color.Background.secondary)
-        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-    }
-}
-
-private struct CompletionCard: View {
-    let nextPlayerName: String?
-
-    var body: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Image(systemName: "checkmark.circle.fill")
-                    .font(DesignBook.IconFont.extraLarge)
-                    .foregroundStyle(DesignBook.Color.Status.success)
-
-                Text(localized("wordInput.allWordsAdded"))
-                    .font(DesignBook.Font.title3)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-
-                if let nextPlayerName {
-                    Text(String(format: localized("wordInput.readyToPass"), nextPlayerName))
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
-                        .multilineTextAlignment(.center)
-                } else {
-                    Text(localized("wordInput.allPlayersEntered"))
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
-                        .multilineTextAlignment(.center)
-                }
-            }
-            .padding(DesignBook.Spacing.lg)
-        }
-    }
-}
-
-private struct WordsListCard: View {
-    let playerWords: [String]
-    let wordsPerPlayer: Int
-    let onRemove: (Int) -> Void
-
-    var body: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                Text(String(format: localized("wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
-                    .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-
-                WordsList(playerWords: playerWords, onRemove: onRemove)
             }
         }
     }
