@@ -31,6 +31,8 @@ struct LocalFlowView: View {
     var body: some View {
         NavigationStack(path: Bindable(navigator).navigationPath) {
             LocalMenuView()
+                // This is the flow's own NavigationStack — the one place pages register.
+                // swiftlint:disable:next no_navigation_destination
                 .navigationDestination(for: AnyPage.self) { page in
                     page.view()
                         .environment(roomManager as RoomManager)
@@ -43,5 +45,8 @@ struct LocalFlowView: View {
         .environment(navigator)
         .environment(roomManager) // local-specific access for browser screen
         .onReceive(navigator.pleaseDismissViewPublisher) { dismiss() }
+        .onDisappear {
+            Task { try? await roomManager.leaveRoom() }
+        }
     }
 }

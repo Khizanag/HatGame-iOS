@@ -52,6 +52,18 @@ struct OnlineGameFlowView: View {
 private extension OnlineGameFlowView {
     @ViewBuilder
     var content: some View {
+        switch roomManager.connectionState {
+        case .closed:
+            closedState.transition(.opacity)
+        case .unsupported:
+            unsupportedState.transition(.opacity)
+        case .idle, .joining, .live:
+            roomContent
+        }
+    }
+
+    @ViewBuilder
+    var roomContent: some View {
         if room?.isSupported == false {
             unsupportedState.transition(.opacity)
         } else {
@@ -70,6 +82,17 @@ private extension OnlineGameFlowView {
         }
     }
 
+    /// The host closed the room while this device was in it.
+    var closedState: some View {
+        OnlineNoticeView(
+            symbol: "door.left.hand.closed",
+            title: localized("local.session.hostLost"),
+            message: localized("local.session.hostLost.message"),
+            actionTitle: localized("local.session.hostLost.action"),
+            action: leaveToMenu
+        )
+    }
+
     /// A newer build wrote a status, phase, or round this one can't read.
     var unsupportedState: some View {
         OnlineNoticeView(
@@ -77,7 +100,7 @@ private extension OnlineGameFlowView {
             title: localized("common.error"),
             message: NetworkingError.unsupportedVersion.localizedDescription,
             actionTitle: localized("local.session.hostLost.action"),
-            action: leaveUnsupportedRoom
+            action: leaveToMenu
         )
     }
 
@@ -148,10 +171,12 @@ private extension OnlineGameFlowView {
         }
     }
 
-    func leaveUnsupportedRoom() {
+    /// Detaches without writing — the room is gone or unreadable — and
+    /// returns to the online menu.
+    func leaveToMenu() {
         Task {
             try? await roomManager.leaveRoom()
-            navigator.dismiss()
+            navigator.popToRoot()
         }
     }
 

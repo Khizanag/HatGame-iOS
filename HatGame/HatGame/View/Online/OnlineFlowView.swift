@@ -18,6 +18,8 @@ struct OnlineFlowView: View {
     var body: some View {
         NavigationStack(path: Bindable(onlineNavigator).navigationPath) {
             OnlineMenuView()
+                // This is the flow's own NavigationStack — the one place pages register.
+                // swiftlint:disable:next no_navigation_destination
                 .navigationDestination(for: AnyPage.self) { page in
                     page.view()
                         .environment(roomManager)
@@ -30,6 +32,11 @@ struct OnlineFlowView: View {
         .environment(onlineNavigator)
         .onReceive(onlineNavigator.pleaseDismissViewPublisher) {
             dismiss()
+        }
+        // Dismissing the sheet leaves the room: the observer stops streaming,
+        // and in the lobby the player (or the host's room) is removed.
+        .onDisappear {
+            Task { try? await roomManager.leaveRoom() }
         }
     }
 }

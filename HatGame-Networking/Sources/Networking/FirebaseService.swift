@@ -12,6 +12,15 @@ import OSLog
 
 private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "FirebaseService")
 
+/// One delivery from a room observer.
+public enum RoomSnapshot: Sendable {
+    case room(GameRoom)
+    /// Nothing is stored at the room's path: it was deleted, or never existed.
+    case missing
+    /// Data exists but this build cannot decode it.
+    case unreadable
+}
+
 public final class FirebaseService: @unchecked Sendable {
     public static let shared = FirebaseService()
 
@@ -80,22 +89,21 @@ public final class FirebaseService: @unchecked Sendable {
         }
     }
 
-    public func observeRoom(id: String, onChange: @escaping (GameRoom?) -> Void) -> DatabaseHandle {
+    public func observeRoom(id: String, onChange: @escaping (RoomSnapshot) -> Void) -> DatabaseHandle? {
         guard isAvailable else {
-            onChange(nil)
-            return 0
+            onChange(.missing)
+            return nil
         }
         return roomsRef.child(id).observe(.value) { snapshot in
             guard snapshot.exists(), let data = snapshot.value else {
-                onChange(nil)
+                onChange(.missing)
                 return
             }
             do {
-                let room = try self.decode(GameRoom.self, from: data)
-                onChange(room)
+                onChange(.room(try self.decode(GameRoom.self, from: data)))
             } catch {
                 logger.error("Failed to decode room \(id, privacy: .public): \(error, privacy: .public)")
-                onChange(nil)
+                onChange(.unreadable)
             }
         }
     }

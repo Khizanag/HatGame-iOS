@@ -9,16 +9,37 @@ import FirebaseDatabase
 import Foundation
 import Observation
 
+/// Where this device stands with the room it observes.
+public enum RoomConnectionState: Equatable, Sendable {
+    /// Not in a room.
+    case idle
+    /// Observing, waiting for the first snapshot.
+    case joining
+    /// Receiving snapshots.
+    case live
+    /// The room disappeared — the host closed it.
+    case closed
+    /// The room exists but a newer build wrote data this one cannot read.
+    case unsupported
+}
+
 @MainActor
 @Observable
 open class RoomManager {
     public internal(set) var room: GameRoom?
     public internal(set) var currentPlayerId: String?
     public internal(set) var isConnected: Bool = false
-    public internal(set) var error: Error?
+    public internal(set) var connectionState: RoomConnectionState = .idle
 
     private let firebaseService = FirebaseService.shared
-    private var roomObserverHandle: DatabaseHandle?
+    /// Tracked apart from `room`, which is nil before the first snapshot and
+    /// after the room is deleted — exactly when the observer still needs
+    /// removing.
+    @ObservationIgnored private var observedRoomId: String?
+    @ObservationIgnored private var roomObserverHandle: DatabaseHandle?
+    /// Set while this device deletes or leaves the room, so its own write is
+    /// not mistaken for the host closing it.
+    @ObservationIgnored private var isLeaving = false
     /// Stable per-device UUID kept in UserDefaults so reconnects map back
     /// to the same player record.
     internal var deviceId: String
@@ -39,6 +60,12 @@ open class RoomManager {
 
     public init() {
         self.deviceId = Self.getOrCreateDeviceId()
+    }
+
+    isolated deinit {
+        if let roomObserverHandle, let observedRoomId {
+            firebaseService.removeObserver(handle: roomObserverHandle, forRoomId: observedRoomId)
+        }
     }
 
     // MARK: - Room Creation
@@ -91,20 +118,44 @@ open class RoomManager {
 
     // MARK: - Room Observation
     private func startObservingRoom(id: String) {
-        roomObserverHandle = firebaseService.observeRoom(id: id) { [weak self] room in
+        stopObserving()
+        observedRoomId = id
+        connectionState = .joining
+        roomObserverHandle = firebaseService.observeRoom(id: id) { [weak self] snapshot in
             Task { @MainActor in
-                self?.room = room
-                self?.isConnected = room != nil
+                self?.apply(snapshot, forRoomId: id)
             }
         }
     }
 
+    private func apply(_ snapshot: RoomSnapshot, forRoomId id: String) {
+        guard observedRoomId == id, !isLeaving else { return }
+        switch snapshot {
+        case let .room(room):
+            self.room = room
+            isConnected = true
+            connectionState = .live
+        case .missing:
+            room = nil
+            isConnected = false
+            connectionState = .closed
+        case .unreadable:
+            isConnected = false
+            connectionState = .unsupported
+        }
+    }
+
+    /// Detaches from the room without writing anything. Safe to call when
+    /// the room is already gone or was never received.
     open func stopObserving() {
-        guard let handle = roomObserverHandle, let roomId = room?.id else { return }
-        firebaseService.removeObserver(handle: handle, forRoomId: roomId)
+        if let roomObserverHandle, let observedRoomId {
+            firebaseService.removeObserver(handle: roomObserverHandle, forRoomId: observedRoomId)
+        }
         roomObserverHandle = nil
+        observedRoomId = nil
         room = nil
         isConnected = false
+        connectionState = .idle
     }
 
     // MARK: - Player Actions
@@ -130,17 +181,27 @@ open class RoomManager {
         )
     }
 
+    /// Leaves the room. In the lobby the host's departure deletes the room
+    /// and a guest's removes their player; once the game has started, or
+    /// after the room closed, this only detaches, so the others keep their
+    /// game and results. The write happens before detaching, so on failure
+    /// the caller is still in the room and can retry.
     open func leaveRoom() async throws {
-        guard let playerId = currentPlayerId, let roomId = room?.id else { return }
+        let wasHost = isHost
+        let roomId = observedRoomId
+        let shouldWrite = connectionState == .live && room?.status.isLobby == true
 
-        stopObserving()
-
-        if isHost {
-            try await firebaseService.deleteRoom(id: roomId)
-        } else {
-            try await firebaseService.removePlayer(playerId: playerId, fromRoomId: roomId)
+        if let playerId = currentPlayerId, let roomId, shouldWrite {
+            isLeaving = true
+            defer { isLeaving = false }
+            if wasHost {
+                try await firebaseService.deleteRoom(id: roomId)
+            } else {
+                try await firebaseService.removePlayer(playerId: playerId, fromRoomId: roomId)
+            }
         }
 
+        stopObserving()
         currentPlayerId = nil
     }
 
