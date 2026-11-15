@@ -117,6 +117,36 @@ nonisolated extension GameState {
         Scoreboard(teams: teams, scores: scores)
     }
 
+    /// Whether the state can be played from. A saved game that decodes but
+    /// fails this (a missing team, a turn without a word) would leave the loop
+    /// screen with nothing to show, so it is discarded like a corrupt file.
+    var isConsistent: Bool {
+        let wordIds = Set(words.map(\.id))
+        let scoredIds = scores.values.flatMap(\.values).flatMap { $0 }
+        let explainersValid = explainerIndices.allSatisfy { teamId, index in
+            team(withId: teamId)?.players.indices.contains(index) ?? false
+        }
+        guard Set(remainingWordIds).isSubset(of: wordIds),
+              Set(scoredIds).isSubset(of: wordIds),
+              explainersValid
+        else { return false }
+
+        switch phase {
+        case .setup, .finished:
+            return true
+        case .nextTeam:
+            return currentTeam != nil && !remainingWordIds.isEmpty
+        case .playing:
+            guard let currentTeamId, currentTeam != nil, turn?.teamId == currentTeamId,
+                  let currentWordId
+            else { return false }
+            return remainingWordIds.contains(currentWordId)
+        case .turnResults:
+            guard let currentTeamId, currentTeam != nil else { return false }
+            return turn?.teamId == currentTeamId
+        }
+    }
+
     func team(withId id: Team.ID) -> Team? {
         teams.first { $0.id == id }
     }

@@ -9,6 +9,7 @@ import Foundation
 @testable import HatGame
 import Testing
 
+@MainActor
 @Suite("Game state coding")
 struct GameStateCodingTests {
     @Test("A fresh setup state round-trips through JSON")
@@ -100,5 +101,27 @@ final class FileGameStoreTests {
 
         #expect(await store.load() == nil)
         #expect(!FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    @Test("A file that decodes but cannot be played from loads as nil and is deleted")
+    func inconsistentFileIsDeleted() async throws {
+        var state = Fixtures.started()
+        state.currentTeamId = UUID()
+        try FileManager.default.createDirectory(at: directory, withIntermediateDirectories: true)
+        try JSONEncoder().encode(state).write(to: fileURL)
+        let store = FileGameStore(directory: directory)
+
+        #expect(await store.load() == nil)
+        #expect(!FileManager.default.fileExists(atPath: fileURL.path))
+    }
+
+    @Test("A file that cannot be read is kept for a later attempt")
+    func unreadableFileIsKept() async throws {
+        // A directory at the file's path makes the read fail without being a decode error.
+        try FileManager.default.createDirectory(at: fileURL, withIntermediateDirectories: true)
+        let store = FileGameStore(directory: directory)
+
+        #expect(await store.load() == nil)
+        #expect(FileManager.default.fileExists(atPath: fileURL.path))
     }
 }

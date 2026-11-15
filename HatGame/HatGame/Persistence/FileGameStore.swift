@@ -29,17 +29,31 @@ actor FileGameStore: GameStore {
 
     func load() -> GameState? {
         guard let fileURL, fileManager.fileExists(atPath: fileURL.path) else { return nil }
+        let data: Data
         do {
-            let data = try Data(contentsOf: fileURL)
+            data = try Data(contentsOf: fileURL)
+        } catch {
+            // A read can fail transiently (protected data not yet available);
+            // keep the file so the game can still be resumed later.
+            Self.logger.error("Could not read saved game: \(error.localizedDescription)")
+            return nil
+        }
+        do {
             let header = try JSONDecoder().decode(SchemaHeader.self, from: data)
             guard header.schemaVersion == GameState.currentSchemaVersion else {
                 Self.logger.notice("Discarding saved game with schema \(header.schemaVersion)")
                 removeFile(at: fileURL)
                 return nil
             }
-            return try JSONDecoder().decode(GameState.self, from: data)
+            let state = try JSONDecoder().decode(GameState.self, from: data)
+            guard state.isConsistent else {
+                Self.logger.error("Discarding inconsistent saved game")
+                removeFile(at: fileURL)
+                return nil
+            }
+            return state
         } catch {
-            Self.logger.error("Discarding unreadable saved game: \(error.localizedDescription)")
+            Self.logger.error("Discarding undecodable saved game: \(error.localizedDescription)")
             removeFile(at: fileURL)
             return nil
         }
