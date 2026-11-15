@@ -278,20 +278,17 @@ open class RoomManager {
         try await firebaseService.removeTeam(teamId: teamId, unassigning: memberIds, fromRoomId: room.id)
     }
 
-    open func updateRoomStatus(_ status: RoomStatus) async throws {
-        guard isHost, let roomId = room?.id else {
-            throw NetworkingError.notAuthorized
-        }
-
-        try await firebaseService.updateRoomStatus(status, forRoomId: roomId)
-    }
-
+    /// Host-only. Starts the game once `RoomRules` agrees the teams are
+    /// playable — the same check the lobby's Start button uses.
     open func startGame() async throws {
-        guard isHost else {
+        guard isHost, let room else {
             throw NetworkingError.notAuthorized
         }
+        guard let started = RoomRules.startGame(room) else {
+            throw room.teams.count < RoomRules.minimumTeams ? RoomError.notEnoughTeams : RoomError.notEnoughPlayers
+        }
 
-        try await updateRoomStatus(.playing)
+        try await firebaseService.updateRoomStatus(started.status, forRoomId: room.id)
     }
 
     // MARK: - Word Submission

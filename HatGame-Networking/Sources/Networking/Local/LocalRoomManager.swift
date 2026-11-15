@@ -27,13 +27,11 @@ public final class LocalRoomManager: RoomManager {
     public enum LocalError: Error, LocalizedError {
         case notImplementedForLocal
         case hostOnly
-        case notConnected
 
         public var errorDescription: String? {
             switch self {
             case .notImplementedForLocal: "This action isn't supported in nearby play."
             case .hostOnly: "Only the host can do this."
-            case .notConnected: "Not connected to any host yet."
             }
         }
     }
@@ -167,14 +165,6 @@ public final class LocalRoomManager: RoomManager {
 
     public override func submitWords(_ submitted: [String]) async throws {
         try perform(.submitWords(submitted))
-    }
-
-    public override func updateRoomStatus(_ status: RoomStatus) async throws {
-        guard isLocalHost else { throw LocalError.hostOnly }
-        guard var room else { return }
-        room.status = status
-        self.room = room
-        broadcastSnapshot()
     }
 
     public override func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
