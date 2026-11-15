@@ -7,11 +7,25 @@
 
 import SwiftUI
 
-struct Team: Identifiable, Hashable {
+nonisolated struct Team: Identifiable, Hashable, Codable, Sendable {
     let id: UUID
     var name: String
     var players: [Player]
-    let color: Color
+    let teamColor: TeamColor
+
+    var color: Color { teamColor.color }
+
+    init(
+        id: UUID = UUID(),
+        name: String,
+        players: [Player] = [],
+        teamColor: TeamColor
+    ) {
+        self.id = id
+        self.name = name
+        self.players = players
+        self.teamColor = teamColor
+    }
 
     init(
         id: UUID = UUID(),
@@ -19,9 +33,6 @@ struct Team: Identifiable, Hashable {
         players: [Player] = [],
         color: Color
     ) {
-        self.id = id
-        self.name = name
-        self.players = players
-        self.color = color
+        self.init(id: id, name: name, players: players, teamColor: TeamColor(color))
     }
 }

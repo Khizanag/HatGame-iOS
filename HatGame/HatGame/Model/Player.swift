@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Player: Identifiable, Hashable {
+nonisolated struct Player: Identifiable, Hashable, Codable, Sendable {
     let id: UUID
     let name: String
     let teamId: UUID

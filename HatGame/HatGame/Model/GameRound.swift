@@ -7,11 +7,17 @@
 
 import SwiftUI
 
-enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
+nonisolated enum GameRound: Int, Codable, CaseIterable, Hashable, Sendable {
     case first = 1
     case second = 2
     case third = 3
 
+    /// The round after this one, or `nil` after the last round.
+    var next: GameRound? {
+        GameRound(rawValue: rawValue + 1)
+    }
+
+    @MainActor
     var description: String {
         switch self {
         case .first:
@@ -23,6 +29,7 @@ enum GameRound: Int, Codable, CaseIterable, Equatable, Hashable {
         }
     }
 
+    @MainActor
     var title: String {
         String(format: localized("gameRound.title"), rawValue)
     }

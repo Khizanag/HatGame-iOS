@@ -7,15 +7,19 @@
 
 import Foundation
 
-struct Word: Identifiable, Hashable {
+nonisolated struct Word: Identifiable, Hashable, Codable, Sendable {
     let id: UUID
     let text: String
+    /// The player who put the word in the hat; `nil` for generated words.
+    let authorId: UUID?
 
     init(
         id: UUID = UUID(),
-        text: String
+        text: String,
+        authorId: UUID? = nil
     ) {
         self.id = id
         self.text = text
+        self.authorId = authorId
     }
 }
