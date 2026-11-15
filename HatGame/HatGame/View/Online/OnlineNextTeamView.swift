@@ -24,23 +24,19 @@ struct OnlineNextTeamView: View {
     private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        guard let state = gameState else { return nil }
-        return teams[safe: state.currentTeamIndex]
+        gameState.flatMap { GameRules.currentTeam($0, teams: teams) }
     }
 
     private var teamPlayers: [OnlinePlayer] {
         guard let team = currentTeam else { return [] }
-        if !team.playerIds.isEmpty {
-            let lookup = Dictionary(players.map { ($0.id, $0) }, uniquingKeysWith: { first, _ in first })
-            return team.playerIds.compactMap { lookup[$0] }
-        }
-        return players.filter { $0.teamId == team.id }
+        return GameRules.playersInTeam(team, allPlayers: players)
     }
 
+    /// The player the synced state names as explainer — the same id that
+    /// gates the Play button, so the roles card can never disagree with it.
     private var explainer: OnlinePlayer? {
-        guard let team = currentTeam, let state = gameState else { return nil }
-        let index = state.explainerIndex(for: team.id)
-        return teamPlayers[safe: index]
+        guard let activeId = gameState?.activePlayerId else { return nil }
+        return players.first { $0.id == activeId }
     }
 
     private var guessers: [OnlinePlayer] {
@@ -288,12 +284,12 @@ private extension OnlineNextTeamView {
     }
 
     func startTurn() {
-        guard let roomId = room?.id, let state = gameState else { return }
+        guard let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
         DesignBook.Haptics.confirm()
         Task {
             do {
-                try await gameSyncManager.startTurn(roomId: roomId, gameState: state)
+                try await gameSyncManager.perform(.startTurn, room: room, playerId: playerId)
             } catch {
                 self.error = error
             }
@@ -310,12 +306,5 @@ private extension OnlineGameRound {
         case .second: localized("round.second.title")
         case .third, .unsupported: localized("round.third.title")
         }
-    }
-}
-
-// MARK: - Safe subscript
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
     }
 }

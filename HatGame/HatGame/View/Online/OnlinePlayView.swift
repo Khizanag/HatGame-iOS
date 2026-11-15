@@ -29,8 +29,7 @@ struct OnlinePlayView: View {
     private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        guard let state = gameState else { return nil }
-        return teams[safe: state.currentTeamIndex]
+        gameState.flatMap { GameRules.currentTeam($0, teams: teams) }
     }
 
     private var isActivePlayer: Bool {
@@ -69,10 +68,6 @@ struct OnlinePlayView: View {
             .onChange(of: gameState?.timerStartedAt) { _, _ in syncRemainingSeconds() }
             .onChange(of: gameState?.phase) { _, newPhase in
                 if newPhase != .playing { stopTimerLoop() }
-            }
-            .onChange(of: gameState?.currentWordId) { _, newId in
-                guard isActivePlayer, newId == nil, gameState?.phase == .playing else { return }
-                endTurn()
             }
             .alert(localized("game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 Button(localized("common.buttons.cancel"), role: .cancel) { }
@@ -318,41 +313,28 @@ private extension OnlinePlayView {
 // MARK: - Actions
 private extension OnlinePlayView {
     func markGuessed() {
-        guard isActivePlayer,
-              let roomId = room?.id,
-              let state = gameState else { return }
+        guard isActivePlayer, let wordId = gameState?.currentWordId else { return }
         DesignBook.Haptics.confirm()
-        Task {
-            try? await gameSyncManager.markWordGuessed(roomId: roomId, gameState: state, teams: teams)
-        }
+        perform(.markGuessed(wordId: wordId))
     }
 
     func skipCurrentWord() {
-        guard isActivePlayer,
-              let roomId = room?.id,
-              let state = gameState,
-              isSkipEnabled else { return }
+        guard isActivePlayer, isSkipEnabled, let wordId = gameState?.currentWordId else { return }
         DesignBook.Haptics.soft()
-        Task {
-            try? await gameSyncManager.skipWord(roomId: roomId, gameState: state)
-        }
+        perform(.skip(wordId: wordId))
     }
 
     func endTurn() {
-        guard isActivePlayer,
-              let roomId = room?.id,
-              let state = gameState else { return }
+        guard isActivePlayer else { return }
         stopTimerLoop()
         DesignBook.Haptics.rigid()
-        Task {
-            try? await gameSyncManager.endTurn(roomId: roomId, gameState: state)
-        }
+        perform(.endTurn)
     }
-}
 
-// MARK: - Helpers
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
+    func perform(_ action: GameAction) {
+        guard let room, let playerId = roomManager.currentPlayerId else { return }
+        Task {
+            try? await gameSyncManager.perform(action, room: room, playerId: playerId)
+        }
     }
 }

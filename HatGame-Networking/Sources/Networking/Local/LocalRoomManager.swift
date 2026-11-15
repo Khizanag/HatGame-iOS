@@ -250,12 +250,56 @@ public final class LocalRoomManager: RoomManager {
         service.send(.wordsSnapshot(words))
     }
 
-    /// Called by `LocalGameSyncManager` on guest devices to forward a typed
-    /// game-flow action to the host. Hosts mutate state directly via
-    /// `updateGameState` instead of using this path.
-    func forwardClientAction(_ action: ClientAction) {
+    /// Called by `LocalGameSyncManager` on guest devices to forward a
+    /// gameplay action to the host.
+    func forwardGameAction(_ action: GameAction) {
         guard !isLocalHost else { return }
-        service.send(.clientAction(action))
+        service.send(.clientAction(Self.legacyClientAction(for: action)))
+    }
+
+    /// Host-only. Seeds the first game state from the shuffled word pool.
+    func initializeGame(wordIds: [String]) -> Bool {
+        guard isLocalHost,
+              var room,
+              room.gameState == nil,
+              let state = GameRules.initialState(
+                  teams: room.teams,
+                  players: room.players,
+                  wordIds: wordIds,
+                  settings: room.settings
+              ) else { return false }
+        room.gameState = state
+        self.room = room
+        broadcastSnapshot()
+        return true
+    }
+
+    /// Host-only. Applies a gameplay action through `GameRules` and
+    /// broadcasts the result.
+    func applyGameAction(_ action: GameAction, by playerId: String) -> Bool {
+        guard isLocalHost,
+              var room,
+              let state = room.gameState,
+              let next = GameRules.apply(action, by: playerId, to: state, context: GameContext(room: room))
+        else { return false }
+        room.gameState = next
+        if next.phase == .finished {
+            room.status = .finished
+        }
+        self.room = room
+        broadcastSnapshot()
+        return true
+    }
+
+    private static func legacyClientAction(for action: GameAction) -> ClientAction {
+        switch action {
+        case .startTurn: .startTurn
+        case .markGuessed: .markWordGuessed
+        case .skip: .skipWord
+        case .endTurn: .endTurn
+        case .advanceAfterTurnResults: .advanceAfterTurnResults
+        case .advanceAfterRoundResults: .advanceAfterRoundResults
+        }
     }
 
     private func handlePeerStateChange(peer: MCPeerID, state: MCSessionState) {

@@ -26,10 +26,7 @@ struct RoomLobbyView: View {
 
     /// Every team must have ≥ 2 players for the round to be playable.
     private var canStartGame: Bool {
-        guard allTeams.count >= 2 else { return false }
-        return allTeams.allSatisfy { team in
-            allPlayers.filter { $0.teamId == team.id }.count >= 2
-        }
+        room.map(RoomRules.canStartGame) ?? false
     }
 
     var body: some View {
@@ -111,6 +108,8 @@ private extension RoomLobbyView {
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
 
                 Text(room?.id ?? "------")
+                    // Room-code hero: monospaced display size with no token match.
+                    // swiftlint:disable:next no_inline_font
                     .font(.system(size: 44, weight: .bold, design: .monospaced))
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .kerning(8)
@@ -285,35 +284,45 @@ private extension RoomLobbyView {
                     }
                 }
 
-                HStack(spacing: DesignBook.Spacing.md) {
-                    if amIInTeam {
-                        Button(action: { leaveTeam() }) {
-                            Label("lobby.leaveTeam", systemImage: "arrow.uturn.left")
-                                .font(DesignBook.Font.captionBold)
-                        }
-                        .buttonStyle(.glass)
-                        .tint(DesignBook.Color.Status.error)
-                    } else {
-                        Button(action: { joinTeam(team.id) }) {
-                            Label("lobby.joinTeam", systemImage: "person.crop.circle.fill.badge.plus")
-                                .font(DesignBook.Font.captionBold)
-                        }
-                        .buttonStyle(.glassProminent)
-                        .tint(color)
-                    }
+                teamActions(team, amIInTeam: amIInTeam, color: color)
+            }
+        }
+    }
 
-                    Spacer()
-
-                    if isHost {
-                        Button(action: { removeTeam(team.id) }) {
-                            Image(systemName: "trash")
-                                .font(DesignBook.Font.body)
-                                .foregroundStyle(DesignBook.Color.Status.error)
-                        }
-                        .buttonStyle(.plain)
-                        .accessibilityLabel(Text(localized("teamCard.delete")))
-                    }
+    func teamActions(_ team: OnlineTeam, amIInTeam: Bool, color: Color) -> some View {
+        HStack(spacing: DesignBook.Spacing.md) {
+            if amIInTeam {
+                Button {
+                    leaveTeam()
+                } label: {
+                    Label("lobby.leaveTeam", systemImage: "arrow.uturn.left")
+                        .font(DesignBook.Font.captionBold)
                 }
+                .buttonStyle(.glass)
+                .tint(DesignBook.Color.Status.error)
+            } else {
+                Button {
+                    joinTeam(team.id)
+                } label: {
+                    Label("lobby.joinTeam", systemImage: "person.crop.circle.fill.badge.plus")
+                        .font(DesignBook.Font.captionBold)
+                }
+                .buttonStyle(.glassProminent)
+                .tint(color)
+            }
+
+            Spacer()
+
+            if isHost {
+                Button {
+                    removeTeam(team.id)
+                } label: {
+                    Image(systemName: "trash")
+                        .font(DesignBook.Font.body)
+                        .foregroundStyle(DesignBook.Color.Status.error)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(localized("teamCard.delete")))
             }
         }
     }

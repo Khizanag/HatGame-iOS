@@ -22,7 +22,6 @@ struct OnlineRoundResultsView: View {
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
     private var teams: [OnlineTeam] { room?.teams ?? [] }
-    private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
     /// On the round-results screen `currentRound` is the round that just ended.
@@ -250,17 +249,12 @@ private extension OnlineRoundResultsView {
     }
 
     func advance() {
-        guard let roomId = room?.id, let state = gameState else { return }
+        guard let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
         DesignBook.Haptics.confirm()
         Task {
             do {
-                try await gameSyncManager.advanceAfterRoundResults(
-                    roomId: roomId,
-                    gameState: state,
-                    teams: teams,
-                    players: players
-                )
+                try await gameSyncManager.perform(.advanceAfterRoundResults, room: room, playerId: playerId)
             } catch {
                 self.error = error
             }

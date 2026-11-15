@@ -22,11 +22,9 @@ struct OnlineTurnResultsView: View {
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
     private var teams: [OnlineTeam] { room?.teams ?? [] }
-    private var players: [OnlinePlayer] { room?.players ?? [] }
 
     private var currentTeam: OnlineTeam? {
-        guard let state = gameState else { return nil }
-        return teams[safe: state.currentTeamIndex]
+        gameState.flatMap { GameRules.currentTeam($0, teams: teams) }
     }
 
     private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
@@ -207,28 +205,16 @@ private extension OnlineTurnResultsView {
     }
 
     func continueFlow() {
-        guard let roomId = room?.id, let state = gameState else { return }
+        guard let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
         DesignBook.Haptics.tap()
         Task {
             do {
-                try await gameSyncManager.advanceAfterTurnResults(
-                    roomId: roomId,
-                    gameState: state,
-                    teams: teams,
-                    players: players
-                )
+                try await gameSyncManager.perform(.advanceAfterTurnResults, room: room, playerId: playerId)
             } catch {
                 self.error = error
             }
             isLoading = false
         }
-    }
-}
-
-// MARK: - Safe subscript
-private extension Array {
-    subscript(safe index: Int) -> Element? {
-        indices.contains(index) ? self[index] : nil
     }
 }

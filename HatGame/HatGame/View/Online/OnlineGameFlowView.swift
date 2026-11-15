@@ -30,8 +30,7 @@ struct OnlineGameFlowView: View {
     private var isAutomaticWords: Bool { room?.settings.isAutomaticWords == true }
 
     private var allPlayersSubmittedWords: Bool {
-        guard let players = room?.players, !players.isEmpty else { return false }
-        return players.allSatisfy(\.hasSubmittedWords)
+        room.map(RoomRules.allWordsSubmitted) ?? false
     }
 
     var body: some View {
@@ -165,13 +164,7 @@ private extension OnlineGameFlowView {
         Task {
             do {
                 let words = try await roomManager.getWords()
-                _ = try await gameSyncManager.initializeGame(
-                    for: room.id,
-                    teams: room.teams,
-                    players: room.players,
-                    words: words,
-                    settings: room.settings
-                )
+                try await gameSyncManager.initializeGame(room: room, words: words)
             } catch {
                 hasInitializedGame = false
             }
