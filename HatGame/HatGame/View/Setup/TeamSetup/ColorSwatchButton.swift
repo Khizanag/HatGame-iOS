@@ -21,7 +21,7 @@ struct ColorSwatchButton: View {
             Circle()
                 .fill(color)
                 .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
-                .overlay(overlay)
+                .overlay(overlay.decorativeHeroSizing())
                 .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
         }
         .buttonStyle(.plain)

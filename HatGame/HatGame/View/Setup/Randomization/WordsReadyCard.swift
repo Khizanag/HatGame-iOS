@@ -24,6 +24,8 @@ struct WordsReadyCard: View {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Status.success)
                 }
+                .accessibilityHidden(true)
+                .decorativeHeroSizing()
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text(localized("randomization.wordsReady.title"))

@@ -22,6 +22,7 @@ struct NavigationCard: View {
                         .font(DesignBook.IconFont.extraLarge)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                         .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
+                        .decorativeHeroSizing()
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(title)

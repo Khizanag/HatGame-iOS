@@ -140,6 +140,7 @@ private extension TimerSettingsView {
                         .foregroundStyle(DesignBook.Color.Status.warning)
                         .frame(width: DesignBook.Size.touchTargetSize, height: DesignBook.Size.touchTargetSize)
                         .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
+                        .decorativeHeroSizing()
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(localized("timerSettings.allowSkipping.title"))
