@@ -127,6 +127,11 @@ extension GameEngine {
         apply(GameRules.newWords(state))
     }
 
+    /// Ends a game in progress for good; the saved game is cleared.
+    func abandon() {
+        apply(GameRules.abandon(state))
+    }
+
     /// The app left the foreground: a running turn pauses so the clock can't
     /// run down unseen, and the latest state is saved.
     func handleLeavingForeground() {

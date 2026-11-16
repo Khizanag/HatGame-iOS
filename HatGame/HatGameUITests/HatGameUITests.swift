@@ -21,7 +21,7 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(roundTitle.waitForExistence(timeout: 10))
         let roundOneTitle = roundTitle.label
 
-        app.buttons["nextTeam.play"].tap()
+        tapWhenEnabled(app.buttons["nextTeam.play"])
         let gotIt = app.buttons["game.gotIt"]
         XCTAssertTrue(gotIt.waitForExistence(timeout: 5))
         gotIt.tap()
@@ -52,9 +52,7 @@ final class HatGameUITests: XCTestCase {
     @MainActor
     func testKilledGameIsOfferedForResumeAndComesBackPaused() throws {
         let app = launchIntoTestGame()
-        let play = app.buttons["nextTeam.play"]
-        XCTAssertTrue(play.waitForExistence(timeout: 10))
-        play.tap()
+        tapWhenEnabled(app.buttons["nextTeam.play"])
         let gotIt = app.buttons["game.gotIt"]
         XCTAssertTrue(gotIt.waitForExistence(timeout: 5))
         gotIt.tap()
@@ -80,6 +78,27 @@ final class HatGameUITests: XCTestCase {
         relaunched.terminate()
         launchClearingSavedGame().terminate()
     }
+
+    @MainActor
+    func testEndGameLeavesTheLoopAndClearsTheSave() throws {
+        let app = launchIntoTestGame()
+        let endGame = app.buttons["game.endGame"]
+        XCTAssertTrue(endGame.waitForExistence(timeout: 10))
+        endGame.tap()
+
+        let alert = app.alerts.firstMatch
+        XCTAssertTrue(alert.waitForExistence(timeout: 5))
+        // Cancel comes first; the destructive confirmation is the last button.
+        alert.buttons.element(boundBy: alert.buttons.count - 1).tap()
+
+        XCTAssertTrue(app.buttons["nextTeam.play"].waitForNonExistence(timeout: 5))
+        app.terminate()
+
+        let relaunched = XCUIApplication()
+        relaunched.launch()
+        XCTAssertFalse(relaunched.buttons["home.resumeButton"].waitForExistence(timeout: 3))
+        relaunched.terminate()
+    }
 }
 
 // MARK: - Helpers
@@ -90,6 +109,16 @@ private extension HatGameUITests {
         app.launchArguments = ["-uiTestScreen", "game", "-uiTestResetState", "-uiTestDisableAnimations"]
         app.launch()
         return app
+    }
+
+    /// Waits for `button` to exist and become enabled, then taps it. Next
+    /// Team's Play arms itself a moment after the screen appears.
+    @MainActor
+    func tapWhenEnabled(_ button: XCUIElement, timeout: TimeInterval = 10) {
+        XCTAssertTrue(button.waitForExistence(timeout: timeout))
+        let enabled = XCTNSPredicateExpectation(predicate: NSPredicate(format: "isEnabled == true"), object: button)
+        XCTAssertEqual(XCTWaiter().wait(for: [enabled], timeout: timeout), .completed)
+        button.tap()
     }
 
     @MainActor

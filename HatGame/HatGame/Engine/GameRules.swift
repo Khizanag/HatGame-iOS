@@ -41,6 +41,13 @@ nonisolated enum GameRules {
         return resetProgress(state)
     }
 
+    /// Abandons a game in progress: back to `.setup` with every score cleared,
+    /// so nothing is left to resume.
+    static func abandon(_ state: GameState) -> GameState {
+        guard state.phase.isInProgress else { return state }
+        return resetProgress(state)
+    }
+
     /// Like `rematch`, but the hat is emptied so players add new words.
     static func newWords(_ state: GameState) -> GameState {
         guard state.phase == .finished || state.phase == .setup else { return state }

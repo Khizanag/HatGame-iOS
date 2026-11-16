@@ -6,6 +6,7 @@
 //
 
 import DesignBook
+import Navigation
 import SwiftUI
 
 /// The whole single-device game loop as one page: it switches between Next
@@ -14,13 +15,23 @@ import SwiftUI
 /// also disables swipe-back), so the loop can only move forward.
 struct GameLoopView: View {
     @Environment(GameEngine.self) private var engine
+    @Environment(Navigator.self) private var navigator
     @Environment(\.scenePhase) private var scenePhase
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+
+    @State private var isEndGameConfirmationPresented = false
 
     var body: some View {
         phaseContent
             .navigationBarBackButtonHidden()
             .interactiveDismissDisabled()
+            .toolbar { endGameToolbar }
+            .alert(localized("game.endGame.title"), isPresented: $isEndGameConfirmationPresented) {
+                Button(localized("common.buttons.cancel"), role: .cancel) {}
+                Button(localized("game.endGame.confirm"), role: .destructive, action: endGame)
+            } message: {
+                Text(localized("game.endGame.message"))
+            }
             .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: engine.phase)
             .onChange(of: scenePhase) { _, phase in
                 guard phase != .active else { return }
@@ -66,6 +77,31 @@ private extension GameLoopView {
 
     var phaseTransition: AnyTransition {
         reduceMotion ? .opacity : .push(from: .trailing)
+    }
+}
+
+// MARK: - End game
+private extension GameLoopView {
+    /// Leaving mid-game is a deliberate act, so it lives behind a confirmation
+    /// and only between turns — during a turn the clock has its own Give Up.
+    @ToolbarContentBuilder
+    var endGameToolbar: some ToolbarContent {
+        if engine.phase == .nextTeam || engine.phase == .turnResults {
+            ToolbarItem(placement: .cancellationAction) {
+                Button(localized("game.endGame.button"), systemImage: "flag.checkered") {
+                    DesignBook.Haptics.tap()
+                    isEndGameConfirmationPresented = true
+                }
+                .accessibilityIdentifier("game.endGame")
+            }
+        }
+    }
+
+    func endGame() {
+        DesignBook.Haptics.warning()
+        engine.abandon()
+        navigator.dismissToRoot()
+        navigator.dismiss()
     }
 }
 

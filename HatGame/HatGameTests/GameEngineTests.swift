@@ -171,6 +171,21 @@ struct GameEngineTests {
         #expect(engine.state.words.isEmpty)
     }
 
+    @Test("Abandoning mid-turn stops the clock and clears the save")
+    func abandonClearsSave() async {
+        let engine = makeEngine(roundDuration: 30)
+        engine.beginTurn(explainerIndex: 0)
+        await advance(seconds: 2)
+
+        engine.abandon()
+        await engine.waitForPendingWrites()
+        await advance(seconds: 30)
+
+        #expect(engine.phase == .setup)
+        #expect(await store.load() == nil)
+        #expect(sound.timeUpCount == 0)
+    }
+
     @Test("Pausing after the clock hit zero ends the turn instead")
     func pauseAtZeroExpires() async {
         let engine = makeEngine(roundDuration: 3)

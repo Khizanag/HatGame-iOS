@@ -21,6 +21,9 @@ struct NextTeamView: View {
     @State private var isStandingsPresented = false
     @State private var selectedExplainerIndex: Int = 0
     @State private var isRandomizingExplainer: Bool = false
+    /// Play stays disabled for a moment after the screen appears, so a double
+    /// tap on the previous screen's Continue (same spot) can't start the turn.
+    @State private var isPlayArmed = false
     /// Changing this starts an explainer shuffle; the task is cancelled on disappear.
     @State private var explainerShuffleId: UUID?
     @ScaledMetric(relativeTo: .body) private var selectionIndicatorSize = DesignBook.Size.selectionIndicatorSize
@@ -47,6 +50,10 @@ struct NextTeamView: View {
             }
             .task(id: explainerShuffleId) {
                 await shuffleExplainer()
+            }
+            .task {
+                try? await Task.sleep(for: .milliseconds(400))
+                isPlayArmed = true
             }
     }
 }
@@ -278,7 +285,7 @@ private extension NextTeamView {
                 DesignBook.Haptics.confirm()
                 engine.beginTurn(explainerIndex: isFirstPlay ? selectedExplainerIndex : nil)
             }
-            .disabled(isRandomizingExplainer)
+            .disabled(isRandomizingExplainer || !isPlayArmed)
             .accessibilityIdentifier("nextTeam.play")
         }
     }

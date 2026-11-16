@@ -14,9 +14,10 @@ Before a team's turn, one player is designated the **explainer**; the rest are *
 - A turn is timed. The default length is **60 seconds** (configurable; see [Setup](setup.md#3-timer-settings)).
 - A turn normally starts with a **full** timer. The exception: a team that ended the previous round by emptying the hat resumes with its **carried-over leftover time** for its first turn of the new round. See [The Three Rounds](rounds.md#carrying-over-between-rounds).
 - In the final seconds the device gives **urgency haptics**, and a sound plays when time runs out.
-- If the app goes to the background mid-turn, the turn **auto-pauses** so the clock can't run down unseen; the player resumes manually.
+- If the app leaves the foreground mid-turn — backgrounded, or interrupted by Control Center, a notification, or a call banner — the turn **auto-pauses** so the clock can't run down unseen; the player resumes manually.
 - The clock ends the turn exactly when its time is used up; the countdown never sits on 0 while the turn is still running.
-- A game in progress is saved as it goes. If the app is closed, Home offers to **resume** it; an interrupted turn comes back paused with the time it had left.
+- A game in progress is saved as it goes. If the app is closed, Home offers to **resume** it; an interrupted turn comes back paused with the time it had left. Starting a new game while one is saved asks first, since it replaces the save.
+- Between turns (Next Team, Turn Results), **End Game** abandons the game after a confirmation; it can't be resumed.
 
 ## Playing the word
 

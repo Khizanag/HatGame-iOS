@@ -19,6 +19,7 @@ struct HomeView: View {
     /// The single-device game saved mid-play, offered for resuming.
     @State private var savedGame: GameState?
     @State private var isDiscardConfirmationPresented = false
+    @State private var isOverwriteConfirmationPresented = false
 
     private let gameStore = FileGameStore.shared
 
@@ -38,6 +39,15 @@ struct HomeView: View {
                 Button(localized("home.resume.discard"), role: .destructive, action: discardSavedGame)
             } message: {
                 Text(localized("home.resume.discard.message"))
+            }
+            .alert(localized("home.newGame.overwrite.title"), isPresented: $isOverwriteConfirmationPresented) {
+                Button(localized("common.buttons.cancel"), role: .cancel) {}
+                Button(localized("home.newGame.overwrite.confirm"), role: .destructive) {
+                    discardSavedGame()
+                    navigator.present(.teamSetup)
+                }
+            } message: {
+                Text(localized("home.newGame.overwrite.message"))
             }
     }
 }
@@ -216,7 +226,12 @@ private extension HomeView {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill") {
                 DesignBook.Haptics.tap()
-                navigator.present(.teamSetup)
+                // Starting a game replaces the saved one, so ask first.
+                if savedGame == nil {
+                    navigator.present(.teamSetup)
+                } else {
+                    isOverwriteConfirmationPresented = true
+                }
             }
             .navigationZoomSource(id: "teamSetup", in: zoomNamespace)
 

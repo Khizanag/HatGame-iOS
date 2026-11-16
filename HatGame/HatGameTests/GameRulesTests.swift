@@ -308,6 +308,19 @@ struct GameRulesTests {
         #expect(state.teams.count == 2)
     }
 
+    @Test("Abandoning a game in progress clears its progress; other phases are untouched")
+    func abandonResetsOnlyGamesInProgress() {
+        let abandoned = GameRules.abandon(Fixtures.playing())
+
+        #expect(abandoned.phase == .setup)
+        #expect(!abandoned.scoreboard.hasAnyScore)
+        #expect(abandoned.turn == nil)
+        let finished = Fixtures.finished()
+        let setup = Fixtures.state()
+        #expect(GameRules.abandon(finished) == finished)
+        #expect(GameRules.abandon(setup) == setup)
+    }
+
     @Test("Rematch and new words are ignored while a game is in progress")
     func rematchAndNewWordsIgnoredMidGame() {
         for state in [Fixtures.started(), Fixtures.playing()] {
