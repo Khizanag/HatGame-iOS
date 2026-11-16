@@ -13,41 +13,38 @@ struct AppIconSelectionView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.navZoomNamespace) private var zoomNamespace
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private let appConfiguration = AppConfiguration.shared
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: DesignBook.Spacing.xl) {
-                descriptionText
-                CurrentAppIconCard(icon: appConfiguration.appIcon)
-                iconGrid
-            }
-            .paddingHorizontalDefault()
-            .padding(.top, DesignBook.Spacing.lg)
-            .padding(.bottom, DesignBook.Spacing.xxl)
+        Form {
+            currentSection
+            availableSection
         }
+        .formStyle(.grouped)
+        .scrollContentBackground(.hidden)
         .navigationTitle(localized("settings.appIcon.title"))
         .setDefaultStyle()
         .navigationZoomDestination(id: "appIconSelection", in: zoomNamespace)
     }
 }
 
-// MARK: - Subviews
+// MARK: - Sections
 private extension AppIconSelectionView {
-    var descriptionText: some View {
-        Text(localized("settings.appIcon.description"))
-            .font(DesignBook.Font.body)
-            .foregroundStyle(DesignBook.Color.Text.secondary)
-            .padding(.horizontal, DesignBook.Spacing.sm)
+    var currentSection: some View {
+        Section {
+            CurrentAppIconRow(icon: appConfiguration.appIcon)
+        } header: {
+            Text(localized("settings.appIcon.current"))
+        } footer: {
+            Text(localized("settings.appIcon.description"))
+        }
     }
 
-    var iconGrid: some View {
-        SettingsSection(title: localized("settings.appIcon.available")) {
-            LazyVGrid(
-                columns: [GridItem(.adaptive(minimum: 150), spacing: DesignBook.Spacing.md)],
-                spacing: DesignBook.Spacing.lg
-            ) {
+    var availableSection: some View {
+        Section {
+            LazyVGrid(columns: columns, spacing: DesignBook.Spacing.md) {
                 ForEach(AppIcon.allCases) { icon in
                     AppIconCard(
                         icon: icon,
@@ -56,6 +53,19 @@ private extension AppIconSelectionView {
                     )
                 }
             }
+            .listRowInsets(EdgeInsets())
+            .listRowBackground(Color.clear)
+        } header: {
+            Text(localized("settings.appIcon.available"))
+        }
+    }
+
+    /// One column at accessibility sizes, two or more otherwise.
+    var columns: [GridItem] {
+        if dynamicTypeSize.isAccessibilitySize {
+            [GridItem(.flexible())]
+        } else {
+            [GridItem(.adaptive(minimum: 150), spacing: DesignBook.Spacing.md)]
         }
     }
 }

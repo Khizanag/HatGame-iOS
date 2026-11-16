@@ -8,29 +8,33 @@
 import DesignBook
 import SwiftUI
 
-/// Square gradient icon preview with the symbol centered on top.
+/// The real icon artwork, masked like the Home Screen draws it: a continuous
+/// rounded rectangle with a hairline edge. Each icon has a bundled 180 px
+/// preview (`AppIconPreview-<icon>`) with light and dark variants, so the
+/// preview matches what the Home Screen shows in each appearance.
 struct AppIconPreview: View {
+    /// The Home Screen icon mask's corner radius as a fraction of its side.
+    private static let cornerRadiusRatio: CGFloat = 0.2237
+
     let icon: AppIcon
     let size: CGFloat
-    let symbolSize: CGFloat
 
     var body: some View {
-        ZStack {
-            LinearGradient(
-                colors: icon.gradientColors,
-                startPoint: .topLeading,
-                endPoint: .bottomTrailing
-            )
+        Image("AppIconPreview-\(icon.rawValue)")
+            .resizable()
+            .interpolation(.high)
+            .scaledToFill()
             .frame(width: size, height: size)
-            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-            .shadow(color: icon.displayColor.opacity(0.3), radius: 8, x: 0, y: 4)
+            .clipShape(iconShape)
+            .overlay {
+                iconShape
+                    .strokeBorder(DesignBook.Color.Text.primary.opacity(0.12), lineWidth: 0.5)
+            }
+            .accessibilityHidden(true)
+    }
 
-            Image(systemName: icon.iconSymbol)
-                .font(DesignBook.IconFont.sized(symbolSize))
-                .foregroundStyle(DesignBook.Color.onGradient)
-                .shadow(color: .black.opacity(0.3), radius: 3, x: 0, y: 2)
-        }
-        .decorativeHeroSizing()
+    private var iconShape: RoundedRectangle {
+        RoundedRectangle(cornerRadius: size * Self.cornerRadiusRatio, style: .continuous)
     }
 }
 

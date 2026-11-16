@@ -8,11 +8,15 @@
 import DesignBook
 import SwiftUI
 
-/// A selectable app-icon option in the icon grid.
+/// A selectable app-icon option in the icon grid. Title and subtitle reserve
+/// a fixed number of lines, so every card in a row has the same height and
+/// long names truncate the same way.
 struct AppIconCard: View {
     let icon: AppIcon
     let isSelected: Bool
     let onSelect: () -> Void
+
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     var body: some View {
         Button(action: onSelect) {
@@ -21,41 +25,70 @@ struct AppIconCard: View {
 
                 VStack(spacing: DesignBook.Spacing.xs) {
                     Text(icon.title)
-                        .font(DesignBook.Font.title3)
+                        .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
+                        .lineLimit(titleLineLimit, reservesSpace: true)
+                        .minimumScaleFactor(0.8)
 
                     Text(icon.subtitle)
                         .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
-                        .multilineTextAlignment(.center)
+                        .lineLimit(subtitleLineLimit, reservesSpace: true)
                 }
+                .multilineTextAlignment(.center)
             }
             .padding(DesignBook.Spacing.md)
             .frame(maxWidth: .infinity)
-            .background(DesignBook.Color.Background.card)
-            .clipShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
+            .cardSurface()
             .overlay {
-                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                    .stroke(isSelected ? icon.displayColor : .clear, lineWidth: isSelected ? 2 : 0)
+                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
+                    .strokeBorder(isSelected ? icon.displayColor : .clear, lineWidth: 2)
             }
-            .scaleEffect(isSelected ? 1.02 : 1.0)
+            .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)
-        .accessibilityAddTraits(isSelected ? .isSelected : [])
+        .pointerHoverEffect()
+        .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(icon.title))
+        .accessibilityValue(Text(icon.subtitle))
+        .accessibilityAddTraits(isSelected ? [.isButton, .isSelected] : .isButton)
     }
 }
 
 // MARK: - Subviews
 private extension AppIconCard {
+    /// The grid is one column at accessibility sizes, which gives the text
+    /// room for more lines.
+    var titleLineLimit: Int {
+        dynamicTypeSize.isAccessibilitySize ? 3 : 1
+    }
+
+    var subtitleLineLimit: Int {
+        dynamicTypeSize.isAccessibilitySize ? 4 : 2
+    }
+
     var preview: some View {
         ZStack(alignment: .topTrailing) {
-            AppIconPreview(icon: icon, size: 100, symbolSize: 40)
+            AppIconPreview(icon: icon, size: 100)
 
             if isSelected {
                 AppIconSelectedBadge(color: icon.displayColor)
                     .offset(x: 8, y: -8)
             }
         }
+    }
+}
+
+// MARK: - Pointer hover
+private extension View {
+    /// The pointer lift on iPad and visionOS; macOS has no hover effect API
+    /// and never shows this screen.
+    @ViewBuilder
+    func pointerHoverEffect() -> some View {
+        #if os(macOS)
+        self
+        #else
+        hoverEffect(.highlight)
+        #endif
     }
 }

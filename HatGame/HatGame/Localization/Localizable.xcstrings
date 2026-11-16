@@ -5603,23 +5603,6 @@
         }
       }
     },
-    "settings.appIcon.current.description" : {
-      "comment" : "Description for current app icon section.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This icon will appear on your home screen"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ეს ხატულა გამოჩნდება თქვენს მთავარ ეკრანზე"
-          }
-        }
-      }
-    },
     "settings.appIcon.description" : {
       "comment" : "Description for the app icon picker section.",
       "localizations" : {
