@@ -99,15 +99,19 @@ public enum OnlineGameRules {
     }
 
     // MARK: - Setup
-    /// The first `.teamPrep` state: team 0 starts with its first player
-    /// explaining. `wordIds` arrive already shuffled.
+    /// The first `.teamPrep` state: the starting team — drawn at random
+    /// unless `startingTeamIndex` names one — plays first, with its first
+    /// player explaining. `wordIds` arrive already shuffled.
     public static func initialState(
         teams: [OnlineTeam],
         players: [OnlinePlayer],
         wordIds: [String],
-        settings: GameSettings
+        settings: GameSettings,
+        startingTeamIndex: Int? = nil
     ) -> OnlineGameState? {
-        guard let firstTeam = teams.first, !wordIds.isEmpty else { return nil }
+        guard !teams.isEmpty, !wordIds.isEmpty else { return nil }
+        let startIndex = normalizedIndex(startingTeamIndex ?? Int.random(in: teams.indices), count: teams.count)
+        let firstTeam = teams[startIndex]
         var scores: [String: [OnlineGameRound: Int]] = [:]
         var explainerIndices: [String: Int] = [:]
         for team in teams {
@@ -116,7 +120,7 @@ public enum OnlineGameRules {
         }
         return OnlineGameState(
             currentRound: .first,
-            currentTeamIndex: 0,
+            currentTeamIndex: startIndex,
             teamExplainerIndices: explainerIndices,
             currentWordId: wordIds.first,
             remainingWordIds: wordIds,

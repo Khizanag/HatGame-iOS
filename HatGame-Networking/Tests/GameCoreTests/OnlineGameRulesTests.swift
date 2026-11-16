@@ -35,7 +35,13 @@ private enum Table {
     static func initial(words: [String] = words, isSkippingEnabled: Bool = true) throws -> OnlineGameState {
         let settings = GameSettings(roundDuration: 60, isSkippingEnabled: isSkippingEnabled)
         return try #require(
-            OnlineGameRules.initialState(teams: teams, players: players, wordIds: words, settings: settings)
+            OnlineGameRules.initialState(
+                teams: teams,
+                players: players,
+                wordIds: words,
+                settings: settings,
+                startingTeamIndex: 0
+            )
         )
     }
 
@@ -89,6 +95,36 @@ struct GameRulesSetupTests {
 
         #expect(OnlineGameRules.initialState(teams: [], players: players, wordIds: ["w"], settings: settings) == nil)
         #expect(OnlineGameRules.initialState(teams: Table.teams, players: players, wordIds: [], settings: settings) == nil)
+    }
+
+    @Test("The named starting team plays first with its own explainer")
+    func startingTeam() throws {
+        let state = try #require(
+            OnlineGameRules.initialState(
+                teams: Table.teams,
+                players: Table.players,
+                wordIds: Table.words,
+                settings: GameSettings(),
+                startingTeamIndex: 1
+            )
+        )
+
+        #expect(state.currentTeamIndex == 1)
+        #expect(state.activePlayerId == "b1")
+    }
+
+    @Test("Without a starting team every team can be drawn")
+    func randomStartingTeam() {
+        let drawn = Set((0..<64).compactMap { _ in
+            OnlineGameRules.initialState(
+                teams: Table.teams,
+                players: Table.players,
+                wordIds: Table.words,
+                settings: GameSettings()
+            )?.currentTeamIndex
+        })
+
+        #expect(drawn == [0, 1])
     }
 }
 
