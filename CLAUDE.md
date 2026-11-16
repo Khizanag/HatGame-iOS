@@ -8,7 +8,7 @@ Hat Game — a SwiftUI party game (explain words to teammates against a timer, 3
 
 Stack: SwiftUI, `@Observable` (Observation framework, never `@ObservableObject`), Swift Concurrency. Bundle id `com.khizanag.hat-game`, Firebase project `hat-game-e050f`.
 
-Multiplatform: one target supporting iOS, macOS, and visionOS — deployment target 26.0 on all three (`TARGETED_DEVICE_FAMILY` 1,2,7). Platform differences are centralized in `Extensions/CrossPlatform.swift` (`#if os(...)` view shims — inline titles, edit mode, list styles); `HatGameApp` adds macOS window sizing (560×880 phone-like default, resizable) and a native Settings scene (Cmd-,). On macOS the game flows present as a `.page`-sized sheet (see `HatGame-Navigation/Sources/Navigation/NavigationView.swift`). `DEVELOPMENT_TEAM` is intentionally empty (the previous team id was wrong) — don't re-add one.
+Multiplatform: one target supporting iOS, macOS, and visionOS — deployment target 26.0 on all three (`TARGETED_DEVICE_FAMILY` 1,2,7). Platform differences are centralized in `Extensions/CrossPlatform.swift` (`#if os(...)` view shims — inline titles, edit mode, list styles); `HatGameApp` adds macOS window sizing (560×880 phone-like default, resizable) and a native Settings scene (Cmd-,). On macOS the game flows present as a `.page`-sized sheet (see `HatGame-Navigation/Sources/Navigation/FlowNavigationView.swift`). `DEVELOPMENT_TEAM` is intentionally empty (the previous team id was wrong) — don't re-add one.
 
 Canonical game rules (teams, the hat, 3 rounds, turns, scoring, the three modes) are documented in `docs/` — read `docs/README.md` first when behavior questions come up.
 
