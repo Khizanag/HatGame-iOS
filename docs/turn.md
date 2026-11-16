@@ -13,11 +13,11 @@ Before a team's turn, one player is designated the **explainer**; the rest are *
 
 - A turn is timed. The default length is **60 seconds** (configurable; see [Setup](setup.md#3-timer-settings)).
 - A turn normally starts with a **full** timer. The exception: a team that ended the previous round by emptying the hat resumes with its **carried-over leftover time** for its first turn of the new round. See [The Three Rounds](rounds.md#carrying-over-between-rounds).
-- In the final seconds the device gives **urgency haptics**, and a sound plays when time runs out.
+- In the final seconds the device gives **urgency haptics**, and a sound plays when time runs out. VoiceOver announces the time left at 10 and 5 seconds, and announces when time is up.
 - If the app leaves the foreground mid-turn — backgrounded, or interrupted by Control Center, a notification, or a call banner — the turn **auto-pauses** so the clock can't run down unseen; the player resumes manually.
 - The clock ends the turn exactly when its time is used up; the countdown never sits on 0 while the turn is still running.
 - A game in progress is saved as it goes. If the app is closed, Home offers to **resume** it; an interrupted turn comes back paused with the time it had left. Starting a new game while one is saved asks first, since it replaces the save.
-- Between turns (Next Team, Turn Results), **End Game** abandons the game after a confirmation; it can't be resumed.
+- Between turns (Next Team, Turn Results), **End Game** asks what to do: **Save and Exit** returns Home with the game saved, so it can be resumed; **End Game** abandons it for good.
 
 ## Playing the word
 
@@ -25,8 +25,10 @@ The explainer sees the **current word** and conveys it to the guessers under the
 
 - **Got It** — the word was guessed. It scores **one point** for the team, leaves the hat, and the next random word from the hat appears.
 - **Skip** — pass on the current word (see [Skipping](#skipping)).
-- **Pause / Resume** — stop and restart the clock.
+- **Pause / Resume** — stop and restart the clock. On a hardware keyboard, Escape pauses and resumes.
 - **Give Up** — end the turn early (after a confirmation). The clock pauses while the confirmation is up, so time can't run out behind it. Giving up is treated the same as the timer running out.
+
+With VoiceOver, Got It and Skip are named actions on the word card; double-tapping the card does nothing, so a word is never scored by accident.
 
 The screen also shows the active team, the round, how many words have been guessed this turn, the countdown, and overall progress through the hat.
 
