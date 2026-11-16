@@ -46,16 +46,8 @@ struct OnlineTeamCreationView: View {
                     keyboardToolbar
                 }
                 .setDefaultBackground()
-                .alert("common.error", isPresented: errorBinding) {
-                    Button("common.gotIt") { error = nil }
-                } message: {
-                    Text(error?.localizedDescription ?? "")
-                }
+                .errorAlert($error)
         }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
     }
 }
 

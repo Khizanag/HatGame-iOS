@@ -53,7 +53,7 @@ private extension OnlineMenuView {
                     .font(DesignBook.IconFont.medium)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .accessibilityHidden(true)
-                Text(NetworkingError.firebaseNotConfigured.localizedDescription)
+                Text(localized("online.unavailable"))
                     .font(DesignBook.Font.body)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .frame(maxWidth: .infinity, alignment: .leading)

@@ -70,11 +70,7 @@ struct OnlineNextTeamView: View {
     var body: some View {
         content
             .setDefaultStyle()
-            .alert(localized("common.error"), isPresented: errorBinding) {
-                Button(localized("common.gotIt")) { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
+            .errorAlert($error)
     }
 }
 
@@ -291,10 +287,6 @@ private extension OnlineNextTeamView {
 
 // MARK: - Actions
 private extension OnlineNextTeamView {
-    var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
-    }
-
     func startTurn() {
         DesignBook.Haptics.confirm()
         perform(.startTurn)

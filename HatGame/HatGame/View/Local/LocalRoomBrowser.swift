@@ -38,20 +38,12 @@ struct LocalRoomBrowser: View {
         content
             .navigationTitle(localized("local.browser.title"))
             .setDefaultStyle()
-            .alert("common.error", isPresented: errorBinding) {
-                Button("common.gotIt") { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
+            .errorAlert($error, transport: .nearby)
             .onAppear {
                 roomManager.startBrowsingForHosts()
                 focusedField = .name
             }
             .onDisappear { roomManager.stopBrowsingForHosts() }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
     }
 }
 

@@ -58,19 +58,11 @@ struct LocalHostSetupView: View {
                     .withFooterGradient()
             }
         }
-        .alert("common.error", isPresented: errorBinding) {
-            Button("common.gotIt") { error = nil }
-        } message: {
-            Text(error?.localizedDescription ?? "")
-        }
+        .errorAlert($error, transport: .nearby)
         .onAppear {
             focusedField = .name
             isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
         }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
     }
 }
 

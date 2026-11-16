@@ -75,15 +75,7 @@ struct OnlinePlayView: View {
             } message: {
                 Text(localized("game.giveUp.confirmationMessage"))
             }
-            .alert(localized("common.error"), isPresented: errorBinding) {
-                Button(localized("common.gotIt")) { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+            .errorAlert($error)
     }
 }
 

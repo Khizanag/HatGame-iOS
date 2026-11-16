@@ -37,15 +37,7 @@ struct OnlineWordInputView: View {
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .onAppear { isFieldFocused = true }
-            .alert("common.error", isPresented: errorBinding) {
-                Button("common.gotIt") { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+            .errorAlert($error)
     }
 }
 

@@ -676,6 +676,278 @@
         }
       }
     },
+    "error.connection.timedOut" : {
+      "comment" : "Error message when an online request takes too long — usually a weak or missing internet connection.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The connection is too slow right now. Check your internet and try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "კავშირი ახლა ძალიან ნელია. შეამოწმე ინტერნეტი და სცადე თავიდან."
+          }
+        }
+      }
+    },
+    "error.generic" : {
+      "comment" : "Fallback error message when a multiplayer action fails for an unexpected reason.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong. Please try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რაღაც შეცდომა მოხდა. გთხოვ, სცადე თავიდან."
+          }
+        }
+      }
+    },
+    "error.nearby.declined" : {
+      "comment" : "Error message when the nearby host's device refused the connection request.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host's device didn't accept the connection. Try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მასპინძლის მოწყობილობამ კავშირი არ მიიღო. სცადე თავიდან."
+          }
+        }
+      }
+    },
+    "error.nearby.notBrowsing" : {
+      "comment" : "Error message when the player tries to join a nearby room before the app is looking for rooms.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Look for nearby rooms first, then pick one to join."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჯერ ახლომდებარე ოთახები მოძებნე, შემდეგ აირჩიე, რომელშიც შეხვალ."
+          }
+        }
+      }
+    },
+    "error.nearby.refused" : {
+      "comment" : "Message shown when the nearby host refused to let this device into the room.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host didn't let this device join the room."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მასპინძელმა ამ მოწყობილობას ოთახში შესვლის ნება არ მისცა."
+          }
+        }
+      }
+    },
+    "error.nearby.timedOut" : {
+      "comment" : "Error message when connecting to a nearby host took too long.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't reach the host. Make sure you're both on the same Wi-Fi or have Bluetooth on."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მასპინძელს ვერ დავუკავშირდით. დარწმუნდი, რომ ერთსა და იმავე Wi-Fi-ზე ხართ ან Bluetooth ჩართული გაქვთ."
+          }
+        }
+      }
+    },
+    "error.nearby.unsupportedAction" : {
+      "comment" : "Error message when an action that only exists in online play is attempted in nearby play.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This isn't available when playing nearby."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ეს ახლომდებარე თამაშში მიუწვდომელია."
+          }
+        }
+      }
+    },
+    "error.room.createFailed" : {
+      "comment" : "Error message when the app could not create a new online room.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn't create a room right now. Try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახის შექმნა ახლა ვერ მოხერხდა. სცადე თავიდან."
+          }
+        }
+      }
+    },
+    "error.room.dataInvalid" : {
+      "comment" : "Error message when the room's data could not be read or written.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something is wrong with this room's data. Try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ამ ოთახის მონაცემებში რაღაც შეცდომაა. სცადე თავიდან."
+          }
+        }
+      }
+    },
+    "error.room.full" : {
+      "comment" : "Error message when the room has no space for another player.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This room is full."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ეს ოთახი სავსეა."
+          }
+        }
+      }
+    },
+    "error.room.gameStarted" : {
+      "comment" : "Error message when joining a room whose game has already started.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This game has already started, so new players can't join."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაში უკვე დაწყებულია, ამიტომ ახალი მოთამაშეები ვეღარ შემოვლენ."
+          }
+        }
+      }
+    },
+    "error.room.hostOnly" : {
+      "comment" : "Error message when a non-host player attempts a host-only action.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the host can do that."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ამის გაკეთება მხოლოდ მასპინძელს შეუძლია."
+          }
+        }
+      }
+    },
+    "error.room.notEnoughPlayers" : {
+      "comment" : "Error message when the host starts the game while a team has fewer than 2 players.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every team needs at least 2 players to start."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დასაწყებად თითოეულ გუნდში მინიმუმ 2 მოთამაშე უნდა იყოს."
+          }
+        }
+      }
+    },
+    "error.room.notEnoughTeams" : {
+      "comment" : "Error message when the host starts the game with fewer than 2 teams.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add at least 2 teams to start."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დასაწყებად დაამატე მინიმუმ 2 გუნდი."
+          }
+        }
+      }
+    },
+    "error.room.notFound" : {
+      "comment" : "Error message when the room code doesn't match a room, or the room has closed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "That room doesn't exist or has closed. Check the code and try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ასეთი ოთახი არ არსებობს ან უკვე დაიხურა. გადაამოწმე კოდი და სცადე თავიდან."
+          }
+        }
+      }
+    },
+    "error.room.teamFull" : {
+      "comment" : "Error message when the team has no space for another player.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This team is full."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ეს გუნდი სავსეა."
+          }
+        }
+      }
+    },
     "feedback.category.bug" : {
       "comment" : "Feedback category: a bug report.",
       "localizations" : {
@@ -3038,6 +3310,23 @@
         }
       }
     },
+    "local.session.gameInProgress" : {
+      "comment" : "Message shown when the nearby host refused this device because the game has already started.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host's game has already started, so new players can't join."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მასპინძელმა თამაში უკვე დაიწყო, ამიტომ ახალი მოთამაშეები ვეღარ შემოვლენ."
+          }
+        }
+      }
+    },
     "local.session.hostLost" : {
       "comment" : "Alert title shown to a guest after losing connection to the host.",
       "localizations" : {
@@ -3085,6 +3374,40 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "მასპინძლის მოწყობილობა აღარაა მისაწვდომი. ოთახი დაიხურა."
+          }
+        }
+      }
+    },
+    "local.session.versionMismatch" : {
+      "comment" : "Message shown when this device and the nearby host run different versions of the app.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your device and the host's are running different versions of Hat Game. Update both to the latest version and try again."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შენს და მასპინძლის მოწყობილობებზე Hat Game-ის სხვადასხვა ვერსიაა. განაახლეთ ორივე უახლეს ვერსიამდე და სცადეთ თავიდან."
+          }
+        }
+      }
+    },
+    "local.session.versionMismatch.title" : {
+      "comment" : "Title shown when this device and the nearby host run different versions of the app.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Different app versions"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აპის სხვადასხვა ვერსია"
           }
         }
       }
@@ -3204,6 +3527,40 @@
         }
       }
     },
+    "online.session.closed" : {
+      "comment" : "Title shown when the online room this device was in has closed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Room closed"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახი დაიხურა"
+          }
+        }
+      }
+    },
+    "online.session.closed.message" : {
+      "comment" : "Message shown when the online room this device was in has closed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The host closed this room, or it's no longer available."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მასპინძელმა ეს ოთახი დახურა, ან ის აღარ არის ხელმისაწვდომი."
+          }
+        }
+      }
+    },
     "online.session.joining" : {
       "comment" : "Title shown while the Firebase RTDB room observer fetches the first snapshot.",
       "localizations" : {
@@ -3234,6 +3591,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ვსინქრონიზდები ჰოსტთან."
+          }
+        }
+      }
+    },
+    "online.startWithSubmittedWords" : {
+      "comment" : "Host button on the waiting screen: start the game with the words submitted so far instead of waiting for everyone.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start with Submitted Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დაწყება გაგზავნილი სიტყვებით"
           }
         }
       }
@@ -3284,6 +3658,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ბეჭდავს…"
+          }
+        }
+      }
+    },
+    "online.unavailable" : {
+      "comment" : "Notice on the online menu when this build of the app cannot reach the online service.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Online play isn't available in this version of the app. Play Nearby still works."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ონლაინ თამაში აპის ამ ვერსიაში მიუწვდომელია. ახლომდებარე თამაში კვლავ მუშაობს."
+          }
+        }
+      }
+    },
+    "online.unsupported.message" : {
+      "comment" : "Message shown when an online room was created by a newer version of the app.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This room was created by a newer version of Hat Game. Update the app to join it."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ეს ოთახი Hat Game-ის უფრო ახალი ვერსიით შეიქმნა. მასში შესასვლელად განაახლე აპი."
+          }
+        }
+      }
+    },
+    "online.unsupported.title" : {
+      "comment" : "Title shown when an online room was created by a newer version of the app.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Update required"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საჭიროა განახლება"
           }
         }
       }

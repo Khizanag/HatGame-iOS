@@ -34,7 +34,7 @@ struct OnlineWaitingView: View {
             playerStatusCard
             Spacer()
             if let onStartWithSubmittedWords {
-                PrimaryButton(title: localized("lobby.startGame"), icon: "play.fill") {
+                PrimaryButton(title: localized("online.startWithSubmittedWords"), icon: "play.fill") {
                     onStartWithSubmittedWords()
                 }
             }

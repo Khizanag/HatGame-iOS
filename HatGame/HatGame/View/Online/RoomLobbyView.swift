@@ -45,15 +45,7 @@ struct RoomLobbyView: View {
             } message: {
                 Text(isHost ? localized("lobby.leave.hostMessage") : localized("lobby.leave.guestMessage"))
             }
-            .alert("common.error", isPresented: errorBinding) {
-                Button("common.gotIt") { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
+            .errorAlert($error)
     }
 }
 

@@ -93,8 +93,8 @@ private extension OnlineGameFlowView {
     var closedState: some View {
         OnlineNoticeView(
             symbol: "door.left.hand.closed",
-            title: localized("local.session.hostLost"),
-            message: localized("local.session.hostLost.message"),
+            title: localized("online.session.closed"),
+            message: localized("online.session.closed.message"),
             actionTitle: localized("local.session.hostLost.action"),
             action: leaveToMenu
         )
@@ -104,8 +104,8 @@ private extension OnlineGameFlowView {
     var unsupportedState: some View {
         OnlineNoticeView(
             symbol: "arrow.down.app",
-            title: localized("common.error"),
-            message: NetworkingError.unsupportedVersion.localizedDescription,
+            title: localized("online.unsupported.title"),
+            message: localized("online.unsupported.message"),
             actionTitle: localized("local.session.hostLost.action"),
             action: leaveToMenu
         )

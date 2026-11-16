@@ -92,12 +92,13 @@ private extension LocalSessionView {
         }
     }
 
-    /// The host runs a newer build whose snapshot this one can't read.
+    /// This device and the host run different protocol or data versions;
+    /// either one may be the older build.
     var unsupportedState: some View {
         OnlineNoticeView(
             symbol: "arrow.down.app",
-            title: localized("common.error"),
-            message: NetworkingError.unsupportedVersion.localizedDescription,
+            title: localized("local.session.versionMismatch.title"),
+            message: localized("local.session.versionMismatch"),
             actionTitle: localized("local.session.hostLost.action"),
             action: leaveSession
         )
@@ -108,9 +109,8 @@ private extension LocalSessionView {
         OnlineNoticeView(
             symbol: "door.left.hand.closed",
             title: localized("local.session.hostLost"),
-            message: localRoomManager.rejection == .gameInProgress
-                ? RoomError.gameAlreadyStarted.localizedDescription
-                : localized("local.session.hostLost.message"),
+            message: localRoomManager.rejection.map { NetworkErrorMessage.message(for: $0) }
+                ?? localized("local.session.hostLost.message"),
             actionTitle: localized("local.session.hostLost.action"),
             action: leaveSession
         )

@@ -69,11 +69,7 @@ struct OnlineTurnResultsView: View {
                     hasCelebrated = true
                 }
             }
-            .alert(localized("common.error"), isPresented: errorBinding) {
-                Button(localized("common.gotIt")) { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
+            .errorAlert($error)
     }
 }
 
@@ -207,10 +203,6 @@ private extension OnlineTurnResultsView {
 
 // MARK: - Actions
 private extension OnlineTurnResultsView {
-    var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
-    }
-
     func continueFlow() {
         guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true

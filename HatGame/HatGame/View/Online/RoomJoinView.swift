@@ -36,16 +36,8 @@ struct RoomJoinView: View {
             .navigationTitle(localized("joinRoom.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
-            .alert("common.error", isPresented: errorBinding) {
-                Button("common.gotIt") { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
+            .errorAlert($error)
             .onAppear { focusedField = .code }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
     }
 }
 

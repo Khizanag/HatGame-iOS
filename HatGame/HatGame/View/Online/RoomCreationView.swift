@@ -38,19 +38,11 @@ struct RoomCreationView: View {
             .navigationTitle(localized("createRoom.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
-            .alert("common.error", isPresented: errorBinding) {
-                Button("common.gotIt") { error = nil }
-            } message: {
-                Text(error?.localizedDescription ?? "")
-            }
+            .errorAlert($error)
             .onAppear {
                 focusedField = .name
                 isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
             }
-    }
-
-    private var errorBinding: Binding<Bool> {
-        Binding(get: { error != nil }, set: { if !$0 { error = nil } })
     }
 }
 
