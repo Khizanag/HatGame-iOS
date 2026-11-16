@@ -18,6 +18,11 @@ struct RoomJoinView: View {
 
     @AppStorage(PlayerNameStorage.key) private var playerName: String = ""
     @State private var roomCode: String = ""
+    /// The last edit typed characters a code can't contain, which were dropped.
+    @State private var droppedCharacters: Bool = false
+    /// The cleaned value written back by `sanitizeCode`, so its own change
+    /// callback doesn't count as a new keystroke.
+    @State private var sanitizedWrite: String?
     @State private var isJoining: Bool = false
     @State private var error: Error?
 
@@ -79,26 +84,30 @@ private extension RoomJoinView {
 
                 TextField(localized("joinRoom.enterCode"), text: $roomCode)
                     .multilineTextAlignment(.center)
-                    .textCase(.uppercase)
                     .focused($focusedField, equals: .code)
                     .hatFieldStyle(
                         label: localized("joinRoom.roomCode"),
                         font: DesignBook.Font.scaled(32, relativeTo: .largeTitle, weight: .bold, design: .monospaced),
+                        submitLabel: .next,
                         keyboard: .asciiCapable,
                         disablesAutocorrection: true,
                         capitalization: .characters
                     ) { focusedField = .code }
+                    .onSubmit { focusedField = .name }
                     .onChange(of: roomCode) { _, newValue in
-                        let next = RoomCode.sanitized(newValue)
-                        if next != roomCode { roomCode = next }
-                        if RoomCode.isValid(next) {
-                            focusedField = .name
-                        }
+                        sanitizeCode(newValue)
                     }
 
-                Text(localized("joinRoom.codeHint"))
-                    .font(DesignBook.Font.subheadline)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                if droppedCharacters {
+                    Label(localized("joinRoom.codeCharactersHint"), systemImage: "exclamationmark.circle")
+                        .font(DesignBook.Font.subheadline)
+                        .foregroundStyle(DesignBook.Color.Status.warning)
+                        .accessibilityIdentifier("joinRoom.codeCharactersHint")
+                } else {
+                    Text(localized("joinRoom.codeHint"))
+                        .font(DesignBook.Font.subheadline)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                }
             }
         }
     }
@@ -136,6 +145,32 @@ private extension RoomJoinView {
 
 // MARK: - Actions
 private extension RoomJoinView {
+    /// Keeps only code characters. When typed characters are dropped (a
+    /// look-alike such as O or 1, punctuation, another script) the field
+    /// says why instead of silently ignoring the keystroke.
+    func sanitizeCode(_ newValue: String) {
+        if let sanitizedWrite, sanitizedWrite == newValue {
+            self.sanitizedWrite = nil
+            return
+        }
+        let next = RoomCode.sanitized(newValue)
+        let invalidCount = newValue.uppercased().filter { !RoomCode.alphabet.contains($0) }.count
+        let didDrop = invalidCount > 0
+        if didDrop != droppedCharacters {
+            droppedCharacters = didDrop
+            if didDrop {
+                AccessibilityNotification.Announcement(localized("joinRoom.codeCharactersHint")).post()
+            }
+        }
+        if next != newValue {
+            sanitizedWrite = next
+            roomCode = next
+        }
+        if RoomCode.isValid(next) {
+            focusedField = .name
+        }
+    }
+
     func joinRoom() {
         guard canJoin else { return }
         isJoining = true

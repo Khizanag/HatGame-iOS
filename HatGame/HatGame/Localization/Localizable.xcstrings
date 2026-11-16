@@ -355,6 +355,23 @@
         }
       }
     },
+    "joinRoom.codeCharactersHint" : {
+      "comment" : "Shown under the room code field when typed characters were dropped because a code cannot contain them.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Codes use only letters and the digits 2–9 — no I, O, 0, or 1."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "კოდში მხოლოდ ლათინური ასოები და ციფრები 2–9 გამოიყენება, I-ს, O-ს, 0-ისა და 1-ის გარეშე."
+          }
+        }
+      }
+    },
     "lobby.away" : {
       "comment" : "Shown next to a lobby player whose device lost connection or closed the app.",
       "localizations" : {
