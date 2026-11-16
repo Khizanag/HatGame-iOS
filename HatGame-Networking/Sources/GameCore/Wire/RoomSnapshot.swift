@@ -17,9 +17,15 @@ public enum RoomSnapshot: Sendable {
     case unreadable
 
     /// Classifies the raw value stored at `rooms/<id>`; `nil` or `NSNull`
-    /// means nothing is there.
+    /// means nothing is there. A node without an `id` is not a room either:
+    /// it is what a late leaf write (a queued presence flag) leaves in the
+    /// local cache after the room itself was deleted.
     public init(storedValue value: Any?) {
         guard let value, !(value is NSNull) else {
+            self = .missing
+            return
+        }
+        guard (value as? [String: Any])?["id"] != nil else {
             self = .missing
             return
         }

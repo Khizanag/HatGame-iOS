@@ -215,6 +215,11 @@ open class RoomManager {
             isConnected = false
             connectionState = .closed
             stopPresence(markOffline: false)
+            // The room is gone for good; stop listening at its path.
+            if let roomObserverHandle {
+                firebaseService.removeObserver(handle: roomObserverHandle, forRoomId: id)
+                self.roomObserverHandle = nil
+            }
         case .unreadable:
             isConnected = false
             connectionState = .unsupported

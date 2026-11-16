@@ -113,6 +113,16 @@ struct RoomSnapshotTests {
         #expect(room.id == "ABCDEF")
     }
 
+    @Test("A node left by a late presence write after deletion is missing")
+    func roomWithoutIdIsMissing() {
+        let stored: [String: Any] = ["players": ["gone": ["isConnected": false]]]
+
+        guard case .missing = RoomSnapshot(storedValue: stored) else {
+            Issue.record("Expected .missing")
+            return
+        }
+    }
+
     @Test("A malformed room is unreadable")
     func malformedRoom() {
         let stored: [String: Any] = ["id": "ABCDEF", "hostId": 7, "status": "waiting"]
