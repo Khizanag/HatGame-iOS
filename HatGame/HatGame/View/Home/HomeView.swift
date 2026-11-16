@@ -106,6 +106,7 @@ private extension HomeView {
                     .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignBook.Spacing.lg)
 
                 Text(localized("home.subtitle"))
                     .font(DesignBook.Font.body)
