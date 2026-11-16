@@ -35,7 +35,6 @@ struct RoomJoinView: View {
         content
             .navigationTitle(localized("joinRoom.title"))
             .setDefaultStyle()
-            .toolbar { keyboardToolbar }
             .errorAlert($error)
             .onAppear { focusedField = .code }
     }
@@ -59,13 +58,11 @@ private extension RoomJoinView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil || Platform.isMac {
-                joinButton
-                    .paddingHorizontalDefault()
-                    .padding(.top, DesignBook.Spacing.md)
-                    .padding(.bottom, DesignBook.Spacing.sm)
-                    .withFooterGradient()
-            }
+            joinButton
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.sm)
+                .withFooterGradient()
         }
     }
 
@@ -136,19 +133,6 @@ private extension RoomJoinView {
                 .opacity(canJoin ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                 .keyboardShortcut(.defaultAction)
             }
-        }
-    }
-
-    @ToolbarContentBuilder
-    var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboardAccessory) {
-            Spacer()
-            Button(action: joinRoom) {
-                Label(localized("joinRoom.join"), systemImage: "arrow.right.circle.fill")
-                    .labelStyle(.titleAndIcon)
-                    .fontWeight(.semibold)
-            }
-            .disabled(!canJoin)
         }
     }
 }

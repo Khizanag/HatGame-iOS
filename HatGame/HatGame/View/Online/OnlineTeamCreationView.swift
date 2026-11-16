@@ -43,7 +43,6 @@ struct OnlineTeamCreationView: View {
                         }
                         .keyboardShortcut(.cancelAction)
                     }
-                    keyboardToolbar
                 }
                 .setDefaultBackground()
                 .errorAlert($error)
@@ -64,13 +63,11 @@ private extension OnlineTeamCreationView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil || Platform.isMac {
-                primaryButton
-                    .paddingHorizontalDefault()
-                    .padding(.top, DesignBook.Spacing.md)
-                    .padding(.bottom, DesignBook.Spacing.sm)
-                    .withFooterGradient()
-            }
+            primaryButton
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.sm)
+                .withFooterGradient()
         }
         .onAppear {
             focusedField = .name
@@ -197,19 +194,6 @@ private extension OnlineTeamCreationView {
                 .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                 .keyboardShortcut(.defaultAction)
             }
-        }
-    }
-
-    @ToolbarContentBuilder
-    var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboardAccessory) {
-            Spacer()
-            Button(action: createTeam) {
-                Label(localized("createTeam.create"), systemImage: "plus.circle.fill")
-                    .labelStyle(.titleAndIcon)
-                    .fontWeight(.semibold)
-            }
-            .disabled(!canCreate)
         }
     }
 }

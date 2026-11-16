@@ -10,8 +10,9 @@ import Networking
 import SwiftUI
 
 /// The host's room form shared by online and nearby play: a hero, the
-/// player's name, the game settings, and the create button, which moves
-/// into the keyboard toolbar while the name field has focus.
+/// player's name, the game settings, and a create button pinned to the
+/// bottom — above the keyboard while typing — that stays disabled until a
+/// name is entered.
 struct RoomSetupForm<Hero: View>: View {
     private enum Field: Hashable { case name }
 
@@ -48,15 +49,12 @@ struct RoomSetupForm<Hero: View>: View {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .safeAreaInset(edge: .bottom) {
-            if focusedField == nil || Platform.isMac {
-                submitButton
-                    .paddingHorizontalDefault()
-                    .padding(.top, DesignBook.Spacing.md)
-                    .padding(.bottom, DesignBook.Spacing.sm)
-                    .withFooterGradient()
-            }
+            submitButton
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.md)
+                .padding(.bottom, DesignBook.Spacing.sm)
+                .withFooterGradient()
         }
-        .toolbar { keyboardToolbar }
         .onAppear { focusedField = .name }
     }
 }
@@ -126,19 +124,6 @@ private extension RoomSetupForm {
                     .opacity(canSubmit ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                     .keyboardShortcut(.defaultAction)
             }
-        }
-    }
-
-    @ToolbarContentBuilder
-    var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboardAccessory) {
-            Spacer()
-            Button(action: submit) {
-                Label(actionTitle, systemImage: actionIcon)
-                    .labelStyle(.titleAndIcon)
-                    .fontWeight(.semibold)
-            }
-            .disabled(!canSubmit)
         }
     }
 

@@ -18,6 +18,10 @@ struct PlayerNameCard<Field: Hashable>: View {
     var submitLabel: SubmitLabel = .done
     let onSubmit: () -> Void
 
+    private var isNameMissing: Bool {
+        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -39,6 +43,12 @@ struct PlayerNameCard<Field: Hashable>: View {
                     .focused(focus, equals: field)
                     .submitLabel(submitLabel)
                     .onSubmit(onSubmit)
+                if isNameMissing {
+                    Label(localized("multiplayer.nameRequired"), systemImage: "info.circle")
+                        .font(DesignBook.Font.caption)
+                        .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .accessibilityIdentifier("playerName.requiredHint")
+                }
             }
         }
     }
