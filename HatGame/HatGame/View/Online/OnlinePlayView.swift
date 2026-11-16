@@ -155,7 +155,7 @@ private extension OnlinePlayView {
             .id(word.id)
             .transition(
                 .asymmetric(
-                    insertion: .opacity.combined(with: .scale(scale: 0.92)),
+                    insertion: reduceMotion ? .opacity : .opacity.combined(with: .scale(scale: 0.92)),
                     removal: .opacity
                 )
             )

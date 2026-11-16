@@ -83,7 +83,7 @@ private extension OnlineResultsView {
                     // Trophy glyph sits on the celebration gradient disc.
                     // swiftlint:disable:next no_raw_foreground_white_black
                     .foregroundStyle(.white)
-                    .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: hasCelebrated)
+                    .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: !reduceMotion && hasCelebrated)
             }
             .accessibilityHidden(true)
 

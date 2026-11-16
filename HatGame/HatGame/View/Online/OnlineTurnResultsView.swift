@@ -14,6 +14,7 @@ struct OnlineTurnResultsView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
     @Environment(GameSyncManager.self) private var gameSyncManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var isLoading: Bool = false
     @State private var hasCelebrated: Bool = false
@@ -63,11 +64,11 @@ struct OnlineTurnResultsView: View {
                     ConfettiView(isActive: true).ignoresSafeArea().allowsHitTesting(false)
                 }
             }
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.18) {
-                    DesignBook.Haptics.success()
-                    hasCelebrated = true
-                }
+            .task {
+                try? await Task.sleep(for: .milliseconds(180))
+                guard !Task.isCancelled else { return }
+                DesignBook.Haptics.success()
+                hasCelebrated = true
             }
             .errorAlert($error)
     }
@@ -103,7 +104,7 @@ private extension OnlineTurnResultsView {
                     // swiftlint:disable:next no_inline_font
                     .font(.system(size: 38, weight: .bold))
                     .foregroundStyle(DesignBook.Color.Status.success)
-                    .symbolEffect(.bounce, options: .nonRepeating, value: hasCelebrated)
+                    .symbolEffect(.bounce, options: .nonRepeating, value: !reduceMotion && hasCelebrated)
             }
             Text(localized("onlineTurnResults.title"))
                 .font(DesignBook.Font.largeTitle)

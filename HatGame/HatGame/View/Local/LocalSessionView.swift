@@ -48,8 +48,8 @@ struct LocalSessionView: View {
 
     var body: some View {
         content
-            .animation(DesignBook.Motion.smooth, value: roomStatus)
-            .animation(DesignBook.Motion.smooth, value: gamePhase)
+            .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: roomStatus)
+            .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: gamePhase)
             .task(id: setupStep) {
                 await OnlineGameSetup.run(setupStep, roomManager: roomManager, gameSyncManager: gameSyncManager)
             }
