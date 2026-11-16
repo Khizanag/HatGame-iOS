@@ -113,8 +113,10 @@ struct LocalSessionView: View {
 private extension LocalSessionView {
     @ViewBuilder
     var content: some View {
-        if room?.isSupported == false {
+        if localRoomManager.connectionState == .unsupported || room?.isSupported == false {
             unsupportedState.transition(.opacity)
+        } else if localRoomManager.connectionState == .closed {
+            closedState.transition(.opacity)
         } else {
             switch roomStatus {
             case .waiting, .setup:
@@ -137,6 +139,19 @@ private extension LocalSessionView {
             symbol: "arrow.down.app",
             title: localized("common.error"),
             message: NetworkingError.unsupportedVersion.localizedDescription,
+            actionTitle: localized("local.session.hostLost.action"),
+            action: leaveSession
+        )
+    }
+
+    /// The host refused this device, or never answered its hello.
+    var closedState: some View {
+        OnlineNoticeView(
+            symbol: "door.left.hand.closed",
+            title: localized("local.session.hostLost"),
+            message: localRoomManager.rejection == .gameInProgress
+                ? RoomError.gameAlreadyStarted.localizedDescription
+                : localized("local.session.hostLost.message"),
             actionTitle: localized("local.session.hostLost.action"),
             action: leaveSession
         )

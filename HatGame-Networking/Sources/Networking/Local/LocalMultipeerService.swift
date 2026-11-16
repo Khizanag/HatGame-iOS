@@ -49,6 +49,11 @@ public final class LocalMultipeerService: NSObject {
         public let displayName: String
         /// Optional metadata advertised by the host (e.g. host player name).
         public let discoveryInfo: [String: String]
+
+        /// False when the host runs a different nearby protocol version.
+        public var isCompatible: Bool {
+            LocalProtocol.isCompatible(discoveryInfo: discoveryInfo)
+        }
     }
 
     /// One in-flight `connect(to:)`; resolved exactly once by the peer's

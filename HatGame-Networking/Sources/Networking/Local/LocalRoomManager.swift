@@ -41,6 +41,8 @@ public final class LocalRoomManager: RoomManager {
     /// Browser-driven list of nearby rooms — populated when the local
     /// manager is in guest browsing mode (before `connectToHost` succeeds).
     public private(set) var discoveredHosts: [LocalMultipeerService.DiscoveredHost] = []
+    /// Guest-only. Why the host refused this device, once it has.
+    public private(set) var rejection: HelloRejection?
 
     private let service: LocalMultipeerService
     /// Map MC peer → playerId so we can route ClientActions back to the
@@ -96,6 +98,9 @@ public final class LocalRoomManager: RoomManager {
     /// once the peers are connected. The hello and the host's first snapshot
     /// follow from the `.connected` event.
     public func connectToHost(_ host: LocalMultipeerService.DiscoveredHost, playerName: String) async throws {
+        guard host.isCompatible else { throw NetworkingError.unsupportedVersion }
+        connectionState = .joining
+        rejection = nil
         let player = OnlinePlayer(deviceId: deviceId, name: playerName)
         self.localPlayer = player
         self.currentPlayerId = player.id
@@ -107,6 +112,7 @@ public final class LocalRoomManager: RoomManager {
             self.localPlayer = nil
             self.currentPlayerId = nil
             self.hostPeerID = nil
+            connectionState = .idle
             throw error
         }
         service.stopBrowsing()
@@ -133,7 +139,11 @@ public final class LocalRoomManager: RoomManager {
         self.room = room
         self.isConnected = true
 
-        service.startHosting(discoveryInfo: ["host": hostName])
+        connectionState = .live
+        service.startHosting(discoveryInfo: [
+            "host": hostName,
+            LocalProtocol.discoveryKey: String(LocalProtocol.version),
+        ])
         return room.id
     }
 
@@ -187,6 +197,7 @@ public final class LocalRoomManager: RoomManager {
         currentPlayerId = nil
         localPlayer = nil
         isConnected = false
+        connectionState = .idle
         peerToPlayerId.removeAll()
         hostPeerID = nil
     }
@@ -301,7 +312,7 @@ private extension LocalRoomManager {
             // Hosts wait for helloFromGuest before adding the peer.
             guard !isLocalHost, peer == hostPeerID else { return }
             if let player = localPlayer {
-                service.send(.helloFromGuest(player), to: [peer])
+                service.send(.helloFromGuest(player, protocolVersion: LocalProtocol.version), to: [peer])
             }
             isConnected = true
         case .notConnected:
@@ -325,11 +336,17 @@ private extension LocalRoomManager {
             guard !isLocalHost, peer == hostPeerID else { return }
             self.room = snapshot
             self.isConnected = true
+            connectionState = snapshot.isSupported ? .live : .unsupported
         case let .wordsSnapshot(snapshot):
             guard !isLocalHost, peer == hostPeerID else { return }
             self.words = snapshot
-        case let .helloFromGuest(player):
-            admitGuest(player, fromPeer: peer)
+        case let .helloFromGuest(player, protocolVersion):
+            admitGuest(player, protocolVersion: protocolVersion, fromPeer: peer)
+        case let .helloRejected(reason):
+            guard !isLocalHost, peer == hostPeerID else { return }
+            logger.info("Host refused this guest: \(reason.rawValue, privacy: .public)")
+            rejection = reason
+            connectionState = reason == .unsupportedVersion ? .unsupported : .closed
         case let .clientAction(action):
             guard isLocalHost, let playerId = peerToPlayerId[peer] else { return }
             switch action {
@@ -345,12 +362,17 @@ private extension LocalRoomManager {
     /// player it announced: the lobby must be open and the id unused, so a
     /// guest cannot claim the host's (or anyone's) id, and one peer cannot
     /// register twice.
-    func admitGuest(_ player: OnlinePlayer, fromPeer peer: MCPeerID) {
-        guard isLocalHost,
-              peerToPlayerId[peer] == nil,
-              let room,
-              let next = RoomRules.addPlayer(player, to: room) else {
+    func admitGuest(_ player: OnlinePlayer, protocolVersion: Int, fromPeer peer: MCPeerID) {
+        guard isLocalHost else { return }
+        guard LocalProtocol.isCompatible(protocolVersion) else {
+            logger.info("Rejected hello on protocol \(protocolVersion) from \(peer.displayName, privacy: .public)")
+            service.send(.helloRejected(.unsupportedVersion), to: [peer])
+            return
+        }
+        guard peerToPlayerId[peer] == nil, let room else { return }
+        guard let next = RoomRules.addPlayer(player, to: room) else {
             logger.info("Rejected hello from \(peer.displayName, privacy: .public)")
+            service.send(.helloRejected(room.status.isLobby ? .refused : .gameInProgress), to: [peer])
             return
         }
         peerToPlayerId[peer] = player.id
