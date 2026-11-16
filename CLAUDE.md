@@ -90,8 +90,19 @@ This project predates / diverges from the generic personal-org house pattern. **
 
 - **Navigation:** never `NavigationLink`; never `.navigationDestination(for:)` outside the flow views' own `NavigationStack`. Navigate with `navigator.push(.somePage)` / `navigator.present(...)`, where pages are the `Page` static factories. (rules: `no_navigation_link`, `no_navigation_destination`, `no_on_tap_gesture_navigation`)
 - **Design tokens:** use `DesignBook.*` (`DesignBook.Spacing.md`, `DesignBook.Color.Text.primary`, `DesignBook.Font.headline`, `DesignBook.Size.*`, also `Gradient`/`Shadow`/`Opacity`/`Motion`/`Haptics`). Never raw `.font(.system(size:))`, never raw `.white`/`.black` foreground/background. (rules: `no_inline_font`, `no_raw_*_white_black`)
+  - Font tokens are named for the text style they scale with (`title2` scales with `.title2`); display sizes are `displayLarge/Medium/Small`, plus `heroNumber`/`heroScore`/`timer`/`roomCode`.
+  - Contrast: every colorset ships Any, Dark, and High Contrast; text ≥ 4.5:1. Team colors never tint text directly — use `DesignBook.Color.teamText(for:)`; raw team colors are for fills, dots, and rings. Prominent buttons tint with `Status.successFill`/`errorFill`; `Status.success`/`warning`/`error` are for text and glyphs. `DesignBook.Contrast` has the math.
+- **Human Interface Guidelines (checked against the HIG on 2026-11-16 — keep it that way):**
+  - Bottom actions use `.actionBar { … }` (system `safeAreaBar` + soft scroll edge; inline at the end of content on macOS) with **at most two buttons**; tertiary actions go in the toolbar. Never a hand-rolled gradient or opaque footer.
+  - Modals close with `CloseToolbarItem { … }` (leading, `role: .close`, Esc); sheet forms confirm with `ConfirmToolbarItem(title:canConfirm:action:)` (trailing) — never a floating button over the form. No `.plain`/tinted/`foregroundStyle` toolbar items; actions a symbol can't carry (Give Up, End Game) are text items.
+  - Intentional exits confirm with `.confirmationDialog` and offer the non-destructive option (Save and Exit, Keep Editing); `.alert` is for unexpected conditions and `errorAlert` requires a specific `title:` — never "Error". Input that would be lost on close → `.interactiveDismissDisabled(hasChanges)` + discard confirmation.
+  - Text fields use `.hatFieldStyle(label:…)` (whole box tappable, ≥ 44 pt, real VoiceOver label, keyboard/content type). Validate on submit or focus-leave, not per keystroke. In-content icon buttons are ≥ 44 pt with a label that names the target.
+  - Multiplayer session pages hide the system back button; the only exit is the Leave control in `MultiplayerSessionView`, which confirms and calls `leaveRoom()`. Back must never leave a player silently in a room.
+  - Haptics are optional (`AppConfiguration.isHapticsEnabled`, mirrored to `DesignBook.Haptics.isEnabled`) and only mark game moments: Got It = confirm, Skip = soft, countdown = tick, time-up = warning, all guessed = success, destructive confirm = rigid. Never on system controls, navigation, or form submits.
+  - Georgian has no case: never `.textCase(.uppercase)` directly — use `eyebrowUppercase()`.
+  - Turn keyboard: → Got It, ← Skip, Esc pause/resume on single-device play (online turns have no pause; Esc there is Give Up). The in-app Language and Color Scheme settings deliberately duplicate system settings (one shared party device).
 - **View structure:** private view-returning `func`/computed `var` inside a `View` body get moved into a `private extension <ViewName>` block at the bottom of the file. Every `extension` is preceded by a `// MARK: -`. No empty line after a MARK or doc comment.
-- **Sheets:** never `.presentationDragIndicator(...)`.
+- **Sheets:** never `.presentationDragIndicator(...)` — the system shows the grabber on multi-detent sheets. View-only sheets offer `[.medium, .large]`.
 - **Misc:** trailing commas mandatory in multiline collections; no 3+ stacked unclosed `(` on one line; `Package.swift` URLs have no trailing `.git` and use `from:` not `.upToNextMajor(from:)`.
 
 ## Localization
