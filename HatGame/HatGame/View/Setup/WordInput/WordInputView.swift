@@ -169,16 +169,13 @@ private extension WordInputView {
 
     var wordTextField: some View {
         TextField(localized("wordInput.enterWord"), text: $currentWord)
-            .textFieldStyle(.plain)
-            .submitLabel(.next)
-            .autocapitalizeWords()
-            .autocorrectionDisabled()
-            .font(DesignBook.Font.body)
-            .foregroundStyle(DesignBook.Color.Text.primary)
-            .padding(DesignBook.Spacing.md)
-            .background(DesignBook.Color.Background.secondary)
-            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
             .focused($isWordFieldFocused)
+            .hatFieldStyle(
+                label: localized("textField.word"),
+                submitLabel: .next,
+                disablesAutocorrection: true,
+                capitalization: .words
+            ) { isWordFieldFocused = true }
             .onSubmit {
                 guard !isAddWordButtonDisabled else { return }
                 handleAddWord()

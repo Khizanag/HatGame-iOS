@@ -129,13 +129,10 @@ private extension TeamFormView {
                 TeamFormFieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
 
                 TextField(localized("teamForm.enterTeamName"), text: teamNameBinding)
-                    .textFieldStyle(.plain)
-                    .font(DesignBook.Font.title3)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused($focusedField, equals: .teamName)
+                    .hatFieldStyle(label: localized("teamForm.teamName"), font: DesignBook.Font.title3) {
+                        focusedField = .teamName
+                    }
                     .onSubmit { focusedField = nil }
 
                 if showNameSuggestions {
@@ -195,13 +192,12 @@ private extension TeamFormView {
                     set: { playerNames[index] = $0 }
                 )
             )
-            .textFieldStyle(.plain)
-            .font(DesignBook.Font.body)
-            .foregroundStyle(DesignBook.Color.Text.primary)
-            .padding(DesignBook.Spacing.md)
-            .background(DesignBook.Color.Background.secondary)
-            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
             .focused($focusedField, equals: .player(index))
+            .hatFieldStyle(
+                label: localized("teamForm.playerField \(index + 1)"),
+                contentType: .givenName,
+                disablesAutocorrection: true
+            ) { focusedField = .player(index) }
             .onSubmit {
                 let nextIndex = index + 1
                 focusedField = nextIndex < playerNames.count ? .player(nextIndex) : nil

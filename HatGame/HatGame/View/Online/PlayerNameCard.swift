@@ -34,14 +34,14 @@ struct PlayerNameCard<Field: Hashable>: View {
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 TextField(placeholder, text: $name)
-                    .textFieldStyle(.plain)
-                    .font(DesignBook.Font.title3)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused(focus, equals: field)
-                    .submitLabel(submitLabel)
+                    .hatFieldStyle(
+                        label: title,
+                        font: DesignBook.Font.title3,
+                        submitLabel: submitLabel,
+                        contentType: .givenName,
+                        disablesAutocorrection: true
+                    ) { focus.wrappedValue = field }
                     .onSubmit(onSubmit)
                 if isNameMissing {
                     Label(localized("multiplayer.nameRequired"), systemImage: "info.circle")

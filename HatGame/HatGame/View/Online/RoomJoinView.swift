@@ -78,17 +78,16 @@ private extension RoomJoinView {
                 }
 
                 TextField(localized("joinRoom.enterCode"), text: $roomCode)
-                    .textFieldStyle(.plain)
-                    .font(DesignBook.Font.scaled(32, relativeTo: .largeTitle, weight: .bold, design: .monospaced))
-                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                     .textCase(.uppercase)
-                    .autocorrectionDisabled()
-                    .autocapitalizeCharacters()
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused($focusedField, equals: .code)
+                    .hatFieldStyle(
+                        label: localized("joinRoom.roomCode"),
+                        font: DesignBook.Font.scaled(32, relativeTo: .largeTitle, weight: .bold, design: .monospaced),
+                        keyboard: .asciiCapable,
+                        disablesAutocorrection: true,
+                        capitalization: .characters
+                    ) { focusedField = .code }
                     .onChange(of: roomCode) { _, newValue in
                         let next = RoomCode.sanitized(newValue)
                         if next != roomCode { roomCode = next }

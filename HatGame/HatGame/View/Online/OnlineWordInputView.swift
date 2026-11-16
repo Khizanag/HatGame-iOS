@@ -154,13 +154,8 @@ private extension OnlineWordInputView {
     var textField: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
             TextField(localized("onlineWordInput.enterWord"), text: $currentWord)
-                .textFieldStyle(.plain)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-                .padding(DesignBook.Spacing.md)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                 .focused($isFieldFocused)
+                .hatFieldStyle(label: localized("textField.word")) { isFieldFocused = true }
                 .onSubmit { addWord() }
 
             Button { addWord() } label: {

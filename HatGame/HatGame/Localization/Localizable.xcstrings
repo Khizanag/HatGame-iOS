@@ -6149,6 +6149,23 @@
         }
       }
     },
+    "teamForm.playerField %lld" : {
+      "comment" : "VoiceOver label of a player name field in the team form; the number is its position.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Player %lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშე %lld"
+          }
+        }
+      }
+    },
     "teamForm.playerName" : {
       "comment" : "A placeholder text for a text field where a user can enter a player name.",
       "localizations" : {
@@ -6612,6 +6629,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "გუნდების მომზადება"
+          }
+        }
+      }
+    },
+    "textField.word" : {
+      "comment" : "VoiceOver label of the field where a player types a word for the hat.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Word"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვა"
           }
         }
       }

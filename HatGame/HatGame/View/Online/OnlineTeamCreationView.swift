@@ -80,13 +80,10 @@ private extension OnlineTeamCreationView {
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 TextField(localized("createTeam.enterName"), text: $teamName)
-                    .textFieldStyle(.plain)
-                    .font(DesignBook.Font.title3)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused($focusedField, equals: .name)
+                    .hatFieldStyle(label: localized("createTeam.teamName"), font: DesignBook.Font.title3) {
+                        focusedField = .name
+                    }
             }
         }
     }

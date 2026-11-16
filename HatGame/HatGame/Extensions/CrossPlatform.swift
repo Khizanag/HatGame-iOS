@@ -137,31 +137,6 @@ extension ToolbarItemPlacement {
     }
 }
 
-// MARK: - Text input autocapitalization
-extension View {
-    /// Uppercases typed characters on iOS and visionOS. A no-op on macOS, whose
-    /// text fields have no input autocapitalization.
-    @ViewBuilder
-    func autocapitalizeCharacters() -> some View {
-        #if !os(macOS)
-        textInputAutocapitalization(.characters)
-        #else
-        self
-        #endif
-    }
-
-    /// Capitalizes each typed word on iOS and visionOS. A no-op on macOS, whose
-    /// text fields have no input autocapitalization.
-    @ViewBuilder
-    func autocapitalizeWords() -> some View {
-        #if !os(macOS)
-        textInputAutocapitalization(.words)
-        #else
-        self
-        #endif
-    }
-}
-
 // MARK: - Platform
 enum Platform {
     /// True on native macOS. Use to branch UI that must differ at runtime —

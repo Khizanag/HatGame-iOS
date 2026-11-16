@@ -95,14 +95,9 @@ private extension FeedbackView {
                     text: $message,
                     axis: .vertical
                 )
-                .textFieldStyle(.plain)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
                 .lineLimit(5...12)
                 .focused($isMessageFocused)
-                .padding(DesignBook.Spacing.md)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
+                .hatFieldStyle(label: localized("feedback.message.title")) { isMessageFocused = true }
             }
         }
     }
