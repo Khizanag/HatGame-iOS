@@ -406,6 +406,23 @@
         }
       }
     },
+    "lobby.nearbyHint" : {
+      "comment" : "Nearby lobby card telling the host how guests find the room. “Find a Nearby Room” is the button title (local.join).",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Others see this room under Find a Nearby Room."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სხვები ამ ოთახს „ახლომდებარე ოთახის ძებნაში“ იპოვიან."
+          }
+        }
+      }
+    },
     "lobby.removePlayer" : {
       "comment" : "VoiceOver label of the host button that removes an away player from the lobby; the argument is the player name.",
       "localizations" : {

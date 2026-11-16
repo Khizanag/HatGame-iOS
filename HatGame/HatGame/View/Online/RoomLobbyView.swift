@@ -64,7 +64,12 @@ private extension RoomLobbyView {
     var content: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
-                roomCodeCard
+                switch transport {
+                case .online: roomCodeCard
+                // A nearby room's id is internal; guests find the room by
+                // browsing, so there is no code to share.
+                case .nearby: nearbyDiscoveryCard
+                }
                 playersCard
                 teamsSection
             }
@@ -128,6 +133,20 @@ private extension RoomLobbyView {
                 }
             }
             .frame(maxWidth: .infinity)
+        }
+    }
+
+    var nearbyDiscoveryCard: some View {
+        GameCard {
+            Label {
+                Text(localized("lobby.nearbyHint"))
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+            } icon: {
+                Image(systemName: "antenna.radiowaves.left.and.right")
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
