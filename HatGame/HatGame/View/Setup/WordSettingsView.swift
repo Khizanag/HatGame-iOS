@@ -49,6 +49,8 @@ private extension WordSettingsView {
                 Text(verbatim: "\(selectedWordCount)")
                     .font(DesignBook.Font.heroNumber)
                     .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
                     .contentTransition(.numericText(value: Double(selectedWordCount)))
                     .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedWordCount)
                     .foregroundStyle(DesignBook.Gradient.primary)

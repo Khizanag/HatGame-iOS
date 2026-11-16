@@ -51,11 +51,15 @@ private extension TimerSettingsView {
                 Text(verbatim: "\(selectedDuration)")
                     .font(DesignBook.Font.heroNumber)
                     .monospacedDigit()
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
                     .contentTransition(.numericText(value: Double(selectedDuration)))
                     .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedDuration)
                     .foregroundStyle(DesignBook.Gradient.primary)
                 Text(localized("timerSettings.unit.seconds"))
                     .font(DesignBook.Font.title)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.4)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
 
