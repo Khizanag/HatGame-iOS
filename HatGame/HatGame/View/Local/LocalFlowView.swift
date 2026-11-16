@@ -21,9 +21,11 @@ struct LocalFlowView: View {
     @State private var gameSyncManager: LocalGameSyncManager
 
     init() {
-        // Use the user's device name when available — anything more
-        // specific lives in the room/player flow.
-        let manager = LocalRoomManager(displayName: Platform.deviceDisplayName)
+        // Nearby peers see this name. Without a special entitlement the
+        // device name is just "iPhone", so the player's remembered name
+        // goes first.
+        let savedName = PlayerNameStorage.savedName
+        let manager = LocalRoomManager(displayName: savedName.isEmpty ? Platform.deviceDisplayName : savedName)
         _roomManager = State(initialValue: manager)
         _gameSyncManager = State(initialValue: LocalGameSyncManager(roomManager: manager))
     }

@@ -107,6 +107,11 @@ private extension LocalRoomBrowser {
         }
     }
 
+    /// The host player's name from the advertisement, else the peer's name.
+    func hostName(of host: LocalMultipeerService.DiscoveredHost) -> String {
+        host.discoveryInfo["host"] ?? host.displayName
+    }
+
     func hostRow(_ host: LocalMultipeerService.DiscoveredHost) -> some View {
         Button {
             join(host)
@@ -121,14 +126,17 @@ private extension LocalRoomBrowser {
                         backgroundColor: DesignBook.Color.Text.accent.opacity(0.12)
                     )
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(host.discoveryInfo["host"] ?? host.displayName)
+                        Text(hostName(of: host))
                             .font(DesignBook.Font.headline)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                             .lineLimit(1)
-                        Text(host.displayName)
-                            .font(DesignBook.Font.caption)
-                            .foregroundStyle(DesignBook.Color.Text.tertiary)
-                            .lineLimit(1)
+                        // The device's advertised name, when it adds anything.
+                        if host.displayName != hostName(of: host) {
+                            Text(host.displayName)
+                                .font(DesignBook.Font.caption)
+                                .foregroundStyle(DesignBook.Color.Text.tertiary)
+                                .lineLimit(1)
+                        }
                     }
                     Spacer()
                     if isConnecting {
