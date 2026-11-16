@@ -46,6 +46,8 @@ open class RoomManager {
     /// `.info/connected` observer that keeps this player's `isConnected`
     /// accurate, so the host can cover for an explainer who drops out.
     @ObservationIgnored private var connectivityHandle: DatabaseHandle?
+    /// The latest presence arming, so stopping presence can settle it first.
+    @ObservationIgnored private var presenceTask: Task<Void, Never>?
     /// A timed-out write may still land, so a retry must reuse the identity
     /// of the attempt before it rather than mint a second room, player, or
     /// team. Kept for the life of this manager.
@@ -89,6 +91,7 @@ open class RoomManager {
     }
 
     isolated deinit {
+        presenceTask?.cancel()
         if let roomObserverHandle, let observedRoomId {
             firebaseService.removeObserver(handle: roomObserverHandle, forRoomId: observedRoomId)
         }
@@ -207,21 +210,27 @@ open class RoomManager {
               !isLeaving,
               connectionState == .joining || connectionState == .live,
               let playerId = currentPlayerId else { return }
-        Task {
+        presenceTask?.cancel()
+        presenceTask = Task { [firebaseService] in
             try? await firebaseService.armPresence(playerId: playerId, roomId: id)
         }
     }
 
     /// Stops re-arming presence and cancels the server-side offline write.
-    /// Returns the cancelling write so a caller about to remove the player
-    /// can wait for it.
+    /// An arming still in flight is cancelled and awaited first, so its
+    /// `onDisconnect` cannot be registered after the disarm. Returns the
+    /// disarm so a caller about to remove the player can wait for it.
     @discardableResult
     private func stopPresence(markOffline: Bool) -> Task<Void, Never>? {
+        let arming = presenceTask
+        presenceTask = nil
+        arming?.cancel()
         guard let connectivityHandle else { return nil }
         firebaseService.removeConnectionObserver(connectivityHandle)
         self.connectivityHandle = nil
         guard let playerId = currentPlayerId, let roomId = observedRoomId else { return nil }
         return Task { [firebaseService] in
+            await arming?.value
             try? await firebaseService.disarmPresence(playerId: playerId, roomId: roomId, markOffline: markOffline)
         }
     }
