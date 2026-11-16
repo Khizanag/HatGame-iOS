@@ -33,8 +33,9 @@ public enum LocalProtocol {
 /// `roomSnapshot` (and `wordsSnapshot` when the words pool changes). Every
 /// peer renders from the snapshot it last received.
 public enum LocalMessage: Codable, Sendable {
-    /// Host → all peers. Full room envelope after a state change.
-    case roomSnapshot(GameRoom)
+    /// Host → all peers. Full room envelope after a state change, stamped
+    /// with the host's clock so guests can run countdowns on host time.
+    case roomSnapshot(GameRoom, hostTime: Date)
     /// Host → all peers. Pool of words; separate from `roomSnapshot` so we
     /// don't reserialize a hundred words on every score update.
     case wordsSnapshot([OnlineWord])

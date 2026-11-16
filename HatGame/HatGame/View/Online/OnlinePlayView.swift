@@ -255,7 +255,7 @@ private extension OnlinePlayView {
             remainingSeconds = OnlineGameRules.turnDuration(state)
             return
         }
-        let elapsed = Int(Date().timeIntervalSince(startedAt))
+        let elapsed = Int(roomManager.now.timeIntervalSince(startedAt))
         remainingSeconds = max(0, OnlineGameRules.turnDuration(state) - elapsed)
     }
 
@@ -291,7 +291,7 @@ private extension OnlinePlayView {
     /// a backgrounded or disconnected device never sends its own end.
     var isCoveringStalledTurn: Bool {
         guard roomManager.canActAsHost, let state = gameState else { return false }
-        return OnlineGameRules.isStalled(state, now: Date())
+        return OnlineGameRules.isStalled(state, now: roomManager.now)
     }
 
     func playUrgencyHaptics(from previous: Int, to current: Int) {

@@ -43,6 +43,20 @@ struct LocalMessageTests {
         #expect(version == 7)
     }
 
+    @Test("A room snapshot carries the host's clock")
+    func snapshotCarriesHostTime() throws {
+        let hostTime = Date(timeIntervalSinceReferenceDate: 800_000_123)
+        let room = GameRoom(id: "local-1", hostId: "h")
+        let data = try JSONEncoder().encode(LocalMessage.roomSnapshot(room, hostTime: hostTime))
+
+        guard case let .roomSnapshot(decoded, time) = try JSONDecoder().decode(LocalMessage.self, from: data) else {
+            Issue.record("Expected a snapshot")
+            return
+        }
+        #expect(decoded.id == "local-1")
+        #expect(time == hostTime)
+    }
+
     @Test("An unknown rejection reason decodes as refused")
     func unknownRejection() throws {
         let decoded = try JSONDecoder().decode(HelloRejection.self, from: Data(#""roomFull""#.utf8))

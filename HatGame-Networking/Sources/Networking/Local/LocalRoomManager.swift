@@ -57,7 +57,16 @@ public final class LocalRoomManager: RoomManager {
     /// disconnect ends the session and whose snapshots are trusted.
     private var hostPeerID: MCPeerID?
 
+    /// Guest-only. Host clock minus this device's, from the last snapshot.
+    @ObservationIgnored private var hostClockOffset: TimeInterval = 0
+
     public var isHostInternal: Bool { isLocalHost }
+
+    /// The host's clock: the host decides when a turn ends and whether a
+    /// guess counts, so guests count down against its time.
+    public override var now: Date {
+        Date().addingTimeInterval(isLocalHost ? 0 : hostClockOffset)
+    }
 
     public init(displayName: String) {
         self.service = LocalMultipeerService(displayName: displayName)
@@ -299,7 +308,7 @@ private extension LocalRoomManager {
 private extension LocalRoomManager {
     func broadcastSnapshot() {
         guard isLocalHost, let room else { return }
-        service.send(.roomSnapshot(room))
+        service.send(.roomSnapshot(room, hostTime: Date()))
     }
 
     func broadcastWords() {
@@ -333,8 +342,11 @@ private extension LocalRoomManager {
 
     func handleMessage(_ message: LocalMessage, fromPeer peer: MCPeerID) {
         switch message {
-        case let .roomSnapshot(snapshot):
+        case let .roomSnapshot(snapshot, hostTime):
             guard !isLocalHost, peer == hostPeerID else { return }
+            // Delivery on the local network takes milliseconds, so the
+            // difference on arrival is the clock skew.
+            hostClockOffset = hostTime.timeIntervalSince(Date())
             adoptReturningIdentity(in: snapshot)
             self.room = snapshot
             self.isConnected = true

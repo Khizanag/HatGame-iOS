@@ -44,12 +44,25 @@ open class GameSyncManager {
     open func perform(_ action: GameAction, room: GameRoom, playerId: String) async throws -> Bool {
         // Cheap local check first: skip the round trip for an action the
         // player could not take even against the state on screen.
+        // Server time throughout, so a device with a wrong clock neither
+        // cuts a turn short nor accepts a guess after it ended.
+        let service = firebaseService
         guard let cached = room.gameState,
-              OnlineGameRules.canPerform(action, by: playerId, state: cached, context: GameContext(room: room))
+              OnlineGameRules.canPerform(
+                  action,
+                  by: playerId,
+                  state: cached,
+                  context: GameContext(room: room, now: service.serverNow())
+              )
         else { return false }
-        let committed = try await firebaseService.transactGameState(roomId: room.id) { current in
+        let committed = try await service.transactGameState(roomId: room.id) { current in
             current.flatMap { live in
-                OnlineGameRules.apply(action, by: playerId, to: live, context: GameContext(room: room, now: Date()))
+                OnlineGameRules.apply(
+                    action,
+                    by: playerId,
+                    to: live,
+                    context: GameContext(room: room, now: service.serverNow())
+                )
             }
         }
         guard let next = committed else { return false }

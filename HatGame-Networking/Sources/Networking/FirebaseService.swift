@@ -10,6 +10,7 @@ import FirebaseDatabase
 import Foundation
 import GameCore
 import OSLog
+import Synchronization
 
 private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "FirebaseService")
 
@@ -25,6 +26,15 @@ public final class FirebaseService: @unchecked Sendable {
         /// Transactions may round-trip more than once under contention.
         static let transaction: Duration = .seconds(15)
     }
+
+    /// This device's clock error against the server's, from
+    /// `.info/serverTimeOffset`.
+    private struct ServerClock {
+        var offset: TimeInterval = 0
+        var isTracking = false
+    }
+
+    private let serverClock = Mutex(ServerClock())
 
     private var database: Database {
         Database.database()
@@ -48,6 +58,30 @@ public final class FirebaseService: @unchecked Sendable {
         // without the URL.
         guard let url = FirebaseApp.app()?.options.databaseURL else { return false }
         return !url.isEmpty
+    }
+
+    // MARK: - Server clock
+    /// The current time on the database server's clock. Every timestamp the
+    /// rules or a countdown compare — turn start, deadline, stall — uses it,
+    /// so devices whose clocks disagree still agree on the turn.
+    public func serverNow() -> Date {
+        Date().addingTimeInterval(serverClock.withLock { $0.offset })
+    }
+
+    /// Starts tracking the server clock offset; later calls do nothing.
+    public func startServerClock() {
+        guard isAvailable else { return }
+        let shouldStart = serverClock.withLock { clock -> Bool in
+            guard !clock.isTracking else { return false }
+            clock.isTracking = true
+            return true
+        }
+        guard shouldStart else { return }
+        // The service lives for the whole process, so the observer is never removed.
+        database.reference(withPath: ".info/serverTimeOffset").observe(.value) { [weak self] snapshot in
+            guard let milliseconds = snapshot.value as? Double else { return }
+            self?.serverClock.withLock { $0.offset = milliseconds / 1000 }
+        }
     }
 
     // MARK: - Room Operations
@@ -83,6 +117,7 @@ public final class FirebaseService: @unchecked Sendable {
             onChange(.missing)
             return nil
         }
+        startServerClock()
         return roomsRef.child(id).observe(.value) { snapshot in
             let classified = RoomSnapshot(storedValue: snapshot.exists() ? snapshot.value : nil)
             if case .unreadable = classified {

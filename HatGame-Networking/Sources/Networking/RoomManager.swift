@@ -60,6 +60,13 @@ open class RoomManager {
         room?.hostId == currentPlayerId
     }
 
+    /// The room's shared clock: the database server's time online, the
+    /// host's on nearby. Countdowns and turn checks read this, never the
+    /// device's own clock, so every device agrees on when a turn ends.
+    open var now: Date {
+        firebaseService.serverNow()
+    }
+
     /// May take host-only game actions: the host, or the player standing
     /// in for a host who has dropped out (see `OnlineGameRules.actingHostId`).
     public var canActAsHost: Bool {
