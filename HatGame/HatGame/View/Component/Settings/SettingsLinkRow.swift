@@ -9,8 +9,7 @@ import DesignBook
 import SwiftUI
 
 /// A tappable settings row that triggers navigation. Shows the colored icon
-/// tile, a title, an optional trailing value, and a chevron. Fires a
-/// selection haptic before running `action`.
+/// tile, a title, an optional trailing value, and a chevron.
 struct SettingsLinkRow: View {
     let icon: String
     var tint: Color = DesignBook.Color.Text.accent

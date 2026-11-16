@@ -9,7 +9,8 @@ import DesignBook
 import SwiftUI
 
 /// A settings row wrapping a native `Toggle`, with the colored icon tile and
-/// an optional subtitle. Fires a selection haptic when toggled.
+/// an optional subtitle. The switch keeps the system tint: its color only
+/// means on or off (HIG toggles.md).
 struct SettingsToggleRow: View {
     let icon: String
     var tint: Color = DesignBook.Color.Text.accent
@@ -36,6 +37,5 @@ struct SettingsToggleRow: View {
                 }
             }
         }
-        .tint(tint)
     }
 }

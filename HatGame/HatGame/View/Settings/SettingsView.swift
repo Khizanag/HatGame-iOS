@@ -16,17 +16,17 @@ struct SettingsView: View {
     private let appConfiguration = AppConfiguration.shared
 
     var body: some View {
-        List {
+        Form {
             appearanceSection
             languageSection
             gameDefaultsSection
             accessibilitySection
             aboutSection
         }
-        .groupedListStyle()
+        .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .navigationTitle(localized("settings.title"))
-        .setDefaultStyle()
+        .setDefaultStyle(titleDisplay: .large)
     }
 }
 
@@ -122,18 +122,16 @@ private extension SettingsView {
 // MARK: - Rows
 private extension SettingsView {
     var themeRow: some View {
-        SettingsMenuRow(
+        SettingsPickerRow(
             icon: "paintbrush.fill",
             title: localized("settings.appearance.colorScheme"),
+            value: appConfiguration.colorScheme.displayName,
             valueSystemImage: appConfiguration.colorScheme.systemImage,
-            value: appConfiguration.colorScheme.displayName
+            selection: colorSchemeBinding
         ) {
-            Picker(localized("settings.appearance.colorScheme"), selection: colorSchemeBinding) {
-                ForEach(AppColorScheme.allCases, id: \.self) { scheme in
-                    Label(scheme.displayName, systemImage: scheme.systemImage).tag(scheme)
-                }
+            ForEach(AppColorScheme.allCases, id: \.self) { scheme in
+                Label(scheme.displayName, systemImage: scheme.systemImage).tag(scheme)
             }
-            .pickerStyle(.inline)
         }
     }
 
@@ -149,33 +147,29 @@ private extension SettingsView {
     }
 
     var languageRow: some View {
-        SettingsMenuRow(
+        SettingsPickerRow(
             icon: "globe",
             title: localized("settings.language.title"),
-            value: "\(appConfiguration.language.flag)  \(appConfiguration.language.displayName)"
+            value: "\(appConfiguration.language.flag)  \(appConfiguration.language.displayName)",
+            selection: languageBinding
         ) {
-            Picker(localized("settings.language.title"), selection: languageBinding) {
-                ForEach(AppLanguage.allCases) { language in
-                    Text(verbatim: "\(language.flag)  \(language.displayName)").tag(language)
-                }
+            ForEach(AppLanguage.allCases) { language in
+                Text(verbatim: "\(language.flag)  \(language.displayName)").tag(language)
             }
-            .pickerStyle(.inline)
         }
     }
 
     var handednessRow: some View {
-        SettingsMenuRow(
+        SettingsPickerRow(
             icon: "hand.raised.fill",
             title: localized("settings.handedness.title"),
+            value: handedness.displayName,
             valueSystemImage: handedness.systemImage,
-            value: handednessShortValue
+            selection: handednessBinding
         ) {
-            Picker(localized("settings.handedness.title"), selection: handednessBinding) {
-                ForEach(Handedness.allCases, id: \.self) { hand in
-                    Label(hand.displayName, systemImage: hand.systemImage).tag(hand)
-                }
+            ForEach(Handedness.allCases, id: \.self) { hand in
+                Label(hand.displayName, systemImage: hand.systemImage).tag(hand)
             }
-            .pickerStyle(.inline)
         }
     }
 
@@ -194,6 +188,7 @@ private extension SettingsView {
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .monospacedDigit()
         }
+        .accessibilityElement(children: .combine)
     }
 }
 
@@ -201,13 +196,6 @@ private extension SettingsView {
 private extension SettingsView {
     var handedness: Handedness {
         appConfiguration.isRightHanded ? .right : .left
-    }
-
-    /// Compact value for the trailing pill — "Right-handed" -> "Right" — while
-    /// the menu still lists the full descriptive names. Falls back to the full
-    /// string for locales that don't hyphenate.
-    var handednessShortValue: String {
-        handedness.displayName.split(separator: "-").first.map(String.init) ?? handedness.displayName
     }
 
     var appVersion: String? {

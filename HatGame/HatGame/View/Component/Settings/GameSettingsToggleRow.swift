@@ -11,7 +11,8 @@ import SwiftUI
 /// A labelled toggle row for boolean game settings (allow skipping, automatic
 /// words). Shared by `RoomCreationView` and `LocalHostSetupView` so the two
 /// host-setup flows look and behave the same — the toggle sibling of
-/// `GameSettingsRow`.
+/// `GameSettingsRow`. `tint` colors the icon; the switch keeps the system
+/// tint, since its color only means on or off (HIG toggles.md).
 struct GameSettingsToggleRow: View {
     let icon: String
     let title: String
@@ -42,7 +43,6 @@ struct GameSettingsToggleRow: View {
                 }
             }
         }
-        .tint(tint)
         .padding(.vertical, DesignBook.Spacing.xs)
     }
 }

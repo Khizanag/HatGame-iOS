@@ -13,7 +13,7 @@ struct DefaultsSettingsView: View {
     private let appConfiguration = AppConfiguration.shared
 
     var body: some View {
-        List {
+        Form {
             wordsSection
             durationSection
             duplicatesSection
@@ -23,7 +23,7 @@ struct DefaultsSettingsView: View {
             hapticsSection
             #endif
         }
-        .groupedListStyle()
+        .formStyle(.grouped)
         .scrollContentBackground(.hidden)
         .navigationTitle(localized("settings.defaults.title"))
         .setDefaultStyle()
