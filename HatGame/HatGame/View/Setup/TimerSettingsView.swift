@@ -61,6 +61,8 @@ private extension TimerSettingsView {
                     .minimumScaleFactor(0.4)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
+            // The slider and stepper below speak the value; the hero would repeat it.
+            .accessibilityHidden(true)
 
             Text(localized("timerSettings.headerTitle"))
                 .font(DesignBook.Font.title3)
@@ -92,14 +94,21 @@ private extension TimerSettingsView {
             step: 5
         )
         .tint(DesignBook.Color.Text.accent)
+        .accessibilityLabel(Text(localized("timerSettings.turnLength")))
+        .accessibilityValue(Text(durationValue))
     }
 
     var durationStepper: some View {
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
-            Text(localized("common.tapOrHoldToAdjust"))
+            Text(localized("timerSettings.turnLength"))
                 .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
+        .accessibilityValue(Text(durationValue))
+    }
+
+    var durationValue: String {
+        localized("timerSettings.seconds \(selectedDuration)")
     }
 
     var timerTags: some View {
@@ -144,7 +153,6 @@ private extension TimerSettingsView {
                     }
                 }
             }
-            .tint(DesignBook.Color.Status.warning)
         }
     }
 
@@ -152,6 +160,7 @@ private extension TimerSettingsView {
         PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
             handleContinue()
         }
+        .keyboardShortcut(.defaultAction)
     }
 
     var durationBinding: Binding<Double> {

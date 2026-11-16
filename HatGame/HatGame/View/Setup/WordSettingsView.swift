@@ -57,6 +57,8 @@ private extension WordSettingsView {
                     .font(DesignBook.Font.displaySmall)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
+            // The slider and stepper below speak the value; the hero would repeat it.
+            .accessibilityHidden(true)
 
             Text(localized("wordSettings.headerTitle"))
                 .font(DesignBook.Font.title3)
@@ -88,14 +90,21 @@ private extension WordSettingsView {
             step: 1
         )
         .tint(DesignBook.Color.Text.accent)
+        .accessibilityLabel(Text(localized("wordSettings.wordsPerPlayer")))
+        .accessibilityValue(Text(wordCountValue))
     }
 
     var stepper: some View {
         Stepper(value: $selectedWordCount, in: 3...20) {
-            Text(localized("common.tapOrHoldToAdjust"))
+            Text(localized("wordSettings.wordsPerPlayer"))
                 .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
+        .accessibilityValue(Text(wordCountValue))
+    }
+
+    var wordCountValue: String {
+        localized("wordSettings.wordCount \(selectedWordCount)")
     }
 
     var legendTags: some View {
@@ -125,6 +134,7 @@ private extension WordSettingsView {
         ) {
             handleContinue()
         }
+        .keyboardShortcut(.defaultAction)
     }
 
     var wordCountBinding: Binding<Double> {
