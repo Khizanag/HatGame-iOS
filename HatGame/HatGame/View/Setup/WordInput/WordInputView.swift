@@ -86,7 +86,7 @@ private extension WordInputView {
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.xxl)
             }
-            .scrollDismissesKeyboard(.interactively)
+            .dismissesKeyboardInteractively()
             .actionBar { footer }
             .onAppear { requestScrollToTextField(after: .milliseconds(500)) }
             .onChange(of: isWordFieldFocused) { _, focused in

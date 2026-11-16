@@ -105,7 +105,7 @@ struct TeamFormView: View {
     var body: some View {
         ScrollViewReader { proxy in
             formContent
-                .scrollDismissesKeyboard(.interactively)
+                .dismissesKeyboardInteractively()
                 .onChange(of: focusedField) { previous, field in
                     handleFocusChange(from: previous, to: field, proxy: proxy)
                 }
