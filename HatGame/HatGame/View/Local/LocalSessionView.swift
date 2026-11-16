@@ -20,8 +20,6 @@ struct LocalSessionView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var hasInitializedGame: Bool = false
-    @State private var hasGeneratedWords: Bool = false
     @State private var showHostLostAlert: Bool = false
     @State private var hasBeenConnected: Bool = false
 
@@ -34,17 +32,18 @@ struct LocalSessionView: View {
         room.map(RoomRules.allWordsSubmitted) ?? false
     }
 
+    /// Only the host's device runs setup on nearby: it holds the room.
+    private var setupStep: GameSetupStep? {
+        guard localRoomManager.isHostInternal, let room, let playerId = roomManager.currentPlayerId else { return nil }
+        return RoomRules.pendingSetupStep(in: room, for: playerId)
+    }
+
     var body: some View {
         content
             .animation(DesignBook.Motion.smooth, value: roomStatus)
             .animation(DesignBook.Motion.smooth, value: gamePhase)
-            .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
-                guard allSubmitted, roomManager.isHost else { return }
-                initializeGameIfNeeded()
-            }
-            .onChange(of: roomStatus) { _, status in
-                guard status == .playing else { return }
-                generateWordsIfNeeded()
+            .task(id: setupStep) {
+                await OnlineGameSetup.run(setupStep, roomManager: roomManager, gameSyncManager: gameSyncManager)
             }
             .onChange(of: localRoomManager.isConnected) { _, isConnected in
                 if isConnected {
@@ -58,55 +57,6 @@ struct LocalSessionView: View {
             } message: {
                 Text(localized("local.session.hostLost.message"))
             }
-    }
-
-    private func initializeGameIfNeeded() {
-        guard !hasInitializedGame,
-              let room,
-              room.gameState == nil else { return }
-        hasInitializedGame = true
-
-        Task {
-            do {
-                // For local: words are already in localRoomManager.words
-                // (the host submitted on behalf of everyone via Multipeer).
-                try await gameSyncManager.initializeGame(room: room, words: localRoomManager.words)
-            } catch {
-                hasInitializedGame = false
-            }
-        }
-    }
-
-    /// Host-only. In automatic mode the host draws the shared word pool from
-    /// the bundled database when the game starts; `fillRandomWords` broadcasts
-    /// it and opens the submission gate for everyone, triggering initialization.
-    private func generateWordsIfNeeded() {
-        guard localRoomManager.isHostInternal,
-              isAutomaticWords,
-              !hasGeneratedWords,
-              room?.gameState == nil,
-              !allPlayersSubmittedWords,
-              let room = localRoomManager.room else { return }
-        hasGeneratedWords = true
-
-        let count = max(1, room.settings.wordsPerPlayer * room.players.count)
-        let hostId = localRoomManager.currentPlayerId ?? ""
-        // Built once: every retry sends the same ids.
-        let words = WordDatabase.randomWords(count: count).map { OnlineWord(text: $0, addedByPlayerId: hostId) }
-        Task {
-            for attempt in 1...3 {
-                do {
-                    try await localRoomManager.fillRandomWords(words)
-                    return
-                } catch {
-                    guard attempt < 3 else {
-                        hasGeneratedWords = false
-                        return
-                    }
-                    try? await Task.sleep(for: .seconds(1))
-                }
-            }
-        }
     }
 }
 

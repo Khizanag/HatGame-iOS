@@ -183,10 +183,34 @@ public enum RoomRules {
         return next
     }
 
+    /// What `playerId`'s device still has to do to get a started game
+    /// going, or `nil` when it has nothing to do. Only the host generates
+    /// the automatic pool — two devices drawing words would fill the hat
+    /// twice — while the first state may be written by anyone who can act
+    /// as host, since that write is a create-if-absent transaction.
+    public static func pendingSetupStep(in room: GameRoom, for playerId: String) -> GameSetupStep? {
+        guard room.status == .playing, room.gameState == nil else { return nil }
+        let isReady = allWordsSubmitted(room)
+        if room.settings.isAutomaticWords, !isReady {
+            return playerId == room.hostId ? .generateWords : nil
+        }
+        guard isReady,
+              OnlineGameRules.canActAsHost(playerId, hostId: room.hostId, players: room.players) else { return nil }
+        return .initializeGame
+    }
+
     /// True once every player's submission gate is open.
     public static func allWordsSubmitted(_ room: GameRoom) -> Bool {
         !room.players.isEmpty && room.players.allSatisfy(\.hasSubmittedWords)
     }
+}
+
+/// Host-side work between pressing Start and the first turn.
+public enum GameSetupStep: Equatable, Sendable {
+    /// Draw the automatic word pool for everyone.
+    case generateWords
+    /// Write the first game state from the submitted words.
+    case initializeGame
 }
 
 /// The host's answer to a nearby guest's hello.

@@ -21,9 +21,6 @@ struct OnlineGameFlowView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @State private var hasInitializedGame: Bool = false
-    @State private var hasGeneratedWords: Bool = false
-
     private var room: GameRoom? { roomManager.room }
     private var roomStatus: RoomStatus? { room?.status }
     private var gamePhase: GamePhase? { room?.gameState?.phase }
@@ -33,17 +30,18 @@ struct OnlineGameFlowView: View {
         room.map(RoomRules.allWordsSubmitted) ?? false
     }
 
+    /// The host-side setup this device still owes the room, if any.
+    private var setupStep: GameSetupStep? {
+        guard let room, let playerId = roomManager.currentPlayerId else { return nil }
+        return RoomRules.pendingSetupStep(in: room, for: playerId)
+    }
+
     var body: some View {
         content
             .animation(DesignBook.Motion.smooth, value: roomStatus)
             .animation(DesignBook.Motion.smooth, value: gamePhase)
-            .onChange(of: allPlayersSubmittedWords) { _, allSubmitted in
-                guard allSubmitted, roomManager.isHost else { return }
-                initializeGameIfNeeded()
-            }
-            .onChange(of: roomStatus) { _, status in
-                guard status == .playing else { return }
-                generateWordsIfNeeded()
+            .task(id: setupStep) {
+                await OnlineGameSetup.run(setupStep, roomManager: roomManager, gameSyncManager: gameSyncManager)
             }
     }
 }
@@ -177,57 +175,6 @@ private extension OnlineGameFlowView {
         Task {
             try? await roomManager.leaveRoom()
             navigator.popToRoot()
-        }
-    }
-
-    func initializeGameIfNeeded() {
-        guard !hasInitializedGame,
-              let room,
-              room.gameState == nil else { return }
-        hasInitializedGame = true
-
-        Task {
-            do {
-                let words = try await roomManager.getWords()
-                try await gameSyncManager.initializeGame(room: room, words: words)
-            } catch {
-                hasInitializedGame = false
-            }
-        }
-    }
-
-    /// Host-only. In automatic mode the host generates the shared word pool
-    /// from the bundled database once the game starts; `fillRandomWords` then
-    /// atomically opens the submission gate for everyone, which triggers
-    /// initialization. Retries transient write failures rather than stranding
-    /// the room on the waiting screen; the atomic write makes retries safe
-    /// (a failed attempt persists nothing, so no duplicate words).
-    func generateWordsIfNeeded() {
-        guard roomManager.isHost,
-              isAutomaticWords,
-              !hasGeneratedWords,
-              room?.gameState == nil,
-              !allPlayersSubmittedWords,
-              let room = roomManager.room else { return }
-        hasGeneratedWords = true
-
-        let count = max(1, room.settings.wordsPerPlayer * room.players.count)
-        let hostId = roomManager.currentPlayerId ?? ""
-        // Built once: every retry sends the same ids.
-        let words = WordDatabase.randomWords(count: count).map { OnlineWord(text: $0, addedByPlayerId: hostId) }
-        Task {
-            for attempt in 1...3 {
-                do {
-                    try await roomManager.fillRandomWords(words)
-                    return
-                } catch {
-                    guard attempt < 3 else {
-                        hasGeneratedWords = false
-                        return
-                    }
-                    try? await Task.sleep(for: .seconds(1))
-                }
-            }
         }
     }
 }
