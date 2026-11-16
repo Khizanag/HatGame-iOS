@@ -29,6 +29,7 @@ struct OnlineGameFlowView: View {
 
     var body: some View {
         MultiplayerSessionView(
+            transport: .online,
             terminal: terminal,
             runsSetup: true,
             canStartEarly: roomManager.canActAsHost,

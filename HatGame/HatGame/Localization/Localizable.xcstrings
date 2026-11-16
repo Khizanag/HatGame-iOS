@@ -66,6 +66,23 @@
         }
       }
     },
+    "error.title.leaveRoom" : {
+      "comment" : "Alert title when leaving an online or nearby room failed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Leave Room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახის დატოვება ვერ მოხერხდა"
+          }
+        }
+      }
+    },
     "game.endGame.button" : {
       "comment" : "Toolbar button that abandons the single-device game in progress.",
       "localizations" : {
@@ -232,6 +249,74 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "გასაგრძელებლად შეიყვანეთ სახელი."
+          }
+        }
+      }
+    },
+    "session.leave" : {
+      "comment" : "Accessibility label of the close button that leaves an online or nearby room.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leave Room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ოთახის დატოვება"
+          }
+        }
+      }
+    },
+    "session.leave.nearby.inGame" : {
+      "comment" : "Leave confirmation message for a nearby guest during a game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The others can keep playing without you."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დანარჩენები შენს გარეშე გააგრძელებენ."
+          }
+        }
+      }
+    },
+    "session.leave.nearby.lobby" : {
+      "comment" : "Leave confirmation message for a nearby guest in the lobby.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Leaving removes you from the room. You can find it again under Find a Nearby Room."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გასვლა ოთახიდან ამოგიყვანს. მას ისევ იპოვი „ახლომდებარე ოთახის ძებნაში“."
+          }
+        }
+      }
+    },
+    "session.leave.online.inGame" : {
+      "comment" : "Leave confirmation message for an online game already in progress.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The others can keep playing without you. You can rejoin with the room code."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დანარჩენები შენს გარეშე გააგრძელებენ. ოთახში დაბრუნება კოდით შეგიძლია."
           }
         }
       }
@@ -3010,13 +3095,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leave"
+            "value" : "Leave Room"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "დატოვება"
+            "value" : "ოთახის დატოვება"
           }
         }
       }
@@ -3061,13 +3146,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Leave room?"
+            "value" : "Leave Room?"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "დატოვო ოთახი?"
+            "value" : "დატოვებ ოთახს?"
           }
         }
       }

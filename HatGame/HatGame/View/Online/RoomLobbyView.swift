@@ -11,12 +11,14 @@ import Networking
 import SwiftUI
 
 struct RoomLobbyView: View {
-    @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    /// Nearby rooms have no code to share and word their errors for a
+    /// local connection.
+    let transport: NetworkErrorMessage.Transport
+
     @State private var showingTeamCreation: Bool = false
-    @State private var showingLeaveConfirmation: Bool = false
     @State private var isUpdating: Bool = false
     @State private var error: Error?
 
@@ -34,19 +36,10 @@ struct RoomLobbyView: View {
         content
             .navigationTitle(localized("lobby.title"))
             .setDefaultStyle()
-            .toolbar { leaveToolbar }
             .sheet(isPresented: $showingTeamCreation) {
                 OnlineTeamCreationView()
             }
-            .alert(localized("lobby.leave.title"), isPresented: $showingLeaveConfirmation) {
-                Button(localized("common.buttons.cancel"), role: .cancel) { }
-                Button(localized("lobby.leave.confirm"), role: .destructive) {
-                    leaveRoom()
-                }
-            } message: {
-                Text(isHost ? localized("lobby.leave.hostMessage") : localized("lobby.leave.guestMessage"))
-            }
-            .errorAlert($error, title: localized("error.title.updateRoom"))
+            .errorAlert($error, title: localized("error.title.updateRoom"), transport: transport)
     }
 }
 
@@ -75,18 +68,6 @@ private extension RoomLobbyView {
         // catch those mutations.
         .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allTeams.map { "\($0.id):\($0.colorHex):\($0.playerIds.joined())" })
         .animation(reduceMotion ? nil : DesignBook.Motion.smooth, value: allPlayers.map { "\($0.id):\($0.teamId ?? "_")" })
-    }
-
-    @ToolbarContentBuilder
-    var leaveToolbar: some ToolbarContent {
-        ToolbarItem(placement: .trailingAction) {
-            Button {
-                showingLeaveConfirmation = true
-            } label: {
-                Image(systemName: "xmark")
-            }
-            .accessibilityLabel(Text(localized("lobby.leave.title")))
-        }
     }
 
     var roomCodeCard: some View {
@@ -427,21 +408,10 @@ private extension RoomLobbyView {
             isUpdating = false
         }
     }
-
-    func leaveRoom() {
-        Task {
-            do {
-                try await roomManager.leaveRoom()
-                navigator.popToRoot()
-            } catch {
-                self.error = error
-            }
-        }
-    }
 }
 
 #Preview {
-    NavigationStack { RoomLobbyView() }
+    NavigationStack { RoomLobbyView(transport: .online) }
         .environment(Navigator())
         .environment(RoomManager())
 }

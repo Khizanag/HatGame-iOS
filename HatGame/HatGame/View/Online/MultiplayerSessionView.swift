@@ -6,6 +6,7 @@
 //
 
 import DesignBook
+import Navigation
 import Networking
 import SwiftUI
 
@@ -30,8 +31,10 @@ struct MultiplayerSessionView: View {
 
     @Environment(RoomManager.self) private var roomManager
     @Environment(GameSyncManager.self) private var gameSyncManager
+    @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
+    let transport: NetworkErrorMessage.Transport
     let terminal: Terminal?
     /// Whether this device runs the host's setup work once the game starts.
     let runsSetup: Bool
@@ -43,6 +46,9 @@ struct MultiplayerSessionView: View {
 
     /// The host chose to start with the words already submitted.
     @State private var startsWithSubmittedWords: Bool = false
+    @State private var isLeaveConfirmationPresented: Bool = false
+    @State private var isLeaving: Bool = false
+    @State private var leaveError: (any Error)?
 
     private var room: GameRoom? { roomManager.room }
     private var roomStatus: RoomStatus? { room?.status }
@@ -72,6 +78,79 @@ struct MultiplayerSessionView: View {
             .task(id: setupStep) {
                 await OnlineGameSetup.run(setupStep, roomManager: roomManager, gameSyncManager: gameSyncManager)
             }
+            // The system Back button (and the swipe that mirrors it) would
+            // pop this screen without leaving the room, so every exit goes
+            // through Leave, which tells the other devices.
+            .navigationBarBackButtonHidden()
+            .toolbar { leaveToolbar }
+            .confirmationDialog(
+                localized("lobby.leave.title"),
+                isPresented: $isLeaveConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button(localized("lobby.leave.confirm"), role: .destructive, action: leaveRoom)
+                Button(localized("common.buttons.cancel"), role: .cancel) { }
+            } message: {
+                Text(leaveMessage)
+            }
+            .errorAlert($leaveError, title: localized("error.title.leaveRoom"), transport: transport)
+    }
+}
+
+// MARK: - Leaving
+private extension MultiplayerSessionView {
+    /// A turn in progress keeps its own controls (Give Up); a terminal
+    /// notice carries its own way out.
+    var showsLeaveControl: Bool {
+        terminal == nil && !(roomStatus == .playing && gamePhase == .playing)
+    }
+
+    /// Nothing is lost by leaving before the room loads or after the game ends.
+    var leavesWithoutConfirmation: Bool {
+        roomStatus == nil || roomStatus == .finished || gamePhase == .finished
+    }
+
+    @ToolbarContentBuilder
+    var leaveToolbar: some ToolbarContent {
+        if showsLeaveControl {
+            CloseToolbarItem(accessibilityLabel: localized("session.leave")) {
+                if leavesWithoutConfirmation {
+                    leaveRoom()
+                } else {
+                    isLeaveConfirmationPresented = true
+                }
+            }
+        }
+    }
+
+    /// What leaving costs, which depends on the phase and the transport: an
+    /// online host's lobby closes for everyone, while a game in progress
+    /// carries on without the leaver; a nearby host holds the room, so
+    /// leaving ends it in any phase.
+    var leaveMessage: String {
+        let isInLobby = roomStatus?.isLobby ?? true
+        switch transport {
+        case .online:
+            guard isInLobby else { return localized("session.leave.online.inGame") }
+            return localized(roomManager.isHost ? "lobby.leave.hostMessage" : "lobby.leave.guestMessage")
+        case .nearby:
+            if roomManager.isHost { return localized("lobby.leave.hostMessage") }
+            return localized(isInLobby ? "session.leave.nearby.lobby" : "session.leave.nearby.inGame")
+        }
+    }
+
+    func leaveRoom() {
+        guard !isLeaving else { return }
+        isLeaving = true
+        Task {
+            do {
+                try await roomManager.leaveRoom()
+                navigator.popToRoot()
+            } catch {
+                leaveError = error
+            }
+            isLeaving = false
+        }
     }
 }
 
@@ -93,7 +172,7 @@ private extension MultiplayerSessionView {
     var roomContent: some View {
         switch roomStatus {
         case .waiting, .setup:
-            RoomLobbyView().transition(.opacity)
+            RoomLobbyView(transport: transport).transition(.opacity)
         case .playing:
             playingContent.transition(.opacity)
         case .finished:

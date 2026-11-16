@@ -31,6 +31,7 @@ struct LocalSessionView: View {
 
     var body: some View {
         MultiplayerSessionView(
+            transport: .nearby,
             terminal: terminal,
             // Only the host's device runs setup on nearby: it holds the room.
             runsSetup: localRoomManager.isHostInternal,
