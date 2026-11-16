@@ -116,7 +116,7 @@ private extension OnlineNextTeamView {
                     .multilineTextAlignment(.center)
 
                 if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
-                    Text(String(format: localized("game.currentScoreLabel"), totalScore))
+                    Text(localized("game.currentScoreLabel \(totalScore)"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(tint)
                 }
@@ -244,7 +244,7 @@ private extension OnlineNextTeamView {
                     Text(currentRound.title)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                    Text(String(format: localized("game.wordsRemainingLabel"), remainingWordCount))
+                    Text(localized("game.wordsRemaining \(remainingWordCount)"))
                         .font(DesignBook.Font.caption)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }

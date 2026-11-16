@@ -24,7 +24,7 @@ struct TeamTurnResultsView: View {
     private var isCelebratory: Bool { completionReason == .allWordsGuessed }
 
     private var wordsUnit: String {
-        localized(guessedWords.count == 1 ? "game.turnResults.wordUnit" : "game.turnResults.wordsUnit")
+        localized("game.turnResults.wordsUnit \(guessedWords.count)")
     }
 
     var body: some View {

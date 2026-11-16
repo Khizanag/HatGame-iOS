@@ -127,7 +127,7 @@ private extension OnlineTurnResultsView {
                         color: tint,
                         duration: 0.7
                     )
-                    Text(roundScore == 1 ? "onlineTurnResults.wordUnit.one" : "onlineTurnResults.wordUnit.many")
+                    Text(localized("game.turnResults.wordsUnit \(roundScore)"))
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
