@@ -8,6 +8,8 @@
 import SwiftUI
 #if canImport(UIKit)
 import UIKit
+#elseif canImport(AppKit)
+import AppKit
 #endif
 
 extension DesignBook {
@@ -48,20 +50,15 @@ extension DesignBook {
         public static let smallCaption = SwiftUI.Font.system(.caption, design: .rounded).weight(.semibold)
 
         /// A font of `size` points at the default text size that grows and
-        /// shrinks with Dynamic Type along `textStyle`'s curve. macOS has no
-        /// Dynamic Type, so there it is simply `size` points.
+        /// shrinks with Dynamic Type along `textStyle`'s curve.
         public static func scaled(
             _ size: CGFloat,
             relativeTo textStyle: SwiftUI.Font.TextStyle,
             weight: SwiftUI.Font.Weight = .regular,
             design: SwiftUI.Font.Design = .rounded
         ) -> SwiftUI.Font {
-            #if canImport(UIKit)
             SwiftUI.Font.system(textStyle, design: design, weight: weight)
                 .scaled(by: size / defaultPointSize(of: textStyle))
-            #else
-            SwiftUI.Font.system(size: size, weight: weight, design: design)
-            #endif
         }
     }
 
@@ -92,22 +89,31 @@ extension DesignBook {
 }
 
 // MARK: - Default text-style sizes
-#if canImport(UIKit)
 private extension DesignBook.Font {
     /// The point size `textStyle` resolves to at the default (Large) content
     /// size on this platform — the anchor that `scaled` multiplies from.
     static func defaultPointSize(of textStyle: SwiftUI.Font.TextStyle) -> CGFloat {
+        #if canImport(UIKit)
         UIFont.preferredFont(
-            forTextStyle: textStyle.uiTextStyle,
+            forTextStyle: textStyle.platformTextStyle,
             compatibleWith: UITraitCollection(preferredContentSizeCategory: .large)
         )
         .pointSize
+        #else
+        NSFont.preferredFont(forTextStyle: textStyle.platformTextStyle).pointSize
+        #endif
     }
 }
 
 // MARK: - TextStyle bridging
+#if canImport(UIKit)
+private typealias PlatformTextStyle = UIFont.TextStyle
+#else
+private typealias PlatformTextStyle = NSFont.TextStyle
+#endif
+
 private extension SwiftUI.Font.TextStyle {
-    var uiTextStyle: UIFont.TextStyle {
+    var platformTextStyle: PlatformTextStyle {
         switch self {
         case .largeTitle: .largeTitle
         case .title: .title1
@@ -124,4 +130,3 @@ private extension SwiftUI.Font.TextStyle {
         }
     }
 }
-#endif
