@@ -33,23 +33,25 @@ struct OnlineSpectatorView: View {
     private var passedWords: Int { totalWords - remainingWords }
 
     var body: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            roleBanner
-            CircularTimerView(
-                remainingSeconds: remainingSeconds,
-                totalSeconds: totalSeconds,
-                isPaused: false,
-                tint: tint
-            )
-            .frame(width: 168, height: 168)
+        CenteredScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                roleBanner
+                CircularTimerView(
+                    remainingSeconds: remainingSeconds,
+                    totalSeconds: totalSeconds,
+                    isPaused: false,
+                    tint: tint
+                )
+                .frame(width: 168, height: 168)
 
-            scoreChip
-            instructionCard
+                scoreChip
+                instructionCard
 
-            GameProgressFooter(passed: passedWords, total: totalWords, tint: tint)
+                GameProgressFooter(passed: passedWords, total: totalWords, tint: tint)
+            }
+            .padding(.top, DesignBook.Spacing.lg)
+            .paddingHorizontalDefault()
         }
-        .padding(.top, DesignBook.Spacing.lg)
-        .paddingHorizontalDefault()
     }
 }
 

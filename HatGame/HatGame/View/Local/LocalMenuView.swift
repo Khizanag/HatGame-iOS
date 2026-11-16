@@ -14,19 +14,22 @@ struct LocalMenuView: View {
     @Environment(Navigator.self) private var navigator
 
     var body: some View {
-        VStack(spacing: DesignBook.Spacing.xl) {
-            Spacer()
+        CenteredScrollView {
             ConnectivityMenuHero(
                 symbol: "dot.radiowaves.left.and.right",
                 title: "local.hero.title",
                 description: "local.description",
                 animation: .iterating
             )
-            Spacer()
-            actions
+            .paddingHorizontalDefault()
         }
-        .paddingHorizontalDefault()
-        .padding(.bottom, DesignBook.Spacing.lg)
+        .safeAreaInset(edge: .bottom) {
+            actions
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.xl)
+                .padding(.bottom, DesignBook.Spacing.lg)
+                .withFooterGradient()
+        }
         .navigationTitle(localized("local.title"))
         .setDefaultStyle()
     }

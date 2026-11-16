@@ -19,27 +19,31 @@ struct OnlineNoticeView: View {
     let action: () -> Void
 
     var body: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            Spacer()
-            Image(systemName: symbol)
-                .font(DesignBook.IconFont.extraLarge)
-                .foregroundStyle(DesignBook.Color.Text.accent)
-                .accessibilityHidden(true)
-            Text(title)
-                .font(DesignBook.Font.title3)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-                .multilineTextAlignment(.center)
-            Text(message)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, DesignBook.Spacing.lg)
-            Spacer()
-            PrimaryButton(title: actionTitle, icon: "arrow.uturn.backward", action: action)
+        CenteredScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                Image(systemName: symbol)
+                    .font(DesignBook.IconFont.extraLarge)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .accessibilityHidden(true)
+                Text(title)
+                    .font(DesignBook.Font.title3)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+                    .multilineTextAlignment(.center)
+                Text(message)
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignBook.Spacing.lg)
+            }
+            .paddingHorizontalDefault()
         }
-        .paddingHorizontalDefault()
-        .padding(.bottom, DesignBook.Spacing.lg)
-        .frame(maxWidth: .infinity)
+        .safeAreaInset(edge: .bottom) {
+            PrimaryButton(title: actionTitle, icon: "arrow.uturn.backward", action: action)
+                .paddingHorizontalDefault()
+                .padding(.top, DesignBook.Spacing.lg)
+                .padding(.bottom, DesignBook.Spacing.lg)
+                .withFooterGradient()
+        }
         .setDefaultBackground()
     }
 }

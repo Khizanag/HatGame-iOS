@@ -27,23 +27,28 @@ struct OnlineMenuView: View {
 // MARK: - Composition
 private extension OnlineMenuView {
     var content: some View {
-        VStack(spacing: DesignBook.Spacing.xl) {
-            Spacer()
+        CenteredScrollView {
             ConnectivityMenuHero(
                 symbol: "globe.americas.fill",
                 title: "online.hero.title",
                 description: "online.description",
                 animation: .pulse
             )
-            Spacer()
-            if isOnlineAvailable {
-                actionButtons
-            } else {
-                unavailableNotice
-            }
+            .paddingHorizontalDefault()
         }
-        .paddingHorizontalDefault()
-        .padding(.bottom, DesignBook.Spacing.lg)
+        .safeAreaInset(edge: .bottom) {
+            Group {
+                if isOnlineAvailable {
+                    actionButtons
+                } else {
+                    unavailableNotice
+                }
+            }
+            .paddingHorizontalDefault()
+            .padding(.top, DesignBook.Spacing.xl)
+            .padding(.bottom, DesignBook.Spacing.lg)
+            .withFooterGradient()
+        }
     }
 
     var unavailableNotice: some View {

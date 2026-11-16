@@ -28,19 +28,24 @@ struct OnlineWaitingView: View {
     private var totalCount: Int { presentPlayers.count }
 
     var body: some View {
-        VStack(spacing: DesignBook.Spacing.xl) {
-            Spacer()
-            hero
-            playerStatusCard
-            Spacer()
+        CenteredScrollView {
+            VStack(spacing: DesignBook.Spacing.xl) {
+                hero
+                playerStatusCard
+            }
+            .paddingHorizontalDefault()
+            .padding(.vertical, DesignBook.Spacing.xl)
+        }
+        .safeAreaInset(edge: .bottom) {
             if let onStartWithSubmittedWords {
                 PrimaryButton(title: localized("online.startWithSubmittedWords"), icon: "play.fill") {
                     onStartWithSubmittedWords()
                 }
+                .paddingHorizontalDefault()
+                .padding(.bottom, DesignBook.Spacing.lg)
+                .withFooterGradient()
             }
         }
-        .paddingHorizontalDefault()
-        .padding(.bottom, DesignBook.Spacing.lg)
         .setDefaultBackground()
     }
 }

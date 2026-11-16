@@ -71,7 +71,10 @@ struct ConnectivityMenuHero: View {
                     .font(DesignBook.Font.largeTitle)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
-                    .lineLimit(2)
+                    // Both menus scroll, so the title has room for a third
+                    // line at accessibility sizes; it shrinks only as far as
+                    // keeping each word whole needs.
+                    .lineLimit(3)
                     .minimumScaleFactor(0.5)
                 Text(localized(description))
                     .font(DesignBook.Font.body)

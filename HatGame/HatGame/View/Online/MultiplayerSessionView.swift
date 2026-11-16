@@ -107,37 +107,36 @@ private extension MultiplayerSessionView {
 
     /// Shown until the first room snapshot arrives.
     var connectingState: some View {
-        VStack(spacing: DesignBook.Spacing.lg) {
-            Spacer()
-            ZStack {
-                Circle()
-                    .fill(DesignBook.Gradient.primary)
-                    .frame(width: 120, height: 120)
-                    .blur(radius: 28)
-                    .opacity(0.55)
-                Circle()
-                    .fill(DesignBook.Color.Background.card)
-                    .frame(width: 96, height: 96)
-                    .shadow(.medium)
-                Image(systemName: connecting.symbol)
-                    .font(DesignBook.IconFont.sized(42, relativeTo: .largeTitle, weight: .bold))
-                    .decorativeHeroSizing()
-                    .foregroundStyle(DesignBook.Gradient.primary)
-                    .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
+        CenteredScrollView {
+            VStack(spacing: DesignBook.Spacing.lg) {
+                ZStack {
+                    Circle()
+                        .fill(DesignBook.Gradient.primary)
+                        .frame(width: 120, height: 120)
+                        .blur(radius: 28)
+                        .opacity(0.55)
+                    Circle()
+                        .fill(DesignBook.Color.Background.card)
+                        .frame(width: 96, height: 96)
+                        .shadow(.medium)
+                    Image(systemName: connecting.symbol)
+                        .font(DesignBook.IconFont.sized(42, relativeTo: .largeTitle, weight: .bold))
+                        .decorativeHeroSizing()
+                        .foregroundStyle(DesignBook.Gradient.primary)
+                        .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
+                }
+                .accessibilityHidden(true)
+                Text(connecting.title)
+                    .font(DesignBook.Font.title3)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+                    .multilineTextAlignment(.center)
+                Text(connecting.hint)
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal, DesignBook.Spacing.lg)
             }
-            .accessibilityHidden(true)
-            Text(connecting.title)
-                .font(DesignBook.Font.title3)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-                .multilineTextAlignment(.center)
-            Text(connecting.hint)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.secondary)
-                .multilineTextAlignment(.center)
-                .padding(.horizontal, DesignBook.Spacing.lg)
-            Spacer()
         }
-        .frame(maxWidth: .infinity)
         .setDefaultBackground()
     }
 

@@ -83,7 +83,7 @@ private extension OnlineRoundResultsView {
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
-                .lineLimit(1)
+                .lineLimit(2)
                 .minimumScaleFactor(0.5)
             Text(currentRound.title)
                 .font(DesignBook.Font.title3)
