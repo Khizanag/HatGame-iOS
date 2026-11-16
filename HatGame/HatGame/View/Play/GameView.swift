@@ -146,9 +146,7 @@ private extension GameView {
         ToolbarItem(placement: .cancellationAction) {
             Button(action: presentGiveUpConfirmation) {
                 Label(localized("game.giveUp.button"), systemImage: "flag")
-                    .foregroundStyle(DesignBook.Color.Status.error)
             }
-            .buttonStyle(.plain)
             .keyboardShortcut(.cancelAction)
             .accessibilityIdentifier("game.giveUp")
         }

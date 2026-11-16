@@ -224,9 +224,7 @@ private extension OnlinePlayView {
             ToolbarItem(placement: .cancellationAction) {
                 Button { showingGiveUpConfirmation = true } label: {
                     Label(localized("game.giveUp.button"), systemImage: "flag")
-                        .foregroundStyle(DesignBook.Color.Status.error)
                 }
-                .buttonStyle(.plain)
                 .keyboardShortcut(.cancelAction)
             }
         }

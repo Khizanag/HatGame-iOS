@@ -84,7 +84,6 @@ private extension RoomLobbyView {
                 showingLeaveConfirmation = true
             } label: {
                 Image(systemName: "xmark")
-                    .foregroundStyle(DesignBook.Color.Text.primary)
             }
             .accessibilityLabel(Text(localized("lobby.leave.title")))
         }

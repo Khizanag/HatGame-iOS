@@ -36,13 +36,7 @@ struct OnlineTeamCreationView: View {
                 .navigationTitle(localized("createTeam.title"))
                 .inlineNavigationTitle()
                 .toolbar {
-                    ToolbarItem(placement: .trailingAction) {
-                        Button { dismiss() } label: {
-                            Image(systemName: "xmark")
-                                .foregroundStyle(DesignBook.Color.Text.primary)
-                        }
-                        .keyboardShortcut(.cancelAction)
-                    }
+                    CloseToolbarItem { dismiss() }
                 }
                 .setDefaultBackground()
                 .errorAlert($error)

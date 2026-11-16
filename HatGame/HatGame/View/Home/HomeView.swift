@@ -268,7 +268,6 @@ private extension HomeView {
                 navigator.push(.settings)
             } label: {
                 Image(systemName: "gearshape")
-                    .foregroundStyle(DesignBook.Color.Text.primary)
             }
             .accessibilityLabel(Text(localized("common.buttons.settings")))
         }
