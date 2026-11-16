@@ -2016,7 +2016,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Give up"
+            "value" : "Give Up"
           }
         },
         "ka" : {
@@ -2033,13 +2033,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Are you sure you want to skip this word? It will remain available for other teams."
+            "value" : "End your team's turn now? The words left stay in the hat."
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "დარწმუნებული ხართ, რომ გსურთ ამ სიტყვის გამოტოვება? ის დარჩება ხელმისაწვდომი სხვა გუნდებისთვის."
+            "value" : "დავასრულოთ თქვენი გუნდის ხვედრი ახლავე? დარჩენილი სიტყვები ქუდში დარჩება."
           }
         }
       }
@@ -2050,13 +2050,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Give Up?"
+            "value" : "Give Up"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "დანებება?"
+            "value" : "დანებება"
           }
         }
       }
