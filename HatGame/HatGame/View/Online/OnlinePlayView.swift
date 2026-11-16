@@ -17,7 +17,6 @@ struct OnlinePlayView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var remainingSeconds: Int = 0
-    @State private var timerTick: Timer?
     @State private var showingGiveUpConfirmation: Bool = false
     @State private var words: [String: OnlineWord] = [:]
     @State private var hasPlayedFinalWarning: Bool = false
@@ -65,11 +64,10 @@ struct OnlinePlayView: View {
             .task(id: gameState?.currentWordId) {
                 await loadWordsIfNeeded()
             }
-            .onAppear { startTimerLoop() }
-            .onDisappear { stopTimerLoop() }
-            .onChange(of: gameState?.timerStartedAt) { _, _ in syncRemainingSeconds() }
-            .onChange(of: gameState?.phase) { _, newPhase in
-                if newPhase != .playing { stopTimerLoop() }
+            // A new turn start restarts the countdown; leaving the view or
+            // the turn cancels it.
+            .task(id: gameState?.timerStartedAt) {
+                await runCountdown()
             }
             .alert(localized("game.giveUp.title"), isPresented: $showingGiveUpConfirmation) {
                 Button(localized("common.buttons.cancel"), role: .cancel) { }
@@ -250,27 +248,30 @@ private extension OnlinePlayView {
             remainingSeconds = 0
             return
         }
-        guard let startedAt = state.timerStartedAt else {
+        guard let deadline = OnlineGameRules.deadline(state) else {
             // Pre-turn: show the full duration so the ring sits at 100%.
             remainingSeconds = OnlineGameRules.turnDuration(state)
             return
         }
-        let elapsed = Int(roomManager.now.timeIntervalSince(startedAt))
-        remainingSeconds = max(0, OnlineGameRules.turnDuration(state) - elapsed)
+        // Whole seconds rounded up, so the clock never sits on 0 while the
+        // turn is still running.
+        remainingSeconds = max(0, Int(deadline.timeIntervalSince(roomManager.now).rounded(.up)))
     }
 
-    func startTimerLoop() {
-        stopTimerLoop()
+    /// Ticks four times a second so the display flips close to each whole
+    /// second; the remaining time always comes from the deadline, never
+    /// from counting ticks.
+    func runCountdown() async {
         hasPlayedFinalWarning = false
         syncRemainingSeconds()
-        timerTick = Timer.scheduledTimer(withTimeInterval: 1, repeats: true) { _ in
+        while gameState?.phase == .playing {
+            do {
+                try await Task.sleep(for: .milliseconds(250))
+            } catch {
+                return
+            }
             tick()
         }
-    }
-
-    func stopTimerLoop() {
-        timerTick?.invalidate()
-        timerTick = nil
     }
 
     func tick() {
