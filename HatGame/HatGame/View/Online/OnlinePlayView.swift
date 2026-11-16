@@ -212,7 +212,7 @@ private extension OnlinePlayView {
                     .padding(.vertical, DesignBook.Spacing.sm)
             }
             .glassProminentButtonStyle()
-            .tint(DesignBook.Color.Status.success)
+            .tint(DesignBook.Color.Status.successFill)
             .disabled(currentWord == nil || isSubmitting)
             .keyboardShortcut(.rightArrow, modifiers: [])
         }

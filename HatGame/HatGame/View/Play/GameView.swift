@@ -134,7 +134,7 @@ private extension GameView {
                     .padding(.vertical, DesignBook.Spacing.sm)
             }
             .glassProminentButtonStyle()
-            .tint(DesignBook.Color.Status.success)
+            .tint(DesignBook.Color.Status.successFill)
             .disabled(engine.isPaused || engine.state.currentWord == nil)
             .keyboardShortcut(.rightArrow, modifiers: [])
             .accessibilityIdentifier("game.gotIt")

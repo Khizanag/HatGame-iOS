@@ -22,10 +22,17 @@ extension DesignBook {
             public static let accent = SwiftUI.Color(.Text.accent)
         }
 
+        /// Status colors. The plain tokens are for text and glyphs on the app
+        /// backgrounds (≥ 4.5:1); the `…Fill` tokens are for tinting prominent
+        /// buttons, dark enough that their white label stays ≥ 4.5:1.
         public enum Status {
             public static let success = SwiftUI.Color(.Status.success)
             public static let error = SwiftUI.Color(.Status.error)
             public static let warning = SwiftUI.Color(.Status.warning)
+            /// Tint for a prominent "success" button, such as Got It.
+            public static let successFill = SwiftUI.Color(.Status.successFill)
+            /// Tint for a prominent destructive button.
+            public static let errorFill = SwiftUI.Color(.Status.errorFill)
         }
 
         /// Foreground for glyphs and text on the brand gradients and on dimmed
