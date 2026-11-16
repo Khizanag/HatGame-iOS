@@ -90,6 +90,34 @@ struct WireCompatibilityTests {
         }
     }
 
+    /// `OnlineGameRound` is not a `CodingKeyRepresentable` key, so a team's
+    /// scores encode as a flat [round, score, round, score…] array, which
+    /// Realtime Database stores as an index-keyed node. Changing that shape
+    /// would make every stored game unreadable.
+    @Test("Scores are stored as round/score pairs in a flat array")
+    func scoresStoredShape() throws {
+        let state = OnlineGameState(scores: ["t1": [.first: 3, .second: 1, .third: 0]])
+
+        let object = try #require(try Fixture.firebaseObject(state) as? [String: Any])
+        let scores = try #require(object["scores"] as? [String: Any])
+        let flat = try #require(scores["t1"] as? [Int])
+
+        #expect(flat.count == 6)
+        let pairs = stride(from: 0, to: flat.count, by: 2).map { [flat[$0], flat[$0 + 1]] }
+        #expect(pairs.sorted { $0[0] < $1[0] } == [[1, 3], [2, 1], [3, 0]])
+    }
+
+    @Test("Scores stored as an index-keyed node decode")
+    func scoresFromIndexKeyedNode() throws {
+        let json = #"{"currentRound":1,"currentTeamIndex":0,"phase":"teamPrep","roundDuration":60,"#
+            + #""scores":{"t1":[2,4,1,5]}}"#
+
+        let state = try Fixture.decode(OnlineGameState.self, json: json)
+
+        #expect(state.getScore(for: "t1", in: .first) == 5)
+        #expect(state.getScore(for: "t1", in: .second) == 4)
+    }
+
     @Test("Scores survive a Firebase round trip")
     func scoresRoundTrip() throws {
         let state = OnlineGameState(scores: ["t1": [.first: 3, .second: 1, .third: 0]])
