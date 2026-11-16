@@ -8,14 +8,35 @@
 import DesignBook
 import SwiftUI
 
-/// The dimmed spinning-hat overlay shown while the hat is shuffled.
+/// The dimmed spinning-hat overlay shown while the hat is shuffled. The
+/// whole overlay is one button: a tap skips straight to the game.
 struct ShufflingOverlay: View {
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     let reduceMotion: Bool
+    let onSkip: () -> Void
 
     @State private var rotationAngle: Double = 0
 
     var body: some View {
+        Button(action: onSkip) {
+            overlayContent
+        }
+        .buttonStyle(.plain)
+        .accessibilityLabel(Text(localized("randomization.shuffling.message")))
+        .accessibilityHint(Text(localized("common.tapToSkip")))
+        .accessibilityAddTraits(.isModal)
+        .onAppear {
+            guard !reduceMotion else { return }
+            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
+                rotationAngle = 360
+            }
+        }
+    }
+}
+
+// MARK: - ShufflingOverlay subviews
+private extension ShufflingOverlay {
+    var overlayContent: some View {
         ZStack {
             Color.black.opacity(0.55).ignoresSafeArea()
 
@@ -41,20 +62,17 @@ struct ShufflingOverlay: View {
                         currentColor: DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque),
                         pendingColor: DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque)
                     )
+
+                    Text(localized("common.tapToSkip"))
+                        .font(DesignBook.Font.footnote)
+                        .foregroundStyle(DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque))
+                        .padding(.top, DesignBook.Spacing.md)
                 }
             }
         }
-        .onAppear {
-            guard !reduceMotion else { return }
-            withAnimation(.linear(duration: 2.5).repeatForever(autoreverses: false)) {
-                rotationAngle = 360
-            }
-        }
+        .contentShape(.rect)
     }
-}
 
-// MARK: - ShufflingOverlay subviews
-private extension ShufflingOverlay {
     var hatBadge: some View {
         ZStack {
             Circle()

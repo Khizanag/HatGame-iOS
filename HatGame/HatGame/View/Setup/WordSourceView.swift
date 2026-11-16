@@ -89,7 +89,7 @@ private extension WordSourceView {
             }
         }
         .buttonStyle(.plain)
-        .accessibilityElement(children: .ignore)
+        .pointerHoverEffect()
         .accessibilityLabel(Text(title))
         .accessibilityHint(Text(description))
     }

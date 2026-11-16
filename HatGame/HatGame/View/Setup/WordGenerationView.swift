@@ -23,6 +23,7 @@ struct WordGenerationView: View {
     @State private var generatedCount: Int = 0
     @State private var hasStarted = false
     @State private var isHatFloating = false
+    @State private var isSkipRequested = false
     @AccessibilityFocusState private var readyControlFocused: Bool
 
     private enum Phase {
@@ -94,6 +95,11 @@ private extension WordGenerationView {
                 .padding(.horizontal, DesignBook.Spacing.xl)
                 .opacity(phase == .generating ? 1 : 0)
                 .accessibilityLabel(Text(localized("wordGeneration.title")))
+            if phase == .generating {
+                Text(localized("common.tapToSkip"))
+                    .font(DesignBook.Font.footnote)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
+            }
             Spacer(minLength: 0)
             if phase == .ready, generatedCount > 0 {
                 continueButton
@@ -102,6 +108,10 @@ private extension WordGenerationView {
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.xl)
+        // The draw is decoration over instant work: a tap anywhere skips it.
+        .contentShape(.rect)
+        .onTapGesture(perform: skipDraw)
+        .accessibilityAction(named: Text(localized("common.skip")), skipDraw)
     }
 
     var hatHero: some View {
@@ -178,6 +188,7 @@ private extension WordGenerationView {
         PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
             navigator.push(.randomization)
         }
+        .keyboardShortcut(.defaultAction)
         .accessibilityFocused($readyControlFocused)
         .accessibilityHint(Text(localized("wordGeneration.count \(generatedCount)")))
     }
@@ -206,7 +217,10 @@ private extension WordGenerationView {
             }
         }
 
-        let drawCount = reduceMotion ? 5 : 14
+        // The full draw plays once per session; later games get a short one.
+        let isShort = reduceMotion || SessionAnimations.hasPlayedWordDraw
+        SessionAnimations.hasPlayedWordDraw = true
+        let drawCount = isShort ? 5 : 14
         let interval: Duration = reduceMotion ? .milliseconds(340) : .milliseconds(160)
         drawWord(from: pool)
         for draw in 2...drawCount {
@@ -214,6 +228,7 @@ private extension WordGenerationView {
                 hasStarted = false
                 return
             }
+            if isSkipRequested { break }
             drawWord(from: pool)
             withAnimation(reduceMotion ? nil : .linear(duration: 0.16)) {
                 progress = Double(draw) / Double(drawCount)
@@ -224,6 +239,11 @@ private extension WordGenerationView {
         // Move VoiceOver to the now-actionable Continue button once it is on screen.
         guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
         readyControlFocused = true
+    }
+
+    func skipDraw() {
+        guard phase == .generating else { return }
+        isSkipRequested = true
     }
 
     /// Draws one random word, sharpening it into focus from a blur — or a calm

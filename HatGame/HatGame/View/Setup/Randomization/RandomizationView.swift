@@ -20,6 +20,8 @@ struct RandomizationView: View {
     @State private var showTeamReveal: Bool = false
     /// Changing this starts a starting-team shuffle; the task is cancelled on disappear.
     @State private var teamShuffleId: UUID?
+    /// Set once the game starts, so a skip tap and the timer can't both start it.
+    @State private var hasStartedGame = false
 
     private var selectedTeam: Team? {
         gameManager.configuration.teams[safe: selectedStartingTeamIndex]
@@ -35,9 +37,10 @@ struct RandomizationView: View {
                 .blur(radius: isShuffling ? 10 : 0)
                 .opacity(isShuffling ? 0.3 : 1)
                 .allowsHitTesting(!isShuffling)
+                .accessibilityHidden(isShuffling)
 
             if isShuffling {
-                ShufflingOverlay(reduceMotion: reduceMotion)
+                ShufflingOverlay(reduceMotion: reduceMotion, onSkip: startGame)
                     .transition(.opacity)
             }
         }
@@ -109,11 +112,13 @@ private extension RandomizationView {
                     }
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .padding(.horizontal, DesignBook.Spacing.md)
-                    .padding(.vertical, DesignBook.Spacing.sm)
+                    .frame(minHeight: DesignBook.Size.touchTargetSize)
                     .background(DesignBook.Color.Text.accent.opacity(0.1))
                     .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
+                    .contentShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                 }
                 .buttonStyle(.plain)
+                .pointerHoverEffect()
                 .disabled(isRandomizingTeam)
             }
         }
@@ -131,6 +136,7 @@ private extension RandomizationView {
                     )
                 }
                 .buttonStyle(.plain)
+                .pointerHoverEffect()
             }
         }
     }
@@ -141,6 +147,7 @@ private extension RandomizationView {
             icon: "play.fill",
             action: shuffleAndStart
         )
+        .keyboardShortcut(.defaultAction)
         .disabled(isShuffling || isRandomizingTeam || !canStart)
         .accessibilityIdentifier("randomization.start")
     }
@@ -194,16 +201,26 @@ private extension RandomizationView {
         }
     }
 
-    /// Lets the shuffle animation play, then starts the game and enters the loop.
+    /// Lets the shuffle animation play — in full only the first time this
+    /// session — then starts the game. A tap on the overlay starts it sooner.
     func startGameAfterShuffle() async {
         guard isShuffling else { return }
-        guard (try? await Task.sleep(for: reduceMotion ? .milliseconds(600) : .milliseconds(2500))) != nil else {
+        let isShort = reduceMotion || SessionAnimations.hasPlayedShuffle
+        SessionAnimations.hasPlayedShuffle = true
+        guard (try? await Task.sleep(for: isShort ? .milliseconds(600) : .milliseconds(2500))) != nil else {
             return
         }
+        startGame()
+    }
+
+    func startGame() {
+        guard isShuffling, !hasStartedGame else { return }
+        hasStartedGame = true
         gameManager.startGame(startingTeamIndex: selectedStartingTeamIndex)
         guard gameManager.engine.phase == .nextTeam else {
             // Never leave the dimmed overlay up with navigation hidden.
             isShuffling = false
+            hasStartedGame = false
             return
         }
         navigator.push(.gameLoop)

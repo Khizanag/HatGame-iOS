@@ -100,6 +100,40 @@
         }
       }
     },
+    "common.skip" : {
+      "comment" : "VoiceOver action that skips a decorative animation.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვება"
+          }
+        }
+      }
+    },
+    "common.tapToSkip" : {
+      "comment" : "Caption and VoiceOver hint on decorative animations that a tap skips.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tap to skip"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეეხეთ გამოსატოვებლად"
+          }
+        }
+      }
+    },
     "createTeam.confirm" : {
       "comment" : "Toolbar button that creates the team in the online/nearby Create Team sheet.",
       "localizations" : {
@@ -812,6 +846,23 @@
         }
       }
     },
+    "randomization.title" : {
+      "comment" : "Randomization view title.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Starting Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "პირველი გუნდი"
+          }
+        }
+      }
+    },
     "session.leave" : {
       "comment" : "Accessibility label of the close button that leaves an online or nearby room.",
       "localizations" : {
@@ -1065,6 +1116,23 @@
         }
       }
     },
+    "wordGeneration.navTitle" : {
+      "comment" : "Navigation title for the automatic word-generation screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Random Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შემთხვევითი სიტყვები"
+          }
+        }
+      }
+    },
     "wordInput.autoFill.nothingToAdd" : {
       "comment" : "Shown when auto-fill finds no word that is not already in the hat.",
       "localizations" : {
@@ -1204,6 +1272,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სიტყვა თითო მოთამაშეზე"
+          }
+        }
+      }
+    },
+    "wordSource.navTitle" : {
+      "comment" : "Navigation title for the word-source choice screen.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Choose Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვების არჩევა"
           }
         }
       }
@@ -5622,23 +5707,6 @@
         }
       }
     },
-    "randomization.title" : {
-      "comment" : "Randomization view title.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Randomize Words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვების არევა"
-          }
-        }
-      }
-    },
     "randomization.wordsReady.count %lld" : {
       "comment" : "Shows count of words ready to play.",
       "localizations" : {
@@ -7650,23 +7718,6 @@
         }
       }
     },
-    "wordGeneration.navTitle" : {
-      "comment" : "Navigation title for the automatic word-generation screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვები"
-          }
-        }
-      }
-    },
     "wordGeneration.ready" : {
       "comment" : "Status title once words are generated.",
       "localizations" : {
@@ -8202,23 +8253,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ხელით შეყვანა"
-          }
-        }
-      }
-    },
-    "wordSource.navTitle" : {
-      "comment" : "Navigation title for the word-source choice screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Words"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვები"
           }
         }
       }
