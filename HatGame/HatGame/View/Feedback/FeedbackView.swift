@@ -17,6 +17,7 @@ struct FeedbackView: View {
     @State private var service = FeedbackService()
     @State private var category: FeedbackCategory = .idea
     @State private var message: String = ""
+    @State private var isDiscardDialogPresented = false
     @FocusState private var isMessageFocused: Bool
 
     private var trimmedMessage: String {
@@ -27,11 +28,22 @@ struct FeedbackView: View {
         !trimmedMessage.isEmpty && !service.isSubmitting
     }
 
+    /// An unsent message that leaving the screen would throw away.
+    private var hasDraft: Bool {
+        !trimmedMessage.isEmpty && service.state != .submitted
+    }
+
     var body: some View {
         content
             .navigationTitle(localized("feedback.title"))
             .setDefaultStyle()
-            .toolbar { keyboardToolbar }
+            .navigationBarBackButtonHidden(hasDraft)
+            .toolbar {
+                if hasDraft {
+                    backToolbarItem
+                }
+                keyboardToolbar
+            }
             .errorAlert(
                 title: localized("error.title.sendFeedback"),
                 message: service.errorMessage, onDismiss: service.resetAfterFailure)
@@ -64,6 +76,7 @@ private extension FeedbackView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
+        .dismissesKeyboardOnScroll()
         .actionBar {
             submitButton
                 .paddingHorizontalDefault()
@@ -82,6 +95,8 @@ private extension FeedbackView {
                     }
                 }
                 .pickerStyle(.segmented)
+                // The card header already names it; macOS would repeat it.
+                .labelsHidden()
             }
         }
     }
@@ -128,7 +143,6 @@ private extension FeedbackView {
                 Task { await service.submit(category: category, message: message) }
             }
             .disabled(!canSubmit)
-            .opacity(canSubmit ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
         }
     }
 
@@ -173,6 +187,30 @@ private extension FeedbackView {
         .onAppear { DesignBook.Haptics.success() }
     }
 
+    /// Stands in for the system Back button while a message is unsent, so
+    /// leaving asks first instead of silently dropping the draft. Hiding the
+    /// system button also turns off the swipe back.
+    var backToolbarItem: some ToolbarContent {
+        ToolbarItem(placement: .navigation) {
+            Button {
+                isMessageFocused = false
+                isDiscardDialogPresented = true
+            } label: {
+                Label(localized("feedback.back"), systemImage: "chevron.backward")
+            }
+            .help(localized("feedback.back"))
+            // Anchored here so the dialog points at the button that asked.
+            .confirmationDialog(
+                localized("feedback.discard.title"),
+                isPresented: $isDiscardDialogPresented,
+                titleVisibility: .visible
+            ) {
+                Button(localized("feedback.discard.confirm"), role: .destructive) { dismiss() }
+                Button(localized("feedback.discard.keepEditing"), role: .cancel) { }
+            }
+        }
+    }
+
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
         ToolbarItemGroup(placement: .keyboardAccessory) {
@@ -180,10 +218,25 @@ private extension FeedbackView {
             Button {
                 isMessageFocused = false
             } label: {
-                Image(systemName: "keyboard.chevron.compact.down")
+                Label(localized("feedback.dismissKeyboard"), systemImage: "keyboard.chevron.compact.down")
+                    .labelStyle(.iconOnly)
             }
-            .accessibilityLabel(Text(localized("common.gotIt")))
+            .help(localized("feedback.dismissKeyboard"))
         }
+    }
+}
+
+// MARK: - Keyboard dismissal
+private extension View {
+    /// Dragging the form down dismisses the keyboard; visionOS has no
+    /// scroll-driven keyboard dismissal.
+    @ViewBuilder
+    func dismissesKeyboardOnScroll() -> some View {
+        #if os(visionOS)
+        self
+        #else
+        scrollDismissesKeyboard(.interactively)
+        #endif
     }
 }
 

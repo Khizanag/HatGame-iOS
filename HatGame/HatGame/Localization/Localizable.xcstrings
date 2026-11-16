@@ -236,6 +236,91 @@
         }
       }
     },
+    "feedback.back" : {
+      "comment" : "Feedback: back button shown while a message is unsent; asks before discarding it",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Back"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "უკან"
+          }
+        }
+      }
+    },
+    "feedback.discard.confirm" : {
+      "comment" : "Feedback: destructive dialog button that leaves and drops the unsent message",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard Message"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეტყობინების წაშლა"
+          }
+        }
+      }
+    },
+    "feedback.discard.keepEditing" : {
+      "comment" : "Feedback: dialog button that stays on the form",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep Editing"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რედაქტირების გაგრძელება"
+          }
+        }
+      }
+    },
+    "feedback.discard.title" : {
+      "comment" : "Feedback: title of the dialog shown when leaving with an unsent message",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard your message?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წავშალოთ შეტყობინება?"
+          }
+        }
+      }
+    },
+    "feedback.dismissKeyboard" : {
+      "comment" : "Feedback: keyboard toolbar button that hides the keyboard",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dismiss Keyboard"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "კლავიატურის დამალვა"
+          }
+        }
+      }
+    },
     "game.endGame.button" : {
       "comment" : "Toolbar button that abandons the single-device game in progress.",
       "localizations" : {
@@ -1703,7 +1788,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Send feedback"
+            "value" : "Send"
           }
         },
         "ka" : {
@@ -1771,13 +1856,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Feedback"
+            "value" : "Send Feedback"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "უკუკავშირი"
+            "value" : "უკუკავშირის გაგზავნა"
           }
         }
       }
