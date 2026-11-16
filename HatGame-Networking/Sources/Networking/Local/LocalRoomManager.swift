@@ -56,6 +56,10 @@ public final class LocalRoomManager: RoomManager {
     /// Guest-only. The peer this guest joined; the only peer whose
     /// disconnect ends the session and whose snapshots are trusted.
     private var hostPeerID: MCPeerID?
+    /// Guest-only. Repeats the hello until the host answers.
+    @ObservationIgnored private var helloTask: Task<Void, Never>?
+    static let helloInterval: Duration = .seconds(2)
+    static let helloTimeout: Duration = .seconds(15)
 
     /// Guest-only. Host clock minus this device's, from the last snapshot.
     @ObservationIgnored private var hostClockOffset: TimeInterval = 0
@@ -201,6 +205,8 @@ public final class LocalRoomManager: RoomManager {
     }
 
     public override func leaveRoom() async throws {
+        helloTask?.cancel()
+        helloTask = nil
         service.endSession()
         room = nil
         words = []
@@ -217,7 +223,7 @@ public final class LocalRoomManager: RoomManager {
     /// gameplay action to the host.
     func forwardGameAction(_ action: GameAction) {
         guard !isLocalHost else { return }
-        service.send(.clientAction(.game(action)))
+        sendToHost(.clientAction(.game(action)))
     }
 
     /// Host-only. Seeds the first game state from the shuffled word pool.
@@ -269,7 +275,7 @@ private extension LocalRoomManager {
         case .createTeam, .removeTeam, .startGame:
             throw LocalError.hostOnly
         case .joinTeam, .leaveTeam, .submitWords:
-            service.send(.clientAction(.room(action)))
+            sendToHost(.clientAction(.room(action)))
         }
     }
 
@@ -306,14 +312,49 @@ private extension LocalRoomManager {
 
 // MARK: - Transport events
 private extension LocalRoomManager {
+    /// Peers whose hello the host accepted. Anyone else connected to the
+    /// session — mid-handshake, refused, or never announced — gets nothing.
+    var admittedPeers: [MCPeerID] {
+        Array(peerToPlayerId.keys)
+    }
+
+    /// Guests talk to the host only, never to other guests.
+    func sendToHost(_ message: LocalMessage) {
+        guard let hostPeerID else { return }
+        service.send(message, to: [hostPeerID])
+    }
+
     func broadcastSnapshot() {
         guard isLocalHost, let room else { return }
-        service.send(.roomSnapshot(room, hostTime: Date()))
+        service.send(.roomSnapshot(room, hostTime: Date()), to: admittedPeers)
     }
 
     func broadcastWords() {
         guard isLocalHost else { return }
-        service.send(.wordsSnapshot(words))
+        service.send(.wordsSnapshot(words), to: admittedPeers)
+    }
+
+    /// Guest-only. Sends the hello every couple of seconds until the host's
+    /// first snapshot (or refusal) arrives, so one lost hello cannot leave
+    /// the guest connected but never admitted; gives up after `helloTimeout`.
+    func startHello(to host: MCPeerID) {
+        helloTask?.cancel()
+        helloTask = Task { [weak self] in
+            let deadline = ContinuousClock.now + Self.helloTimeout
+            while let self, self.room == nil, self.connectionState == .joining, let player = self.localPlayer {
+                guard ContinuousClock.now < deadline else {
+                    logger.info("Host never answered the hello")
+                    self.connectionState = .closed
+                    return
+                }
+                self.service.send(.helloFromGuest(player, protocolVersion: LocalProtocol.version), to: [host])
+                do {
+                    try await Task.sleep(for: Self.helloInterval)
+                } catch {
+                    return
+                }
+            }
+        }
     }
 
     func handlePeerStateChange(peer: MCPeerID, state: MCSessionState) {
@@ -321,9 +362,7 @@ private extension LocalRoomManager {
         case .connected:
             // Hosts wait for helloFromGuest before adding the peer.
             guard !isLocalHost, peer == hostPeerID else { return }
-            if let player = localPlayer {
-                service.send(.helloFromGuest(player, protocolVersion: LocalProtocol.version), to: [peer])
-            }
+            startHello(to: peer)
             isConnected = true
         case .notConnected:
             if isLocalHost {
@@ -333,6 +372,7 @@ private extension LocalRoomManager {
                 self.room = next
                 broadcastSnapshot()
             } else if peer == hostPeerID {
+                helloTask?.cancel()
                 isConnected = false
             }
         default:
@@ -393,7 +433,14 @@ private extension LocalRoomManager {
             service.send(.helloRejected(.unsupportedVersion), to: [peer])
             return
         }
-        guard peerToPlayerId[peer] == nil, let room else { return }
+        guard let room else { return }
+        guard peerToPlayerId[peer] == nil else {
+            // A resent hello from a guest already admitted: its snapshot is
+            // in flight or was lost, so send the current one again.
+            service.send(.roomSnapshot(room, hostTime: Date()), to: [peer])
+            service.send(.wordsSnapshot(words), to: [peer])
+            return
+        }
         let admission = RoomRules.admitGuest(
             player,
             to: room,
