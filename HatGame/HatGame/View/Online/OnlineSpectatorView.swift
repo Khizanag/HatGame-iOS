@@ -60,7 +60,7 @@ private extension OnlineSpectatorView {
     var roleBanner: some View {
         VStack(spacing: 4) {
             Text(localized(isOwnTeam ? "onlineSpectator.yourTurn" : "onlineSpectator.othersTurn"))
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .textCase(.uppercase)
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
@@ -68,7 +68,7 @@ private extension OnlineSpectatorView {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Circle().fill(tint).frame(width: 10, height: 10)
                 Text(team.name)
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(tint)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -79,9 +79,9 @@ private extension OnlineSpectatorView {
     var scoreChip: some View {
         HStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: "checkmark.seal.fill")
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
             Text(verbatim: "\(teamScore)")
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }
@@ -109,7 +109,7 @@ private extension OnlineSpectatorView {
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 
                 Text(localized(isOwnTeam ? "onlineSpectator.listen" : "onlineSpectator.watching"))
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
 

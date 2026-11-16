@@ -29,7 +29,7 @@ struct WordsReadyCard: View {
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text(localized("randomization.wordsReady.title"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Text(localized("randomization.wordsReady.count \(wordCount)"))

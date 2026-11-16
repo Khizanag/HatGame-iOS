@@ -95,13 +95,13 @@ private extension NextTeamView {
             .decorativeHeroSizing()
 
             Text(localized("game.nextTeam.title"))
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .textCase(.uppercase)
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 
             Text(team.name)
-                .font(DesignBook.Font.largeTitle)
+                .font(DesignBook.Font.displayLarge)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .foregroundStyle(team.color)
@@ -110,14 +110,14 @@ private extension NextTeamView {
             if hasGameStarted {
                 HStack(spacing: DesignBook.Spacing.xs) {
                     Image(systemName: "star.fill")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                     AnimatedScoreText(
                         value: engine.scoreboard.totalScore(for: team),
-                        font: DesignBook.Font.headline,
+                        font: DesignBook.Font.title3,
                         color: team.color
                     )
                     Text(localized("game.currentScoreLabel.suffix"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .textCase(.uppercase)
                         .tracking(1.2)
@@ -146,11 +146,11 @@ private extension NextTeamView {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(round.title)
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                         .accessibilityIdentifier("nextTeam.roundTitle")
                     Text(String(format: localized("game.wordsRemainingLabel"), engine.state.remainingWordCount))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 
@@ -174,11 +174,11 @@ private extension NextTeamView {
                 HStack {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(localized("game.nextTeam.selectExplainer"))
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
 
                         Text(localized("game.nextTeam.selectExplainer.description"))
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
 
@@ -242,7 +242,7 @@ private extension NextTeamView {
             }
 
             Text(player.name)
-                .font(isSelected ? DesignBook.Font.bodyBold : DesignBook.Font.body)
+                .font(isSelected ? DesignBook.Font.bodySemibold : DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
             Spacer()
@@ -267,7 +267,7 @@ private extension NextTeamView {
         let bg: Color = isSelected ? team.color.opacity(0.15) : DesignBook.Color.Background.card
 
         return Text(text)
-            .font(DesignBook.Font.captionBold)
+            .font(DesignBook.Font.subheadlineSemibold)
             .textCase(.uppercase)
             .tracking(1.1)
             .foregroundStyle(fg)

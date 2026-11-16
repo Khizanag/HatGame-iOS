@@ -106,7 +106,7 @@ private extension OnlineTurnResultsView {
                     .symbolEffect(.bounce, options: .nonRepeating, value: !reduceMotion && hasCelebrated)
             }
             Text(localized("onlineTurnResults.title"))
-                .font(DesignBook.Font.largeTitle)
+                .font(DesignBook.Font.displayLarge)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -119,7 +119,7 @@ private extension OnlineTurnResultsView {
             VStack(spacing: DesignBook.Spacing.sm) {
                 if let team = currentTeam {
                     Text(team.name)
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(tint)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -132,7 +132,7 @@ private extension OnlineTurnResultsView {
                         duration: 0.7
                     )
                     Text(localized("game.turnResults.wordsUnit \(roundScore)"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
             }
@@ -143,13 +143,13 @@ private extension OnlineTurnResultsView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("onlineTurnResults.standings"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 ForEach(Array(sortedTeams.enumerated()), id: \.element.id) { index, team in
                     HStack(spacing: DesignBook.Spacing.md) {
                         Text(verbatim: "\(index + 1)")
-                            .font(DesignBook.Font.captionBold)
+                            .font(DesignBook.Font.subheadlineSemibold)
                             .foregroundStyle(index == 0
                                 ? DesignBook.Color.onAccent(for: team.color)
                                 : DesignBook.Color.Text.primary)
@@ -175,7 +175,7 @@ private extension OnlineTurnResultsView {
 
                         AnimatedScoreText(
                             value: gameState?.getTotalScore(for: team.id) ?? 0,
-                            font: DesignBook.Font.title3,
+                            font: DesignBook.Font.title1,
                             color: index == 0
                                 ? team.color
                                 : DesignBook.Color.Text.secondary,

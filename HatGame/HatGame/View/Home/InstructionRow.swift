@@ -29,7 +29,7 @@ struct InstructionRow: View {
                     .frame(width: iconDiscSize, height: iconDiscSize)
 
                 Image(systemName: icon)
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.accent)
             }
 
@@ -42,7 +42,7 @@ struct InstructionRow: View {
 
             if let index {
                 Text(verbatim: "\(index)")
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .monospacedDigit()
                     .padding(.horizontal, DesignBook.Spacing.sm)

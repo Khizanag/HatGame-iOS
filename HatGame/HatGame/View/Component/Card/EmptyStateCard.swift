@@ -37,7 +37,7 @@ struct EmptyStateCard: View {
                     .multilineTextAlignment(.center)
                 if let caption {
                     Text(localized(caption))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .multilineTextAlignment(.center)
                 }

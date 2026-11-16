@@ -29,7 +29,7 @@ struct RandomizationHeaderCard: View {
 
                 VStack(spacing: DesignBook.Spacing.xs) {
                     Text(localized("randomization.header.title"))
-                        .font(DesignBook.Font.title2)
+                        .font(DesignBook.Font.displaySmall)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)

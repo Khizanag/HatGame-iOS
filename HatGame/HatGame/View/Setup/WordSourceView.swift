@@ -71,10 +71,10 @@ private extension WordSourceView {
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(title)
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                         Text(description)
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                             .multilineTextAlignment(.leading)
                             .fixedSize(horizontal: false, vertical: true)
@@ -83,7 +83,7 @@ private extension WordSourceView {
                     Spacer(minLength: DesignBook.Spacing.sm)
 
                     Image(systemName: "chevron.right")
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
             }

@@ -100,11 +100,11 @@ private extension OnlineWordInputView {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             HStack {
                 Text(localized("onlineWordInput.wordsAdded"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 Spacer()
                 Text(verbatim: "\(playerWords.count)/\(wordsPerPlayer)")
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .monospacedDigit()
             }
@@ -130,7 +130,7 @@ private extension OnlineWordInputView {
     func wordRow(at index: Int) -> some View {
         HStack(spacing: DesignBook.Spacing.sm) {
             Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                 .frame(width: 24, height: 24)
                 .background(DesignBook.Color.Background.secondary)
@@ -166,7 +166,7 @@ private extension OnlineWordInputView {
 
             Button { addWord() } label: {
                 Image(systemName: "plus.circle.fill")
-                    .font(DesignBook.Font.title2)
+                    .font(DesignBook.Font.displaySmall)
                     .foregroundStyle(canAdd ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
             }
             .buttonStyle(.plain)
@@ -181,7 +181,7 @@ private extension OnlineWordInputView {
                     .font(DesignBook.IconFont.extraLarge)
                     .foregroundStyle(DesignBook.Color.Status.success)
                 Text(localized("onlineWordInput.ready"))
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 Text(localized("onlineWordInput.readyHint"))
                     .font(DesignBook.Font.body)
@@ -197,7 +197,7 @@ private extension OnlineWordInputView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("onlineWordInput.summary"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 wordsList
             }

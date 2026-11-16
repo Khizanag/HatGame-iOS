@@ -139,7 +139,7 @@ private extension WordCard {
                 .font(DesignBook.IconFont.medium)
                 .fontWeight(.bold)
             Text(localized(label))
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .textCase(.uppercase)
                 .tracking(1.4)
         }
@@ -162,7 +162,7 @@ private extension WordCard {
             Spacer(minLength: 0)
 
             Text(word)
-                .font(DesignBook.Font.largeTitle)
+                .font(DesignBook.Font.displayLarge)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.4)
@@ -173,7 +173,7 @@ private extension WordCard {
             Spacer(minLength: 0)
 
             Text(localized("game.card.swipeHint"))
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .textCase(.uppercase)
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)

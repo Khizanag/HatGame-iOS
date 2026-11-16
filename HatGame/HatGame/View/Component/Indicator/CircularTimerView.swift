@@ -108,7 +108,7 @@ private extension CircularTimerView {
 
             if isPaused {
                 Text(localized("game.timer.paused"))
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .textCase(.uppercase)
                     .tracking(1.2)

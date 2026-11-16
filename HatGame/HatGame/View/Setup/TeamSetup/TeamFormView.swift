@@ -131,7 +131,7 @@ private extension TeamFormView {
 
                 TextField(localized("teamForm.enterTeamName"), text: teamNameBinding)
                     .textFieldStyle(.plain)
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
@@ -159,14 +159,14 @@ private extension TeamFormView {
                     TeamFormFieldLabel(icon: "person.2.fill", title: "teamForm.players")
                     Spacer()
                     Text(verbatim: "\(filledPlayerNames.count)/\(requiredPlayers)")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .monospacedDigit()
                 }
 
                 if let validationMessage {
                     Text(validationMessage)
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Status.error)
                 }
 
@@ -182,7 +182,7 @@ private extension TeamFormView {
     func playerField(index: Int) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
             Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .frame(width: playerBadgeSize, height: playerBadgeSize)
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))

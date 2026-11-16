@@ -153,11 +153,11 @@ private extension WordInputView {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
             HStack {
                 Text(localized("wordInput.wordsAdded"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 Spacer()
                 Text(verbatim: "\(playerWords.count)/\(wordsPerPlayer)")
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .monospacedDigit()
             }

@@ -83,12 +83,12 @@ private extension OnlineTeamCreationView {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("createTeam.teamName"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 TextField(localized("createTeam.enterName"), text: $teamName)
                     .textFieldStyle(.plain)
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
@@ -106,7 +106,7 @@ private extension OnlineTeamCreationView {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("createTeam.teamColor"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                     Spacer()
                     Circle().fill(teamColor).frame(width: 24, height: 24)
@@ -150,7 +150,7 @@ private extension OnlineTeamCreationView {
                 .overlay {
                     if isSelected {
                         Image(systemName: "checkmark")
-                            .font(DesignBook.Font.subheadlineBold)
+                            .font(DesignBook.Font.bodyBold)
                             .foregroundStyle(DesignBook.Color.onAccent(for: color))
                     } else if isUsed {
                         Image(systemName: "xmark")

@@ -41,11 +41,11 @@ private extension TeamNameSuggestionRow {
     var header: some View {
         HStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: "wand.and.stars")
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .foregroundStyle(DesignBook.Color.Text.accent)
 
             Text(localized("teamForm.suggestions.title"))
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .textCase(.uppercase)
                 .tracking(1.2)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
@@ -54,7 +54,7 @@ private extension TeamNameSuggestionRow {
 
             Button(action: onRefresh) {
                 Image(systemName: "shuffle")
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .padding(6)
                     .background {
@@ -76,7 +76,7 @@ struct SuggestionChip: View {
     var body: some View {
         Button(action: onTap) {
             Text(text)
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .lineLimit(1)
                 .padding(.horizontal, DesignBook.Spacing.md)

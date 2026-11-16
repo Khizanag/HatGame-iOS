@@ -23,7 +23,7 @@ struct HeaderCard<Content: View>: View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 Text(title)
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .frame(maxWidth: .infinity, alignment: .leading)
 

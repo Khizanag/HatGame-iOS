@@ -16,14 +16,18 @@ extension DesignBook {
     /// Text fonts. Every token scales with Dynamic Type: text-style tokens
     /// directly, display and hero tokens by anchoring a design size to the text
     /// style whose growth curve they follow (see `scaled(_:relativeTo:weight:design:)`).
+    ///
+    /// Text-style tokens are named after the system text style they scale with
+    /// (`title1` is Title 1, `subheadline` is Subheadline), so the name tells
+    /// you where a token sits in the type hierarchy.
     public enum Font {
         // MARK: - Display
         /// 56 pt bold, scales with Large Title.
-        public static let largeTitle = scaled(56, relativeTo: .largeTitle, weight: .bold)
+        public static let displayLarge = scaled(56, relativeTo: .largeTitle, weight: .bold)
         /// 42 pt bold, scales with Large Title.
-        public static let title = scaled(42, relativeTo: .largeTitle, weight: .bold)
-        /// 32 pt bold, scales with Title.
-        public static let title2 = scaled(32, relativeTo: .title, weight: .bold)
+        public static let displayMedium = scaled(42, relativeTo: .largeTitle, weight: .bold)
+        /// 32 pt bold, scales with Title 1.
+        public static let displaySmall = scaled(32, relativeTo: .title, weight: .bold)
 
         // MARK: - Hero numerals
         /// 96 pt bold — the big value on the word-count and timer setup screens.
@@ -36,18 +40,39 @@ extension DesignBook {
         public static let roomCode = scaled(44, relativeTo: .largeTitle, weight: .bold, design: .monospaced)
 
         // MARK: - Text styles
-        public static let title3 = SwiftUI.Font.system(.title, design: .rounded).weight(.semibold)
-        public static let headline = SwiftUI.Font.system(.title3, design: .rounded).weight(.semibold)
-        public static let callout = SwiftUI.Font.system(.title2, design: .rounded).weight(.semibold)
+        /// Large Title, bold.
+        public static let largeTitle = SwiftUI.Font.system(.largeTitle, design: .rounded).weight(.bold)
+        /// Title 1, semibold.
+        public static let title1 = SwiftUI.Font.system(.title, design: .rounded).weight(.semibold)
+        /// Title 2, semibold.
+        public static let title2 = SwiftUI.Font.system(.title2, design: .rounded).weight(.semibold)
+        /// Title 3, semibold.
+        public static let title3 = SwiftUI.Font.system(.title3, design: .rounded).weight(.semibold)
+        /// Headline (body size, semibold by definition).
+        public static let headline = SwiftUI.Font.system(.headline, design: .rounded)
+        /// Body, regular.
         public static let body = SwiftUI.Font.system(.body, design: .rounded).weight(.regular)
-        public static let bodyBold = SwiftUI.Font.system(.body, design: .rounded).weight(.semibold)
+        /// Body, semibold.
+        public static let bodySemibold = SwiftUI.Font.system(.body, design: .rounded).weight(.semibold)
         /// 18 pt bold, scales with Body.
-        public static let subheadlineBold = scaled(18, relativeTo: .body, weight: .bold)
-        public static let caption = SwiftUI.Font.system(.subheadline, design: .rounded).weight(.regular)
-        public static let captionBold = SwiftUI.Font.system(.subheadline, design: .rounded).weight(.semibold)
+        public static let bodyBold = scaled(18, relativeTo: .body, weight: .bold)
+        /// Callout, regular.
+        public static let callout = SwiftUI.Font.system(.callout, design: .rounded).weight(.regular)
+        /// Subheadline, regular.
+        public static let subheadline = SwiftUI.Font.system(.subheadline, design: .rounded).weight(.regular)
+        /// Subheadline, semibold.
+        public static let subheadlineSemibold = SwiftUI.Font.system(.subheadline, design: .rounded)
+            .weight(.semibold)
+        /// Footnote, regular.
+        public static let footnote = SwiftUI.Font.system(.footnote, design: .rounded).weight(.regular)
         /// 14 pt bold, scales with Footnote.
         public static let footnoteBold = scaled(14, relativeTo: .footnote, weight: .bold)
-        public static let smallCaption = SwiftUI.Font.system(.caption, design: .rounded).weight(.semibold)
+        /// Caption 1, regular.
+        public static let caption1 = SwiftUI.Font.system(.caption, design: .rounded).weight(.regular)
+        /// Caption 1, semibold.
+        public static let caption1Semibold = SwiftUI.Font.system(.caption, design: .rounded).weight(.semibold)
+        /// Caption 2, regular.
+        public static let caption2 = SwiftUI.Font.system(.caption2, design: .rounded).weight(.regular)
 
         /// A font of `size` points at the default text size that grows and
         /// shrinks with Dynamic Type along `textStyle`'s curve.

@@ -20,7 +20,7 @@ struct WordInputCompletionCard: View {
                     .foregroundStyle(DesignBook.Color.Status.success)
 
                 Text(localized("wordInput.allWordsAdded"))
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 if let nextPlayerName {

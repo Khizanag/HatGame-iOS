@@ -29,7 +29,7 @@ struct SettingsToggleRow: View {
 
                     if let subtitle {
                         Text(subtitle)
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }

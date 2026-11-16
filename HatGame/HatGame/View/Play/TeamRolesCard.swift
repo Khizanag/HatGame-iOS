@@ -19,13 +19,13 @@ struct TeamRolesCard: View {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
                     Text(localized("game.nextTeam.teamRoles"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
 
                     Image(systemName: "arrow.triangle.2.circlepath")
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                 }
 
@@ -64,11 +64,11 @@ private extension TeamRolesCard {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             HStack(spacing: DesignBook.Spacing.xs) {
                 Image(systemName: icon)
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .foregroundStyle(iconColor)
 
                 Text(localized(label))
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .textCase(.uppercase)
                     .tracking(1.2)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
@@ -84,7 +84,7 @@ private extension TeamRolesCard {
                 .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
 
             Text(explainer.name)
-                .font(DesignBook.Font.bodyBold)
+                .font(DesignBook.Font.bodySemibold)
                 .foregroundStyle(team.color)
         }
         .padding(DesignBook.Spacing.sm)

@@ -194,7 +194,7 @@ private extension OnlinePlayView {
             if isSkippingAllowed {
                 Button(action: skipCurrentWord) {
                     Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
                 }
@@ -207,7 +207,7 @@ private extension OnlinePlayView {
 
             Button(action: markGuessed) {
                 Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
             }

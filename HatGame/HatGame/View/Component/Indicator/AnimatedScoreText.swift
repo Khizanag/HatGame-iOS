@@ -13,7 +13,7 @@ struct AnimatedScoreText: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let value: Int
-    var font: Font = DesignBook.Font.title2
+    var font: Font = DesignBook.Font.displaySmall
     var color: Color = DesignBook.Color.Text.primary
     var duration: Double = 0.9
 
@@ -46,6 +46,6 @@ private extension AnimatedScoreText {
 }
 
 #Preview {
-    AnimatedScoreText(value: 42, font: DesignBook.Font.largeTitle, color: .blue)
+    AnimatedScoreText(value: 42, font: DesignBook.Font.displayLarge, color: .blue)
         .padding()
 }

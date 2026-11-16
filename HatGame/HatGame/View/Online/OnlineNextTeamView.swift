@@ -105,14 +105,14 @@ private extension OnlineNextTeamView {
             .decorativeHeroSizing()
 
             Text(localized("game.nextTeam.title"))
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .textCase(.uppercase)
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 
             if let team = currentTeam {
                 Text(team.name)
-                    .font(DesignBook.Font.largeTitle)
+                    .font(DesignBook.Font.displayLarge)
                     .foregroundStyle(tint)
                     .multilineTextAlignment(.center)
                     .lineLimit(1)
@@ -120,7 +120,7 @@ private extension OnlineNextTeamView {
 
                 if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
                     Text(localized("game.currentScoreLabel \(totalScore)"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(tint)
                 }
             }
@@ -133,11 +133,11 @@ private extension OnlineNextTeamView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
                     Text(localized("onlineNextTeam.teamRoles"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     Spacer()
                     Image(systemName: "arrow.triangle.2.circlepath")
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                 }
 
@@ -155,10 +155,10 @@ private extension OnlineNextTeamView {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                         HStack(spacing: DesignBook.Spacing.xs) {
                             Image(systemName: "lightbulb.fill")
-                                .font(DesignBook.Font.caption)
+                                .font(DesignBook.Font.subheadline)
                                 .foregroundStyle(DesignBook.Color.Text.accent)
                             Text(localized("game.nextTeam.role.guessing"))
-                                .font(DesignBook.Font.smallCaption)
+                                .font(DesignBook.Font.caption1Semibold)
                                 .textCase(.uppercase)
                                 .tracking(1.2)
                                 .foregroundStyle(DesignBook.Color.Text.tertiary)
@@ -175,7 +175,7 @@ private extension OnlineNextTeamView {
                                         .foregroundStyle(DesignBook.Color.Text.primary)
                                     if guesser.id == roomManager.currentPlayerId {
                                         Text(localized("onlineNextTeam.you"))
-                                            .font(DesignBook.Font.captionBold)
+                                            .font(DesignBook.Font.subheadlineSemibold)
                                             .foregroundStyle(DesignBook.Color.Text.accent)
                                     }
                                 }
@@ -201,10 +201,10 @@ private extension OnlineNextTeamView {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             HStack(spacing: DesignBook.Spacing.xs) {
                 Image(systemName: icon)
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .foregroundStyle(tint)
                 Text(localized(label))
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .textCase(.uppercase)
                     .tracking(1.2)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
@@ -212,11 +212,11 @@ private extension OnlineNextTeamView {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Circle().fill(tint).frame(width: 8, height: 8)
                 Text(playerName)
-                    .font(DesignBook.Font.bodyBold)
+                    .font(DesignBook.Font.bodySemibold)
                     .foregroundStyle(tint)
                 if isMe {
                     Text(localized("onlineNextTeam.you"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.onAccent(for: tint))
                         .padding(.horizontal, DesignBook.Spacing.sm)
                         .padding(.vertical, 2)
@@ -243,10 +243,10 @@ private extension OnlineNextTeamView {
 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(currentRound.title)
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     Text(localized("game.wordsRemaining \(remainingWordCount)"))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 Spacer()

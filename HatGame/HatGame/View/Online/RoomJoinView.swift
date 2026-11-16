@@ -74,7 +74,7 @@ private extension RoomJoinView {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("joinRoom.roomCode"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 
@@ -100,7 +100,7 @@ private extension RoomJoinView {
                     }
 
                 Text(localized("joinRoom.codeHint"))
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
         }

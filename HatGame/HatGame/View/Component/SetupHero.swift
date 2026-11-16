@@ -41,12 +41,12 @@ struct SetupHero: View {
             .decorativeHeroSizing()
 
             Text(title)
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
 
             Text(subtitle)
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
                 .contentTransition(.opacity)

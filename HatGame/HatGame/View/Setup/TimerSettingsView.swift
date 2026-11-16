@@ -57,14 +57,14 @@ private extension TimerSettingsView {
                     .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedDuration)
                     .foregroundStyle(DesignBook.Gradient.primary)
                 Text(localized("timerSettings.unit.seconds"))
-                    .font(DesignBook.Font.title)
+                    .font(DesignBook.Font.displayMedium)
                     .lineLimit(1)
                     .minimumScaleFactor(0.4)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
 
             Text(localized("timerSettings.headerTitle"))
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
             Text(localized("timerSettings.headerDescription"))
@@ -103,7 +103,7 @@ private extension TimerSettingsView {
     var durationStepper: some View {
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
             Text(localized("common.tapOrHoldToAdjust"))
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
         .onChange(of: selectedDuration) { _, _ in
@@ -144,10 +144,10 @@ private extension TimerSettingsView {
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(localized("timerSettings.allowSkipping.title"))
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                         Text(localized("timerSettings.allowSkipping.description"))
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                             .fixedSize(horizontal: false, vertical: true)
                     }

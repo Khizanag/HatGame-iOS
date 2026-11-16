@@ -95,7 +95,7 @@ private extension RoomLobbyView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text(localized("lobby.shareCode"))
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .textCase(.uppercase)
                     .tracking(1.6)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
@@ -117,7 +117,7 @@ private extension RoomLobbyView {
                                 Platform.copyToClipboard(code)
                             } label: {
                                 Label(localized("lobby.copyCode"), systemImage: "doc.on.doc")
-                                    .font(DesignBook.Font.caption)
+                                    .font(DesignBook.Font.subheadline)
                             }
                             .glassButtonStyle()
 
@@ -126,7 +126,7 @@ private extension RoomLobbyView {
                                 preview: SharePreview(localized("online.title"))
                             ) {
                                 Label(localized("lobby.share"), systemImage: "square.and.arrow.up")
-                                    .font(DesignBook.Font.caption)
+                                    .font(DesignBook.Font.subheadline)
                             }
                             .glassButtonStyle()
                         }
@@ -145,11 +145,11 @@ private extension RoomLobbyView {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("lobby.players"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                     Spacer()
                     Text(verbatim: "\(allPlayers.count)")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .monospacedDigit()
                 }
@@ -188,7 +188,7 @@ private extension RoomLobbyView {
                     .foregroundStyle(DesignBook.Color.Status.success)
             } else {
                 Text(localized("lobby.noTeam"))
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
         }
@@ -200,7 +200,7 @@ private extension RoomLobbyView {
     @ViewBuilder
     func awayStatus(for player: OnlinePlayer) -> some View {
         Label(localized("lobby.away"), systemImage: "wifi.slash")
-            .font(DesignBook.Font.caption)
+            .font(DesignBook.Font.subheadline)
             .foregroundStyle(DesignBook.Color.Status.warning)
             .accessibilityIdentifier("lobby.away")
         if isHost {
@@ -232,7 +232,7 @@ private extension RoomLobbyView {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
             HStack {
                 Text(localized("lobby.teams"))
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                 Spacer()
                 if isHost {
@@ -241,7 +241,7 @@ private extension RoomLobbyView {
                         showingTeamCreation = true
                     } label: {
                         Label(localized("lobby.addTeam"), systemImage: "plus.circle.fill")
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.accent)
                     }
                     .buttonStyle(.plain)
@@ -276,13 +276,13 @@ private extension RoomLobbyView {
                 HStack {
                     Circle().fill(color).frame(width: 14, height: 14)
                     Text(team.name)
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(color)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                     Spacer()
                     Text(verbatim: "\(players.count)")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .monospacedDigit()
                         .padding(.horizontal, DesignBook.Spacing.sm)
@@ -292,7 +292,7 @@ private extension RoomLobbyView {
 
                 if players.isEmpty {
                     Text(localized("lobby.teamEmpty"))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 } else {
                     VStack(alignment: .leading, spacing: 4) {
@@ -319,7 +319,7 @@ private extension RoomLobbyView {
                     leaveTeam()
                 } label: {
                     Label(localized("lobby.leaveTeam"), systemImage: "arrow.uturn.left")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                 }
                 .glassButtonStyle()
                 .tint(DesignBook.Color.Status.error)
@@ -328,7 +328,7 @@ private extension RoomLobbyView {
                     joinTeam(team.id)
                 } label: {
                     Label(localized("lobby.joinTeam"), systemImage: "person.crop.circle.fill.badge.plus")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                 }
                 .glassProminentButtonStyle()
                 .tint(color)
@@ -362,7 +362,7 @@ private extension RoomLobbyView {
 
                 if !canStartGame {
                     Text(localized("lobby.needMorePlayers"))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .multilineTextAlignment(.center)
                 }
@@ -370,15 +370,15 @@ private extension RoomLobbyView {
         } else {
             HStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: "hourglass")
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(localized("lobby.waitingForHost"))
-                        .font(DesignBook.Font.bodyBold)
+                        .font(DesignBook.Font.bodySemibold)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     Text(localized("lobby.waitingForHost.hint"))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 Spacer()

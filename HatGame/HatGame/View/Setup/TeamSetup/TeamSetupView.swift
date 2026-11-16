@@ -140,7 +140,7 @@ private extension TeamSetupView {
 
     var requirementText: some View {
         Text(localized("teamSetup.minTeamsRequired \(gameManager.configuration.minTeams)"))
-            .font(DesignBook.Font.caption)
+            .font(DesignBook.Font.subheadline)
             .foregroundStyle(DesignBook.Color.Text.secondary)
             .multilineTextAlignment(.center)
             .paddingHorizontalDefault()

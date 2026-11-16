@@ -21,11 +21,11 @@ struct RevealedTeamCard: View {
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.startingTeam.selected"))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
 
                     Text(team.name)
-                        .font(DesignBook.Font.title)
+                        .font(DesignBook.Font.displayMedium)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .fontWeight(.bold)

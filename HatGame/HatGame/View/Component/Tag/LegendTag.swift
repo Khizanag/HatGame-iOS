@@ -48,7 +48,7 @@ private extension LegendTag {
     var label: some View {
         VStack(spacing: 2) {
             Text(title)
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(
                     isHighlighted
                     ? DesignBook.Color.Text.accent
@@ -56,7 +56,7 @@ private extension LegendTag {
                 )
 
             Text(range)
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(
                     isHighlighted
                     ? DesignBook.Color.Text.accent.opacity(0.8)

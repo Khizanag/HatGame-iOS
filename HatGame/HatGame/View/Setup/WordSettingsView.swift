@@ -55,12 +55,12 @@ private extension WordSettingsView {
                     .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedWordCount)
                     .foregroundStyle(DesignBook.Gradient.primary)
                 Image(systemName: "text.bubble.fill")
-                    .font(DesignBook.Font.title2)
+                    .font(DesignBook.Font.displaySmall)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
 
             Text(localized("wordSettings.headerTitle"))
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
             Text(localized("wordSettings.headerDescription"))
@@ -99,7 +99,7 @@ private extension WordSettingsView {
     var stepper: some View {
         Stepper(value: $selectedWordCount, in: 3...20) {
             Text(localized("common.tapOrHoldToAdjust"))
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
         .onChange(of: selectedWordCount) { _, _ in

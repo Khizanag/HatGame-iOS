@@ -53,7 +53,7 @@ private extension DeveloperInfoView {
                         .foregroundStyle(DesignBook.Color.Text.accent)
 
                     Text(localized("settings.developerInfo.credits.title"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
@@ -70,7 +70,7 @@ private extension DeveloperInfoView {
                             .foregroundStyle(DesignBook.Color.Text.primary)
 
                         Text(localized("settings.developerInfo.credits.rulesExplainer"))
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
 
@@ -89,14 +89,14 @@ private extension DeveloperInfoView {
                                 .foregroundStyle(DesignBook.Color.Text.primary)
 
                             Text(localized("settings.developerInfo.credits.wordsLicense"))
-                                .font(DesignBook.Font.caption)
+                                .font(DesignBook.Font.subheadline)
                                 .foregroundStyle(DesignBook.Color.Text.secondary)
                         }
 
                         Spacer()
 
                         Image(systemName: "arrow.up.right")
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.accent)
                     }
                 }
@@ -119,7 +119,7 @@ private extension DeveloperInfoView {
                         .foregroundStyle(.purple)
 
                     Text(localized("settings.developerInfo.about.title"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
@@ -148,7 +148,7 @@ private extension DeveloperInfoView {
                         .foregroundStyle(.blue)
 
                     Text(localized("settings.developerInfo.technologies.title"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
@@ -170,7 +170,7 @@ private extension DeveloperInfoView {
     func techBullet(_ text: String.LocalizationValue) -> some View {
         HStack(alignment: .top, spacing: DesignBook.Spacing.sm) {
             Image(systemName: "checkmark.circle.fill")
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(.blue)
                 .padding(.top, 2)
 
@@ -199,7 +199,7 @@ private extension DeveloperInfoView {
                             .contentTransition(.symbolEffect(.replace))
 
                         Text(localized("settings.testMode.title"))
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                     }
                 }
@@ -224,7 +224,7 @@ private extension DeveloperInfoView {
                         .foregroundStyle(.green)
 
                     Text(localized("settings.developerInfo.contact.title"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Spacer()
@@ -249,7 +249,7 @@ private extension DeveloperInfoView {
                             Spacer()
 
                             Image(systemName: "arrow.up.right")
-                                .font(DesignBook.Font.caption)
+                                .font(DesignBook.Font.subheadline)
                                 .foregroundStyle(.green)
                         }
                         .padding(DesignBook.Spacing.sm)

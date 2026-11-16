@@ -21,11 +21,11 @@ struct TeamSelectionRow: View {
 
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 Text(team.name)
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 Text(localized("randomization.team.players \(team.players.count)"))
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             }
 

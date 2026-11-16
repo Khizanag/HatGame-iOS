@@ -44,7 +44,7 @@ struct SettingsLinkRow: View {
                 }
 
                 Image(systemName: "chevron.forward")
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .fontWeight(.semibold)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }

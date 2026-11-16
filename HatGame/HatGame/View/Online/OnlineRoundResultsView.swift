@@ -80,13 +80,13 @@ private extension OnlineRoundResultsView {
                 .decorativeHeroSizing()
                 .accessibilityHidden(true)
             Text(localized("onlineRoundResults.roundComplete"))
-                .font(DesignBook.Font.largeTitle)
+                .font(DesignBook.Font.displayLarge)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .minimumScaleFactor(0.5)
             Text(currentRound.title)
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
         .padding(.top, DesignBook.Spacing.lg)
@@ -96,7 +96,7 @@ private extension OnlineRoundResultsView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("onlineRoundResults.roundScores"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 let ranked = teams.enumerated()
@@ -121,7 +121,7 @@ private extension OnlineRoundResultsView {
                         Spacer()
                         AnimatedScoreText(
                             value: gameState?.getScore(for: team.id, in: currentRound) ?? 0,
-                            font: DesignBook.Font.title3,
+                            font: DesignBook.Font.title1,
                             color: isLeader
                                 ? team.color
                                 : DesignBook.Color.Text.secondary,
@@ -138,7 +138,7 @@ private extension OnlineRoundResultsView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("onlineRoundResults.totalScores"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 let ranked = teams.sorted { lhs, rhs in
@@ -149,7 +149,7 @@ private extension OnlineRoundResultsView {
                 ForEach(Array(ranked.enumerated()), id: \.element.id) { rank, team in
                     HStack(spacing: DesignBook.Spacing.md) {
                         Text(verbatim: "\(rank + 1)")
-                            .font(DesignBook.Font.captionBold)
+                            .font(DesignBook.Font.subheadlineSemibold)
                             .foregroundStyle(rank == 0
                                 ? DesignBook.Color.onAccent(for: team.color)
                                 : DesignBook.Color.Text.primary)
@@ -175,7 +175,7 @@ private extension OnlineRoundResultsView {
 
                         AnimatedScoreText(
                             value: gameState?.getTotalScore(for: team.id) ?? 0,
-                            font: DesignBook.Font.title3,
+                            font: DesignBook.Font.title1,
                             color: rank == 0
                                 ? team.color
                                 : DesignBook.Color.Text.secondary,
@@ -192,13 +192,13 @@ private extension OnlineRoundResultsView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Text(localized("onlineRoundResults.nextRound"))
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .textCase(.uppercase)
                     .tracking(1.6)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
 
                 Text(round.title)
-                    .font(DesignBook.Font.title2)
+                    .font(DesignBook.Font.displaySmall)
                     .foregroundStyle(DesignBook.Color.Text.accent)
 
                 Text(round.description)
@@ -213,12 +213,12 @@ private extension OnlineRoundResultsView {
     @ViewBuilder
     func medalIcon(for index: Int) -> some View {
         switch index {
-        case 0: Text(verbatim: "🥇").font(DesignBook.Font.title3)
-        case 1: Text(verbatim: "🥈").font(DesignBook.Font.title3)
-        case 2: Text(verbatim: "🥉").font(DesignBook.Font.title3)
+        case 0: Text(verbatim: "🥇").font(DesignBook.Font.title1)
+        case 1: Text(verbatim: "🥈").font(DesignBook.Font.title1)
+        case 2: Text(verbatim: "🥉").font(DesignBook.Font.title1)
         default:
             Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
         }
     }

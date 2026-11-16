@@ -31,7 +31,7 @@ private extension GameHeaderBar {
     var roundAndTeam: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(round.title.uppercased())
-                .font(DesignBook.Font.smallCaption)
+                .font(DesignBook.Font.caption1Semibold)
                 .tracking(1.5)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 
@@ -40,7 +40,7 @@ private extension GameHeaderBar {
                     .fill(team.color)
                     .frame(width: 10, height: 10)
                 Text(team.name)
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(team.color)
                     .lineLimit(1)
             }
@@ -56,9 +56,9 @@ private struct TurnScoreBadge: View {
     var body: some View {
         HStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: "checkmark.seal.fill")
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
             Text(verbatim: "\(count)")
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }

@@ -27,7 +27,7 @@ struct GamePausedOverlay: View {
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 
                 Text(localized("game.paused.title"))
-                    .font(DesignBook.Font.largeTitle)
+                    .font(DesignBook.Font.displayLarge)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)

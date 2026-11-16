@@ -143,13 +143,13 @@ private extension ResultsView {
     func singleWinnerLabel(winner: Team) -> some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             Text(localized("game.results.winner"))
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .textCase(.uppercase)
                 .tracking(1.6)
 
             Text(winner.name)
-                .font(DesignBook.Font.title)
+                .font(DesignBook.Font.displayMedium)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
                 .foregroundStyle(winner.color)
@@ -157,12 +157,12 @@ private extension ResultsView {
 
             AnimatedScoreText(
                 value: scoreboard.totalScore(for: winner),
-                font: DesignBook.Font.largeTitle,
+                font: DesignBook.Font.displayLarge,
                 color: winner.color
             )
 
             Text(localized("game.results.totalPoints"))
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                 .textCase(.uppercase)
                 .tracking(1.2)
@@ -172,19 +172,19 @@ private extension ResultsView {
     var multipleWinnersLabel: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             Text(localized("game.results.winners"))
-                .font(DesignBook.Font.title2)
+                .font(DesignBook.Font.displaySmall)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
             VStack(spacing: DesignBook.Spacing.sm) {
                 ForEach(winners) { winner in
                     VStack(spacing: DesignBook.Spacing.xs) {
                         Text(winner.name)
-                            .font(DesignBook.Font.title3)
+                            .font(DesignBook.Font.title1)
                             .foregroundStyle(winner.color)
 
                         AnimatedScoreText(
                             value: scoreboard.totalScore(for: winner),
-                            font: DesignBook.Font.title2,
+                            font: DesignBook.Font.displaySmall,
                             color: winner.color
                         )
                     }
@@ -281,7 +281,7 @@ private extension ResultsView {
             .accessibilityIdentifier("results.playAgain")
 
             Text(localized("game.results.playAgain.note"))
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }

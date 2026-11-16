@@ -69,7 +69,7 @@ private extension RoomSetupForm {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("createRoom.gameSettings"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 VStack(spacing: DesignBook.Spacing.md) {

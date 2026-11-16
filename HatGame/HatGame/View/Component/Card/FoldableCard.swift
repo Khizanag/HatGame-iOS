@@ -26,7 +26,7 @@ struct FoldableCard<Content: View>: View {
         title: String,
         description: String? = nil,
         icon: String? = nil,
-        titleFont: Font = DesignBook.Font.headline,
+        titleFont: Font = DesignBook.Font.title3,
         descriptionFont: Font = DesignBook.Font.body,
         @ViewBuilder content: @escaping () -> Content
     ) {
@@ -94,7 +94,7 @@ private extension FoldableCard {
 
     var chevronIcon: some View {
         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-            .font(DesignBook.Font.headline)
+            .font(DesignBook.Font.title3)
             .foregroundStyle(DesignBook.Color.Text.accent)
     }
 }

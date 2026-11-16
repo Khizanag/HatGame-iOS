@@ -102,7 +102,7 @@ private extension TeamTurnResultsView {
             .decorativeHeroSizing()
 
             Text(localized(isCelebratory ? "game.turnResults.allWordsGuessed" : "game.turnResults.timeUp"))
-                .font(DesignBook.Font.largeTitle)
+                .font(DesignBook.Font.displayLarge)
                 .lineLimit(2)
                 .minimumScaleFactor(0.5)
                 .foregroundStyle(DesignBook.Color.Text.primary)
@@ -115,7 +115,7 @@ private extension TeamTurnResultsView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Text(String(format: localized("game.turnResults.teamTitle"), team.name))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(team.color)
                     .multilineTextAlignment(.center)
 
@@ -127,7 +127,7 @@ private extension TeamTurnResultsView {
                         duration: 0.7
                     )
                     Text(wordsUnit)
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
                 .padding(.top, DesignBook.Spacing.xs)
@@ -148,7 +148,7 @@ private extension TeamTurnResultsView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("game.turnResults.wordsGuessed"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 LazyVGrid(

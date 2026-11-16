@@ -20,13 +20,13 @@ struct GameProgressFooter: View {
         VStack(spacing: DesignBook.Spacing.xs) {
             HStack {
                 Text(localized("game.progress.title"))
-                    .font(DesignBook.Font.smallCaption)
+                    .font(DesignBook.Font.caption1Semibold)
                     .textCase(.uppercase)
                     .tracking(1.2)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                 Spacer()
                 Text(verbatim: "\(passed)/\(total)")
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .monospacedDigit()
             }

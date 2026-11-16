@@ -30,12 +30,12 @@ struct PlayerNameCard<Field: Hashable>: View {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(title)
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
                 TextField(placeholder, text: $name)
                     .textFieldStyle(.plain)
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
@@ -45,7 +45,7 @@ struct PlayerNameCard<Field: Hashable>: View {
                     .onSubmit(onSubmit)
                 if isNameMissing {
                     Label(localized("multiplayer.nameRequired"), systemImage: "info.circle")
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .accessibilityIdentifier("playerName.requiredHint")
                 }

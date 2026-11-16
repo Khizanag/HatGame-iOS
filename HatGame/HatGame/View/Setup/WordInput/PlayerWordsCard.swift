@@ -18,7 +18,7 @@ struct PlayerWordsCard: View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(String(format: localized("wordInput.wordsAddedProgress"), playerWords.count, wordsPerPlayer))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 PlayerWordsList(playerWords: playerWords, onRemove: onRemove)

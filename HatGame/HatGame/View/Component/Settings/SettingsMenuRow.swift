@@ -66,10 +66,10 @@ private extension SettingsMenuRow {
                     .minimumScaleFactor(0.5)
 
                 Image(systemName: "chevron.up.chevron.down")
-                    .font(DesignBook.Font.caption)
+                    .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
-            .font(DesignBook.Font.callout)
+            .font(DesignBook.Font.title2)
             .padding(.horizontal, DesignBook.Spacing.sm)
             .padding(.vertical, DesignBook.Spacing.xs)
             .background(.quaternary, in: Capsule())

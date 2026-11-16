@@ -20,7 +20,7 @@ struct TeamFormFieldLabel: View {
                 .foregroundStyle(DesignBook.Color.Text.accent)
 
             Text(localized(title))
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }

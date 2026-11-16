@@ -26,7 +26,7 @@ struct OnlineNoticeView: View {
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .accessibilityHidden(true)
                 Text(title)
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                 Text(message)

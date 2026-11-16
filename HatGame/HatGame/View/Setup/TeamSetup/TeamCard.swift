@@ -37,14 +37,14 @@ private extension TeamCard {
     var header: some View {
         HStack(alignment: .firstTextBaseline) {
             Text(team.name)
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .lineLimit(1)
 
             Spacer()
 
             Text(verbatim: "\(team.players.count)/\(playersPerTeam)")
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .monospacedDigit()
         }

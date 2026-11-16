@@ -89,13 +89,13 @@ private extension OnlineResultsView {
             if winners.count == 1, let winner = winners.first {
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("game.results.winner"))
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                         .textCase(.uppercase)
                         .tracking(1.6)
 
                     Text(winner.name)
-                        .font(DesignBook.Font.title)
+                        .font(DesignBook.Font.displayMedium)
                         .foregroundStyle(winner.color)
                         .multilineTextAlignment(.center)
                         .lineLimit(1)
@@ -108,7 +108,7 @@ private extension OnlineResultsView {
                     )
 
                     Text(localized("game.results.totalPoints"))
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .textCase(.uppercase)
                         .tracking(1.2)
@@ -116,18 +116,18 @@ private extension OnlineResultsView {
             } else {
                 VStack(spacing: DesignBook.Spacing.md) {
                     Text(localized("game.results.winners"))
-                        .font(DesignBook.Font.title2)
+                        .font(DesignBook.Font.displaySmall)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     ForEach(winners, id: \.id) { winner in
                         VStack(spacing: 4) {
                             Text(winner.name)
-                                .font(DesignBook.Font.title3)
+                                .font(DesignBook.Font.title1)
                                 .foregroundStyle(winner.color)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                             AnimatedScoreText(
                                 value: gameState?.getTotalScore(for: winner.id) ?? 0,
-                                font: DesignBook.Font.title2,
+                                font: DesignBook.Font.displaySmall,
                                 color: winner.color
                             )
                         }
@@ -152,13 +152,13 @@ private extension OnlineResultsView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("onlineResults.byRound"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 ForEach(OnlineGameRound.allCases, id: \.rawValue) { round in
                     HStack {
                         Text(round.title)
-                            .font(DesignBook.Font.captionBold)
+                            .font(DesignBook.Font.subheadlineSemibold)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                         Spacer()
                     }
@@ -179,7 +179,7 @@ private extension OnlineResultsView {
                                 .minimumScaleFactor(0.5)
                             Spacer()
                             Text(verbatim: "\(gameState?.getScore(for: item.team.id, in: round) ?? 0)")
-                                .font(DesignBook.Font.bodyBold)
+                                .font(DesignBook.Font.bodySemibold)
                                 .foregroundStyle(DesignBook.Color.Text.secondary)
                                 .monospacedDigit()
                         }
@@ -194,7 +194,7 @@ private extension OnlineResultsView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 Text(localized("onlineResults.leaderboard"))
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 VStack(spacing: DesignBook.Spacing.sm) {

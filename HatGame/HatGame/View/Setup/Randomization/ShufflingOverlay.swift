@@ -26,7 +26,7 @@ struct ShufflingOverlay: View {
 
                 VStack(spacing: DesignBook.Spacing.sm) {
                     Text(localized("randomization.shuffling.message"))
-                        .font(DesignBook.Font.title2)
+                        .font(DesignBook.Font.displaySmall)
                         .foregroundStyle(DesignBook.Color.onGradient)
                         .multilineTextAlignment(.center)
                         .lineLimit(2)

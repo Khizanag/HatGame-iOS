@@ -52,7 +52,7 @@ private extension TeamColorCard {
                     .foregroundStyle(DesignBook.Color.Text.accent)
 
                 Text(localized("teamForm.teamColor"))
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
 
                 Spacer()

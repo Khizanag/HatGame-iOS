@@ -80,11 +80,11 @@ private extension LocalRoomBrowser {
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
                 Text(localized("local.browser.nearby"))
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                 Spacer()
                 Text(verbatim: "\(hosts.count)")
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .monospacedDigit()
             }
@@ -127,13 +127,13 @@ private extension LocalRoomBrowser {
                     )
                     VStack(alignment: .leading, spacing: 2) {
                         Text(hostName(of: host))
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                             .lineLimit(1)
                         // The device's advertised name, when it adds anything.
                         if host.displayName != hostName(of: host) {
                             Text(host.displayName)
-                                .font(DesignBook.Font.caption)
+                                .font(DesignBook.Font.subheadline)
                                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                                 .lineLimit(1)
                         }
@@ -143,7 +143,7 @@ private extension LocalRoomBrowser {
                         ProgressView()
                     } else {
                         Image(systemName: "arrow.right.circle.fill")
-                            .font(DesignBook.Font.title3)
+                            .font(DesignBook.Font.title1)
                             .foregroundStyle(DesignBook.Color.Text.accent)
                     }
                 }

@@ -93,7 +93,7 @@ private extension RandomizationView {
     var startingTeamHeader: some View {
         HStack {
             Text(localized("randomization.startingTeam.title"))
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .foregroundStyle(DesignBook.Color.Text.primary)
 
             Spacer()
@@ -102,11 +102,11 @@ private extension RandomizationView {
                 Button(action: randomizeStartingTeam) {
                     HStack(spacing: DesignBook.Spacing.xs) {
                         Image(systemName: isRandomizingTeam ? "sparkles" : "shuffle")
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingTeam && !reduceMotion)
 
                         Text(localized("randomization.startingTeam.randomize"))
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                     }
                     .foregroundStyle(DesignBook.Color.Text.accent)
                     .padding(.horizontal, DesignBook.Spacing.md)

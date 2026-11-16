@@ -45,7 +45,7 @@ struct SettingsSection<Content: View>: View {
 private extension SettingsSection {
     func sectionHeader(_ text: String) -> some View {
         Text(text)
-            .font(DesignBook.Font.caption)
+            .font(DesignBook.Font.subheadline)
             .foregroundStyle(DesignBook.Color.Text.secondary)
             .textCase(.uppercase)
             .padding(.horizontal, DesignBook.Spacing.sm)
@@ -54,7 +54,7 @@ private extension SettingsSection {
 
     func sectionFooter(_ text: String) -> some View {
         Text(text)
-            .font(DesignBook.Font.caption)
+            .font(DesignBook.Font.subheadline)
             .foregroundStyle(DesignBook.Color.Text.tertiary)
             .padding(.horizontal, DesignBook.Spacing.sm)
             .padding(.top, DesignBook.Spacing.xs)

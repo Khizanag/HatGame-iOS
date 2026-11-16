@@ -22,7 +22,7 @@ struct NumberBadge: View {
         size: CGFloat = DesignBook.Size.badgeSize,
         backgroundColor: Color = DesignBook.Color.Text.accent,
         textColor: Color = .white,
-        font: Font = DesignBook.Font.captionBold
+        font: Font = DesignBook.Font.subheadlineSemibold
     ) {
         self.number = number
         self.size = size
@@ -67,7 +67,7 @@ struct NumberBadge: View {
             number: 5,
             size: DesignBook.Size.dotLarge,
             backgroundColor: DesignBook.Color.Status.success,
-            font: DesignBook.Font.caption
+            font: DesignBook.Font.subheadline
         )
     }
     .padding()

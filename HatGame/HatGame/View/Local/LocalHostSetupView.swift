@@ -68,13 +68,13 @@ private extension LocalHostSetupView {
             }
             .accessibilityHidden(true)
             Text(localized("local.host.hero.title"))
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
             Text(trimmedName.isEmpty
                 ? localized("local.host.hero.subtitle.empty")
                 : String(format: localized("local.host.hero.subtitle.named"), trimmedName))
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
                 .multilineTextAlignment(.center)
                 .contentTransition(.opacity)

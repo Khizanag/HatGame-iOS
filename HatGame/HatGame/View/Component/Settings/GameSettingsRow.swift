@@ -79,7 +79,7 @@ private extension GameSettingsRow {
 
     var valueLabel: some View {
         Text(formattedValue)
-            .font(DesignBook.Font.headline)
+            .font(DesignBook.Font.title3)
             .foregroundStyle(DesignBook.Color.Text.accent)
             .monospacedDigit()
             .contentTransition(.numericText(value: Double(value)))

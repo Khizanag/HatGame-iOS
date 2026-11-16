@@ -127,7 +127,7 @@ private extension MultiplayerSessionView {
                 }
                 .accessibilityHidden(true)
                 Text(connecting.title)
-                    .font(DesignBook.Font.title3)
+                    .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                 Text(connecting.hint)

@@ -38,7 +38,7 @@ private extension ColorSwatchButton {
     var overlay: some View {
         if isSelected {
             Image(systemName: "checkmark")
-                .font(DesignBook.Font.subheadlineBold)
+                .font(DesignBook.Font.bodyBold)
                 .foregroundStyle(DesignBook.Color.onAccent(for: color))
         } else if isDisabled {
             Image(systemName: "xmark")

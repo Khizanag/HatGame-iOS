@@ -140,7 +140,7 @@ private extension WordGenerationView {
             Text(phase == .generating
                 ? localized("wordGeneration.title")
                 : localized("wordGeneration.ready"))
-                .font(DesignBook.Font.title2)
+                .font(DesignBook.Font.displaySmall)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
@@ -160,7 +160,7 @@ private extension WordGenerationView {
 
     var wordCard: some View {
         Text(displayWord)
-            .font(DesignBook.Font.title2)
+            .font(DesignBook.Font.displaySmall)
             .foregroundStyle(DesignBook.Color.Text.accent)
             .lineLimit(1)
             .minimumScaleFactor(0.5)

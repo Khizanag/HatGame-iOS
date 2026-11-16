@@ -51,7 +51,7 @@ struct PlayerWordRow: View {
     var body: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
             Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                 .frame(width: badgeSize, height: badgeSize)
                 .background(DesignBook.Color.Background.secondary)

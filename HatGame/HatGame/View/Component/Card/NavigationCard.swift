@@ -26,11 +26,11 @@ struct NavigationCard: View {
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(title)
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
 
                         Text(description)
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                             .lineLimit(2)
                     }

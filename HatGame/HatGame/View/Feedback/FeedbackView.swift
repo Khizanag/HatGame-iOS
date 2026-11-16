@@ -113,7 +113,7 @@ private extension FeedbackView {
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .contentTransition(.symbolEffect(.replace))
             Text(title)
-                .font(DesignBook.Font.captionBold)
+                .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         }
     }
@@ -154,7 +154,7 @@ private extension FeedbackView {
 
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(localized("feedback.success.title"))
-                    .font(DesignBook.Font.title2)
+                    .font(DesignBook.Font.displaySmall)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)

@@ -68,7 +68,7 @@ struct ConnectivityMenuHero: View {
 
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(localized(title))
-                    .font(DesignBook.Font.largeTitle)
+                    .font(DesignBook.Font.displayLarge)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                     // Both menus scroll, so the title has room for a third

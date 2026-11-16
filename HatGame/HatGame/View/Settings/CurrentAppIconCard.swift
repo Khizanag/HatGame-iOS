@@ -22,11 +22,11 @@ struct CurrentAppIconCard: View {
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text(icon.title)
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
 
                     Text(icon.subtitle)
-                        .font(DesignBook.Font.caption)
+                        .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 

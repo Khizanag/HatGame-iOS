@@ -20,7 +20,7 @@ struct DestructiveButton<Label: View>: View {
     var body: some View {
         Button(action: action) {
             label()
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 // Footer buttons stack; past this size they would bury the screen.
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
                 .padding(8)

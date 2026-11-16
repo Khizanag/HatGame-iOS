@@ -60,11 +60,11 @@ private extension TeamScoreRowView {
 
             if rank == 1 {
                 Image(systemName: "crown.fill")
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(rankForegroundColor)
             } else {
                 Text(verbatim: "\(rank)")
-                    .font(DesignBook.Font.captionBold)
+                    .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(rankForegroundColor)
                     .monospacedDigit()
             }
@@ -79,7 +79,7 @@ private extension TeamScoreRowView {
 
     var nameView: some View {
         Text(name)
-            .font(DesignBook.Font.headline)
+            .font(DesignBook.Font.title3)
             .foregroundStyle(DesignBook.Color.Text.primary)
             .lineLimit(1)
     }
@@ -87,7 +87,7 @@ private extension TeamScoreRowView {
     var scoreView: some View {
         AnimatedScoreText(
             value: score,
-            font: DesignBook.Font.title3,
+            font: DesignBook.Font.title1,
             color: isWinner ? color : DesignBook.Color.Text.secondary,
             duration: 0.6
         )

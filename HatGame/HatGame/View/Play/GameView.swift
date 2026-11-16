@@ -115,7 +115,7 @@ private extension GameView {
             if engine.state.settings.isSkippingEnabled {
                 Button(action: skipCurrentWord) {
                     Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
-                        .font(DesignBook.Font.headline)
+                        .font(DesignBook.Font.title3)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
                 }
@@ -129,7 +129,7 @@ private extension GameView {
 
             Button(action: markCurrentWordGuessed) {
                 Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
-                    .font(DesignBook.Font.headline)
+                    .font(DesignBook.Font.title3)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
             }

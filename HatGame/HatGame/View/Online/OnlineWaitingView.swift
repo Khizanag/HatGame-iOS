@@ -73,12 +73,12 @@ private extension OnlineWaitingView {
             .accessibilityHidden(true)
 
             Text(message)
-                .font(DesignBook.Font.title3)
+                .font(DesignBook.Font.title1)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
 
             Text(verbatim: "\(submittedCount)/\(totalCount)")
-                .font(DesignBook.Font.headline)
+                .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .monospacedDigit()
                 .contentTransition(.numericText())
@@ -93,7 +93,7 @@ private extension OnlineWaitingView {
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("online.playersStatus"))
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 
@@ -117,7 +117,7 @@ private extension OnlineWaitingView {
                     .frame(width: 36, height: 36)
                 if isDone {
                     Image(systemName: "checkmark")
-                        .font(DesignBook.Font.captionBold)
+                        .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Status.success)
                 } else {
                     ProgressView()
@@ -133,7 +133,7 @@ private extension OnlineWaitingView {
             }
             Spacer()
             Text(localized(isDone ? "online.submitted" : "online.typing"))
-                .font(DesignBook.Font.caption)
+                .font(DesignBook.Font.subheadline)
                 .foregroundStyle(isDone ? DesignBook.Color.Status.success : DesignBook.Color.Text.tertiary)
         }
         .padding(.vertical, DesignBook.Spacing.xs)

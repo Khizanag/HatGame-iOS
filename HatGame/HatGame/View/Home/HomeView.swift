@@ -108,7 +108,7 @@ private extension HomeView {
 
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(localized("home.title"))
-                    .font(DesignBook.Font.largeTitle)
+                    .font(DesignBook.Font.displayLarge)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)
@@ -175,10 +175,10 @@ private extension HomeView {
 
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         Text(localized("home.resume.title"))
-                            .font(DesignBook.Font.headline)
+                            .font(DesignBook.Font.title3)
                             .foregroundStyle(DesignBook.Color.Text.primary)
                         Text(resumeSubtitle(for: state))
-                            .font(DesignBook.Font.caption)
+                            .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
                     }
                     .accessibilityElement(children: .combine)
