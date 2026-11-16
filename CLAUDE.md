@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Hat Game — a SwiftUI party game (explain words to teammates against a timer, 3 rounds). One app target plus three local Swift packages. Three independent play modes: single-device pass-and-play, online multiplayer (Firebase Realtime Database), and same-network multiplayer (MultipeerConnectivity).
 
-Stack: SwiftUI, `@Observable` (Observation framework, never `@ObservableObject`), Swift Concurrency. Bundle id `com.khizanag.hat-game`, Firebase project `hat-game-e050f`.
+Stack: SwiftUI, `@Observable` (Observation framework, never `@ObservableObject`), Swift Concurrency. All targets build in Swift 6 language mode with default `MainActor` isolation and `SWIFT_TREAT_WARNINGS_AS_ERRORS = YES` — a warning fails the build. Bundle id `com.khizanag.hat-game`, Firebase project `hat-game-e050f`.
 
 Multiplatform: one target supporting iOS, macOS, and visionOS — deployment target 26.0 on all three (`TARGETED_DEVICE_FAMILY` 1,2,7). Platform differences are centralized in `Extensions/CrossPlatform.swift` (`#if os(...)` view shims — inline titles, edit mode, list styles); `HatGameApp` adds macOS window sizing (560×880 phone-like default, resizable) and a native Settings scene (Cmd-,). On macOS the game flows present as a `.page`-sized sheet (see `HatGame-Navigation/Sources/Navigation/FlowNavigationView.swift`). `DEVELOPMENT_TEAM` is intentionally empty (the previous team id was wrong) — don't re-add one.
 
