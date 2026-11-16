@@ -13,6 +13,7 @@ import SwiftUI
 struct RoomLobbyView: View {
     @Environment(RoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     /// Nearby rooms have no code to share and word their errors for a
     /// local connection.
@@ -174,39 +175,51 @@ private extension RoomLobbyView {
         }
     }
 
+    /// One line at standard sizes; at accessibility sizes the name gets
+    /// its own line and the badges and status move below it, so none of
+    /// them is squeezed into a letter-wide column.
     func playerRow(_ player: OnlinePlayer) -> some View {
-        HStack(spacing: DesignBook.Spacing.md) {
-            Circle()
-                .fill(teamColor(for: player.teamId))
-                .frame(width: 12, height: 12)
-
-            Text(player.name)
-                .font(DesignBook.Font.body)
-                .foregroundStyle(player.isConnected ? DesignBook.Color.Text.primary : DesignBook.Color.Text.tertiary)
-
-            if player.id == room?.hostId {
-                RoleBadge(style: .host)
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: DesignBook.Spacing.xs))
+            : AnyLayout(HStackLayout(spacing: DesignBook.Spacing.md))
+        return layout {
+            HStack(spacing: DesignBook.Spacing.md) {
+                Circle()
+                    .fill(teamColor(for: player.teamId))
+                    .frame(width: 12, height: 12)
+                Text(player.name)
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(memberNameColor(for: player, connected: DesignBook.Color.Text.primary))
             }
-
-            if player.id == roomManager.currentPlayerId {
-                RoleBadge(style: .you)
-            }
-
-            Spacer()
-
-            if !player.isConnected {
-                awayStatus(for: player)
-            } else if let teamId = player.teamId {
-                Image(systemName: "checkmark.circle.fill")
-                    .foregroundStyle(DesignBook.Color.Status.success)
-                    .accessibilityLabel(Text(inTeamLabel(for: teamId)))
-            } else {
-                Text(localized("lobby.noTeam"))
-                    .font(DesignBook.Font.subheadline)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+            HStack(spacing: DesignBook.Spacing.md) {
+                if player.id == room?.hostId {
+                    RoleBadge(style: .host)
+                        .fixedSize()
+                }
+                if player.id == roomManager.currentPlayerId {
+                    RoleBadge(style: .you)
+                        .fixedSize()
+                }
+                Spacer(minLength: 0)
+                playerStatus(player)
             }
         }
         .padding(.vertical, DesignBook.Spacing.xs)
+    }
+
+    @ViewBuilder
+    func playerStatus(_ player: OnlinePlayer) -> some View {
+        if !player.isConnected {
+            awayStatus(for: player)
+        } else if let teamId = player.teamId {
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(DesignBook.Color.Status.success)
+                .accessibilityLabel(Text(inTeamLabel(for: teamId)))
+        } else {
+            Text(localized("lobby.noTeam"))
+                .font(DesignBook.Font.subheadline)
+                .foregroundStyle(DesignBook.Color.Text.tertiary)
+        }
     }
 
     /// A player whose device dropped off. The host can clear them so the room
@@ -233,8 +246,8 @@ private extension RoomLobbyView {
         }
     }
 
-    func memberNameColor(for player: OnlinePlayer) -> Color {
-        player.isConnected ? DesignBook.Color.Text.secondary : DesignBook.Color.Text.tertiary
+    func memberNameColor(for player: OnlinePlayer, connected: Color = DesignBook.Color.Text.secondary) -> Color {
+        player.isConnected ? connected : DesignBook.Color.Text.tertiary
     }
 
     func inTeamLabel(for teamId: String) -> String {
