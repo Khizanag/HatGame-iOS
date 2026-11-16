@@ -188,9 +188,15 @@ public enum RoomRules {
     /// the automatic pool — two devices drawing words would fill the hat
     /// twice — while the first state may be written by anyone who can act
     /// as host, since that write is a create-if-absent transaction.
-    public static func pendingSetupStep(in room: GameRoom, for playerId: String) -> GameSetupStep? {
+    /// `startsWithSubmittedWords` is the host's choice not to wait for
+    /// players who have not submitted; it counts once anyone has.
+    public static func pendingSetupStep(
+        in room: GameRoom,
+        for playerId: String,
+        startsWithSubmittedWords: Bool = false
+    ) -> GameSetupStep? {
         guard room.status == .playing, room.gameState == nil else { return nil }
-        let isReady = allWordsSubmitted(room)
+        let isReady = allWordsSubmitted(room) || (startsWithSubmittedWords && anyWordsSubmitted(room))
         if room.settings.isAutomaticWords, !isReady {
             return playerId == room.hostId ? .generateWords : nil
         }
@@ -199,9 +205,26 @@ public enum RoomRules {
         return .initializeGame
     }
 
-    /// True once every player's submission gate is open.
+    /// True once every connected player's submission gate is open. A player
+    /// who left or lost their connection is not waited for — otherwise one
+    /// dropped phone holds the whole room on the waiting screen.
     public static func allWordsSubmitted(_ room: GameRoom) -> Bool {
-        !room.players.isEmpty && room.players.allSatisfy(\.hasSubmittedWords)
+        let present = room.players.filter(\.isConnected)
+        return !present.isEmpty && present.allSatisfy(\.hasSubmittedWords)
+    }
+
+    public static func anyWordsSubmitted(_ room: GameRoom) -> Bool {
+        room.players.contains(where: \.hasSubmittedWords)
+    }
+
+    /// The host may stop waiting and start with the words already in: typed
+    /// words, someone has submitted, and someone still has not.
+    public static func canStartWithSubmittedWords(_ room: GameRoom) -> Bool {
+        room.status == .playing
+            && room.gameState == nil
+            && !room.settings.isAutomaticWords
+            && anyWordsSubmitted(room)
+            && !allWordsSubmitted(room)
     }
 }
 

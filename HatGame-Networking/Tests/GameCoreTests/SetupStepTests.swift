@@ -55,6 +55,32 @@ struct SetupStepTests {
         #expect(RoomRules.pendingSetupStep(in: Self.room(submitted: ["host", "guest"]), for: "guest") == nil)
     }
 
+    @Test("Players who left are not waited for")
+    func absentPlayersAreNotWaitedFor() {
+        let room = Self.room(submitted: ["host"], offline: ["guest"])
+
+        #expect(RoomRules.allWordsSubmitted(room))
+        #expect(RoomRules.pendingSetupStep(in: room, for: "host") == .initializeGame)
+        #expect(!RoomRules.allWordsSubmitted(Self.room(offline: ["host", "guest"])))
+    }
+
+    @Test("The host may start with the words already in")
+    func startWithSubmittedWords() {
+        let partial = Self.room(submitted: ["host"])
+
+        #expect(RoomRules.canStartWithSubmittedWords(partial))
+        #expect(RoomRules.pendingSetupStep(in: partial, for: "host") == nil)
+        #expect(RoomRules.pendingSetupStep(in: partial, for: "host", startsWithSubmittedWords: true) == .initializeGame)
+    }
+
+    @Test("Starting early needs at least one submission and typed words")
+    func startEarlyPreconditions() {
+        #expect(!RoomRules.canStartWithSubmittedWords(Self.room()))
+        #expect(RoomRules.pendingSetupStep(in: Self.room(), for: "host", startsWithSubmittedWords: true) == nil)
+        #expect(!RoomRules.canStartWithSubmittedWords(Self.room(isAutomatic: true, submitted: ["host"])))
+        #expect(!RoomRules.canStartWithSubmittedWords(Self.room(submitted: ["host", "guest"])))
+    }
+
     @Test("A stand-in starts the game when the host is away")
     func standInInitializes() {
         let room = Self.room(submitted: ["host", "guest"], offline: ["host"])

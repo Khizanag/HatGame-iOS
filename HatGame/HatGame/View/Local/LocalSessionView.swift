@@ -22,6 +22,8 @@ struct LocalSessionView: View {
 
     @State private var showHostLostAlert: Bool = false
     @State private var hasBeenConnected: Bool = false
+    /// The host chose to start with the words already submitted.
+    @State private var startsWithSubmittedWords: Bool = false
 
     private var room: GameRoom? { roomManager.room }
     private var roomStatus: RoomStatus? { room?.status }
@@ -35,7 +37,13 @@ struct LocalSessionView: View {
     /// Only the host's device runs setup on nearby: it holds the room.
     private var setupStep: GameSetupStep? {
         guard localRoomManager.isHostInternal, let room, let playerId = roomManager.currentPlayerId else { return nil }
-        return RoomRules.pendingSetupStep(in: room, for: playerId)
+        return RoomRules.pendingSetupStep(in: room, for: playerId, startsWithSubmittedWords: startsWithSubmittedWords)
+    }
+
+    private var startWithSubmittedWords: (() -> Void)? {
+        guard localRoomManager.isHostInternal,
+              room.map(RoomRules.canStartWithSubmittedWords) == true else { return nil }
+        return { startsWithSubmittedWords = true }
     }
 
     var body: some View {
@@ -151,18 +159,22 @@ private extension LocalSessionView {
         .setDefaultBackground()
     }
 
+    /// A game state, once written, wins over everything else: a returning
+    /// guest, or one who never submitted before the host started, goes
+    /// straight to the game rather than to word entry.
     @ViewBuilder
     var playingContent: some View {
-        if !allPlayersSubmittedWords {
-            if isAutomaticWords {
-                OnlineWaitingView(message: localized("online.preparingGame"))
-            } else if roomManager.currentPlayer?.hasSubmittedWords == true {
-                OnlineWaitingView(message: localized("online.waitingForOthers"))
-            } else {
-                OnlineWordInputView()
-            }
-        } else {
+        if room?.gameState != nil {
             gamePhaseContent
+        } else if isAutomaticWords || allPlayersSubmittedWords || startsWithSubmittedWords {
+            OnlineWaitingView(message: localized("online.preparingGame"))
+        } else if roomManager.currentPlayer?.hasSubmittedWords == true {
+            OnlineWaitingView(
+                message: localized("online.waitingForOthers"),
+                onStartWithSubmittedWords: startWithSubmittedWords
+            )
+        } else {
+            OnlineWordInputView()
         }
     }
 

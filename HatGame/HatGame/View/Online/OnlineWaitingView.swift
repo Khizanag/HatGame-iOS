@@ -17,10 +17,15 @@ struct OnlineWaitingView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let message: String
+    /// Host-only: start with the words already submitted instead of waiting
+    /// for the rest. `nil` hides the button.
+    var onStartWithSubmittedWords: (() -> Void)?
 
     private var players: [OnlinePlayer] { roomManager.room?.players ?? [] }
-    private var submittedCount: Int { players.filter(\.hasSubmittedWords).count }
-    private var totalCount: Int { players.count }
+    /// Players who left are not waited for, so they are not counted either.
+    private var presentPlayers: [OnlinePlayer] { players.filter(\.isConnected) }
+    private var submittedCount: Int { presentPlayers.filter(\.hasSubmittedWords).count }
+    private var totalCount: Int { presentPlayers.count }
 
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xl) {
@@ -28,6 +33,11 @@ struct OnlineWaitingView: View {
             hero
             playerStatusCard
             Spacer()
+            if let onStartWithSubmittedWords {
+                PrimaryButton(title: localized("lobby.startGame"), icon: "play.fill") {
+                    onStartWithSubmittedWords()
+                }
+            }
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.lg)

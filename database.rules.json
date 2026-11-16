@@ -31,7 +31,9 @@
           "$playerId": {
             // Also refuses a lone isConnected write for a player who has
             // already left, which would otherwise recreate a partial node.
-            ".validate": "newData.hasChildren(['id', 'deviceId', 'name', 'joinedAt']) && newData.child('id').val() === $playerId",
+            // A new player may appear only while the lobby is open; an
+            // existing one (a returning device) may still be updated.
+            ".validate": "newData.hasChildren(['id', 'deviceId', 'name', 'joinedAt']) && newData.child('id').val() === $playerId && (data.exists() || newData.parent().parent().child('status').val() === 'waiting' || newData.parent().parent().child('status').val() === 'setup')",
             "id": { ".validate": "newData.isString()" },
             "deviceId": { ".validate": "newData.isString() && newData.val().length <= 64" },
             "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
