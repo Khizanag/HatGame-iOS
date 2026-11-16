@@ -38,7 +38,7 @@ struct GameLoopView: View {
                 engine.handleLeavingForeground()
             }
             .onChange(of: engine.phase) { previous, phase in
-                playTurnEndHaptics(from: previous, to: phase)
+                playTurnEndFeedback(from: previous, to: phase)
             }
     }
 }
@@ -106,7 +106,9 @@ private extension GameLoopView {
 
 // MARK: - Feedback
 private extension GameLoopView {
-    func playTurnEndHaptics(from previous: GameState.Phase, to phase: GameState.Phase) {
+    /// Marks the end of a turn by feel, and — when the clock ran out —
+    /// announces it, since the time-up is a time-critical change.
+    func playTurnEndFeedback(from previous: GameState.Phase, to phase: GameState.Phase) {
         guard previous == .playing, phase == .turnResults else { return }
         switch engine.state.turn?.endReason {
         case .allWordsGuessed:
@@ -115,6 +117,7 @@ private extension GameLoopView {
             DesignBook.Haptics.rigid()
         case .timeExpired, nil:
             DesignBook.Haptics.warning()
+            AccessibilityNotification.Announcement(localized("game.turnResults.timeUp")).post()
         }
     }
 }

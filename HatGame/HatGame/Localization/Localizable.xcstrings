@@ -1873,13 +1873,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Double-tap if guessed. Swipe up or down for more actions."
+            "value" : "Swipe up or down for Got It and Skip."
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ორჯერ შეეხე, თუ გამოიცანი. სხვა მოქმედებებისთვის გადაასრიალე ზემოთ ან ქვემოთ."
+            "value" : "გადაასრიალე ზემოთ ან ქვემოთ — „შემდეგი“ ან „გამოტოვება“."
           }
         }
       }

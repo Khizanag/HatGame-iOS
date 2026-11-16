@@ -13,6 +13,7 @@ import SwiftUI
 struct GameView: View {
     @Environment(GameEngine.self) private var engine
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var isGiveUpConfirmationPresented = false
     /// Whether opening the give-up alert paused a running clock, so Cancel resumes it.
@@ -20,15 +21,21 @@ struct GameView: View {
 
     private var team: Team? { engine.state.currentTeam }
     private var tint: Color { team?.color ?? DesignBook.Color.Text.accent }
+    private var isShowingPausedOverlay: Bool { engine.isPaused && !isGiveUpConfirmationPresented }
+
+    /// At accessibility sizes the timer shrinks so the word card keeps its room.
+    private var timerSize: CGFloat { dynamicTypeSize.isAccessibilitySize ? 120 : 168 }
 
     var body: some View {
         content
+            .accessibilityHidden(isShowingPausedOverlay)
             .navigationTitle(engine.state.round.title)
             .inlineNavigationTitle()
             .setDefaultBackground()
             .toolbar { gameToolbar }
             .onChange(of: engine.remainingSeconds) { _, seconds in
                 playUrgencyHaptics(at: seconds)
+                announceTimeLeft(at: seconds)
             }
             .alert(localized("game.giveUp.title"), isPresented: $isGiveUpConfirmationPresented) {
                 giveUpAlertActions
@@ -36,9 +43,10 @@ struct GameView: View {
                 Text(localized("game.giveUp.confirmationMessage"))
             }
             .overlay {
-                if engine.isPaused, !isGiveUpConfirmationPresented {
+                if isShowingPausedOverlay {
                     GamePausedOverlay(onResume: togglePause)
                         .transition(.opacity)
+                        .accessibilityAddTraits(.isModal)
                         .accessibilityIdentifier("game.pausedOverlay")
                 }
             }
@@ -63,7 +71,7 @@ private extension GameView {
                 isPaused: engine.isPaused,
                 tint: tint
             )
-            .frame(width: 168, height: 168)
+            .frame(width: timerSize, height: timerSize)
             .padding(.top, DesignBook.Spacing.sm)
 
             wordSection
@@ -109,57 +117,73 @@ private extension GameView {
         }
     }
 
+    /// Side by side when both labels fit; stacked (Got It first) at large text sizes.
     var actionButtons: some View {
-        HStack(spacing: DesignBook.Spacing.md) {
-            if engine.state.settings.isSkippingEnabled {
-                Button(action: skipCurrentWord) {
-                    Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
-                        .font(DesignBook.Font.title3)
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, DesignBook.Spacing.sm)
-                }
-                .glassButtonStyle()
-                .tint(DesignBook.Color.Status.warning)
-                .disabled(!engine.canSkip)
-                .opacity(engine.canSkip ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-                .keyboardShortcut(.leftArrow, modifiers: [])
-                .accessibilityIdentifier("game.skip")
+        ViewThatFits(in: .horizontal) {
+            HStack(spacing: DesignBook.Spacing.md) {
+                skipButton
+                gotItButton
             }
+            VStack(spacing: DesignBook.Spacing.sm) {
+                gotItButton
+                skipButton
+            }
+        }
+    }
 
-            Button(action: markCurrentWordGuessed) {
-                Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
+    @ViewBuilder
+    var skipButton: some View {
+        if engine.state.settings.isSkippingEnabled {
+            Button(action: skipCurrentWord) {
+                Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
                     .font(DesignBook.Font.title3)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
             }
-            .glassProminentButtonStyle()
-            .tint(DesignBook.Color.Status.successFill)
-            .disabled(engine.isPaused || engine.state.currentWord == nil)
-            .keyboardShortcut(.rightArrow, modifiers: [])
-            .accessibilityIdentifier("game.gotIt")
+            .glassButtonStyle()
+            .tint(DesignBook.Color.Status.warning)
+            .disabled(!engine.canSkip)
+            .keyboardShortcut(.leftArrow, modifiers: [])
+            .accessibilityIdentifier("game.skip")
         }
     }
 
+    var gotItButton: some View {
+        Button(action: markCurrentWordGuessed) {
+            Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
+                .font(DesignBook.Font.title3)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, DesignBook.Spacing.sm)
+        }
+        .glassProminentButtonStyle()
+        .tint(DesignBook.Color.Status.successFill)
+        .disabled(engine.isPaused || engine.state.currentWord == nil)
+        .keyboardShortcut(.rightArrow, modifiers: [])
+        .accessibilityIdentifier("game.gotIt")
+    }
+
+    /// Give Up is a text item — a flag can't say what it does. Escape pauses
+    /// and resumes, since it should never end the turn.
     @ToolbarContentBuilder
     var gameToolbar: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            Button(action: presentGiveUpConfirmation) {
-                Label(localized("game.giveUp.button"), systemImage: "flag")
-            }
-            .keyboardShortcut(.cancelAction)
-            .accessibilityIdentifier("game.giveUp")
+            Button(localized("game.giveUp.button"), action: presentGiveUpConfirmation)
+                .accessibilityIdentifier("game.giveUp")
         }
 
         ToolbarItem(placement: .primaryAction) {
             Button(action: togglePause) {
                 Image(systemName: engine.isPaused ? "play.fill" : "pause.fill")
             }
-            .accessibilityLabel(
-                engine.isPaused ? Text(localized("game.timer.resume")) : Text(localized("game.timer.pause"))
-            )
-            .keyboardShortcut("p", modifiers: [])
+            .accessibilityLabel(Text(pauseButtonTitle))
+            .help(pauseButtonTitle)
+            .keyboardShortcut(.cancelAction)
             .accessibilityIdentifier("game.pause")
         }
+    }
+
+    var pauseButtonTitle: String {
+        engine.isPaused ? localized("game.timer.resume") : localized("game.timer.pause")
     }
 
     @ViewBuilder
@@ -219,5 +243,12 @@ private extension GameView {
         default:
             break
         }
+    }
+
+    /// Speaks the time left at 10 s and 5 s, so a VoiceOver user who can't
+    /// watch the ring still hears the turn running out.
+    func announceTimeLeft(at seconds: Int) {
+        guard !engine.isPaused, seconds == 10 || seconds == 5 else { return }
+        AccessibilityNotification.Announcement(localized("game.timer.accessibility.seconds \(seconds)")).post()
     }
 }

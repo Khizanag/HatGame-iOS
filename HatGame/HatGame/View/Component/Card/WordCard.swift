@@ -13,6 +13,7 @@ import SwiftUI
 /// also exposed by the parent for accessibility.
 struct WordCard: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     let word: String
     let teamTint: Color
@@ -57,11 +58,11 @@ struct WordCard: View {
         .scaleEffect(isExiting ? 0.85 : 1.0)
         .opacity(isExiting ? 0 : 1)
         .gesture(dragGesture)
+        // Scoring is never the default (double-tap) action: Got It and Skip
+        // are named actions, so a stray double-tap can't score a word.
         .accessibilityElement(children: .combine)
         .accessibilityLabel(Text(localized("game.card.accessibility.word \(word)")))
         .accessibilityHint(Text(localized("game.card.accessibility.hint")))
-        .accessibilityAddTraits(.isButton)
-        .accessibilityAction(.default, onGuessed)
         .accessibilityActions {
             Button(localized("game.gotIt"), action: onGuessed)
             if isSkipEnabled {
@@ -172,14 +173,18 @@ private extension WordCard {
 
             Spacer(minLength: 0)
 
-            Text(localized("game.card.swipeHint"))
-                .font(DesignBook.Font.caption1Semibold)
-                .uppercaseLabel()
-                .tracking(1.6)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .padding(.bottom, DesignBook.Spacing.lg)
-                .opacity(abs(dragProgress) < 0.05 ? 1 : 0)
-                .animation(reduceMotion ? nil : DesignBook.Motion.standard, value: dragProgress)
+            // The Got It and Skip buttons say the same thing; at accessibility
+            // sizes the word needs the room more than the hint does.
+            if !dynamicTypeSize.isAccessibilitySize {
+                Text(localized("game.card.swipeHint"))
+                    .font(DesignBook.Font.caption1Semibold)
+                    .uppercaseLabel()
+                    .tracking(1.6)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                    .padding(.bottom, DesignBook.Spacing.lg)
+                    .opacity(abs(dragProgress) < 0.05 ? 1 : 0)
+                    .animation(reduceMotion ? nil : DesignBook.Motion.standard, value: dragProgress)
+            }
         }
     }
 }
