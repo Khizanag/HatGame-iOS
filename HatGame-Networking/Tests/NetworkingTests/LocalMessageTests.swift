@@ -57,6 +57,19 @@ struct LocalMessageTests {
         #expect(time == hostTime)
     }
 
+    @Test("Departure messages survive the wire")
+    func departureMessagesRoundTrip() throws {
+        for message in [LocalMessage.guestLeaving, .roomClosed] {
+            let decoded = try JSONDecoder().decode(LocalMessage.self, from: JSONEncoder().encode(message))
+            switch (message, decoded) {
+            case (.guestLeaving, .guestLeaving), (.roomClosed, .roomClosed):
+                break
+            default:
+                Issue.record("Expected \(message), got \(decoded)")
+            }
+        }
+    }
+
     @Test("An unknown rejection reason decodes as refused")
     func unknownRejection() throws {
         let decoded = try JSONDecoder().decode(HelloRejection.self, from: Data(#""roomFull""#.utf8))

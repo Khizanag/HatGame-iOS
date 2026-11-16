@@ -354,6 +354,20 @@ open class RoomManager {
         }
     }
 
+    /// Host-only, lobby-only. Removes a player whose device dropped off (app
+    /// closed, connection lost) so the room stops waiting on them. Players
+    /// who leave on purpose remove themselves.
+    open func removeAwayPlayer(_ playerId: String) async throws {
+        guard isHost, let room else {
+            throw NetworkingError.notAuthorized
+        }
+        guard room.status.isLobby,
+              playerId != currentPlayerId,
+              let player = room.players.first(where: { $0.id == playerId }),
+              !player.isConnected else { return }
+        try await firebaseService.removePlayer(playerId: playerId, fromRoomId: room.id)
+    }
+
     open func removeTeam(teamId: String) async throws {
         guard isHost, let room else {
             throw NetworkingError.notAuthorized

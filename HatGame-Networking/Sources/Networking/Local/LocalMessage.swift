@@ -47,6 +47,12 @@ public enum LocalMessage: Codable, Sendable {
     /// Guest → host. A request to mutate state, attributed to the player the
     /// sending peer registered as.
     case clientAction(ClientAction)
+    /// Guest → host. The guest is leaving on purpose. Sent before the session
+    /// ends so the host updates everyone at once instead of waiting for
+    /// MultipeerConnectivity to notice the dropped peer.
+    case guestLeaving
+    /// Host → all peers. The host closed the room; guests stop at once.
+    case roomClosed
 }
 
 /// Why a host refused a guest's hello.

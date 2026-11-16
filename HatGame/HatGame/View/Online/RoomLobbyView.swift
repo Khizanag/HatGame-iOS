@@ -169,7 +169,7 @@ private extension RoomLobbyView {
 
             Text(player.name)
                 .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
+                .foregroundStyle(player.isConnected ? DesignBook.Color.Text.primary : DesignBook.Color.Text.tertiary)
 
             if player.id == room?.hostId {
                 RoleBadge(style: .host)
@@ -181,7 +181,9 @@ private extension RoomLobbyView {
 
             Spacer()
 
-            if player.teamId != nil {
+            if !player.isConnected {
+                awayStatus(for: player)
+            } else if player.teamId != nil {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(DesignBook.Color.Status.success)
             } else {
@@ -191,6 +193,31 @@ private extension RoomLobbyView {
             }
         }
         .padding(.vertical, DesignBook.Spacing.xs)
+    }
+
+    /// A player whose device dropped off. The host can clear them so the room
+    /// stops counting them; everyone else just sees that they're gone.
+    @ViewBuilder
+    func awayStatus(for player: OnlinePlayer) -> some View {
+        Label(localized("lobby.away"), systemImage: "wifi.slash")
+            .font(DesignBook.Font.caption)
+            .foregroundStyle(DesignBook.Color.Status.warning)
+            .accessibilityIdentifier("lobby.away")
+        if isHost {
+            Button {
+                removeAwayPlayer(player)
+            } label: {
+                Image(systemName: "xmark.circle.fill")
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+            }
+            .buttonStyle(.plain)
+            .accessibilityLabel(String(format: localized("lobby.removePlayer"), player.name))
+            .accessibilityIdentifier("lobby.removePlayer")
+        }
+    }
+
+    func memberNameColor(for player: OnlinePlayer) -> Color {
+        player.isConnected ? DesignBook.Color.Text.secondary : DesignBook.Color.Text.tertiary
     }
 
     func teamColor(for teamId: String?) -> Color {
@@ -274,7 +301,7 @@ private extension RoomLobbyView {
                                 Circle().fill(color.opacity(0.5)).frame(width: 6, height: 6)
                                 Text(player.name)
                                     .font(DesignBook.Font.body)
-                                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                                    .foregroundStyle(memberNameColor(for: player))
                             }
                         }
                     }
@@ -379,6 +406,11 @@ private extension RoomLobbyView {
     func leaveTeam() {
         DesignBook.Haptics.soft()
         perform { try await roomManager.leaveTeam() }
+    }
+
+    func removeAwayPlayer(_ player: OnlinePlayer) {
+        DesignBook.Haptics.rigid()
+        perform { try await roomManager.removeAwayPlayer(player.id) }
     }
 
     func removeTeam(_ teamId: String) {

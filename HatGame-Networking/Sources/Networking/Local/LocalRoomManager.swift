@@ -60,6 +60,8 @@ public final class LocalRoomManager: RoomManager {
     @ObservationIgnored private var helloTask: Task<Void, Never>?
     static let helloInterval: Duration = .seconds(2)
     static let helloTimeout: Duration = .seconds(15)
+    /// How long a leaving device waits for its goodbye to be sent.
+    static let departureGrace: Duration = .milliseconds(300)
 
     /// Guest-only. Host clock minus this device's, from the last snapshot.
     @ObservationIgnored private var hostClockOffset: TimeInterval = 0
@@ -182,6 +184,10 @@ public final class LocalRoomManager: RoomManager {
         try perform(.removeTeam(teamId: teamId))
     }
 
+    /// Nearby guests are dropped from the lobby the moment they disconnect,
+    /// so there is never an away player to remove.
+    public override func removeAwayPlayer(_ playerId: String) async throws {}
+
     public override func startGame() async throws {
         try perform(.startGame)
     }
@@ -207,6 +213,7 @@ public final class LocalRoomManager: RoomManager {
     public override func leaveRoom() async throws {
         helloTask?.cancel()
         helloTask = nil
+        await announceDeparture()
         service.endSession()
         room = nil
         words = []
@@ -366,11 +373,7 @@ private extension LocalRoomManager {
             isConnected = true
         case .notConnected:
             if isLocalHost {
-                guard let playerId = peerToPlayerId.removeValue(forKey: peer),
-                      let room,
-                      let next = RoomRules.playerLeft(playerId, from: room) else { return }
-                self.room = next
-                broadcastSnapshot()
+                removeDepartedGuest(peer)
             } else if peer == hostPeerID {
                 helloTask?.cancel()
                 isConnected = false
@@ -409,7 +412,37 @@ private extension LocalRoomManager {
             case let .game(gameAction):
                 _ = applyGameAction(gameAction, by: playerId)
             }
+        case .guestLeaving:
+            guard isLocalHost else { return }
+            removeDepartedGuest(peer)
+        case .roomClosed:
+            guard !isLocalHost, peer == hostPeerID else { return }
+            helloTask?.cancel()
+            isConnected = false
+            connectionState = .closed
         }
+    }
+
+    /// Host-only. Drops a guest that left or disconnected and tells everyone.
+    func removeDepartedGuest(_ peer: MCPeerID) {
+        guard let playerId = peerToPlayerId.removeValue(forKey: peer),
+              let room,
+              let next = RoomRules.playerLeft(playerId, from: room) else { return }
+        self.room = next
+        broadcastSnapshot()
+    }
+
+    /// Tells the other side this device is leaving on purpose, then gives the
+    /// reliable send a moment to go out before the session is torn down.
+    func announceDeparture() async {
+        if isLocalHost {
+            guard !admittedPeers.isEmpty else { return }
+            service.send(.roomClosed, to: admittedPeers)
+        } else {
+            guard hostPeerID != nil, connectionState == .live else { return }
+            sendToHost(.guestLeaving)
+        }
+        try? await Task.sleep(for: Self.departureGrace)
     }
 
     /// Guest-only. A host that re-admitted this device seats it under its
