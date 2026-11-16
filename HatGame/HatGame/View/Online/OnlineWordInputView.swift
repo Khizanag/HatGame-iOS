@@ -57,13 +57,12 @@ private extension OnlineWordInputView {
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             if !isFieldFocused || (Platform.isMac && playerWords.count == wordsPerPlayer) {
                 primaryAction
                     .paddingHorizontalDefault()
                     .padding(.top, DesignBook.Spacing.md)
                     .padding(.bottom, DesignBook.Spacing.sm)
-                    .withFooterGradient()
             }
         }
     }

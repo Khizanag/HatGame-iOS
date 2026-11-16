@@ -10,7 +10,7 @@ import SwiftUI
 /// Centers its content vertically in the space it is given, like a VStack
 /// between two Spacers, but scrolls once the content is taller than that
 /// space — at the largest accessibility text sizes — instead of squeezing
-/// and truncating it. Pin bottom actions with `safeAreaInset(edge: .bottom)`
+/// and truncating it. Pin bottom actions with `actionBar { … }`
 /// so they stay reachable.
 struct CenteredScrollView<Content: View>: View {
     @ViewBuilder let content: Content

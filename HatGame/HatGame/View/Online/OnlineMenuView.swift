@@ -36,7 +36,7 @@ private extension OnlineMenuView {
             )
             .paddingHorizontalDefault()
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             Group {
                 if isOnlineAvailable {
                     actionButtons
@@ -47,7 +47,6 @@ private extension OnlineMenuView {
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.xl)
             .padding(.bottom, DesignBook.Spacing.lg)
-            .withFooterGradient()
         }
     }
 

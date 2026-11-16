@@ -110,12 +110,11 @@ struct TeamFormView: View {
         }
         .navigationTitle(title)
         .setDefaultStyle()
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             stackedActions
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.md)
                 .padding(.bottom, DesignBook.Spacing.md)
-                .withFooterGradient()
         }
         .onAppear(perform: handleAppear)
         .onChange(of: playerNames) { _, _ in handlePlayerNamesChange() }

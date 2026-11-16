@@ -69,10 +69,9 @@ private extension TeamTurnResultsView {
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             buttonsSection
                 .paddingHorizontalDefault()
-                .withFooterGradient()
         }
     }
 

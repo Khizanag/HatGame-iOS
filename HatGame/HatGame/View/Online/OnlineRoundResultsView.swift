@@ -65,11 +65,10 @@ private extension OnlineRoundResultsView {
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             actionSection
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.sm)
-                .withFooterGradient()
         }
     }
 

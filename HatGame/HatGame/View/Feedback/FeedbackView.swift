@@ -62,12 +62,11 @@ private extension FeedbackView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             submitButton
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.md)
                 .padding(.bottom, DesignBook.Spacing.sm)
-                .withFooterGradient()
         }
     }
 

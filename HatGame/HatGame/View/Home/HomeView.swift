@@ -74,9 +74,8 @@ private extension HomeView {
                 Spacer().frame(height: DesignBook.Spacing.xl)
             }
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             actionButtons
-                .withFooterGradient()
         }
         .onAppear {
             #if DEBUG

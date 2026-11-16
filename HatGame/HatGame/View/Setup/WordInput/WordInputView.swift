@@ -79,7 +79,7 @@ private extension WordInputView {
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.xxl)
             }
-            .safeAreaInset(edge: .bottom) { footer }
+            .actionBar { footer }
             .onAppear { requestScrollToTextField(after: .milliseconds(500)) }
             .onChange(of: isWordFieldFocused) { _, focused in
                 if focused { requestScrollToTextField(after: .milliseconds(200)) }
@@ -205,7 +205,6 @@ private extension WordInputView {
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.sm)
-        .withFooterGradient()
     }
 
     @ViewBuilder

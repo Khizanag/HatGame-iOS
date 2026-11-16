@@ -63,12 +63,11 @@ private extension RoomLobbyView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             actionFooter
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.md)
                 .padding(.bottom, DesignBook.Spacing.sm)
-                .withFooterGradient()
         }
         // Key on stable composites — team color edits and player team
         // reassignments only change inner fields, not the array of IDs;

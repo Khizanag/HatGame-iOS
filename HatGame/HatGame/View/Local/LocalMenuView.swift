@@ -23,12 +23,11 @@ struct LocalMenuView: View {
             )
             .paddingHorizontalDefault()
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             actions
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.xl)
                 .padding(.bottom, DesignBook.Spacing.lg)
-                .withFooterGradient()
         }
         .navigationTitle(localized("local.title"))
         .setDefaultStyle()

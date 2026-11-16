@@ -70,9 +70,10 @@ private extension TeamSetupView {
 
             if hasTeams {
                 populatedList
-                continueSection
-                    .paddingHorizontalDefault()
-                    .withFooterGradient()
+                    .actionBar {
+                        continueSection
+                            .paddingHorizontalDefault()
+                    }
             } else {
                 emptyState
                     .frame(maxHeight: .infinity)

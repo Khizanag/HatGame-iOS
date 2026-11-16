@@ -69,11 +69,10 @@ private extension RandomizationView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             shuffleButton
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.sm)
-                .withFooterGradient()
         }
     }
 

@@ -37,12 +37,11 @@ struct OnlineNoticeView: View {
             }
             .paddingHorizontalDefault()
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             PrimaryButton(title: actionTitle, icon: "arrow.uturn.backward", action: action)
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.lg)
                 .padding(.bottom, DesignBook.Spacing.lg)
-                .withFooterGradient()
         }
         .setDefaultBackground()
     }

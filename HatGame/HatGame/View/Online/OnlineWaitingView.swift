@@ -36,14 +36,13 @@ struct OnlineWaitingView: View {
             .paddingHorizontalDefault()
             .padding(.vertical, DesignBook.Spacing.xl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             if let onStartWithSubmittedWords {
                 PrimaryButton(title: localized("online.startWithSubmittedWords"), icon: "play.fill") {
                     onStartWithSubmittedWords()
                 }
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.lg)
-                .withFooterGradient()
             }
         }
         .setDefaultBackground()

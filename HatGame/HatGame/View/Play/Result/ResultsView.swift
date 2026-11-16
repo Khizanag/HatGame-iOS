@@ -65,10 +65,9 @@ private extension ResultsView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             actionSection
                 .paddingHorizontalDefault()
-                .withFooterGradient()
         }
     }
 

@@ -38,10 +38,9 @@ private extension TimerSettingsView {
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             continueButton
                 .paddingHorizontalDefault()
-                .withFooterGradient()
         }
     }
 

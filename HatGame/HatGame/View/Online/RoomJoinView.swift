@@ -57,12 +57,11 @@ private extension RoomJoinView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .safeAreaInset(edge: .bottom) {
+        .actionBar {
             joinButton
                 .paddingHorizontalDefault()
                 .padding(.top, DesignBook.Spacing.md)
                 .padding(.bottom, DesignBook.Spacing.sm)
-                .withFooterGradient()
         }
     }
 
