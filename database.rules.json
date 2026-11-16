@@ -19,13 +19,26 @@
         // .validate runs on the merged result of every write, so leaf and
         // multi-path updates pass as long as the room stays whole; it never
         // runs on deletes, so leaving and closing rooms are unaffected.
-        // Length caps mirror RoomLimits in GameCore.
+        // Length caps mirror RoomLimits in GameCore. Every level below lists
+        // exactly the fields GameRoom and its children encode; anything else
+        // is refused by its $other rule.
         ".validate": "newData.hasChildren(['id', 'hostId', 'status', 'settings', 'createdAt']) && newData.child('id').val() === $roomId",
-        "id": { ".validate": "newData.isString()" },
-        "hostId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+        // id, hostId and createdAt are written once, at creation.
+        "id": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
+        "hostId": { ".validate": "newData.isString() && newData.val().length <= 64 && (!data.exists() || newData.val() === data.val())" },
+        "createdAt": { ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())" },
+        "schemaVersion": { ".validate": "newData.isNumber() && newData.val() >= 1" },
         "status": { ".validate": "newData.isString() && newData.val().length <= 32" },
-        "createdAt": { ".validate": "newData.isNumber()" },
-        "settings": { ".validate": "newData.hasChildren()" },
+        "settings": {
+          ".validate": "newData.hasChildren()",
+          "maxTeams": { ".validate": "newData.isNumber()" },
+          "playersPerTeam": { ".validate": "newData.isNumber()" },
+          "wordsPerPlayer": { ".validate": "newData.isNumber()" },
+          "roundDuration": { ".validate": "newData.isNumber()" },
+          "isSkippingEnabled": { ".validate": "newData.isBoolean()" },
+          "isAutomaticWords": { ".validate": "newData.isBoolean()" },
+          "$other": { ".validate": false }
+        },
 
         "players": {
           "$playerId": {
@@ -34,24 +47,31 @@
             // A new player may appear only while the lobby is open; an
             // existing one (a returning device) may still be updated.
             ".validate": "newData.hasChildren(['id', 'deviceId', 'name', 'joinedAt']) && newData.child('id').val() === $playerId && (data.exists() || newData.parent().parent().child('status').val() === 'waiting' || newData.parent().parent().child('status').val() === 'setup')",
-            "id": { ".validate": "newData.isString()" },
-            "deviceId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+            // id, deviceId and joinedAt are written once, when the player joins.
+            "id": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
+            "deviceId": { ".validate": "newData.isString() && newData.val().length <= 64 && (!data.exists() || newData.val() === data.val())" },
+            "joinedAt": { ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())" },
             "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
             "teamId": { ".validate": "newData.isString() && newData.val().length <= 64" },
             "isReady": { ".validate": "newData.isBoolean()" },
             "hasSubmittedWords": { ".validate": "newData.isBoolean()" },
             "isConnected": { ".validate": "newData.isBoolean()" },
-            "joinedAt": { ".validate": "newData.isNumber()" }
+            "$other": { ".validate": false }
           }
         },
 
         "teams": {
           "$teamId": {
             ".validate": "newData.hasChildren(['id', 'name', 'colorHex']) && newData.child('id').val() === $teamId",
-            "id": { ".validate": "newData.isString()" },
+            "id": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
             "name": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 100" },
             "colorHex": { ".validate": "newData.isString() && newData.val().length <= 16" },
-            "createdAt": { ".validate": "newData.isNumber()" }
+            "createdAt": { ".validate": "newData.isNumber()" },
+            // Stored as an index-keyed list of player ids.
+            "playerIds": {
+              "$index": { ".validate": "$index.matches(/^[0-9]{1,3}$/) && newData.isString() && newData.val().length <= 64" }
+            },
+            "$other": { ".validate": false }
           }
         },
 
@@ -60,13 +80,20 @@
             ".validate": "newData.hasChildren(['id', 'text', 'addedByPlayerId']) && newData.child('id').val() === $wordId",
             "id": { ".validate": "newData.isString()" },
             "text": { ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 200" },
-            "addedByPlayerId": { ".validate": "newData.isString() && newData.val().length <= 64" }
+            "addedByPlayerId": { ".validate": "newData.isString() && newData.val().length <= 64" },
+            "$other": { ".validate": false }
           }
         },
 
+        // Deliberately open below this level: the game state is versioned
+        // (schemaVersion) and transactions carry unknown keys through, so a
+        // newer build can add fields without a rules change.
         "gameState": {
-          ".validate": "newData.hasChildren(['currentRound', 'currentTeamIndex', 'phase', 'roundDuration'])"
-        }
+          ".validate": "newData.hasChildren(['currentRound', 'currentTeamIndex', 'phase', 'roundDuration'])",
+          "schemaVersion": { ".validate": "newData.isNumber() && newData.val() >= 1" }
+        },
+
+        "$other": { ".validate": false }
       }
     },
 
