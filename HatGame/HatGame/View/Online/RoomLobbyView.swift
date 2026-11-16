@@ -411,7 +411,7 @@ private extension RoomLobbyView {
 }
 
 #Preview {
-    NavigationView { RoomLobbyView() }
+    NavigationStack { RoomLobbyView() }
         .environment(Navigator())
         .environment(RoomManager())
 }

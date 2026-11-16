@@ -226,14 +226,3 @@ private extension OnlineResultsView {
         }
     }
 }
-
-// MARK: - Localized round titles
-private extension OnlineGameRound {
-    var title: String {
-        switch self {
-        case .first: localized("round.first.title")
-        case .second: localized("round.second.title")
-        case .third, .unsupported: localized("round.third.title")
-        }
-    }
-}

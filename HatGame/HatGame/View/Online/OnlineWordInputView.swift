@@ -288,7 +288,7 @@ private extension OnlineWordInputView {
 }
 
 #Preview {
-    NavigationView { OnlineWordInputView() }
+    NavigationStack { OnlineWordInputView() }
         .environment(Navigator())
         .environment(RoomManager())
 }

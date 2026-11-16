@@ -312,14 +312,3 @@ private extension OnlineNextTeamView {
         }
     }
 }
-
-// MARK: - Round title helper
-private extension OnlineGameRound {
-    var title: String {
-        switch self {
-        case .first: localized("round.first.title")
-        case .second: localized("round.second.title")
-        case .third, .unsupported: localized("round.third.title")
-        }
-    }
-}
