@@ -11,168 +11,38 @@ import Networking
 import SwiftUI
 
 struct RoomCreationView: View {
-    enum Field: Hashable { case name }
-
     @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
-    @State private var wordsPerPlayer: Int = 5
-    @State private var roundDuration: Int = 60
-    @State private var isSkippingEnabled: Bool = true
-    @State private var isAutomaticWords: Bool = false
+    @AppStorage(PlayerNameStorage.key) private var playerName: String = ""
+    @State private var settings = GameSettings()
     @State private var isCreating: Bool = false
     @State private var error: Error?
-
-    @FocusState private var focusedField: Field?
 
     private var trimmedName: String {
         playerName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
-    private var canCreate: Bool { !trimmedName.isEmpty && !isCreating }
-
     var body: some View {
-        content
-            .navigationTitle(localized("createRoom.title"))
-            .setDefaultStyle()
-            .toolbar { keyboardToolbar }
-            .errorAlert($error)
-            .onAppear {
-                focusedField = .name
-                isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
-            }
-    }
-}
-
-// MARK: - Composition
-private extension RoomCreationView {
-    var content: some View {
-        ScrollView {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                SetupHero(
-                    systemImage: "wifi",
-                    title: localized("createRoom.hero.title"),
-                    subtitle: localized("createRoom.hero.subtitle")
-                )
-                nameCard
-                settingsCard
-            }
-            .paddingHorizontalDefault()
-            .padding(.top, DesignBook.Spacing.lg)
-            .padding(.bottom, DesignBook.Spacing.xxl)
+        RoomSetupForm(
+            playerName: $playerName,
+            settings: $settings,
+            actionTitle: localized("createRoom.create"),
+            actionIcon: "plus.circle.fill",
+            isWorking: isCreating,
+            action: createRoom
+        ) {
+            SetupHero(
+                systemImage: "wifi",
+                title: localized("createRoom.hero.title"),
+                subtitle: localized("createRoom.hero.subtitle")
+            )
         }
-        .safeAreaInset(edge: .bottom) {
-            if focusedField == nil || Platform.isMac {
-                createButton
-                    .paddingHorizontalDefault()
-                    .padding(.top, DesignBook.Spacing.md)
-                    .padding(.bottom, DesignBook.Spacing.sm)
-                    .withFooterGradient()
-            }
-        }
-    }
-
-    var nameCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "person.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text(localized("createRoom.yourName"))
-                        .font(DesignBook.Font.captionBold)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
-                }
-                TextField(localized("createRoom.enterName"), text: $playerName)
-                    .textFieldStyle(.plain)
-                    .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-                    .focused($focusedField, equals: .name)
-                    .submitLabel(.done)
-                    .onSubmit(createRoom)
-            }
-        }
-    }
-
-    var settingsCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.lg) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "gearshape.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text(localized("createRoom.gameSettings"))
-                        .font(DesignBook.Font.captionBold)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
-                }
-
-                VStack(spacing: DesignBook.Spacing.md) {
-                    GameSettingsRow(
-                        icon: "text.bubble.fill",
-                        title: localized("createRoom.wordsPerPlayer"),
-                        value: $wordsPerPlayer,
-                        range: 3...10,
-                        step: 1
-                    )
-                    GameSettingsRow(
-                        icon: "timer",
-                        title: localized("createRoom.roundDuration"),
-                        value: $roundDuration,
-                        range: 30...120,
-                        step: 10,
-                        suffix: localized("createRoom.seconds")
-                    )
-                    GameSettingsToggleRow(
-                        icon: "wand.and.stars",
-                        title: localized("wordSource.automatic.title"),
-                        subtitle: localized("wordSource.automatic.description"),
-                        isOn: $isAutomaticWords
-                    )
-                    GameSettingsToggleRow(
-                        icon: "arrow.uturn.forward",
-                        title: localized("timerSettings.allowSkipping.title"),
-                        subtitle: localized("timerSettings.allowSkipping.description"),
-                        isOn: $isSkippingEnabled,
-                        tint: DesignBook.Color.Status.warning
-                    )
-                }
-            }
-        }
-    }
-
-    var createButton: some View {
-        Group {
-            if isCreating {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
-                    .scaleEffect(1.2)
-                    .padding(.vertical, DesignBook.Spacing.md)
-            } else {
-                PrimaryButton(title: localized("createRoom.create"), icon: "plus.circle.fill") {
-                    createRoom()
-                }
-                .disabled(!canCreate)
-                .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-                .keyboardShortcut(.defaultAction)
-            }
-        }
-    }
-
-    @ToolbarContentBuilder
-    var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboardAccessory) {
-            Spacer()
-            Button(action: createRoom) {
-                Label(localized("createRoom.create"), systemImage: "plus.circle.fill")
-                    .labelStyle(.titleAndIcon)
-                    .fontWeight(.semibold)
-            }
-            .disabled(!canCreate)
+        .navigationTitle(localized("createRoom.title"))
+        .setDefaultStyle()
+        .errorAlert($error)
+        .onAppear {
+            settings.isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
         }
     }
 }
@@ -180,20 +50,14 @@ private extension RoomCreationView {
 // MARK: - Actions
 private extension RoomCreationView {
     func createRoom() {
-        guard canCreate else { return }
+        guard !trimmedName.isEmpty, !isCreating else { return }
         DesignBook.Haptics.confirm()
         isCreating = true
-        focusedField = nil
         let name = trimmedName
+        let settings = settings
 
         Task {
             do {
-                let settings = GameSettings(
-                    wordsPerPlayer: wordsPerPlayer,
-                    roundDuration: roundDuration,
-                    isSkippingEnabled: isSkippingEnabled,
-                    isAutomaticWords: isAutomaticWords
-                )
                 let code = try await roomManager.createRoom(hostName: name, settings: settings)
                 navigator.push(.roomLobby(roomCode: code))
             } catch {
@@ -205,6 +69,7 @@ private extension RoomCreationView {
 }
 
 #Preview {
-    NavigationView { RoomCreationView() }
+    NavigationStack { RoomCreationView() }
         .environment(Navigator())
+        .environment(RoomManager())
 }

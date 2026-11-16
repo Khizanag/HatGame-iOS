@@ -20,7 +20,7 @@ struct LocalRoomBrowser: View {
     @Environment(LocalRoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    @AppStorage("HatGame.lastPlayerName") private var playerName: String = ""
+    @AppStorage(PlayerNameStorage.key) private var playerName: String = ""
     @State private var isConnecting: Bool = false
     @State private var error: Error?
 
@@ -62,28 +62,14 @@ private extension LocalRoomBrowser {
     }
 
     var nameCard: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "person.fill")
-                        .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
-                    Text(localized("createRoom.yourName"))
-                        .font(DesignBook.Font.captionBold)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
-                }
-                TextField(localized("createRoom.enterName"), text: $playerName)
-                    .textFieldStyle(.plain)
-                    .font(DesignBook.Font.headline)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .padding(DesignBook.Spacing.md)
-                    .background(DesignBook.Color.Background.secondary)
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-                    .focused($focusedField, equals: .name)
-                    .submitLabel(.done)
-                    .onSubmit { focusedField = nil }
-            }
-        }
+        PlayerNameCard(
+            title: localized("createRoom.yourName"),
+            placeholder: localized("createRoom.enterName"),
+            name: $playerName,
+            focus: $focusedField,
+            field: .name,
+            onSubmit: { focusedField = nil }
+        )
     }
 
     var hostsSection: some View {
