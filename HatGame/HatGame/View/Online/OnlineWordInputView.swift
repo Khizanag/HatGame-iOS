@@ -37,7 +37,7 @@ struct OnlineWordInputView: View {
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
             .onAppear { isFieldFocused = true }
-            .errorAlert($error)
+            .errorAlert($error, title: localized("error.title.submitWords"))
     }
 }
 

@@ -46,7 +46,7 @@ struct RoomLobbyView: View {
             } message: {
                 Text(isHost ? localized("lobby.leave.hostMessage") : localized("lobby.leave.guestMessage"))
             }
-            .errorAlert($error)
+            .errorAlert($error, title: localized("error.title.updateRoom"))
     }
 }
 

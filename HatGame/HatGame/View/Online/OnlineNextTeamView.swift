@@ -70,7 +70,7 @@ struct OnlineNextTeamView: View {
     var body: some View {
         content
             .setDefaultStyle()
-            .errorAlert($error)
+            .errorAlert($error, title: localized("error.title.connection"))
     }
 }
 

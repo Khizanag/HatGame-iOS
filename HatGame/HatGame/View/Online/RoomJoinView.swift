@@ -35,7 +35,7 @@ struct RoomJoinView: View {
         content
             .navigationTitle(localized("joinRoom.title"))
             .setDefaultStyle()
-            .errorAlert($error)
+            .errorAlert($error, title: localized("error.title.joinRoom"))
             .onAppear { focusedField = .code }
     }
 }

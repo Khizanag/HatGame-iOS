@@ -70,7 +70,7 @@ struct OnlineTurnResultsView: View {
                 DesignBook.Haptics.success()
                 hasCelebrated = true
             }
-            .errorAlert($error)
+            .errorAlert($error, title: localized("error.title.continue"))
     }
 }
 

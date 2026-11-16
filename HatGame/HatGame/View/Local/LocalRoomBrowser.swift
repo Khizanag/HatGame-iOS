@@ -38,7 +38,7 @@ struct LocalRoomBrowser: View {
         content
             .navigationTitle(localized("local.browser.title"))
             .setDefaultStyle()
-            .errorAlert($error, transport: .nearby)
+            .errorAlert($error, title: localized("error.title.joinRoom"), transport: .nearby)
             .onAppear {
                 roomManager.startBrowsingForHosts()
                 focusedField = .name

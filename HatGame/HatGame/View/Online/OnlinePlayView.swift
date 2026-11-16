@@ -75,7 +75,7 @@ struct OnlinePlayView: View {
             } message: {
                 Text(localized("game.giveUp.confirmationMessage"))
             }
-            .errorAlert($error)
+            .errorAlert($error, title: localized("error.title.connection"))
     }
 }
 

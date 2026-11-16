@@ -40,7 +40,7 @@ struct RoomCreationView: View {
         }
         .navigationTitle(localized("createRoom.title"))
         .setDefaultStyle()
-        .errorAlert($error)
+        .errorAlert($error, title: localized("error.title.createRoom"))
         .onAppear {
             settings.isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
         }

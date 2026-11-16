@@ -32,7 +32,9 @@ struct FeedbackView: View {
             .navigationTitle(localized("feedback.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
-            .errorAlert(message: service.errorMessage, onDismiss: service.resetAfterFailure)
+            .errorAlert(
+                title: localized("error.title.sendFeedback"),
+                message: service.errorMessage, onDismiss: service.resetAfterFailure)
     }
 }
 

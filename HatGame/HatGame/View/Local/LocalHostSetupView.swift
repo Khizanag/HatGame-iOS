@@ -39,7 +39,7 @@ struct LocalHostSetupView: View {
         }
         .navigationTitle(localized("local.host.title"))
         .setDefaultStyle()
-        .errorAlert($error, transport: .nearby)
+        .errorAlert($error, title: localized("error.title.hostGame"), transport: .nearby)
         .onAppear {
             settings.isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
         }

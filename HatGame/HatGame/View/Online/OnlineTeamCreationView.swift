@@ -39,7 +39,7 @@ struct OnlineTeamCreationView: View {
                     CloseToolbarItem { dismiss() }
                 }
                 .setDefaultBackground()
-                .errorAlert($error)
+                .errorAlert($error, title: localized("error.title.createTeam"))
         }
     }
 }
