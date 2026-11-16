@@ -5,6 +5,9 @@
 // Usage:  swift compare-images.swift <baseline.png> <candidate.png> [diff-out.png]
 // Env:    CHANNEL_TOLERANCE (0-255, default 8) - per-channel noise allowance
 //         PIXEL_FRACTION    (0-1,   default 0.005) - max share of differing pixels
+//         IGNORE_RECT       "x,y,w,h" as fractions of the image - a region to
+//                           skip, e.g. the Dynamic Island, which the simulator
+//                           sometimes draws into screenshots and the app never does
 // Exit:   0 = within tolerance, 1 = differs, 2 = error.
 //
 // No third-party dependencies: rasterizes both PNGs into a common RGBA8
@@ -106,6 +109,19 @@ if base.width != cand.width || base.height != cand.height {
 
 let total = base.width * base.height
 var differing = 0
+
+/// Pixel bounds of `IGNORE_RECT`, or nil when unset.
+let ignoredRegion: (minX: Int, minY: Int, maxX: Int, maxY: Int)? = {
+    guard let spec = ProcessInfo.processInfo.environment["IGNORE_RECT"] else { return nil }
+    let parts = spec.split(separator: ",").compactMap { Double($0.trimmingCharacters(in: .whitespaces)) }
+    guard parts.count == 4 else { die("IGNORE_RECT must be x,y,w,h fractions, got \(spec)") }
+    let width = Double(base.width)
+    let height = Double(base.height)
+    return (
+        Int(parts[0] * width), Int(parts[1] * height),
+        Int((parts[0] + parts[2]) * width), Int((parts[1] + parts[3]) * height)
+    )
+}()
 var diff = diffPath != nil ? [UInt8](repeating: 0, count: total * 4) : []
 
 for index in 0..<total {
@@ -113,7 +129,10 @@ for index in 0..<total {
     let dr = abs(Int(base.pixels[offset]) - Int(cand.pixels[offset]))
     let dg = abs(Int(base.pixels[offset + 1]) - Int(cand.pixels[offset + 1]))
     let db = abs(Int(base.pixels[offset + 2]) - Int(cand.pixels[offset + 2]))
-    let changed = dr > channelTolerance || dg > channelTolerance || db > channelTolerance
+    let x = index % base.width
+    let y = index / base.width
+    let isIgnored = ignoredRegion.map { x >= $0.minX && x < $0.maxX && y >= $0.minY && y < $0.maxY } ?? false
+    let changed = !isIgnored && (dr > channelTolerance || dg > channelTolerance || db > channelTolerance)
     if changed { differing += 1 }
     if diffPath != nil {
         if changed {

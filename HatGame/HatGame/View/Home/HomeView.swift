@@ -79,6 +79,13 @@ private extension HomeView {
                 .withFooterGradient()
         }
         .onAppear {
+            #if DEBUG
+            // Snapshots need the same Home every launch: no first-run expansion.
+            if UITestConfiguration.screen != nil {
+                isHowToPlayExpanded = false
+                hasSeenHowToPlay = true
+            }
+            #endif
             if !hasSeenHowToPlay {
                 hasSeenHowToPlay = true
                 isHowToPlayExpanded = true

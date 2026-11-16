@@ -102,7 +102,10 @@ for shot in "$CAPTURE_DIR"/*.png; do
     failures=$((failures + 1))
     continue
   fi
-  if detail=$(swift Scripts/compare-images.swift "$baseline" "$shot" "$DIFF_DIR/$name" 2>&1); then
+  # The simulator sometimes draws the Dynamic Island pill into screenshots;
+  # the app never draws there, so that top-center strip is not compared.
+  if detail=$(IGNORE_RECT="${IGNORE_RECT:-0.3,0,0.4,0.06}" \
+      swift Scripts/compare-images.swift "$baseline" "$shot" "$DIFF_DIR/$name" 2>&1); then
     echo "    PASS  $name  $detail"
   else
     echo "    FAIL  $name  $detail"
