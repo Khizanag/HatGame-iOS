@@ -41,7 +41,7 @@ struct OnlineTurnResultsView: View {
     /// The host may move the game past an explainer who has gone offline,
     /// so one backgrounded device cannot wedge the room.
     private var canCoverForAwayExplainer: Bool {
-        guard roomManager.isHost, !isActivePlayer, let state = gameState else { return false }
+        guard roomManager.canActAsHost, !isActivePlayer, let state = gameState else { return false }
         return OnlineGameRules.isActivePlayerAway(state, players: room?.players ?? [])
     }
 

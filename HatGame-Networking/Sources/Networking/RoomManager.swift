@@ -60,6 +60,13 @@ open class RoomManager {
         room?.hostId == currentPlayerId
     }
 
+    /// May take host-only game actions: the host, or the player standing
+    /// in for a host who has dropped out (see `OnlineGameRules.actingHostId`).
+    public var canActAsHost: Bool {
+        guard let room, let currentPlayerId else { return false }
+        return OnlineGameRules.canActAsHost(currentPlayerId, hostId: room.hostId, players: room.players)
+    }
+
     public var currentPlayer: OnlinePlayer? {
         guard let playerId = currentPlayerId else { return nil }
         return room?.players.first { $0.id == playerId }

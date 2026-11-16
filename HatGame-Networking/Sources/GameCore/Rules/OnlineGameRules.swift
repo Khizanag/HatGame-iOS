@@ -60,7 +60,8 @@ public enum OnlineGameRules {
     /// The explainer drives their own turn. The host may stand in when the
     /// explainer is offline or their timer has run well past zero, so one
     /// backgrounded device cannot wedge the room. Only the host moves
-    /// between rounds.
+    /// between rounds. "Host" here means anyone `canActAsHost` admits, so a
+    /// host who drops out does not wedge the room either.
     public static func canPerform(
         _ action: GameAction,
         by playerId: String,
@@ -68,7 +69,7 @@ public enum OnlineGameRules {
         context: GameContext
     ) -> Bool {
         let isActive = state.activePlayerId == playerId
-        let isHost = context.hostId == playerId
+        let isHost = canActAsHost(playerId, hostId: context.hostId, players: context.players)
         let hostCanCover = isHost && isActivePlayerAway(state, players: context.players)
 
         switch action {
@@ -83,6 +84,22 @@ public enum OnlineGameRules {
         case .advanceAfterRoundResults:
             return isHost
         }
+    }
+
+    /// Who stands in for the host: the host while connected; otherwise the
+    /// longest-connected player still connected (earliest `joinedAt`, ties
+    /// by id), which every device derives identically from the same room.
+    /// Falls back to the host when nobody is connected.
+    public static func actingHostId(hostId: String, players: [OnlinePlayer]) -> String {
+        if players.first(where: { $0.id == hostId })?.isConnected == true { return hostId }
+        let seniority = players.sorted { ($0.joinedAt, $0.id) < ($1.joinedAt, $1.id) }
+        return seniority.first(where: \.isConnected)?.id ?? hostId
+    }
+
+    /// The host keeps host authority even while marked away — a stale flag
+    /// must not lock them out — and the acting host shares it.
+    public static func canActAsHost(_ playerId: String, hostId: String, players: [OnlinePlayer]) -> Bool {
+        playerId == hostId || playerId == actingHostId(hostId: hostId, players: players)
     }
 
     /// True when nobody is explaining, or the explainer has left or lost

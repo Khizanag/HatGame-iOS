@@ -220,7 +220,7 @@ private extension OnlineRoundResultsView {
 
     @ViewBuilder
     var actionSection: some View {
-        if roomManager.isHost {
+        if roomManager.canActAsHost {
             PrimaryButton(
                 title: nextRound == nil
                     ? localized("onlineRoundResults.finish")

@@ -290,7 +290,7 @@ private extension OnlinePlayView {
     /// The host closes a turn its explainer left running well past zero —
     /// a backgrounded or disconnected device never sends its own end.
     var isCoveringStalledTurn: Bool {
-        guard roomManager.isHost, let state = gameState else { return false }
+        guard roomManager.canActAsHost, let state = gameState else { return false }
         return OnlineGameRules.isStalled(state, now: Date())
     }
 
