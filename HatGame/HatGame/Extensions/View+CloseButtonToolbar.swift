@@ -20,12 +20,10 @@ struct CloseToolbarItem: ToolbarContent {
 
     var body: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {
-            if let accessibilityLabel {
-                closeButton
-                    .accessibilityLabel(Text(accessibilityLabel))
-            } else {
-                closeButton
-            }
+            // The system "Close" label ignores the in-app language, so always
+            // supply a localized one.
+            closeButton
+                .accessibilityLabel(Text(accessibilityLabel ?? localized("common.buttons.close")))
         }
     }
 

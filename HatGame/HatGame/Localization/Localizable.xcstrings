@@ -1671,22 +1671,6 @@
         }
       }
     },
-    "createTeam.create" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Create Team"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გუნდის შექმნა"
-          }
-        }
-      }
-    },
     "createTeam.enterName" : {
       "localizations" : {
         "en" : {
@@ -2155,23 +2139,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სიტყვების გაგზავნა ვერ მოხერხდა"
-          }
-        }
-      }
-    },
-    "error.title.updateRoom" : {
-      "comment" : "Alert title when a lobby action (joining a team, starting, leaving) failed.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Couldn’t Update Room"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ოთახის განახლება ვერ მოხერხდა"
           }
         }
       }
