@@ -26,15 +26,15 @@ struct SettingsLinkRow: View {
             action()
         } label: {
             HStack(spacing: DesignBook.Spacing.md) {
-                SettingsIconTile(systemImage: icon, tint: tint)
-
                 if dynamicTypeSize.isAccessibilitySize {
                     VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                        SettingsIconTile(systemImage: icon, tint: tint)
                         titleText
                         valueText
                     }
                     Spacer(minLength: 0)
                 } else {
+                    SettingsIconTile(systemImage: icon, tint: tint)
                     titleText
                         .lineLimit(1)
                         .layoutPriority(1)
