@@ -2,6 +2,39 @@
 
 A fresh audit of Hat Game against the current code, re-verifying every finding in [`engineering-audit.md`](./engineering-audit.md) and [`ux-ui-improvement-plan.md`](./ux-ui-improvement-plan.md) and adding new ones. Four parallel passes: networking and multiplayer, single-device engine and tests, the SwiftUI view layer, and project configuration. Every item cites the file it lives in; ids are stable so commits can reference them.
 
+## Status — delivered 2026-11-16
+
+Every phase below landed on `main` (`0fb206f..HEAD`, 116 commits), each followed by an independent code review whose findings were also fixed. Items marked *out of scope* at the bottom still need the owner.
+
+| Gate | Before | After |
+|---|---|---|
+| Swift language mode | 5 (app), 6 (packages) | 6 everywhere, warnings as errors |
+| Build warnings (iOS, macOS, visionOS) | 0 / 0 / visionOS did not compile | 0 / 0 / 0 |
+| `swiftlint --strict` | 66 violations | 0 |
+| App tests | 7 unit + template UI tests | 134 unit cases + 4 UI flows |
+| Package tests | none | 133 (GameCore) + 11 (Networking) |
+| Line coverage | — | Engine 97%, Persistence 90%, Manager 84%, Model 100%, GameCore 94% |
+| Database rules check | none | `Scripts/rules-check/run.sh`: 59/59 against the emulator |
+| Snapshot verification | flaky (first launch, Dynamic Island) | deterministic, 8/8 |
+| CI | rules deploy only | lint + iOS tests + macOS build, green |
+
+### Decisions taken during delivery
+
+- **No Firebase Auth / App Check** (owner, 2026-11-16). Rules instead restrict access to a known room code, validate every field, refuse unknown keys, and make identity fields write-once.
+- **Rules break pre-November dev builds.** The app is unreleased, so the rules were not kept compatible with the array-encoded rooms of older builds. From now on rooms, game states, and the nearby protocol carry a schema/protocol version; a newer peer shows "update the app" instead of failing.
+- **`GameCore`'s rules are `OnlineGameRules`**, distinct from the single-device engine's `GameRules`.
+- **Carry-over (E6):** a team that empties the hat keeps the time its countdown showed, rounded up, minimum one second — single-device and online alike.
+- **Play Again (E11):** same teams and words, scores reset. The docs were aligned to the code.
+- **End Game** exists between turns only; during a turn, Give Up is the exit.
+- **Privacy manifest** declares player nicknames as Name (the conservative reading).
+- **`RoomTransport` collapse deferred.** Both transports now share `OnlineGameRules`/`RoomRules`, which removed the duplicated logic and the authority asymmetry the collapse was meant to fix. Collapsing the remaining subclass pairs needs two-device verification first.
+
+### Still open
+
+- **Owner:** visionOS layered icon and a native-style macOS icon; App Privacy answers in App Store Connect to match `PrivacyInfo.xcprivacy`; sign-off on the Georgian permission-prompt and error copy; restricting the iOS API key to the bundle id (Google Cloud console).
+- **Needs two devices:** nearby join/rejoin, protocol-mismatch refusal, host-time countdown; online presence, host failover, server-clock countdown, simultaneous taps. Covered by unit tests and the rules emulator, not yet by hand.
+- **Future:** MultipeerConnectivity is deprecated in the iOS/macOS 27 SDKs in favor of the Network framework; nearby play will need a port before the deployment target reaches 27.
+
 ## Baseline (2026-11-16, `main` @ `2e18528`)
 
 | Gate | State |

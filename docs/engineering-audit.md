@@ -1,5 +1,7 @@
 # Engineering and Architecture Audit
 
+> **Historical.** Every finding below was re-verified and resolved, or explicitly deferred, by [`improvement-plan.md`](./improvement-plan.md) (November 2026). Read that for the current state.
+
 A code-grounded audit of Hat Game's engineering: correctness, security, architecture, testability, and App Store readiness. It is the counterpart to [`ux-ui-improvement-plan.md`](./ux-ui-improvement-plan.md) — that doc owns UX, visual design, game feel, and accessibility polish; this one owns what happens underneath. Where the two overlap (multiplayer resilience, accessibility correctness), this doc takes the engineering angle and defers the design angle there.
 
 ## How this was researched
