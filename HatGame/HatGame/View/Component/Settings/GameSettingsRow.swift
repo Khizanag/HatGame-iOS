@@ -43,11 +43,14 @@ private extension GameSettingsRow {
         if dynamicTypeSize.isAccessibilitySize {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
                 titleLabel
+                    .accessibilityHidden(true)
                 HStack {
                     valueLabel
+                        .accessibilityHidden(true)
                     Spacer(minLength: DesignBook.Spacing.sm)
                     Stepper(title, value: $value, in: range, step: step)
                         .labelsHidden()
+                        .accessibilityValue(Text(formattedValue))
                 }
             }
         } else {
