@@ -83,9 +83,7 @@ private extension RoomJoinView {
 
                 TextField(localized("joinRoom.enterCode"), text: $roomCode)
                     .textFieldStyle(.plain)
-                    // Room-code entry: monospaced display size with no token match.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 32, weight: .bold, design: .monospaced))
+                    .font(DesignBook.Font.scaled(32, relativeTo: .largeTitle, weight: .bold, design: .monospaced))
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                     .textCase(.uppercase)

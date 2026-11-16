@@ -75,11 +75,16 @@ private extension OnlineRoundResultsView {
 
     var header: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            Text(verbatim: "🏁").font(DesignBook.IconFont.emoji)
+            Text(verbatim: "🏁")
+                .font(DesignBook.IconFont.emoji)
+                .decorativeHeroSizing()
+                .accessibilityHidden(true)
             Text(localized("onlineRoundResults.roundComplete"))
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
             Text(currentRound.title)
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
@@ -111,6 +116,8 @@ private extension OnlineRoundResultsView {
                         Text(team.name)
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.primary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
                         Spacer()
                         AnimatedScoreText(
                             value: gameState?.getScore(for: team.id, in: currentRound) ?? 0,
@@ -161,6 +168,8 @@ private extension OnlineRoundResultsView {
                         Text(team.name)
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.primary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
 
                         Spacer()
 

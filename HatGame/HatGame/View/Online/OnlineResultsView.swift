@@ -86,6 +86,7 @@ private extension OnlineResultsView {
                     .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: !reduceMotion && hasCelebrated)
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             if winners.count == 1, let winner = winners.first {
                 VStack(spacing: DesignBook.Spacing.sm) {
@@ -99,10 +100,12 @@ private extension OnlineResultsView {
                         .font(DesignBook.Font.title)
                         .foregroundStyle(Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary)
                         .multilineTextAlignment(.center)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
 
                     AnimatedScoreText(
                         value: gameState?.getTotalScore(for: winner.id) ?? 0,
-                        font: .system(size: 56, weight: .bold, design: .rounded),
+                        font: DesignBook.Font.scaled(56, relativeTo: .largeTitle, weight: .bold),
                         color: Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary
                     )
 
@@ -122,6 +125,8 @@ private extension OnlineResultsView {
                             Text(winner.name)
                                 .font(DesignBook.Font.title3)
                                 .foregroundStyle(Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                             AnimatedScoreText(
                                 value: gameState?.getTotalScore(for: winner.id) ?? 0,
                                 font: DesignBook.Font.title2,
@@ -172,6 +177,8 @@ private extension OnlineResultsView {
                             Text(item.team.name)
                                 .font(DesignBook.Font.body)
                                 .foregroundStyle(DesignBook.Color.Text.primary)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.5)
                             Spacer()
                             Text(verbatim: "\(gameState?.getScore(for: item.team.id, in: round) ?? 0)")
                                 .font(DesignBook.Font.bodyBold)

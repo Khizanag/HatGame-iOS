@@ -72,9 +72,8 @@ private extension OnlineWordInputView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: "text.bubble.fill")
-                    // Header glyph; off-token size with no Dynamic Type match.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 40))
+                    .font(DesignBook.IconFont.sized(40, relativeTo: .largeTitle))
+                    .decorativeHeroSizing()
                     .foregroundStyle(DesignBook.Color.Text.accent)
                 Text(localized("onlineWordInput.instruction"))
                     .font(DesignBook.Font.body)

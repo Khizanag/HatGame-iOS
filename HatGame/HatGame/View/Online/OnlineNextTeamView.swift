@@ -102,6 +102,7 @@ private extension OnlineNextTeamView {
                 Text(verbatim: "🎯").font(DesignBook.IconFont.emoji)
             }
             .accessibilityHidden(true)
+            .decorativeHeroSizing()
 
             Text(localized("game.nextTeam.title"))
                 .font(DesignBook.Font.smallCaption)
@@ -114,6 +115,8 @@ private extension OnlineNextTeamView {
                     .font(DesignBook.Font.largeTitle)
                     .foregroundStyle(tint)
                     .multilineTextAlignment(.center)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
 
                 if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
                     Text(localized("game.currentScoreLabel \(totalScore)"))

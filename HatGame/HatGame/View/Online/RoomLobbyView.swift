@@ -100,12 +100,13 @@ private extension RoomLobbyView {
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
 
                 Text(room?.id ?? "------")
-                    // Room-code hero: monospaced display size with no token match.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 44, weight: .bold, design: .monospaced))
+                    .font(DesignBook.Font.roomCode)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .kerning(8)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                     .accessibilityLabel(Text(localized("lobby.shareCode")))
+                    .accessibilityValue(Text(verbatim: room?.id ?? "").speechSpellsOutCharacters())
 
                 GlassContainer(spacing: DesignBook.Spacing.md) {
                     HStack(spacing: DesignBook.Spacing.md) {
@@ -249,6 +250,8 @@ private extension RoomLobbyView {
                     Text(team.name)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(color)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                     Spacer()
                     Text(verbatim: "\(players.count)")
                         .font(DesignBook.Font.captionBold)

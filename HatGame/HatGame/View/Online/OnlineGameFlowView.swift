@@ -128,9 +128,8 @@ private extension OnlineGameFlowView {
                     .frame(width: 96, height: 96)
                     .shadow(.medium)
                 Image(systemName: "wifi")
-                    // Connectivity hero glyph; off-token size with no Dynamic Type match.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 42, weight: .bold))
+                    .font(DesignBook.IconFont.sized(42, relativeTo: .largeTitle, weight: .bold))
+                    .decorativeHeroSizing()
                     .foregroundStyle(DesignBook.Gradient.primary)
                     .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
             }

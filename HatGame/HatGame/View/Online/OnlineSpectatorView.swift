@@ -69,6 +69,7 @@ private extension OnlineSpectatorView {
                     .font(DesignBook.Font.title3)
                     .foregroundStyle(tint)
                     .lineLimit(1)
+                    .minimumScaleFactor(0.5)
             }
         }
     }
@@ -100,9 +101,8 @@ private extension OnlineSpectatorView {
         GameCard {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: isOwnTeam ? "ear.fill" : "eye.fill")
-                    // Spectator glyph; off-token size with no Dynamic Type match.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 38))
+                    .font(DesignBook.IconFont.sized(38, relativeTo: .largeTitle))
+                    .decorativeHeroSizing()
                     .foregroundStyle(tint)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 

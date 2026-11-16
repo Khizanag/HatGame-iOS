@@ -100,9 +100,8 @@ private extension OnlineTurnResultsView {
             ZStack {
                 Circle().fill(DesignBook.Color.Status.success.opacity(0.18)).frame(width: 88, height: 88)
                 Image(systemName: "sparkles")
-                    // Hero celebration glyph; unique size with no Dynamic Type token.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 38, weight: .bold))
+                    .font(DesignBook.IconFont.sized(38, relativeTo: .largeTitle, weight: .bold))
+                    .decorativeHeroSizing()
                     .foregroundStyle(DesignBook.Color.Status.success)
                     .symbolEffect(.bounce, options: .nonRepeating, value: !reduceMotion && hasCelebrated)
             }
@@ -110,6 +109,8 @@ private extension OnlineTurnResultsView {
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
         }
     }
 
@@ -120,11 +121,13 @@ private extension OnlineTurnResultsView {
                     Text(team.name)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(tint)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                 }
                 HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.sm) {
                     AnimatedScoreText(
                         value: roundScore,
-                        font: .system(size: 64, weight: .bold, design: .rounded),
+                        font: DesignBook.Font.heroScore,
                         color: tint,
                         duration: 0.7
                     )
@@ -165,6 +168,8 @@ private extension OnlineTurnResultsView {
                         Text(team.name)
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.primary)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.5)
 
                         Spacer()
 

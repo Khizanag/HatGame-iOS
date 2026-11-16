@@ -81,9 +81,8 @@ private extension LocalHostSetupView {
                     .frame(width: 84, height: 84)
                     .shadow(.medium)
                 Image(systemName: "antenna.radiowaves.left.and.right")
-                    // Connectivity hero glyph; off-token size with no Dynamic Type match.
-                    // swiftlint:disable:next no_inline_font
-                    .font(.system(size: 36, weight: .bold))
+                    .font(DesignBook.IconFont.sized(36, relativeTo: .largeTitle, weight: .bold))
+                    .decorativeHeroSizing()
                     .foregroundStyle(DesignBook.Gradient.primary)
                     .symbolEffect(.variableColor.iterative, options: .repeating, isActive: !reduceMotion)
             }
