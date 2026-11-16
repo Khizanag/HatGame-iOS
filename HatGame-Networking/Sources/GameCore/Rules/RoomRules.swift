@@ -36,6 +36,44 @@ public enum RoomRules {
         return next.canonicallyOrdered()
     }
 
+    /// The record this device already holds in the room — a player coming
+    /// back after a dropped connection or a restart. Same device, same seat.
+    public static func returningPlayer(deviceId: String, in room: GameRoom) -> OnlinePlayer? {
+        room.players.first { $0.deviceId == deviceId }
+    }
+
+    /// Admits a nearby guest from its self-declared hello. A device whose
+    /// record is in the room and not bound to another live peer gets that
+    /// record back, team and words intact, at any point in the game. Anyone
+    /// else joins only while the lobby is open, as a fresh player: the host
+    /// owns team, submission, presence, and join time, so a guest cannot
+    /// claim a team, skip word entry, or seniority for host failover. The
+    /// host's own record is never handed out.
+    public static func admitGuest(
+        _ declared: OnlinePlayer,
+        to room: GameRoom,
+        now: Date,
+        boundPlayerIds: Set<String>
+    ) -> GuestAdmission {
+        if let returning = returningPlayer(deviceId: declared.deviceId, in: room),
+           returning.id != room.hostId,
+           !boundPlayerIds.contains(returning.id),
+           let index = room.players.firstIndex(where: { $0.id == returning.id }) {
+            var next = room
+            next.players[index].isConnected = true
+            return .admitted(next, playerId: returning.id)
+        }
+        guard room.status.isLobby else { return .refused(.gameInProgress) }
+        let fresh = OnlinePlayer(
+            id: declared.id,
+            deviceId: declared.deviceId,
+            name: declared.name,
+            joinedAt: now
+        )
+        guard let next = addPlayer(fresh, to: room) else { return .refused(.duplicate) }
+        return .admitted(next, playerId: fresh.id)
+    }
+
     /// In the lobby a departing player is removed outright. Mid-game they
     /// stay on their team, marked disconnected, so explainer rotation is
     /// unchanged and the host may cover their turn.
@@ -148,5 +186,18 @@ public enum RoomRules {
     /// True once every player's submission gate is open.
     public static func allWordsSubmitted(_ room: GameRoom) -> Bool {
         !room.players.isEmpty && room.players.allSatisfy(\.hasSubmittedWords)
+    }
+}
+
+/// The host's answer to a nearby guest's hello.
+public enum GuestAdmission: Sendable {
+    case admitted(GameRoom, playerId: String)
+    case refused(Refusal)
+
+    public enum Refusal: Equatable, Sendable {
+        /// The game has started and the device holds no seat in it.
+        case gameInProgress
+        /// The declared id is already taken.
+        case duplicate
     }
 }

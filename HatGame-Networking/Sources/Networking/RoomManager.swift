@@ -128,6 +128,15 @@ open class RoomManager {
             throw NetworkingError.unsupportedVersion
         }
 
+        // This device already has a seat — it dropped out or restarted.
+        // Take it back, team and words intact; presence marks it connected.
+        if let returning = RoomRules.returningPlayer(deviceId: deviceId, in: existingRoom) {
+            pendingPlayers[code] = returning
+            self.currentPlayerId = returning.id
+            startObservingRoom(id: code)
+            return
+        }
+
         guard existingRoom.status == .waiting || existingRoom.status == .setup else {
             throw RoomError.gameAlreadyStarted
         }

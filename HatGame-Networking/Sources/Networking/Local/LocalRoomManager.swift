@@ -335,6 +335,7 @@ private extension LocalRoomManager {
         switch message {
         case let .roomSnapshot(snapshot):
             guard !isLocalHost, peer == hostPeerID else { return }
+            adoptReturningIdentity(in: snapshot)
             self.room = snapshot
             self.isConnected = true
             connectionState = snapshot.isSupported ? .live : .unsupported
@@ -359,9 +360,19 @@ private extension LocalRoomManager {
         }
     }
 
+    /// Guest-only. A host that re-admitted this device seats it under its
+    /// original player id, not the one its hello declared.
+    func adoptReturningIdentity(in snapshot: GameRoom) {
+        guard let playerId = currentPlayerId,
+              !snapshot.players.contains(where: { $0.id == playerId }),
+              let returning = RoomRules.returningPlayer(deviceId: deviceId, in: snapshot) else { return }
+        currentPlayerId = returning.id
+    }
+
     /// Host-only. A peer gets an identity only once `RoomRules` admits the
-    /// player it announced: the lobby must be open and the id unused, so a
-    /// guest cannot claim the host's (or anyone's) id, and one peer cannot
+    /// player it announced: a returning device gets its own seat back, and
+    /// anyone else joins the open lobby under an unused id, so a guest
+    /// cannot claim the host's (or anyone's) seat, and one peer cannot
     /// register twice.
     func admitGuest(_ player: OnlinePlayer, protocolVersion: Int, fromPeer peer: MCPeerID) {
         guard isLocalHost else { return }
@@ -371,14 +382,21 @@ private extension LocalRoomManager {
             return
         }
         guard peerToPlayerId[peer] == nil, let room else { return }
-        guard let next = RoomRules.addPlayer(player, to: room) else {
+        let admission = RoomRules.admitGuest(
+            player,
+            to: room,
+            now: Date(),
+            boundPlayerIds: Set(peerToPlayerId.values)
+        )
+        switch admission {
+        case let .admitted(next, playerId):
+            peerToPlayerId[peer] = playerId
+            self.room = next
+            broadcastSnapshot()
+            broadcastWords()
+        case let .refused(reason):
             logger.info("Rejected hello from \(peer.displayName, privacy: .public)")
-            service.send(.helloRejected(room.status.isLobby ? .refused : .gameInProgress), to: [peer])
-            return
+            service.send(.helloRejected(reason == .gameInProgress ? .gameInProgress : .refused), to: [peer])
         }
-        peerToPlayerId[peer] = player.id
-        self.room = next
-        broadcastSnapshot()
-        broadcastWords()
     }
 }

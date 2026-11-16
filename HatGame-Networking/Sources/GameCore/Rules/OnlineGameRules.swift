@@ -118,7 +118,7 @@ public enum OnlineGameRules {
             scores[team.id] = [.first: 0, .second: 0, .third: 0]
             explainerIndices[team.id] = 0
         }
-        return OnlineGameState(
+        var state = OnlineGameState(
             currentRound: .first,
             currentTeamIndex: startIndex,
             teamExplainerIndices: explainerIndices,
@@ -127,10 +127,11 @@ public enum OnlineGameRules {
             allWordIds: wordIds,
             scores: scores,
             phase: .teamPrep,
-            activePlayerId: playersInTeam(firstTeam, allPlayers: players).first?.id,
             roundDuration: settings.roundDuration,
             isSkippingEnabled: settings.isSkippingEnabled
         )
+        assignExplainer(of: firstTeam, in: &state, players: players)
+        return state
     }
 
     // MARK: - Turn
@@ -222,7 +223,7 @@ public enum OnlineGameRules {
             next.teamExplainerIndices[previousTeam.id] = (state.explainerIndex(for: previousTeam.id) + 1) % teamSize
         }
         next.currentTeamIndex = (normalizedIndex(state.currentTeamIndex, count: teams.count) + 1) % teams.count
-        next.activePlayerId = explainer(for: teams[next.currentTeamIndex], state: next, players: players)?.id
+        assignExplainer(of: teams[next.currentTeamIndex], in: &next, players: players)
         next.phase = .teamPrep
         next.currentWordId = next.remainingWordIds.first
         return next
@@ -248,9 +249,11 @@ public enum OnlineGameRules {
         next.currentRound = upcoming
         next.remainingWordIds = shuffle(state.allWordIds)
         next.currentWordId = next.remainingWordIds.first
-        next.activePlayerId = currentTeam(state, teams: teams)
-            .flatMap { explainer(for: $0, state: state, players: players) }?
-            .id
+        if let team = currentTeam(state, teams: teams) {
+            assignExplainer(of: team, in: &next, players: players)
+        } else {
+            next.activePlayerId = nil
+        }
         next.phase = .teamPrep
         return next
     }
@@ -274,15 +277,16 @@ public enum OnlineGameRules {
         teams.indices.contains(state.currentTeamIndex) ? teams[state.currentTeamIndex] : nil
     }
 
-    /// The player whose turn it is to explain for `team`.
+    /// The player whose turn it is to explain for `team`: the one the
+    /// rotation points at, or the next connected member after them. An away
+    /// player explains only when nobody on the team is connected.
     public static func explainer(
         for team: OnlineTeam,
         state: OnlineGameState,
         players: [OnlinePlayer]
     ) -> OnlinePlayer? {
         let members = playersInTeam(team, allPlayers: players)
-        guard !members.isEmpty else { return nil }
-        return members[normalizedIndex(state.explainerIndex(for: team.id), count: members.count)]
+        return explainerPosition(in: members, from: state.explainerIndex(for: team.id)).map { members[$0] }
     }
 
     /// When the running turn's timer reaches zero, or `nil` between turns.
@@ -291,6 +295,26 @@ public enum OnlineGameRules {
     }
 
     // MARK: - Helpers
+    /// Points `team`'s rotation at its explainer and makes them the active
+    /// player. Storing the skipped-to position keeps the rotation moving on
+    /// from whoever actually explained.
+    private static func assignExplainer(of team: OnlineTeam, in state: inout OnlineGameState, players: [OnlinePlayer]) {
+        let members = playersInTeam(team, allPlayers: players)
+        guard let position = explainerPosition(in: members, from: state.explainerIndex(for: team.id)) else {
+            state.activePlayerId = nil
+            return
+        }
+        state.teamExplainerIndices[team.id] = position
+        state.activePlayerId = members[position].id
+    }
+
+    private static func explainerPosition(in members: [OnlinePlayer], from index: Int) -> Int? {
+        guard !members.isEmpty else { return nil }
+        let start = normalizedIndex(index, count: members.count)
+        let rotation = (0..<members.count).map { (start + $0) % members.count }
+        return rotation.first { members[$0].isConnected } ?? start
+    }
+
     private static func isPastDeadline(_ state: OnlineGameState, now: Date, grace: TimeInterval) -> Bool {
         guard let deadline = deadline(state) else { return false }
         return now > deadline.addingTimeInterval(grace)
