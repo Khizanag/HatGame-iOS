@@ -34,18 +34,22 @@ struct HomeView: View {
             .task(id: navigator.presentedPage?.id) {
                 await loadSavedGame()
             }
-            .alert(localized("home.resume.discard.title"), isPresented: $isDiscardConfirmationPresented) {
-                Button(localized("common.buttons.cancel"), role: .cancel) {}
+            .confirmationDialog(
+                localized("home.resume.discard.title"),
+                isPresented: $isDiscardConfirmationPresented,
+                titleVisibility: .visible
+            ) {
                 Button(localized("home.resume.discard"), role: .destructive, action: discardSavedGame)
+                Button(localized("common.buttons.cancel"), role: .cancel) {}
             } message: {
                 Text(localized("home.resume.discard.message"))
             }
-            .alert(localized("home.newGame.overwrite.title"), isPresented: $isOverwriteConfirmationPresented) {
-                Button(localized("common.buttons.cancel"), role: .cancel) {}
-                Button(localized("home.newGame.overwrite.confirm"), role: .destructive) {
-                    discardSavedGame()
-                    navigator.present(.teamSetup)
-                }
+            .confirmationDialog(
+                localized("home.newGame.overwrite.title"),
+                isPresented: $isOverwriteConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                overwriteDialogActions
             } message: {
                 Text(localized("home.newGame.overwrite.message"))
             }
@@ -70,6 +74,7 @@ private extension HomeView {
                     resumeCard(for: savedGame)
                         .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 }
+                multiDeviceModes
                 howToPlayCard
                 Spacer().frame(height: DesignBook.Spacing.xl)
             }
@@ -186,7 +191,7 @@ private extension HomeView {
                 }
 
                 HStack(spacing: DesignBook.Spacing.md) {
-                    SecondaryButton(title: localized("home.resume.discard"), icon: "trash") {
+                    SecondaryButton(title: localized("home.resume.discard"), icon: "trash", role: .destructive) {
                         isDiscardConfirmationPresented = true
                     }
                     .accessibilityIdentifier("home.discardButton")
@@ -229,30 +234,53 @@ private extension HomeView {
         .paddingHorizontalDefault()
     }
 
+    /// The one primary action — Pass and Play — rides in the action bar; the
+    /// two multi-device modes are cards in the content, each saying what it is.
     var actionButtons: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill") {
-                // Starting a game replaces the saved one, so ask first.
-                if savedGame == nil {
-                    navigator.present(.teamSetup)
-                } else {
-                    isOverwriteConfirmationPresented = true
-                }
-            }
+        PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill", action: startPassAndPlay)
             .navigationZoomSource(id: "teamSetup", in: zoomNamespace)
+            .accessibilityIdentifier("home.passAndPlay")
+            .paddingHorizontalDefault()
+            .padding(.bottom, DesignBook.Spacing.sm)
+    }
 
-            SecondaryButton(title: localized("home.nearbyGame"), icon: "dot.radiowaves.left.and.right") {
+    var multiDeviceModes: some View {
+        VStack(spacing: DesignBook.Spacing.md) {
+            NavigationCard(
+                icon: "dot.radiowaves.left.and.right",
+                title: localized("home.nearbyGame"),
+                description: localized("home.nearbyGame.description")
+            ) {
                 navigator.present(.localFlow)
             }
             .navigationZoomSource(id: "localFlow", in: zoomNamespace)
+            .accessibilityIdentifier("home.playNearby")
 
-            SecondaryButton(title: localized("home.onlineGame"), icon: "wifi") {
+            NavigationCard(
+                icon: "globe",
+                title: localized("home.onlineGame"),
+                description: localized("home.onlineGame.description")
+            ) {
                 navigator.present(.onlineFlow)
             }
             .navigationZoomSource(id: "onlineFlow", in: zoomNamespace)
+            .accessibilityIdentifier("home.playOnline")
         }
         .paddingHorizontalDefault()
-        .padding(.bottom, DesignBook.Spacing.sm)
+    }
+
+    @ViewBuilder
+    var overwriteDialogActions: some View {
+        Button(localized("home.newGame.overwrite.confirm"), role: .destructive) {
+            discardSavedGame()
+            navigator.present(.teamSetup)
+        }
+        if let savedGame {
+            Button(localized("home.newGame.overwrite.resume")) {
+                navigator.present(.resumeGame(savedGame))
+            }
+        }
+        Button(localized("common.buttons.cancel"), role: .cancel) {}
     }
 
     @ToolbarContentBuilder
@@ -264,6 +292,16 @@ private extension HomeView {
                 Image(systemName: "gearshape")
             }
             .accessibilityLabel(Text(localized("common.buttons.settings")))
+            .help(localized("common.buttons.settings"))
+        }
+    }
+
+    /// Starting a game replaces the saved one, so ask first.
+    func startPassAndPlay() {
+        if savedGame == nil {
+            navigator.present(.teamSetup)
+        } else {
+            isOverwriteConfirmationPresented = true
         }
     }
 

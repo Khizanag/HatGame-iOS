@@ -9,16 +9,18 @@ import DesignBook
 import SwiftUI
 
 struct SecondaryButton<Label: View>: View {
+    private let role: ButtonRole?
     private let action: () -> Void
     @ViewBuilder private let label: () -> Label
 
-    init(action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
+    init(role: ButtonRole? = nil, action: @escaping () -> Void, @ViewBuilder label: @escaping () -> Label) {
+        self.role = role
         self.action = action
         self.label = label
     }
 
     var body: some View {
-        Button(action: action) {
+        Button(role: role, action: action) {
             label()
                 .font(DesignBook.Font.title3)
                 // Footer buttons stack; past this size they would bury the screen.
@@ -32,7 +34,8 @@ struct SecondaryButton<Label: View>: View {
 
 // MARK: - Convenience initializers
 extension SecondaryButton where Label == Text {
-    init(title: String, action: @escaping () -> Void) {
+    init(title: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
+        self.role = role
         self.action = action
         self.label = { Text(title) }
     }
@@ -40,7 +43,8 @@ extension SecondaryButton where Label == Text {
 
 // MARK: - Title + icon initializer
 extension SecondaryButton where Label == AnyView {
-    init(title: String, icon: String, action: @escaping () -> Void) {
+    init(title: String, icon: String, role: ButtonRole? = nil, action: @escaping () -> Void) {
+        self.role = role
         self.action = action
         self.label = {
             AnyView(

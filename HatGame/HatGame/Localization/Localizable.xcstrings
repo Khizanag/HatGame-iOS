@@ -423,6 +423,39 @@
         }
       }
     },
+    "home.localGame" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pass and Play"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაში ერთ მოწყობილობაზე"
+          }
+        }
+      }
+    },
+    "home.nearbyGame.description" : {
+      "comment" : "Home: what the Play Nearby mode is.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everyone on their own device, in the same room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყველა საკუთარი მოწყობილობით, ერთ ოთახში"
+          }
+        }
+      }
+    },
     "home.newGame.overwrite.confirm" : {
       "comment" : "Destructive button that discards the saved game and starts a new one.",
       "localizations" : {
@@ -457,6 +490,23 @@
         }
       }
     },
+    "home.newGame.overwrite.resume" : {
+      "comment" : "New-game dialog: the non-destructive choice, resumes the saved game instead.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Resume Saved Game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შენახული თამაშის გაგრძელება"
+          }
+        }
+      }
+    },
     "home.newGame.overwrite.title" : {
       "comment" : "Title of the alert shown when starting a new game while a saved one exists.",
       "localizations" : {
@@ -470,6 +520,39 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "დავიწყოთ ახალი თამაში?"
+          }
+        }
+      }
+    },
+    "home.onlineGame" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Play Online"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ონლაინ თამაში"
+          }
+        }
+      }
+    },
+    "home.onlineGame.description" : {
+      "comment" : "Home: what the Play Online mode is.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friends anywhere, over the internet"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მეგობრებთან ნებისმიერი ადგილიდან, ინტერნეტით"
           }
         }
       }
@@ -3084,22 +3167,6 @@
         }
       }
     },
-    "home.localGame" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Local Game"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ლოკალური თამაში"
-          }
-        }
-      }
-    },
     "home.nearbyGame" : {
       "comment" : "Home screen CTA opening the local Multipeer Connectivity flow (peer-to-peer, no internet).",
       "localizations" : {
@@ -3113,22 +3180,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ახლომდებარე თამაში"
-          }
-        }
-      }
-    },
-    "home.onlineGame" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Online Game"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ონლაინ თამაში"
           }
         }
       }

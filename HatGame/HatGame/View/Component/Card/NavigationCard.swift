@@ -32,18 +32,24 @@ struct NavigationCard: View {
                         Text(description)
                             .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.secondary)
-                            .lineLimit(2)
+                            .multilineTextAlignment(.leading)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    Spacer()
+                    Spacer(minLength: 0)
 
                     Image(systemName: "chevron.right")
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
+                        .accessibilityHidden(true)
                 }
             }
+            .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
         .buttonStyle(.plain)
+        .pointerHoverEffect()
+        .accessibilityLabel(Text(title))
+        .accessibilityHint(Text(description))
     }
 }
 
