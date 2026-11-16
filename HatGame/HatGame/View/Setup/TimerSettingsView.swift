@@ -12,7 +12,6 @@ import SwiftUI
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var selectedDuration: Int = GameDefaults.standard.roundDuration
     @State private var isSkippingEnabled: Bool = GameDefaults.standard.isSkippingEnabled
@@ -47,14 +46,7 @@ private extension TimerSettingsView {
     var heroValueCard: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
-                Text(verbatim: "\(selectedDuration)")
-                    .font(DesignBook.Font.heroNumber)
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
-                    .contentTransition(.numericText(value: Double(selectedDuration)))
-                    .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedDuration)
-                    .foregroundStyle(DesignBook.Gradient.primary)
+                HeroNumberText(value: selectedDuration)
                 Text(localized("timerSettings.unit.seconds"))
                     .font(DesignBook.Font.displayMedium)
                     .lineLimit(1)

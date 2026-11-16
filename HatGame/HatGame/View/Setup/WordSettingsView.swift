@@ -12,7 +12,6 @@ import SwiftUI
 struct WordSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var selectedWordCount: Int = GameDefaults.standard.wordsPerPlayer
     @State private var hasLoadedConfiguration = false
@@ -45,14 +44,7 @@ private extension WordSettingsView {
     var heroValueCard: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
-                Text(verbatim: "\(selectedWordCount)")
-                    .font(DesignBook.Font.heroNumber)
-                    .monospacedDigit()
-                    .lineLimit(1)
-                    .minimumScaleFactor(0.4)
-                    .contentTransition(.numericText(value: Double(selectedWordCount)))
-                    .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: selectedWordCount)
-                    .foregroundStyle(DesignBook.Gradient.primary)
+                HeroNumberText(value: selectedWordCount)
                 Image(systemName: "text.bubble.fill")
                     .font(DesignBook.Font.displaySmall)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)

@@ -22,13 +22,16 @@ extension DesignBook {
 
         /// Vivid gradient used on primary CTAs and active states.
         public static let primary = LinearGradient(
-            colors: [
-                SwiftUI.Color(red: 0.36, green: 0.50, blue: 1.00),
-                SwiftUI.Color(red: 0.68, green: 0.34, blue: 0.96),
-            ],
+            colors: primaryColors,
             startPoint: .topLeading,
             endPoint: .bottomTrailing
         )
+
+        /// The colors of `primary`, for drawing it across a custom span.
+        public static let primaryColors: [SwiftUI.Color] = [
+            SwiftUI.Color(red: 0.36, green: 0.50, blue: 1.00),
+            SwiftUI.Color(red: 0.68, green: 0.34, blue: 0.96),
+        ]
 
         /// Warm gradient for celebratory winner moments.
         public static let celebration = LinearGradient(
