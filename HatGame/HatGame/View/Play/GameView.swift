@@ -191,7 +191,6 @@ private extension GameView {
     }
 
     func togglePause() {
-        DesignBook.Haptics.tap()
         engine.togglePause()
     }
 

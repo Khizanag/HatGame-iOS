@@ -156,7 +156,6 @@ private extension LocalRoomBrowser {
 
     func join(_ host: LocalMultipeerService.DiscoveredHost) {
         guard !trimmedName.isEmpty else { return }
-        DesignBook.Haptics.confirm()
         focusedField = nil
         isConnecting = true
         Task {

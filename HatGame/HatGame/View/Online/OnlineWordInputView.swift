@@ -252,7 +252,6 @@ private extension OnlineWordInputView {
 private extension OnlineWordInputView {
     func addWord() {
         guard canAdd else { return }
-        DesignBook.Haptics.tap()
         let animation = reduceMotion ? nil : DesignBook.Motion.bouncy
         withAnimation(animation) {
             playerWords.append(trimmed)
@@ -261,7 +260,6 @@ private extension OnlineWordInputView {
     }
 
     func removeWord(at index: Int) {
-        DesignBook.Haptics.soft()
         let animation = reduceMotion ? nil : DesignBook.Motion.snappy
         _ = withAnimation(animation) {
             playerWords.remove(at: index)
@@ -270,7 +268,6 @@ private extension OnlineWordInputView {
 
     func submit() {
         guard canSubmit else { return }
-        DesignBook.Haptics.confirm()
         isSubmitting = true
         isFieldFocused = false
         let snapshot = playerWords

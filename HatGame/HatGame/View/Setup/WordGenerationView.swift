@@ -73,7 +73,6 @@ private extension WordGenerationView {
             }
             Spacer(minLength: 0)
             PrimaryButton(title: localized("wordGeneration.unavailable.enterManually"), icon: "pencil") {
-                DesignBook.Haptics.tap()
                 gameManager.configuration.wordSource = .manual
                 navigator.replace(with: .wordInput)
             }
@@ -177,7 +176,6 @@ private extension WordGenerationView {
 
     var continueButton: some View {
         PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
-            DesignBook.Haptics.tap()
             navigator.push(.randomization)
         }
         .accessibilityFocused($readyControlFocused)
@@ -219,9 +217,6 @@ private extension WordGenerationView {
             drawWord(from: pool)
             withAnimation(reduceMotion ? nil : .linear(duration: 0.16)) {
                 progress = Double(draw) / Double(drawCount)
-            }
-            if !reduceMotion, draw.isMultiple(of: 3) {
-                DesignBook.Haptics.selection()
             }
         }
         finish(from: pool)

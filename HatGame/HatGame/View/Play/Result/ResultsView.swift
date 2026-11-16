@@ -42,7 +42,9 @@ struct ResultsView: View {
                 try? await Task.sleep(for: .milliseconds(180))
                 hasCelebrated = true
             }
-            .sensoryFeedback(.success, trigger: hasCelebrated)
+            .onChange(of: hasCelebrated) { _, celebrated in
+                if celebrated { DesignBook.Haptics.success() }
+            }
     }
 }
 
@@ -303,7 +305,6 @@ private extension ResultsView {
 
     /// Same teams and words, scores reset; back to choosing who starts.
     func handlePlayAgain() {
-        DesignBook.Haptics.tap()
         gameManager.rematch()
         navigator.dismissToRoot()
         navigator.push(.randomization)
@@ -311,14 +312,12 @@ private extension ResultsView {
 
     /// Same teams, an empty hat; back to word settings to collect new words.
     func handleNewWords() {
-        DesignBook.Haptics.tap()
         gameManager.startOverWithNewWords()
         navigator.dismissToRoot()
         navigator.push(.wordSettings)
     }
 
     func handleReturnToMain() {
-        DesignBook.Haptics.tap()
         navigator.dismissToRoot()
         navigator.dismiss()
     }

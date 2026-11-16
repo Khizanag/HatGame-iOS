@@ -111,7 +111,6 @@ private extension RoomLobbyView {
                     HStack(spacing: DesignBook.Spacing.md) {
                         if let code = room?.id {
                             Button {
-                                DesignBook.Haptics.tap()
                                 Platform.copyToClipboard(code)
                             } label: {
                                 Label(localized("lobby.copyCode"), systemImage: "doc.on.doc")
@@ -235,7 +234,6 @@ private extension RoomLobbyView {
                 Spacer()
                 if isHost {
                     Button {
-                        DesignBook.Haptics.tap()
                         showingTeamCreation = true
                     } label: {
                         Label(localized("lobby.addTeam"), systemImage: "plus.circle.fill")
@@ -397,12 +395,10 @@ private extension RoomLobbyView {
 // MARK: - Actions
 private extension RoomLobbyView {
     func joinTeam(_ teamId: String) {
-        DesignBook.Haptics.selection()
         perform { try await roomManager.joinTeam(teamId: teamId) }
     }
 
     func leaveTeam() {
-        DesignBook.Haptics.soft()
         perform { try await roomManager.leaveTeam() }
     }
 

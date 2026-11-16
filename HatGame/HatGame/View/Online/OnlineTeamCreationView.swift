@@ -132,7 +132,6 @@ private extension OnlineTeamCreationView {
 
         return Button {
             guard !isUsed else { return }
-            DesignBook.Haptics.selection()
             withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
                 teamColor = color
             }
@@ -195,7 +194,6 @@ private extension OnlineTeamCreationView {
 private extension OnlineTeamCreationView {
     func createTeam() {
         guard canCreate else { return }
-        DesignBook.Haptics.confirm()
         isCreating = true
         focusedField = nil
         let name = trimmedName

@@ -117,7 +117,6 @@ private extension TeamSetupView {
                 title: localized("teamSetup.addTeam"),
                 icon: "plus.circle.fill"
             ) {
-                DesignBook.Haptics.tap()
                 isAddTeamSheetPresented = true
             }
             .paddingHorizontalDefault()
@@ -127,7 +126,6 @@ private extension TeamSetupView {
     var continueSection: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
-                DesignBook.Haptics.tap()
                 navigator.push(.wordSettings)
             }
             .disabled(!canContinue)
@@ -152,7 +150,6 @@ private extension TeamSetupView {
 private extension TeamSetupView {
     func teamRow(for team: Team) -> some View {
         Button {
-            DesignBook.Haptics.tap()
             editingTeam = team
         } label: {
             TeamCard(team: team, playersPerTeam: gameManager.configuration.playersPerTeam)
@@ -205,7 +202,6 @@ private extension TeamSetupView {
             title: localized("teamSetup.addTeam"),
             icon: "plus.circle.fill"
         ) {
-            DesignBook.Haptics.tap()
             isAddTeamSheetPresented = true
         }
         .paddingHorizontalDefault()
@@ -236,7 +232,6 @@ private extension TeamSetupView {
         if canAddMore {
             ToolbarItem(placement: .trailingAction) {
                 Button {
-                    DesignBook.Haptics.tap()
                     isAddTeamSheetPresented = true
                 } label: {
                     Image(systemName: "plus")
@@ -248,7 +243,6 @@ private extension TeamSetupView {
 
     var editToggleButton: some View {
         Button {
-            DesignBook.Haptics.tap()
             withAnimation(DesignBook.Motion.respectingReducedMotion(.snappy, reduceMotion: reduceMotion)) {
                 isEditing.toggle()
             }

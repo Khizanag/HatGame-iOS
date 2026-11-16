@@ -316,7 +316,6 @@ private extension OnlinePlayView {
 
     func retryLoadWords() {
         wordLoadFailed = false
-        DesignBook.Haptics.tap()
         Task { await loadWordsIfNeeded() }
     }
 }

@@ -127,7 +127,6 @@ private extension FeedbackView {
                 .padding(.vertical, DesignBook.Spacing.md)
         } else {
             PrimaryButton(title: localized("feedback.submit"), icon: "paperplane.fill") {
-                DesignBook.Haptics.confirm()
                 isMessageFocused = false
                 Task { await service.submit(category: category, message: message) }
             }
@@ -168,7 +167,6 @@ private extension FeedbackView {
             Spacer()
 
             PrimaryButton(title: localized("feedback.success.done"), icon: "checkmark") {
-                DesignBook.Haptics.tap()
                 dismiss()
             }
             .paddingHorizontalDefault()

@@ -51,7 +51,6 @@ struct RoomCreationView: View {
 private extension RoomCreationView {
     func createRoom() {
         guard !trimmedName.isEmpty, !isCreating else { return }
-        DesignBook.Haptics.confirm()
         isCreating = true
         let name = trimmedName
         let settings = settings

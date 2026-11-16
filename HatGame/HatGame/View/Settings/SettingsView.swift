@@ -222,7 +222,6 @@ private extension SettingsView {
         Binding(
             get: { appConfiguration.colorScheme },
             set: {
-                DesignBook.Haptics.selection()
                 appConfiguration.colorScheme = $0
             }
         )
@@ -232,7 +231,6 @@ private extension SettingsView {
         Binding(
             get: { appConfiguration.language },
             set: {
-                DesignBook.Haptics.selection()
                 appConfiguration.language = $0
             }
         )
@@ -242,7 +240,6 @@ private extension SettingsView {
         Binding(
             get: { handedness },
             set: {
-                DesignBook.Haptics.selection()
                 appConfiguration.isRightHanded = ($0 == .right)
             }
         )

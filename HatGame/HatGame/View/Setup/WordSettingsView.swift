@@ -85,12 +85,7 @@ private extension WordSettingsView {
         Slider(
             value: wordCountBinding,
             in: 3...20,
-            step: 1,
-            onEditingChanged: { editing in
-                if !editing {
-                    DesignBook.Haptics.selection()
-                }
-            }
+            step: 1
         )
         .tint(DesignBook.Color.Text.accent)
     }
@@ -100,9 +95,6 @@ private extension WordSettingsView {
             Text(localized("common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
-        }
-        .onChange(of: selectedWordCount) { _, _ in
-            DesignBook.Haptics.selection()
         }
     }
 
@@ -131,7 +123,6 @@ private extension WordSettingsView {
             title: localized("common.buttons.continue"),
             icon: "arrow.right.circle.fill"
         ) {
-            DesignBook.Haptics.tap()
             handleContinue()
         }
     }

@@ -98,13 +98,11 @@ private extension WordSourceView {
 // MARK: - Actions
 private extension WordSourceView {
     func chooseManual() {
-        DesignBook.Haptics.tap()
         gameManager.configuration.wordSource = .manual
         navigator.push(.wordInput)
     }
 
     func chooseAutomatic() {
-        DesignBook.Haptics.tap()
         gameManager.configuration.wordSource = .automatic
         navigator.push(.wordGeneration)
     }

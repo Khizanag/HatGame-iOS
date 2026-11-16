@@ -89,12 +89,7 @@ private extension TimerSettingsView {
         Slider(
             value: durationBinding,
             in: 5...120,
-            step: 5,
-            onEditingChanged: { editing in
-                if !editing {
-                    DesignBook.Haptics.selection()
-                }
-            }
+            step: 5
         )
         .tint(DesignBook.Color.Text.accent)
     }
@@ -104,9 +99,6 @@ private extension TimerSettingsView {
             Text(localized("common.tapOrHoldToAdjust"))
                 .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
-        }
-        .onChange(of: selectedDuration) { _, _ in
-            DesignBook.Haptics.selection()
         }
     }
 
@@ -153,15 +145,11 @@ private extension TimerSettingsView {
                 }
             }
             .tint(DesignBook.Color.Status.warning)
-            .onChange(of: isSkippingEnabled) { _, _ in
-                DesignBook.Haptics.selection()
-            }
         }
     }
 
     var continueButton: some View {
         PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
-            DesignBook.Haptics.tap()
             handleContinue()
         }
     }

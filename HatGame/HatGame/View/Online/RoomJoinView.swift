@@ -93,7 +93,6 @@ private extension RoomJoinView {
                         let next = RoomCode.sanitized(newValue)
                         if next != roomCode { roomCode = next }
                         if RoomCode.isValid(next) {
-                            DesignBook.Haptics.selection()
                             focusedField = .name
                         }
                     }
@@ -140,7 +139,6 @@ private extension RoomJoinView {
 private extension RoomJoinView {
     func joinRoom() {
         guard canJoin else { return }
-        DesignBook.Haptics.confirm()
         isJoining = true
         focusedField = nil
         let name = trimmedName

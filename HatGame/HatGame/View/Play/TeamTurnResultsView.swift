@@ -187,12 +187,10 @@ private extension TeamTurnResultsView {
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             SecondaryButton(title: localized("game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
-                DesignBook.Haptics.tap()
                 isStandingsPresented = true
             }
 
             PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
-                DesignBook.Haptics.tap()
                 engine.continueAfterTurn()
             }
             .accessibilityIdentifier("turnResults.continue")

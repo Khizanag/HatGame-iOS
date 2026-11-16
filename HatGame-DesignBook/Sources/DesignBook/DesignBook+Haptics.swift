@@ -5,91 +5,79 @@
 //  Created by Giga Khizanishvili on 19.05.26.
 //
 
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
-#elseif canImport(AppKit)
-import AppKit
 #endif
 
 extension DesignBook {
-    /// Centralized, semantic haptic feedback used across the app.
-    /// Wraps UIKit feedback generators so callers don't manage `prepare()` themselves.
-    /// On macOS the impact-style events map onto `NSHapticFeedbackManager` (Force
-    /// Touch trackpads only); notification-style events have no macOS equivalent
-    /// and stay silent.
+    /// Centralized, semantic haptic feedback, played only on iPhone.
+    ///
+    /// Use each pattern for its documented meaning and only for moments that
+    /// matter; system controls (toggles, sliders, pickers, menus) already
+    /// play their own (HIG playing-haptics.md). Every event is a no-op while
+    /// `isEnabled` is false, and always on macOS and visionOS — a Mac
+    /// trackpad's haptics are reserved for dragging and Force Click.
     @MainActor
     public enum Haptics {
+        /// The user's Haptics setting. The app sets it at launch and whenever
+        /// the setting changes.
+        public static var isEnabled = true
+
         // MARK: - Semantic events
-        /// Light tap — minor selections, picker scrolls.
-        public static func selection() {
-            #if os(iOS)
-            UISelectionFeedbackGenerator().selectionChanged()
-            #elseif os(macOS)
-            performMac(.generic)
-            #endif
-        }
-
-        /// Light impact — taps on primary controls.
+        /// Light tap — a countdown tick.
         public static func tap() {
-            #if os(iOS)
-            UIImpactFeedbackGenerator(style: .light).impactOccurred()
-            #elseif os(macOS)
-            performMac(.generic)
-            #endif
+            impact(.light)
         }
 
-        /// Medium impact — confirmation moments, like marking a word correct.
+        /// Medium impact — a confirmed gameplay moment: Got It, a turn or game starting.
         public static func confirm() {
-            #if os(iOS)
-            UIImpactFeedbackGenerator(style: .medium).impactOccurred()
-            #elseif os(macOS)
-            performMac(.levelChange)
-            #endif
+            impact(.medium)
         }
 
-        /// Soft thump — used for "skip" or "pass" interactions.
+        /// Soft thump — skipping a word.
         public static func soft() {
-            #if os(iOS)
-            UIImpactFeedbackGenerator(style: .soft).impactOccurred()
-            #elseif os(macOS)
-            performMac(.generic)
-            #endif
+            impact(.soft)
         }
 
-        /// Rigid thud — used for serious or destructive events.
+        /// Rigid thud — a confirmed destructive action.
         public static func rigid() {
-            #if os(iOS)
-            UIImpactFeedbackGenerator(style: .rigid).impactOccurred()
-            #elseif os(macOS)
-            performMac(.levelChange)
-            #endif
+            impact(.rigid)
         }
 
-        /// Success notification — celebratory completion.
+        /// Success notification — a celebratory completion.
         public static func success() {
-            #if os(iOS)
-            UINotificationFeedbackGenerator().notificationOccurred(.success)
-            #endif
+            notify(.success)
         }
 
-        /// Warning notification — used for warnings like timer running out.
+        /// Warning notification — time running out or up, rejected input.
         public static func warning() {
-            #if os(iOS)
-            UINotificationFeedbackGenerator().notificationOccurred(.warning)
-            #endif
+            notify(.warning)
         }
 
-        /// Error notification — used for failures like running out of time.
+        /// Error notification — an action that failed.
         public static func error() {
-            #if os(iOS)
-            UINotificationFeedbackGenerator().notificationOccurred(.error)
-            #endif
+            notify(.error)
         }
-
-        #if os(macOS)
-        private static func performMac(_ pattern: NSHapticFeedbackManager.FeedbackPattern) {
-            NSHapticFeedbackManager.defaultPerformer.perform(pattern, performanceTime: .default)
-        }
-        #endif
     }
+}
+
+// MARK: - Generators
+private extension DesignBook.Haptics {
+    #if os(iOS)
+    static func impact(_ style: UIImpactFeedbackGenerator.FeedbackStyle) {
+        guard isEnabled else { return }
+        UIImpactFeedbackGenerator(style: style).impactOccurred()
+    }
+
+    static func notify(_ type: UINotificationFeedbackGenerator.FeedbackType) {
+        guard isEnabled else { return }
+        UINotificationFeedbackGenerator().notificationOccurred(type)
+    }
+    #else
+    enum ImpactStyle { case light, medium, soft, rigid }
+    enum NotificationType { case success, warning, error }
+
+    static func impact(_ style: ImpactStyle) { }
+    static func notify(_ type: NotificationType) { }
+    #endif
 }

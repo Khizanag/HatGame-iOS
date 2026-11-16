@@ -64,7 +64,6 @@ private extension AppIconSelectionView {
 private extension AppIconSelectionView {
     func selectIcon(_ icon: AppIcon) {
         guard appConfiguration.appIcon != icon else { return }
-        DesignBook.Haptics.confirm()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             appConfiguration.appIcon = icon
         }

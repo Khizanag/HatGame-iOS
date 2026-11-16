@@ -187,13 +187,11 @@ private extension HomeView {
 
                 HStack(spacing: DesignBook.Spacing.md) {
                     SecondaryButton(title: localized("home.resume.discard"), icon: "trash") {
-                        DesignBook.Haptics.tap()
                         isDiscardConfirmationPresented = true
                     }
                     .accessibilityIdentifier("home.discardButton")
 
                     PrimaryButton(title: localized("home.resume.button"), icon: "play.fill") {
-                        DesignBook.Haptics.tap()
                         navigator.present(.resumeGame(state))
                     }
                     .navigationZoomSource(id: "resumeGame", in: zoomNamespace)
@@ -234,7 +232,6 @@ private extension HomeView {
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill") {
-                DesignBook.Haptics.tap()
                 // Starting a game replaces the saved one, so ask first.
                 if savedGame == nil {
                     navigator.present(.teamSetup)
@@ -245,13 +242,11 @@ private extension HomeView {
             .navigationZoomSource(id: "teamSetup", in: zoomNamespace)
 
             SecondaryButton(title: localized("home.nearbyGame"), icon: "dot.radiowaves.left.and.right") {
-                DesignBook.Haptics.tap()
                 navigator.present(.localFlow)
             }
             .navigationZoomSource(id: "localFlow", in: zoomNamespace)
 
             SecondaryButton(title: localized("home.onlineGame"), icon: "wifi") {
-                DesignBook.Haptics.tap()
                 navigator.present(.onlineFlow)
             }
             .navigationZoomSource(id: "onlineFlow", in: zoomNamespace)
@@ -264,7 +259,6 @@ private extension HomeView {
     var settingsToolbar: some ToolbarContent {
         ToolbarItem(placement: .trailingAction) {
             Button {
-                DesignBook.Haptics.selection()
                 navigator.push(.settings)
             } label: {
                 Image(systemName: "gearshape")

@@ -30,9 +30,6 @@ struct GameSettingsRow: View {
 
     var body: some View {
         content
-            .onChange(of: value) { _, _ in
-                DesignBook.Haptics.selection()
-            }
     }
 }
 

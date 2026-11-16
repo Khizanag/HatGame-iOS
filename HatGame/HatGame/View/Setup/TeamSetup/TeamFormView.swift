@@ -266,7 +266,6 @@ private extension TeamFormView {
     }
 
     func pickSuggestion(_ name: String) {
-        DesignBook.Haptics.tap()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             teamName = name
         }
@@ -275,7 +274,6 @@ private extension TeamFormView {
     }
 
     func refreshSuggestions() {
-        DesignBook.Haptics.selection()
         let fresh = TeamNameSuggestions.random()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             nameSuggestions = fresh
@@ -304,7 +302,6 @@ private extension TeamFormView {
 
     func handlePrimaryAction() {
         guard !trimmedTeamName.isEmpty else { return }
-        DesignBook.Haptics.confirm()
 
         let teamId = team?.id ?? UUID()
         let updatedTeam = Team(

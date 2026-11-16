@@ -43,9 +43,6 @@ struct GameSettingsToggleRow: View {
             }
         }
         .tint(tint)
-        .onChange(of: isOn) { _, _ in
-            DesignBook.Haptics.selection()
-        }
         .padding(.vertical, DesignBook.Spacing.xs)
     }
 }

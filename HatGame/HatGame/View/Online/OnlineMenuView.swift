@@ -68,11 +68,9 @@ private extension OnlineMenuView {
     var actionButtons: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             PrimaryButton(title: localized("online.createRoom"), icon: "plus.circle.fill") {
-                DesignBook.Haptics.tap()
                 navigator.push(.createRoom)
             }
             SecondaryButton(title: localized("online.joinRoom"), icon: "arrow.right.circle") {
-                DesignBook.Haptics.tap()
                 navigator.push(.joinRoom)
             }
         }

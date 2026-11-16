@@ -127,7 +127,6 @@ private extension TeamColorCard {
     }
 
     func selectColor(_ color: Color) {
-        DesignBook.Haptics.selection()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             self.color = color
             isExpanded = false

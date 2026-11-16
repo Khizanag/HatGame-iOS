@@ -204,7 +204,6 @@ private extension NextTeamView {
                     ForEach(Array(team.players.enumerated()), id: \.element.id) { index, player in
                         Button {
                             guard !isRandomizingExplainer else { return }
-                            DesignBook.Haptics.selection()
                             withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
                                 selectedExplainerIndex = index
                             }
@@ -278,7 +277,6 @@ private extension NextTeamView {
     var buttonsSection: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             SecondaryButton(title: localized("game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
-                DesignBook.Haptics.tap()
                 isStandingsPresented = true
             }
 
@@ -299,7 +297,6 @@ private extension NextTeamView {
     /// starting-team randomizer. Reduce Motion skips straight to the pick.
     func randomizeExplainer() {
         guard !isRandomizingExplainer, team.players.count > 1 else { return }
-        DesignBook.Haptics.tap()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isRandomizingExplainer = true
         }
@@ -310,13 +307,10 @@ private extension NextTeamView {
         guard explainerShuffleId != nil, team.players.count > 1 else { return }
         let playerCount = team.players.count
         if !reduceMotion {
-            for cycle in 1...20 {
+            for _ in 1...20 {
                 guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
                 withAnimation(.easeInOut(duration: 0.1)) {
                     selectedExplainerIndex = Int.random(in: 0..<playerCount)
-                }
-                if cycle.isMultiple(of: 3) {
-                    DesignBook.Haptics.selection()
                 }
             }
             guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }

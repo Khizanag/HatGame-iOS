@@ -19,6 +19,9 @@ struct DefaultsSettingsView: View {
             duplicatesSection
             skippingSection
             soundSection
+            #if os(iOS)
+            hapticsSection
+            #endif
         }
         .groupedListStyle()
         .scrollContentBackground(.hidden)
@@ -96,6 +99,20 @@ private extension DefaultsSettingsView {
             Text(localized("settings.timeUpSound.description"))
         }
     }
+
+    /// Only iPhone plays haptics, so the setting is iOS-only.
+    var hapticsSection: some View {
+        Section {
+            SettingsToggleRow(
+                icon: "iphone.radiowaves.left.and.right",
+                tint: .pink,
+                title: localized("settings.haptics.title"),
+                isOn: hapticsBinding
+            )
+        } footer: {
+            Text(localized("settings.haptics.description"))
+        }
+    }
 }
 
 // MARK: - Bindings
@@ -132,6 +149,13 @@ private extension DefaultsSettingsView {
         Binding(
             get: { appConfiguration.isTimeUpSoundEnabled },
             set: { appConfiguration.isTimeUpSoundEnabled = $0 }
+        )
+    }
+
+    var hapticsBinding: Binding<Bool> {
+        Binding(
+            get: { appConfiguration.isHapticsEnabled },
+            set: { appConfiguration.isHapticsEnabled = $0 }
         )
     }
 }

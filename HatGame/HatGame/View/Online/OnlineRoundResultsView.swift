@@ -251,7 +251,6 @@ private extension OnlineRoundResultsView {
     func advance() {
         guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
-        DesignBook.Haptics.confirm()
         Task {
             do {
                 try await gameSyncManager.perform(.advanceAfterRoundResults, room: room, playerId: playerId)

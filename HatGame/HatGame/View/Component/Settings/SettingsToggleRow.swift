@@ -37,8 +37,5 @@ struct SettingsToggleRow: View {
             }
         }
         .tint(tint)
-        .onChange(of: isOn) { _, _ in
-            DesignBook.Haptics.selection()
-        }
     }
 }

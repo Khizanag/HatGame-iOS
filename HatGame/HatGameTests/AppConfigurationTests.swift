@@ -5,6 +5,7 @@
 //  Created by Giga Khizanishvili on 16.11.26.
 //
 
+import DesignBook
 import Foundation
 @testable import HatGame
 import Testing
@@ -50,6 +51,28 @@ final class AppConfigurationTests {
         // Read the suite's own domain: plain lookups fall through to the system's global value.
         #expect(defaults.persistentDomain(forName: suiteName)?["AppleLanguages"] == nil)
         #expect(!configuration.effectiveLanguageCode.isEmpty)
+    }
+
+    @Test func hapticsAreOnByDefault() {
+        let configuration = AppConfiguration(userDefaults: defaults)
+
+        #expect(configuration.isHapticsEnabled)
+        #expect(DesignBook.Haptics.isEnabled)
+    }
+
+    /// Turning the setting off silences DesignBook's haptics and persists,
+    /// so the next launch starts with haptics off too.
+    @Test func hapticsSettingDrivesDesignBookAndPersists() {
+        defer { DesignBook.Haptics.isEnabled = true }
+        let configuration = AppConfiguration(userDefaults: defaults)
+
+        configuration.isHapticsEnabled = false
+
+        #expect(!DesignBook.Haptics.isEnabled)
+        DesignBook.Haptics.isEnabled = true
+        let relaunched = AppConfiguration(userDefaults: defaults)
+        #expect(!relaunched.isHapticsEnabled)
+        #expect(!DesignBook.Haptics.isEnabled)
     }
 
     @Test func gameDefaultsMirrorSettings() {

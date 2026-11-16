@@ -22,7 +22,6 @@ struct SettingsLinkRow: View {
 
     var body: some View {
         Button {
-            DesignBook.Haptics.selection()
             action()
         } label: {
             HStack(spacing: DesignBook.Spacing.md) {

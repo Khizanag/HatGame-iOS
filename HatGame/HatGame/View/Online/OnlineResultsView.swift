@@ -45,7 +45,9 @@ struct OnlineResultsView: View {
                 try? await Task.sleep(for: .milliseconds(180))
                 hasCelebrated = true
             }
-            .sensoryFeedback(.success, trigger: hasCelebrated)
+            .onChange(of: hasCelebrated) { _, celebrated in
+                if celebrated { DesignBook.Haptics.success() }
+            }
     }
 }
 
@@ -218,7 +220,6 @@ private extension OnlineResultsView {
     }
 
     func leaveRoom() {
-        DesignBook.Haptics.tap()
         Task {
             try? await roomManager.leaveRoom()
             navigator.dismiss()

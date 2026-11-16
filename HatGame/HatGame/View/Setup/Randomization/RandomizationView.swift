@@ -149,7 +149,6 @@ private extension RandomizationView {
 // MARK: - Actions
 private extension RandomizationView {
     func selectTeam(at index: Int) {
-        DesignBook.Haptics.selection()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             selectedStartingTeamIndex = index
             showTeamReveal = false
@@ -158,7 +157,6 @@ private extension RandomizationView {
 
     func randomizeStartingTeam() {
         guard !isRandomizingTeam, !gameManager.configuration.teams.isEmpty else { return }
-        DesignBook.Haptics.tap()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isRandomizingTeam = true
             showTeamReveal = false
@@ -172,13 +170,10 @@ private extension RandomizationView {
         let teamCount = gameManager.configuration.teams.count
         guard teamShuffleId != nil, teamCount > 0 else { return }
         if !reduceMotion {
-            for cycle in 1...20 {
+            for _ in 1...20 {
                 guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
                 withAnimation(.easeInOut(duration: 0.1)) {
                     selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
-                }
-                if cycle.isMultiple(of: 3) {
-                    DesignBook.Haptics.selection()
                 }
             }
             guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }

@@ -302,7 +302,6 @@ private extension WordInputView {
             return
         }
 
-        DesignBook.Haptics.tap()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
             playerWords.append(trimmed)
         }
@@ -313,7 +312,6 @@ private extension WordInputView {
 
     func removeWord(at index: Int) {
         guard playerWords.indices.contains(index) else { return }
-        DesignBook.Haptics.soft()
         _ = withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             playerWords.remove(at: index)
         }
@@ -321,7 +319,6 @@ private extension WordInputView {
 
     func handleSaveWords() {
         guard let currentPlayer else { return }
-        DesignBook.Haptics.confirm()
         autoFillRequest = nil
         gameManager.setWords(playerWords, for: currentPlayer)
 
@@ -347,7 +344,6 @@ private extension WordInputView {
             return
         }
 
-        DesignBook.Haptics.tap()
         isWordFieldFocused = false
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isAutoFilling = true

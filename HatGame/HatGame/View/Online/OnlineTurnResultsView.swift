@@ -211,7 +211,6 @@ private extension OnlineTurnResultsView {
     func continueFlow() {
         guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
-        DesignBook.Haptics.tap()
         Task {
             do {
                 try await gameSyncManager.perform(.advanceAfterTurnResults, room: room, playerId: playerId)

@@ -89,7 +89,6 @@ private extension GameLoopView {
         if engine.phase == .nextTeam || engine.phase == .turnResults {
             ToolbarItem(placement: .cancellationAction) {
                 Button(localized("game.endGame.button"), systemImage: "flag.checkered") {
-                    DesignBook.Haptics.tap()
                     isEndGameConfirmationPresented = true
                 }
                 .accessibilityIdentifier("game.endGame")
@@ -115,7 +114,7 @@ private extension GameLoopView {
         case .gaveUp:
             DesignBook.Haptics.rigid()
         case .timeExpired, nil:
-            DesignBook.Haptics.error()
+            DesignBook.Haptics.warning()
         }
     }
 }
