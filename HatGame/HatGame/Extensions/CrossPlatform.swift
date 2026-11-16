@@ -13,13 +13,34 @@ import AppKit
 #endif
 
 // MARK: - Navigation title
+/// How a screen shows its navigation title on iOS and visionOS.
+enum NavigationTitleDisplay {
+    /// Small and centered in the bar: task screens and flow steps.
+    case inline
+    /// The large title that collapses on scroll: top-level destinations such
+    /// as Settings (HIG navigation-bars.md).
+    case large
+}
+
+// MARK: - Navigation title display
 extension View {
     /// Applies an inline navigation-bar title on iOS and visionOS. A no-op on
     /// macOS, which has no navigation-bar title display mode.
-    @ViewBuilder
     func inlineNavigationTitle() -> some View {
+        navigationTitleDisplay(.inline)
+    }
+
+    /// Applies the title display mode on iOS and visionOS. A no-op on macOS,
+    /// which shows the title in the window toolbar.
+    @ViewBuilder
+    func navigationTitleDisplay(_ display: NavigationTitleDisplay) -> some View {
         #if !os(macOS)
-        navigationBarTitleDisplayMode(.inline)
+        switch display {
+        case .inline:
+            navigationBarTitleDisplayMode(.inline)
+        case .large:
+            navigationBarTitleDisplayMode(.large)
+        }
         #else
         self
         #endif

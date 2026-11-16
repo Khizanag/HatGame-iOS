@@ -57,8 +57,11 @@ struct HatGameApp: App {
             }
             .environment(\.locale, appConfiguration.locale)
             .preferredColorScheme(preferredColorScheme)
-            .frame(minWidth: 480, minHeight: 600)
+            // A settings window fits its pane: a readable form column, tall
+            // enough for the longest pane, resizable only within that range.
+            .frame(minWidth: 480, idealWidth: 540, maxWidth: 720, minHeight: 520, idealHeight: 700)
         }
+        .windowResizability(.contentSize)
         #endif
     }
 
