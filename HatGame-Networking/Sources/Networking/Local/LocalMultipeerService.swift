@@ -16,8 +16,11 @@ private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "Multi
 /// `MCNearbyServiceBrowser` (guest). Sends/receives `LocalMessage`
 /// envelopes via the session.
 ///
-/// Main-actor isolated: Multipeer calls its delegates on private queues, and
-/// every delegate method hops to the main actor before touching state.
+/// Main-actor isolated: Multipeer calls its delegates on private queues.
+/// Every delegate callback is yielded into one `AsyncStream` that a single
+/// main-actor task drains, so events are handled in the order they arrived
+/// — a peer's `.connected` before its first message, a message before the
+/// disconnect that followed it. A `Task` per callback guarantees no order.
 @MainActor
 public final class LocalMultipeerService: NSObject {
     /// Service type advertised over Bonjour. Must be 1-15 chars, lowercase
@@ -70,6 +73,16 @@ public final class LocalMultipeerService: NSObject {
         let respond: (Bool, MCSession?) -> Void
     }
 
+    /// One delegate callback, carried to the main actor. The Multipeer
+    /// objects inside are only touched there.
+    fileprivate enum Event: @unchecked Sendable {
+        case stateChange(MCPeerID, MCSessionState, MCSession)
+        case message(LocalMessage, MCPeerID, MCSession)
+        case invitation(MCNearbyServiceAdvertiser, InvitationReply)
+        case hostFound(DiscoveredHost)
+        case hostLost(MCPeerID)
+    }
+
     // MARK: - State
     public private(set) var role: Role?
     private var session: MCSession?
@@ -77,6 +90,10 @@ public final class LocalMultipeerService: NSObject {
     private var browser: MCNearbyServiceBrowser?
     private var pendingConnection: PendingConnection?
     private let peerID: MCPeerID
+    /// Delegate callbacks enter here from Multipeer's queues…
+    private nonisolated let eventSink: AsyncStream<Event>.Continuation
+    /// …and are handled here, one at a time, on the main actor.
+    private var eventPump: Task<Void, Never>?
 
     // MARK: - Callbacks
     /// Fired when a peer's MCSessionState changes. Host typically reacts to
@@ -92,10 +109,19 @@ public final class LocalMultipeerService: NSObject {
     public init(displayName: String) {
         let trimmed = String(displayName.prefix(63)) // MCPeerID limit
         self.peerID = MCPeerID(displayName: trimmed.isEmpty ? "Player" : trimmed)
+        let (events, sink) = AsyncStream.makeStream(of: Event.self)
+        self.eventSink = sink
         super.init()
+        eventPump = Task { [weak self] in
+            for await event in events {
+                self?.handle(event)
+            }
+        }
     }
 
     isolated deinit {
+        eventSink.finish()
+        eventPump?.cancel()
         endSession()
     }
 
@@ -211,6 +237,21 @@ private extension LocalMultipeerService {
         return session
     }
 
+    func handle(_ event: Event) {
+        switch event {
+        case let .stateChange(peer, state, session):
+            handleStateChange(state, peer: peer, in: session)
+        case let .message(message, peer, session):
+            handleMessage(message, from: peer, in: session)
+        case let .invitation(advertiser, reply):
+            handleInvitation(from: advertiser, reply: reply)
+        case let .hostFound(host):
+            onHostFound?(host)
+        case let .hostLost(peer):
+            onHostLost?(peer)
+        }
+    }
+
     func resolvePendingConnection(with result: Result<Void, Error>) {
         guard let pending = pendingConnection else { return }
         pendingConnection = nil
@@ -251,9 +292,7 @@ private extension LocalMultipeerService {
 // MARK: - MCSessionDelegate
 extension LocalMultipeerService: MCSessionDelegate {
     nonisolated public func session(_ session: MCSession, peer peerID: MCPeerID, didChange state: MCSessionState) {
-        Task { @MainActor in
-            self.handleStateChange(state, peer: peerID, in: session)
-        }
+        eventSink.yield(.stateChange(peerID, state, session))
     }
 
     nonisolated public func session(_ session: MCSession, didReceive data: Data, fromPeer peerID: MCPeerID) {
@@ -264,9 +303,7 @@ extension LocalMultipeerService: MCSessionDelegate {
             logger.error("decode failed: \(error.localizedDescription, privacy: .public)")
             return
         }
-        Task { @MainActor in
-            self.handleMessage(message, from: peerID, in: session)
-        }
+        eventSink.yield(.message(message, peerID, session))
     }
 
     nonisolated public func session(
@@ -300,10 +337,7 @@ extension LocalMultipeerService: MCNearbyServiceAdvertiserDelegate {
         withContext _: Data?,
         invitationHandler: @escaping (Bool, MCSession?) -> Void
     ) {
-        let reply = InvitationReply(respond: invitationHandler)
-        Task { @MainActor in
-            self.handleInvitation(from: advertiser, reply: reply)
-        }
+        eventSink.yield(.invitation(advertiser, InvitationReply(respond: invitationHandler)))
     }
 
     nonisolated public func advertiser(_: MCNearbyServiceAdvertiser, didNotStartAdvertisingPeer error: Error) {
@@ -319,15 +353,11 @@ extension LocalMultipeerService: MCNearbyServiceBrowserDelegate {
         withDiscoveryInfo info: [String: String]?
     ) {
         let host = DiscoveredHost(id: peerID, displayName: peerID.displayName, discoveryInfo: info ?? [:])
-        Task { @MainActor in
-            self.onHostFound?(host)
-        }
+        eventSink.yield(.hostFound(host))
     }
 
     nonisolated public func browser(_: MCNearbyServiceBrowser, lostPeer peerID: MCPeerID) {
-        Task { @MainActor in
-            self.onHostLost?(peerID)
-        }
+        eventSink.yield(.hostLost(peerID))
     }
 
     nonisolated public func browser(_: MCNearbyServiceBrowser, didNotStartBrowsingForPeers error: Error) {
