@@ -26,6 +26,10 @@ struct PlayerStepIndicator: View {
                     }
             }
         }
+        // Color alone can't say which player is up; VoiceOver hears the step.
+        .accessibilityElement(children: .ignore)
+        .accessibilityLabel(Text(localized("teamForm.players")))
+        .accessibilityValue(Text(localized("wordInput.playerStep \(currentIndex + 1) \(playerCount)")))
     }
 
     private func color(for index: Int) -> Color {

@@ -23,9 +23,9 @@ struct FloatingAddButton: View {
         }
         .glassProminentButtonStyle()
         .disabled(isDisabled)
-        .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
         .matchedGeometryEffect(id: "addButton", in: namespace)
         .accessibilityLabel(Text(localized("wordInput.addWord")))
+        .help(localized("wordInput.addWord"))
         .accessibilityShowsLargeContentViewer()
     }
 }

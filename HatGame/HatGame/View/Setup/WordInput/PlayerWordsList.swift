@@ -8,7 +8,7 @@
 import DesignBook
 import SwiftUI
 
-/// The current player's words, each removable.
+/// The current player's words, each removable with its own button.
 struct PlayerWordsList: View {
     let playerWords: [String]
     let onRemove: (Int) -> Void
@@ -28,13 +28,6 @@ struct PlayerWordsList: View {
                         removal: .scale.combined(with: .opacity)
                     )
                 )
-                .swipeActions(edge: .trailing, allowsFullSwipe: true) {
-                    Button(role: .destructive) {
-                        onRemove(index)
-                    } label: {
-                        Label(localized("common.buttons.delete"), systemImage: "trash.fill")
-                    }
-                }
             }
         }
     }
@@ -48,6 +41,10 @@ struct PlayerWordRow: View {
 
     @ScaledMetric(relativeTo: .subheadline) private var badgeSize: CGFloat = DesignBook.Size.badgeSize
 
+    private var removeLabel: String {
+        String(format: localized("wordInput.removeWord %@"), text)
+    }
+
     var body: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
             Text(verbatim: "\(index + 1)")
@@ -56,6 +53,7 @@ struct PlayerWordRow: View {
                 .frame(width: badgeSize, height: badgeSize)
                 .background(DesignBook.Color.Background.secondary)
                 .clipShape(Circle())
+                .accessibilityHidden(true)
 
             Text(text)
                 .font(DesignBook.Font.body)
@@ -67,11 +65,16 @@ struct PlayerWordRow: View {
                 Image(systemName: "xmark.circle.fill")
                     .font(DesignBook.IconFont.small)
                     .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
+                    .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                    .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text(localized("wordInput.removeWord")))
+            .pointerHoverEffect()
+            .accessibilityLabel(Text(removeLabel))
+            .help(removeLabel)
         }
-        .padding(DesignBook.Spacing.md)
+        .padding(.leading, DesignBook.Spacing.md)
+        .padding(.vertical, DesignBook.Spacing.xs)
         .background(DesignBook.Color.Background.secondary)
         .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }

@@ -24,6 +24,9 @@ struct WordInputView: View {
     @State private var focusRequest: Int = 0
     /// The words an auto-fill is adding; its task is cancelled on disappear.
     @State private var autoFillRequest: AutoFillRequest?
+    /// Why the last entry was turned away ("Already in the hat"), shown under the field.
+    @State private var entryMessage: String?
+    @State private var hasRestoredPosition = false
 
     @FocusState private var isWordFieldFocused: Bool
     @Namespace private var addButtonNamespace
@@ -54,6 +57,10 @@ struct WordInputView: View {
         content
             .navigationTitle(localized("wordInput.title"))
             .setDefaultStyle()
+            .onAppear(perform: restorePosition)
+            // Back keeps what this player typed; coming back resumes here.
+            .onDisappear(perform: keepCurrentPlayerWords)
+            .onChange(of: currentWord) { _, _ in entryMessage = nil }
             .task(id: currentPlayerIndex) {
                 loadCurrentPlayerWords()
             }
@@ -79,6 +86,7 @@ private extension WordInputView {
                 .paddingHorizontalDefault()
                 .padding(.bottom, DesignBook.Spacing.xxl)
             }
+            .scrollDismissesKeyboard(.interactively)
             .actionBar { footer }
             .onAppear { requestScrollToTextField(after: .milliseconds(500)) }
             .onChange(of: isWordFieldFocused) { _, focused in
@@ -98,7 +106,6 @@ private extension WordInputView {
 
     var headerCard: some View {
         HeaderCard(
-            title: localized("wordInput.title"),
             description: currentPlayer.map { player in
                 localized("wordInput.playerInstruction \(player.name) \(wordsPerPlayer)")
             }
@@ -144,7 +151,15 @@ private extension WordInputView {
                         .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 }
 
-                wordTextField
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+                    wordTextField
+                    if let entryMessage {
+                        Text(entryMessage)
+                            .font(DesignBook.Font.subheadline)
+                            .foregroundStyle(DesignBook.Color.Status.error)
+                            .transition(.opacity)
+                    }
+                }
             }
         }
     }
@@ -172,7 +187,8 @@ private extension WordInputView {
             .focused($isWordFieldFocused)
             .hatFieldStyle(
                 label: localized("textField.word"),
-                submitLabel: .next,
+                // Return adds the word; on the last one it finishes this player.
+                submitLabel: playerWords.count + 1 >= wordsPerPlayer ? .done : .next,
                 disablesAutocorrection: true,
                 capitalization: .words
             ) { isWordFieldFocused = true }
@@ -211,10 +227,10 @@ private extension WordInputView {
                 handleAddWord()
             }
             .disabled(isAddWordButtonDisabled)
-            .opacity(isAddWordButtonDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
             .matchedGeometryEffect(id: "addButton", in: addButtonNamespace)
         } else {
             PrimaryButton(title: nextActionTitle, icon: nextActionIcon, action: handleSaveWords)
+                .keyboardShortcut(.defaultAction)
         }
     }
 
@@ -278,24 +294,44 @@ private extension WordInputView {
     /// again replaces their words instead of adding a second copy.
     func loadCurrentPlayerWords() {
         guard let currentPlayer else { return }
-        playerWords = gameManager.configuration.words
-            .filter { $0.authorId == currentPlayer.id }
-            .map(\.text)
+        playerWords = savedWords(of: currentPlayer)
+        entryMessage = nil
         focusRequest += 1
+    }
+
+    func savedWords(of player: Player) -> [String] {
+        gameManager.configuration.words
+            .filter { $0.authorId == player.id }
+            .map(\.text)
+    }
+
+    /// Coming back to this screen resumes at the first player who still has
+    /// words to add, instead of starting over at the first player.
+    func restorePosition() {
+        guard !hasRestoredPosition else { return }
+        hasRestoredPosition = true
+        currentPlayerIndex = allPlayers.firstIndex { savedWords(of: $0).count < wordsPerPlayer }
+            ?? max(allPlayers.count - 1, 0)
+    }
+
+    /// Keeps the current player's words in the hat when they leave with Back,
+    /// so nothing typed is lost.
+    func keepCurrentPlayerWords() {
+        guard let currentPlayer, !playerWords.isEmpty else { return }
+        gameManager.setWords(playerWords, for: currentPlayer)
     }
 
     func handleAddWord() {
         guard let currentPlayer else { return }
         let trimmed = currentWord.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !trimmed.isEmpty, !isCurrentPlayerDone else { return }
-        // Signal silent duplicate rejections so the input doesn't feel dead.
         guard !WordEntryRules.isDuplicate(
             trimmed,
             ownWords: playerWords,
             otherPlayersWords: gameManager.wordTexts(excluding: currentPlayer),
             allowsDuplicates: gameManager.configuration.allowsDuplicateWords
         ) else {
-            DesignBook.Haptics.warning()
+            rejectEntry(with: localized("wordInput.duplicate"))
             return
         }
 
@@ -305,6 +341,16 @@ private extension WordInputView {
         currentWord = ""
         requestScrollToLatestWord()
         focusRequest += 1
+    }
+
+    /// Says why an entry didn't go in — on screen, to VoiceOver, and by feel —
+    /// so the field never just ignores the player.
+    func rejectEntry(with message: String) {
+        DesignBook.Haptics.warning()
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            entryMessage = message
+        }
+        AccessibilityNotification.Announcement(message).post()
     }
 
     func removeWord(at index: Int) {
@@ -337,7 +383,7 @@ private extension WordInputView {
             limit: wordsPerPlayer - playerWords.count
         )
         guard !words.isEmpty else {
-            DesignBook.Haptics.warning()
+            rejectEntry(with: localized("wordInput.autoFill.nothingToAdd"))
             return
         }
 

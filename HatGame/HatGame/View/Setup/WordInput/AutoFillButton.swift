@@ -44,6 +44,7 @@ struct AutoFillButton: View {
             .shadow(color: DesignBook.Color.Text.accent.opacity(0.2), radius: 8, x: 0, y: 4)
         }
         .buttonStyle(.plain)
+        .pointerHoverEffect()
         .disabled(isDisabled)
         .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
     }
