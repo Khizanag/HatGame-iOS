@@ -96,7 +96,7 @@ private extension RoomLobbyView {
             VStack(spacing: DesignBook.Spacing.md) {
                 Text(localized("lobby.shareCode"))
                     .font(DesignBook.Font.caption1Semibold)
-                    .textCase(.uppercase)
+                    .eyebrowUppercase()
                     .tracking(1.6)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
 

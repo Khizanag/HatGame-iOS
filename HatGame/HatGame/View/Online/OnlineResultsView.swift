@@ -92,7 +92,7 @@ private extension OnlineResultsView {
                     Text(localized("game.results.winner"))
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
-                        .textCase(.uppercase)
+                        .eyebrowUppercase()
                         .tracking(1.6)
 
                     Text(winner.name)
@@ -111,7 +111,7 @@ private extension OnlineResultsView {
                     Text(localized("game.results.totalPoints"))
                         .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
-                        .textCase(.uppercase)
+                        .eyebrowUppercase()
                         .tracking(1.2)
                 }
             } else {

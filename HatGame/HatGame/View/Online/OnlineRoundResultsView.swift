@@ -192,7 +192,7 @@ private extension OnlineRoundResultsView {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Text(localized("onlineRoundResults.nextRound"))
                     .font(DesignBook.Font.caption1Semibold)
-                    .textCase(.uppercase)
+                    .eyebrowUppercase()
                     .tracking(1.6)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
 

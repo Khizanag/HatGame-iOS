@@ -61,7 +61,7 @@ private extension OnlineSpectatorView {
         VStack(spacing: 4) {
             Text(localized(isOwnTeam ? "onlineSpectator.yourTurn" : "onlineSpectator.othersTurn"))
                 .font(DesignBook.Font.caption1Semibold)
-                .textCase(.uppercase)
+                .eyebrowUppercase()
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 

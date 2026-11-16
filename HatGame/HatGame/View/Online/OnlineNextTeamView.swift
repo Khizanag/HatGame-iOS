@@ -105,7 +105,7 @@ private extension OnlineNextTeamView {
 
             Text(localized("game.nextTeam.title"))
                 .font(DesignBook.Font.caption1Semibold)
-                .textCase(.uppercase)
+                .eyebrowUppercase()
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 
@@ -158,7 +158,7 @@ private extension OnlineNextTeamView {
                                 .foregroundStyle(DesignBook.Color.Text.accent)
                             Text(localized("game.nextTeam.role.guessing"))
                                 .font(DesignBook.Font.caption1Semibold)
-                                .textCase(.uppercase)
+                                .eyebrowUppercase()
                                 .tracking(1.2)
                                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                         }
@@ -204,7 +204,7 @@ private extension OnlineNextTeamView {
                     .foregroundStyle(tint)
                 Text(localized(label))
                     .font(DesignBook.Font.caption1Semibold)
-                    .textCase(.uppercase)
+                    .eyebrowUppercase()
                     .tracking(1.2)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
