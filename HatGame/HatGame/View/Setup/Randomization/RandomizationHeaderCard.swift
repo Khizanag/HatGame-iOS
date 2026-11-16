@@ -31,6 +31,9 @@ struct RandomizationHeaderCard: View {
                     Text(localized("randomization.header.title"))
                         .font(DesignBook.Font.title2)
                         .foregroundStyle(DesignBook.Color.Text.primary)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.5)
 
                     Text(localized("randomization.header.subtitle"))
                         .font(DesignBook.Font.body)

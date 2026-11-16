@@ -28,6 +28,9 @@ struct ShufflingOverlay: View {
                     Text(localized("randomization.shuffling.message"))
                         .font(DesignBook.Font.title2)
                         .foregroundStyle(DesignBook.Color.onGradient)
+                        .multilineTextAlignment(.center)
+                        .lineLimit(2)
+                        .minimumScaleFactor(0.5)
 
                     ProgressDotIndicator(
                         count: 3,

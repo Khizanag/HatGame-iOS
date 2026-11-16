@@ -150,6 +150,8 @@ private extension ResultsView {
 
             Text(winner.name)
                 .font(DesignBook.Font.title)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 .foregroundStyle(winner.color)
                 .multilineTextAlignment(.center)
 

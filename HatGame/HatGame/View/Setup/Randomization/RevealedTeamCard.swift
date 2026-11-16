@@ -26,6 +26,8 @@ struct RevealedTeamCard: View {
 
                     Text(team.name)
                         .font(DesignBook.Font.title)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.5)
                         .fontWeight(.bold)
                         .foregroundStyle(team.color)
 

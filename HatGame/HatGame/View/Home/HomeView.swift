@@ -102,6 +102,8 @@ private extension HomeView {
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(localized("home.title"))
                     .font(DesignBook.Font.largeTitle)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
 

@@ -28,6 +28,8 @@ struct GamePausedOverlay: View {
 
                 Text(localized("game.paused.title"))
                     .font(DesignBook.Font.largeTitle)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)
 
                 PrimaryButton(title: localized("common.buttons.continue"), icon: "play.fill") {

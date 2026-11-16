@@ -103,6 +103,8 @@ private extension TeamTurnResultsView {
 
             Text(localized(isCelebratory ? "game.turnResults.allWordsGuessed" : "game.turnResults.timeUp"))
                 .font(DesignBook.Font.largeTitle)
+                .lineLimit(2)
+                .minimumScaleFactor(0.5)
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .multilineTextAlignment(.center)
                 .accessibilityIdentifier("turnResults.title")

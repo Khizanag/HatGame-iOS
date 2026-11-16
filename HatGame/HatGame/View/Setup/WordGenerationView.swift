@@ -142,6 +142,9 @@ private extension WordGenerationView {
                 : localized("wordGeneration.ready"))
                 .font(DesignBook.Font.title2)
                 .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.5)
                 .contentTransition(.opacity)
 
             Text(phase == .generating

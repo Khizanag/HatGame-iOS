@@ -102,6 +102,8 @@ private extension NextTeamView {
 
             Text(team.name)
                 .font(DesignBook.Font.largeTitle)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
                 .foregroundStyle(team.color)
                 .multilineTextAlignment(.center)
 

@@ -155,6 +155,8 @@ private extension FeedbackView {
             VStack(spacing: DesignBook.Spacing.xs) {
                 Text(localized("feedback.success.title"))
                     .font(DesignBook.Font.title2)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.5)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                 Text(localized("feedback.success.message"))
                     .font(DesignBook.Font.body)
