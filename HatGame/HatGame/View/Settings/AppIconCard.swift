@@ -78,17 +78,3 @@ private extension AppIconCard {
         }
     }
 }
-
-// MARK: - Pointer hover
-private extension View {
-    /// The pointer lift on iPad and visionOS; macOS has no hover effect API
-    /// and never shows this screen.
-    @ViewBuilder
-    func pointerHoverEffect() -> some View {
-        #if os(macOS)
-        self
-        #else
-        hoverEffect(.highlight)
-        #endif
-    }
-}
