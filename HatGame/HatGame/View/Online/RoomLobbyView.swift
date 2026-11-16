@@ -17,6 +17,7 @@ struct RoomLobbyView: View {
 
     @State private var showingTeamCreation: Bool = false
     @State private var showingLeaveConfirmation: Bool = false
+    @State private var isUpdating: Bool = false
     @State private var error: Error?
 
     private var room: GameRoom? { roomManager.room }
@@ -329,7 +330,7 @@ private extension RoomLobbyView {
                 PrimaryButton(title: localized("lobby.startGame"), icon: "play.fill") {
                     startGame()
                 }
-                .disabled(!canStartGame)
+                .disabled(!canStartGame || isUpdating)
                 .opacity(canStartGame ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
 
                 if !canStartGame {
@@ -372,29 +373,32 @@ private extension RoomLobbyView {
 private extension RoomLobbyView {
     func joinTeam(_ teamId: String) {
         DesignBook.Haptics.selection()
-        Task {
-            do { try await roomManager.joinTeam(teamId: teamId) } catch { self.error = error }
-        }
+        perform { try await roomManager.joinTeam(teamId: teamId) }
     }
 
     func leaveTeam() {
         DesignBook.Haptics.soft()
-        Task {
-            do { try await roomManager.leaveTeam() } catch { self.error = error }
-        }
+        perform { try await roomManager.leaveTeam() }
     }
 
     func removeTeam(_ teamId: String) {
         DesignBook.Haptics.rigid()
-        Task {
-            do { try await roomManager.removeTeam(teamId: teamId) } catch { self.error = error }
-        }
+        perform { try await roomManager.removeTeam(teamId: teamId) }
     }
 
     func startGame() {
         DesignBook.Haptics.confirm()
+        perform { try await roomManager.startGame() }
+    }
+
+    /// One lobby write in flight at a time; a tap while one is pending is
+    /// dropped rather than racing it.
+    func perform(_ write: @escaping () async throws -> Void) {
+        guard !isUpdating else { return }
+        isUpdating = true
         Task {
-            do { try await roomManager.startGame() } catch { self.error = error }
+            do { try await write() } catch { self.error = error }
+            isUpdating = false
         }
     }
 

@@ -250,7 +250,7 @@ private extension OnlineRoundResultsView {
 // MARK: - Actions
 private extension OnlineRoundResultsView {
     func advance() {
-        guard let room, let playerId = roomManager.currentPlayerId else { return }
+        guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
         isLoading = true
         DesignBook.Haptics.confirm()
         Task {
