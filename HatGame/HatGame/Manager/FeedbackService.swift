@@ -53,7 +53,21 @@ final class FeedbackService {
         case failed(String)
     }
 
+    /// Sends a feedback record; Firebase in the app, a stub in tests.
+    typealias Submitter = @MainActor (Feedback) async throws -> Void
+
     private(set) var state: SubmissionState = .editing
+
+    @ObservationIgnored private let submitter: Submitter
+    @ObservationIgnored private let defaults: UserDefaults
+
+    init(
+        submitter: @escaping Submitter = { try await FirebaseService.shared.submitFeedback($0) },
+        defaults: UserDefaults = .standard
+    ) {
+        self.submitter = submitter
+        self.defaults = defaults
+    }
 
     var isSubmitting: Bool { state == .submitting }
 
@@ -75,14 +89,14 @@ final class FeedbackService {
             systemVersion: Self.systemVersion,
             deviceModel: Self.deviceModel,
             locale: Locale.current.identifier,
-            deviceId: UserDefaults.standard.string(forKey: "HatGame.deviceId")
+            deviceId: defaults.string(forKey: "HatGame.deviceId")
         )
 
         do {
-            try await FirebaseService.shared.submitFeedback(feedback)
+            try await submitter(feedback)
             state = .submitted
         } catch {
-            state = .failed(error.localizedDescription)
+            state = .failed(NetworkErrorMessage.message(for: error))
         }
     }
 
