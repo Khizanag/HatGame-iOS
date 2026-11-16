@@ -72,8 +72,9 @@ final class HatGameUITests: XCTestCase {
                 || relaunched.descendants(matching: .any)["game.pausedOverlay"].exists,
             "A restored turn should come back paused"
         )
-        // While paused, the turn's controls sit behind the modal overlay.
-        XCTAssertFalse(relaunched.buttons["game.gotIt"].exists)
+        // While paused, the turn's controls sit disabled behind the modal overlay.
+        let restoredGotIt = relaunched.buttons["game.gotIt"]
+        XCTAssertFalse(restoredGotIt.exists && restoredGotIt.isEnabled)
 
         relaunched.terminate()
         launchClearingSavedGame().terminate()
@@ -86,7 +87,8 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(endGame.waitForExistence(timeout: 10))
         endGame.tap()
 
-        let confirm = app.buttons["game.endGame.confirm"]
+        // The dialog may expose its buttons twice (popover and sheet forms).
+        let confirm = app.buttons["game.endGame.confirm"].firstMatch
         XCTAssertTrue(confirm.waitForExistence(timeout: 5))
         confirm.tap()
 
@@ -106,7 +108,7 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(endGame.waitForExistence(timeout: 10))
         endGame.tap()
 
-        let saveAndExit = app.buttons["game.endGame.saveAndExit"]
+        let saveAndExit = app.buttons["game.endGame.saveAndExit"].firstMatch
         XCTAssertTrue(saveAndExit.waitForExistence(timeout: 5))
         saveAndExit.tap()
 
