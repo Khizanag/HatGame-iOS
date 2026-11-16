@@ -27,7 +27,7 @@ struct OnlineSpectatorView: View {
     let remainingWords: Int
 
     private var tint: Color {
-        Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
+        team.color
     }
 
     private var passedWords: Int { totalWords - remainingWords }

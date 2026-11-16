@@ -149,7 +149,7 @@ private extension OnlineWordInputView {
         }
         .padding(DesignBook.Spacing.md)
         .background(DesignBook.Color.Background.secondary)
-        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 
     var textField: some View {
@@ -160,7 +160,7 @@ private extension OnlineWordInputView {
                 .foregroundStyle(DesignBook.Color.Text.primary)
                 .padding(DesignBook.Spacing.md)
                 .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                 .focused($isFieldFocused)
                 .onSubmit { addWord() }
 

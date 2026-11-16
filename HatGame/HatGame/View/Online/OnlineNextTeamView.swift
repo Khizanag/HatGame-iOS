@@ -61,7 +61,7 @@ struct OnlineNextTeamView: View {
     }
 
     private var tint: Color {
-        currentTeam.flatMap { Color(hex: $0.colorHex) } ?? DesignBook.Color.Text.accent
+        currentTeam?.color ?? DesignBook.Color.Text.accent
     }
 
     private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
@@ -184,7 +184,7 @@ private extension OnlineNextTeamView {
                         .padding(DesignBook.Spacing.sm)
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .background(DesignBook.Color.Background.secondary)
-                        .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     }
                 }
             }
@@ -217,9 +217,7 @@ private extension OnlineNextTeamView {
                 if isMe {
                     Text(localized("onlineNextTeam.you"))
                         .font(DesignBook.Font.captionBold)
-                        // "You" badge sits on a capsule filled with the team color.
-                        // swiftlint:disable:next no_raw_foreground_white_black
-                        .foregroundStyle(.white)
+                        .foregroundStyle(DesignBook.Color.onAccent(for: tint))
                         .padding(.horizontal, DesignBook.Spacing.sm)
                         .padding(.vertical, 2)
                         .background(Capsule().fill(tint))
@@ -228,7 +226,7 @@ private extension OnlineNextTeamView {
             .padding(DesignBook.Spacing.sm)
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(tint.opacity(emphasized ? 0.12 : 0.08))
-            .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
         }
     }
 

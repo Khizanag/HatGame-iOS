@@ -78,7 +78,7 @@ private extension LocalRoomBrowser {
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused($focusedField, equals: .name)
                     .submitLabel(.done)
                     .onSubmit { focusedField = nil }

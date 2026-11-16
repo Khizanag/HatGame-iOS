@@ -197,7 +197,7 @@ private extension RoomLobbyView {
               let team = allTeams.first(where: { $0.id == teamId }) else {
             return DesignBook.Color.Text.tertiary
         }
-        return Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
+        return team.color
     }
 
     var teamsSection: some View {
@@ -241,7 +241,7 @@ private extension RoomLobbyView {
     func teamCard(_ team: OnlineTeam) -> some View {
         let players = allPlayers.filter { $0.teamId == team.id }
         let amIInTeam = roomManager.currentPlayer?.teamId == team.id
-        let color = Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
+        let color = team.color
 
         return GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {

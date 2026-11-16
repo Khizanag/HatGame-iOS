@@ -95,7 +95,7 @@ private extension OnlineTeamCreationView {
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .padding(DesignBook.Spacing.md)
                     .background(DesignBook.Color.Background.secondary)
-                    .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                     .focused($focusedField, equals: .name)
             }
         }
@@ -132,7 +132,7 @@ private extension OnlineTeamCreationView {
                 .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
                 .padding(DesignBook.Spacing.sm)
                 .background(DesignBook.Color.Background.secondary)
-                .cornerRadius(DesignBook.Size.smallCardCornerRadius)
+                .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
         }
     }
 
@@ -154,15 +154,11 @@ private extension OnlineTeamCreationView {
                     if isSelected {
                         Image(systemName: "checkmark")
                             .font(DesignBook.Font.subheadlineBold)
-                            // Mark sits on the swatch's own team color.
-                            // swiftlint:disable:next no_raw_foreground_white_black
-                            .foregroundStyle(.white)
+                            .foregroundStyle(DesignBook.Color.onAccent(for: color))
                     } else if isUsed {
                         Image(systemName: "xmark")
                             .font(DesignBook.Font.footnoteBold)
-                            // Mark sits on the swatch's own team color.
-                            // swiftlint:disable:next no_raw_foreground_white_black
-                            .foregroundStyle(.white)
+                            .foregroundStyle(DesignBook.Color.onAccent(for: color))
                             .opacity(DesignBook.Opacity.disabled)
                     }
                 }

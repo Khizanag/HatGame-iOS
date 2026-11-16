@@ -47,7 +47,7 @@ struct OnlineTurnResultsView: View {
     }
 
     private var tint: Color {
-        currentTeam.flatMap { Color(hex: $0.colorHex) } ?? DesignBook.Color.Text.accent
+        currentTeam?.color ?? DesignBook.Color.Text.accent
     }
 
     private var sortedTeams: [OnlineTeam] {
@@ -150,19 +150,19 @@ private extension OnlineTurnResultsView {
                     HStack(spacing: DesignBook.Spacing.md) {
                         Text(verbatim: "\(index + 1)")
                             .font(DesignBook.Font.captionBold)
-                            // White rank numeral sits on a colored team badge.
-                            // swiftlint:disable:next no_raw_foreground_white_black
-                            .foregroundStyle(.white)
+                            .foregroundStyle(index == 0
+                                ? DesignBook.Color.onAccent(for: team.color)
+                                : DesignBook.Color.Text.primary)
                             .frame(width: 28, height: 28)
                             .background {
                                 Circle().fill(index == 0
-                                    ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                    ? team.color
                                     : DesignBook.Color.Text.tertiary.opacity(0.4))
                             }
                             .monospacedDigit()
 
                         Circle()
-                            .fill(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                            .fill(team.color)
                             .frame(width: 10, height: 10)
 
                         Text(team.name)
@@ -177,7 +177,7 @@ private extension OnlineTurnResultsView {
                             value: gameState?.getTotalScore(for: team.id) ?? 0,
                             font: DesignBook.Font.title3,
                             color: index == 0
-                                ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                ? team.color
                                 : DesignBook.Color.Text.secondary,
                             duration: 0.6
                         )

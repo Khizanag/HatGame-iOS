@@ -111,7 +111,7 @@ private extension OnlineRoundResultsView {
                     HStack(spacing: DesignBook.Spacing.md) {
                         medalIcon(for: rank).frame(width: 30)
                         Circle()
-                            .fill(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                            .fill(team.color)
                             .frame(width: 10, height: 10)
                         Text(team.name)
                             .font(DesignBook.Font.body)
@@ -123,7 +123,7 @@ private extension OnlineRoundResultsView {
                             value: gameState?.getScore(for: team.id, in: currentRound) ?? 0,
                             font: DesignBook.Font.title3,
                             color: isLeader
-                                ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                ? team.color
                                 : DesignBook.Color.Text.secondary,
                             duration: 0.6
                         )
@@ -150,19 +150,19 @@ private extension OnlineRoundResultsView {
                     HStack(spacing: DesignBook.Spacing.md) {
                         Text(verbatim: "\(rank + 1)")
                             .font(DesignBook.Font.captionBold)
-                            // White rank numeral sits on a colored team badge.
-                            // swiftlint:disable:next no_raw_foreground_white_black
-                            .foregroundStyle(.white)
+                            .foregroundStyle(rank == 0
+                                ? DesignBook.Color.onAccent(for: team.color)
+                                : DesignBook.Color.Text.primary)
                             .frame(width: 28, height: 28)
                             .background {
                                 Circle().fill(rank == 0
-                                    ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                    ? team.color
                                     : DesignBook.Color.Text.tertiary.opacity(0.4))
                             }
                             .monospacedDigit()
 
                         Circle()
-                            .fill(Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                            .fill(team.color)
                             .frame(width: 10, height: 10)
 
                         Text(team.name)
@@ -177,7 +177,7 @@ private extension OnlineRoundResultsView {
                             value: gameState?.getTotalScore(for: team.id) ?? 0,
                             font: DesignBook.Font.title3,
                             color: rank == 0
-                                ? (Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent)
+                                ? team.color
                                 : DesignBook.Color.Text.secondary,
                             duration: 0.7
                         )

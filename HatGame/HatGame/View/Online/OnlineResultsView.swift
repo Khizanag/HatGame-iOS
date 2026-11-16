@@ -80,9 +80,7 @@ private extension OnlineResultsView {
 
                 Image(systemName: "trophy.fill")
                     .font(DesignBook.IconFont.extraLarge.bold())
-                    // Trophy glyph sits on the celebration gradient disc.
-                    // swiftlint:disable:next no_raw_foreground_white_black
-                    .foregroundStyle(.white)
+                    .foregroundStyle(DesignBook.Color.onGradient)
                     .symbolEffect(.bounce.up.byLayer, options: .nonRepeating, value: !reduceMotion && hasCelebrated)
             }
             .accessibilityHidden(true)
@@ -98,7 +96,7 @@ private extension OnlineResultsView {
 
                     Text(winner.name)
                         .font(DesignBook.Font.title)
-                        .foregroundStyle(Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary)
+                        .foregroundStyle(winner.color)
                         .multilineTextAlignment(.center)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -106,7 +104,7 @@ private extension OnlineResultsView {
                     AnimatedScoreText(
                         value: gameState?.getTotalScore(for: winner.id) ?? 0,
                         font: DesignBook.Font.scaled(56, relativeTo: .largeTitle, weight: .bold),
-                        color: Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary
+                        color: winner.color
                     )
 
                     Text(localized("game.results.totalPoints"))
@@ -124,13 +122,13 @@ private extension OnlineResultsView {
                         VStack(spacing: 4) {
                             Text(winner.name)
                                 .font(DesignBook.Font.title3)
-                                .foregroundStyle(Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary)
+                                .foregroundStyle(winner.color)
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                             AnimatedScoreText(
                                 value: gameState?.getTotalScore(for: winner.id) ?? 0,
                                 font: DesignBook.Font.title2,
-                                color: Color(hex: winner.colorHex) ?? DesignBook.Color.Text.primary
+                                color: winner.color
                             )
                         }
                     }
@@ -172,7 +170,7 @@ private extension OnlineResultsView {
                     }, id: \.team.id) { item in
                         HStack {
                             Circle()
-                                .fill(Color(hex: item.team.colorHex) ?? DesignBook.Color.Text.accent)
+                                .fill(item.team.color)
                                 .frame(width: 8, height: 8)
                             Text(item.team.name)
                                 .font(DesignBook.Font.body)
@@ -203,7 +201,7 @@ private extension OnlineResultsView {
                     ForEach(Array(sortedTeams.enumerated()), id: \.element.team.id) { index, item in
                         TeamScoreRowView(
                             name: item.team.name,
-                            color: Color(hex: item.team.colorHex) ?? DesignBook.Color.Text.accent,
+                            color: item.team.color,
                             rank: index + 1,
                             score: item.score,
                             isWinner: index == 0

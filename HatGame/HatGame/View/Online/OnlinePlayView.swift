@@ -127,7 +127,7 @@ private extension OnlinePlayView {
 
     var tint: Color {
         guard let team = currentTeam else { return DesignBook.Color.Text.accent }
-        return Color(hex: team.colorHex) ?? DesignBook.Color.Text.accent
+        return team.color
     }
 
     /// Whether the host enabled skipping for this game at all (frozen into the
