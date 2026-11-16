@@ -65,7 +65,7 @@ private extension TeamRolesCard {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
             Label {
                 Text(localized(label))
-                    .uppercaseLabel()
+                    .eyebrowUppercase()
                     .tracking(1.2)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             } icon: {
