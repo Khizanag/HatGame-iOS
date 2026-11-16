@@ -199,7 +199,7 @@ private extension LocalHostSetupView {
 
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
+        ToolbarItemGroup(placement: .keyboardAccessory) {
             Spacer()
             Button(action: host) {
                 Label(localized("local.host.start"), systemImage: "antenna.radiowaves.left.and.right")

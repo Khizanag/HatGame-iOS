@@ -115,7 +115,7 @@ private extension RoomLobbyView {
                     .kerning(8)
                     .accessibilityLabel(Text(localized("lobby.shareCode")))
 
-                GlassEffectContainer(spacing: DesignBook.Spacing.md) {
+                GlassContainer(spacing: DesignBook.Spacing.md) {
                     HStack(spacing: DesignBook.Spacing.md) {
                         if let code = room?.id {
                             Button {
@@ -125,7 +125,7 @@ private extension RoomLobbyView {
                                 Label("lobby.copyCode", systemImage: "doc.on.doc")
                                     .font(DesignBook.Font.caption)
                             }
-                            .buttonStyle(.glass)
+                            .glassButtonStyle()
 
                             ShareLink(
                                 item: String(format: localized("lobby.shareMessage"), code),
@@ -134,7 +134,7 @@ private extension RoomLobbyView {
                                 Label("lobby.share", systemImage: "square.and.arrow.up")
                                     .font(DesignBook.Font.caption)
                             }
-                            .buttonStyle(.glass)
+                            .glassButtonStyle()
                         }
                     }
                 }
@@ -298,7 +298,7 @@ private extension RoomLobbyView {
                     Label("lobby.leaveTeam", systemImage: "arrow.uturn.left")
                         .font(DesignBook.Font.captionBold)
                 }
-                .buttonStyle(.glass)
+                .glassButtonStyle()
                 .tint(DesignBook.Color.Status.error)
             } else {
                 Button {
@@ -307,7 +307,7 @@ private extension RoomLobbyView {
                     Label("lobby.joinTeam", systemImage: "person.crop.circle.fill.badge.plus")
                         .font(DesignBook.Font.captionBold)
                 }
-                .buttonStyle(.glassProminent)
+                .glassProminentButtonStyle()
                 .tint(color)
             }
 

@@ -206,7 +206,7 @@ private extension OnlinePlayView {
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
                 }
-                .buttonStyle(.glass)
+                .glassButtonStyle()
                 .tint(DesignBook.Color.Status.warning)
                 .disabled(!isSkipEnabled || isSubmitting)
                 .opacity(isSkipEnabled ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
@@ -219,7 +219,7 @@ private extension OnlinePlayView {
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
             }
-            .buttonStyle(.glassProminent)
+            .glassProminentButtonStyle()
             .tint(DesignBook.Color.Status.success)
             .disabled(currentWord == nil || isSubmitting)
             .keyboardShortcut(.rightArrow, modifiers: [])

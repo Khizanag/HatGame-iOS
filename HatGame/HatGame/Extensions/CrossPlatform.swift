@@ -92,6 +92,28 @@ extension View {
     }
 }
 
+// MARK: - Glass effect container
+/// Groups Liquid Glass shapes so they blend and morph together. visionOS has
+/// no `GlassEffectContainer` (its windows are already glass), so there the
+/// content renders as a plain group.
+struct GlassContainer<Content: View>: View {
+    let spacing: CGFloat?
+    let content: Content
+
+    init(spacing: CGFloat? = nil, @ViewBuilder content: () -> Content) {
+        self.spacing = spacing
+        self.content = content()
+    }
+
+    var body: some View {
+        #if os(visionOS)
+        content
+        #else
+        GlassEffectContainer(spacing: spacing) { content }
+        #endif
+    }
+}
+
 // MARK: - Toolbar placement
 extension ToolbarItemPlacement {
     /// A trailing action placement: the navigation bar's trailing edge on iOS

@@ -214,7 +214,7 @@ private extension OnlineTeamCreationView {
 
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
+        ToolbarItemGroup(placement: .keyboardAccessory) {
             Spacer()
             Button(action: createTeam) {
                 Label(localized("createTeam.create"), systemImage: "plus.circle.fill")

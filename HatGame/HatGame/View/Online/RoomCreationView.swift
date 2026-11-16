@@ -173,7 +173,7 @@ private extension RoomCreationView {
 
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
+        ToolbarItemGroup(placement: .keyboardAccessory) {
             Spacer()
             Button(action: createRoom) {
                 Label(localized("createRoom.create"), systemImage: "plus.circle.fill")

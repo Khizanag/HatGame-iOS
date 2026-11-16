@@ -237,7 +237,7 @@ private extension OnlineWordInputView {
 
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
+        ToolbarItemGroup(placement: .keyboardAccessory) {
             Spacer()
             if playerWords.count == wordsPerPlayer {
                 Button(action: submit) {

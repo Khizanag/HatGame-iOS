@@ -164,7 +164,7 @@ private extension RoomJoinView {
 
     @ToolbarContentBuilder
     var keyboardToolbar: some ToolbarContent {
-        ToolbarItemGroup(placement: .keyboard) {
+        ToolbarItemGroup(placement: .keyboardAccessory) {
             Spacer()
             Button(action: joinRoom) {
                 Label(localized("joinRoom.join"), systemImage: "arrow.right.circle.fill")
