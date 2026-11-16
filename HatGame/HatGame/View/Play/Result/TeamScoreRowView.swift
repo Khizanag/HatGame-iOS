@@ -99,7 +99,7 @@ private extension TeamScoreRowView {
 
     var rankBackgroundColor: Color {
         switch rank {
-        case 1: return color
+        case 1: return DesignBook.Color.opaque(color)
         case 2: return DesignBook.Color.Text.tertiary.opacity(0.4)
         case 3: return DesignBook.Color.Text.tertiary.opacity(0.25)
         default: return DesignBook.Color.Background.secondary

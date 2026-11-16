@@ -43,5 +43,15 @@ extension DesignBook {
             let contrastWithBlack = (luminance + 0.05) / 0.05
             return contrastWithBlack > contrastWithWhite ? .black : .white
         }
+
+        /// `color` with its alpha forced to 1. `onAccent(for:)` ignores alpha,
+        /// so a fill behind its content must be opaque for the contrast to hold.
+        /// An already-opaque color is returned as is, keeping any appearance variants.
+        public static func opaque(_ color: SwiftUI.Color) -> SwiftUI.Color {
+            var resolved = color.resolve(in: EnvironmentValues())
+            guard resolved.opacity < 1 else { return color }
+            resolved.opacity = 1
+            return SwiftUI.Color(resolved)
+        }
     }
 }
