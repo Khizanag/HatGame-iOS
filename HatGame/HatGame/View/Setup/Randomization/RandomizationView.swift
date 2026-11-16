@@ -207,7 +207,11 @@ private extension RandomizationView {
             return
         }
         gameManager.startGame(startingTeamIndex: selectedStartingTeamIndex)
-        guard gameManager.engine.phase == .nextTeam else { return }
+        guard gameManager.engine.phase == .nextTeam else {
+            // Never leave the dimmed overlay up with navigation hidden.
+            isShuffling = false
+            return
+        }
         navigator.push(.gameLoop)
     }
 }
