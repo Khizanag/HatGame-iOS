@@ -221,11 +221,11 @@ private extension OnlinePlayView {
     @ToolbarContentBuilder
     var gameToolbar: some ToolbarContent {
         if isActivePlayer {
+            // A text item, system styled: ending the turn is a deliberate,
+            // confirmed action, not an icon to guess at.
             ToolbarItem(placement: .cancellationAction) {
-                Button { showingGiveUpConfirmation = true } label: {
-                    Label(localized("game.giveUp.button"), systemImage: "flag")
-                }
-                .keyboardShortcut(.cancelAction)
+                Button(localized("game.giveUp.button")) { showingGiveUpConfirmation = true }
+                    .keyboardShortcut(.cancelAction)
             }
         }
     }
