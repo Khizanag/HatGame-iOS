@@ -27,6 +27,7 @@ struct TeamRolesCard: View {
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.accent)
+                        .accessibilityHidden(true)
                 }
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -62,17 +63,17 @@ private extension TeamRolesCard {
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-            HStack(spacing: DesignBook.Spacing.xs) {
-                Image(systemName: icon)
-                    .font(DesignBook.Font.subheadline)
-                    .foregroundStyle(iconColor)
-
+            Label {
                 Text(localized(label))
-                    .font(DesignBook.Font.caption1Semibold)
                     .uppercaseLabel()
                     .tracking(1.2)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
+            } icon: {
+                Image(systemName: icon)
+                    .foregroundStyle(iconColor)
             }
+            .font(DesignBook.Font.caption1Semibold)
+            .accessibilityAddTraits(.isHeader)
             content()
         }
     }

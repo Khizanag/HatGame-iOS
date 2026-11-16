@@ -86,16 +86,19 @@ private extension FoldableCard {
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .contentShape(Rectangle())
+            .frame(maxWidth: .infinity, minHeight: DesignBook.Size.touchTargetSize, alignment: .leading)
+            .contentShape(.rect)
         }
-        .buttonStyle(PlainButtonStyle())
+        .buttonStyle(.plain)
+        .pointerHoverEffect()
+        .accessibilityValue(Text(localized(isExpanded ? "common.state.expanded" : "common.state.collapsed")))
     }
 
     var chevronIcon: some View {
         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
             .font(DesignBook.Font.title3)
             .foregroundStyle(DesignBook.Color.Text.accent)
+            .accessibilityHidden(true)
     }
 }
 
