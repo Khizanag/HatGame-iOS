@@ -6,6 +6,11 @@
 	<string>Hat Game uses the local network to find and connect to nearby devices for offline party play.</string>
 	<key>NSBluetoothAlwaysUsageDescription</key>
 	<string>Hat Game uses Bluetooth to discover nearby devices for offline party play.</string>
+	<key>UILaunchScreen</key>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
 	<key>NSBonjourServices</key>
 	<array>
 		<string>_hg-hat-game._tcp</string>
