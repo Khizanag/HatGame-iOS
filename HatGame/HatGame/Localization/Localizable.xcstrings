@@ -66,6 +66,40 @@
         }
       }
     },
+    "error.title.deleteTeam" : {
+      "comment" : "Alert title when the host failed to delete a team in the lobby.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Delete Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდის წაშლა ვერ მოხერხდა"
+          }
+        }
+      }
+    },
+    "error.title.joinTeam" : {
+      "comment" : "Alert title when joining a team in the lobby failed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Join Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდში შესვლა ვერ მოხერხდა"
+          }
+        }
+      }
+    },
     "error.title.leaveRoom" : {
       "comment" : "Alert title when leaving an online or nearby room failed.",
       "localizations" : {
@@ -79,6 +113,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ოთახის დატოვება ვერ მოხერხდა"
+          }
+        }
+      }
+    },
+    "error.title.leaveTeam" : {
+      "comment" : "Alert title when leaving a team in the lobby failed.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Leave Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდიდან გასვლა ვერ მოხერხდა"
+          }
+        }
+      }
+    },
+    "error.title.removePlayer" : {
+      "comment" : "Alert title when the host failed to remove an away player.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Remove Player"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშის ამოშლა ვერ მოხერხდა"
+          }
+        }
+      }
+    },
+    "error.title.startGame" : {
+      "comment" : "Alert title when the host failed to start the online or nearby game.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Couldn’t Start Game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის დაწყება ვერ მოხერხდა"
           }
         }
       }
@@ -215,6 +300,108 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "არ არის"
+          }
+        }
+      }
+    },
+    "lobby.deleteTeam" : {
+      "comment" : "Accessibility label and tooltip of the lobby button that deletes a team. %@ is the team name.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete %@"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წაშლა: %@"
+          }
+        }
+      }
+    },
+    "lobby.deleteTeam.confirm" : {
+      "comment" : "Destructive button that confirms deleting a lobby team.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდის წაშლა"
+          }
+        }
+      }
+    },
+    "lobby.deleteTeam.message" : {
+      "comment" : "Confirmation message before deleting a lobby team that has players.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Its players go back to No team and can join another one."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მისი მოთამაშეები გუნდის გარეშე დარჩებიან და სხვა გუნდში შესვლას შეძლებენ."
+          }
+        }
+      }
+    },
+    "lobby.deleteTeam.title" : {
+      "comment" : "Confirmation title before deleting a lobby team that has players. %@ is the team name.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete “%@”?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წაიშალოს „%@“?"
+          }
+        }
+      }
+    },
+    "lobby.inTeam" : {
+      "comment" : "Accessibility label of the checkmark next to a lobby player who joined a team. %@ is the team name.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In %@"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდშია: %@"
+          }
+        }
+      }
+    },
+    "lobby.inTeam.unnamed" : {
+      "comment" : "Accessibility label of the checkmark next to a lobby player whose team is not loaded yet.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In a team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდშია"
           }
         }
       }

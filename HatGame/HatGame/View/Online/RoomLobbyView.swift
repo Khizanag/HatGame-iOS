@@ -20,7 +20,10 @@ struct RoomLobbyView: View {
 
     @State private var showingTeamCreation: Bool = false
     @State private var isUpdating: Bool = false
+    @State private var teamPendingDeletion: OnlineTeam?
     @State private var error: Error?
+    /// Names the lobby action that failed ("Couldn't Join Team").
+    @State private var errorTitle: String = ""
 
     private var room: GameRoom? { roomManager.room }
     private var isHost: Bool { roomManager.isHost }
@@ -39,7 +42,20 @@ struct RoomLobbyView: View {
             .sheet(isPresented: $showingTeamCreation) {
                 OnlineTeamCreationView()
             }
-            .errorAlert($error, title: localized("error.title.updateRoom"), transport: transport)
+            .confirmationDialog(
+                deletionTitle,
+                isPresented: isDeletionConfirmationPresented,
+                titleVisibility: .visible,
+                presenting: teamPendingDeletion
+            ) { team in
+                Button(localized("lobby.deleteTeam.confirm"), role: .destructive) {
+                    removeTeam(team.id)
+                }
+                Button(localized("common.buttons.cancel"), role: .cancel) { }
+            } message: { _ in
+                Text(localized("lobby.deleteTeam.message"))
+            }
+            .errorAlert($error, title: errorTitle, transport: transport)
     }
 }
 
@@ -161,9 +177,10 @@ private extension RoomLobbyView {
 
             if !player.isConnected {
                 awayStatus(for: player)
-            } else if player.teamId != nil {
+            } else if let teamId = player.teamId {
                 Image(systemName: "checkmark.circle.fill")
                     .foregroundStyle(DesignBook.Color.Status.success)
+                    .accessibilityLabel(Text(inTeamLabel(for: teamId)))
             } else {
                 Text(localized("lobby.noTeam"))
                     .font(DesignBook.Font.subheadline)
@@ -182,20 +199,30 @@ private extension RoomLobbyView {
             .foregroundStyle(DesignBook.Color.Status.warning)
             .accessibilityIdentifier("lobby.away")
         if isHost {
-            Button {
+            Button(role: .destructive) {
                 removeAwayPlayer(player)
             } label: {
                 Image(systemName: "xmark.circle.fill")
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
+                    .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                    .contentShape(.rect)
             }
             .buttonStyle(.plain)
             .accessibilityLabel(String(format: localized("lobby.removePlayer"), player.name))
+            .help(String(format: localized("lobby.removePlayer"), player.name))
             .accessibilityIdentifier("lobby.removePlayer")
         }
     }
 
     func memberNameColor(for player: OnlinePlayer) -> Color {
         player.isConnected ? DesignBook.Color.Text.secondary : DesignBook.Color.Text.tertiary
+    }
+
+    func inTeamLabel(for teamId: String) -> String {
+        guard let team = allTeams.first(where: { $0.id == teamId }) else {
+            return localized("lobby.inTeam.unnamed")
+        }
+        return String(format: localized("lobby.inTeam"), team.name)
     }
 
     func teamColor(for teamId: String?) -> Color {
@@ -284,12 +311,12 @@ private extension RoomLobbyView {
                     }
                 }
 
-                teamActions(team, amIInTeam: amIInTeam, color: color)
+                teamActions(team, amIInTeam: amIInTeam, hasPlayers: !players.isEmpty, color: color)
             }
         }
     }
 
-    func teamActions(_ team: OnlineTeam, amIInTeam: Bool, color: Color) -> some View {
+    func teamActions(_ team: OnlineTeam, amIInTeam: Bool, hasPlayers: Bool, color: Color) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
             if amIInTeam {
                 Button {
@@ -314,15 +341,22 @@ private extension RoomLobbyView {
             Spacer()
 
             if isHost {
-                Button {
-                    removeTeam(team.id)
+                Button(role: .destructive) {
+                    if hasPlayers {
+                        teamPendingDeletion = team
+                    } else {
+                        removeTeam(team.id)
+                    }
                 } label: {
                     Image(systemName: "trash")
                         .font(DesignBook.Font.body)
                         .foregroundStyle(DesignBook.Color.Status.error)
+                        .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                        .contentShape(.rect)
                 }
                 .buttonStyle(.plain)
-                .accessibilityLabel(Text(localized("teamCard.delete")))
+                .accessibilityLabel(Text(String(format: localized("lobby.deleteTeam"), team.name)))
+                .help(String(format: localized("lobby.deleteTeam"), team.name))
             }
         }
     }
@@ -373,38 +407,62 @@ private extension RoomLobbyView {
     }
 }
 
+// MARK: - Team deletion
+private extension RoomLobbyView {
+    var isDeletionConfirmationPresented: Binding<Bool> {
+        Binding(
+            get: { teamPendingDeletion != nil },
+            set: { isPresented in
+                if !isPresented { teamPendingDeletion = nil }
+            }
+        )
+    }
+
+    var deletionTitle: String {
+        String(format: localized("lobby.deleteTeam.title"), teamPendingDeletion?.name ?? "")
+    }
+}
+
 // MARK: - Actions
 private extension RoomLobbyView {
     func joinTeam(_ teamId: String) {
-        perform { try await roomManager.joinTeam(teamId: teamId) }
+        perform(failureTitle: localized("error.title.joinTeam")) { try await roomManager.joinTeam(teamId: teamId) }
     }
 
     func leaveTeam() {
-        perform { try await roomManager.leaveTeam() }
+        perform(failureTitle: localized("error.title.leaveTeam")) { try await roomManager.leaveTeam() }
     }
 
     func removeAwayPlayer(_ player: OnlinePlayer) {
         DesignBook.Haptics.rigid()
-        perform { try await roomManager.removeAwayPlayer(player.id) }
+        perform(failureTitle: localized("error.title.removePlayer")) {
+            try await roomManager.removeAwayPlayer(player.id)
+        }
     }
 
     func removeTeam(_ teamId: String) {
         DesignBook.Haptics.rigid()
-        perform { try await roomManager.removeTeam(teamId: teamId) }
+        perform(failureTitle: localized("error.title.deleteTeam")) { try await roomManager.removeTeam(teamId: teamId) }
     }
 
     func startGame() {
         DesignBook.Haptics.confirm()
-        perform { try await roomManager.startGame() }
+        perform(failureTitle: localized("error.title.startGame")) { try await roomManager.startGame() }
     }
 
     /// One lobby write in flight at a time; a tap while one is pending is
-    /// dropped rather than racing it.
-    func perform(_ write: @escaping () async throws -> Void) {
+    /// dropped rather than racing it. `failureTitle` names the action in
+    /// the alert if it fails.
+    func perform(failureTitle: String, _ write: @escaping () async throws -> Void) {
         guard !isUpdating else { return }
         isUpdating = true
         Task {
-            do { try await write() } catch { self.error = error }
+            do {
+                try await write()
+            } catch {
+                errorTitle = failureTitle
+                self.error = error
+            }
             isUpdating = false
         }
     }
