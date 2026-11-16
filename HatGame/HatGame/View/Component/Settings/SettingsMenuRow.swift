@@ -61,7 +61,7 @@ private extension SettingsMenuRow {
                 }
 
                 Text(value)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .lineLimit(dynamicTypeSize.isAccessibilitySize ? 2 : 1)
                     .minimumScaleFactor(0.5)
 
@@ -69,7 +69,7 @@ private extension SettingsMenuRow {
                     .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
-            .font(DesignBook.Font.title2)
+            .font(DesignBook.Font.body)
             .padding(.horizontal, DesignBook.Spacing.sm)
             .padding(.vertical, DesignBook.Spacing.xs)
             .background(.quaternary, in: Capsule())
