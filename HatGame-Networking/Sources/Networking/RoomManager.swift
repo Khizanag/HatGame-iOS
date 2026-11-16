@@ -8,6 +8,9 @@
 import FirebaseDatabase
 import Foundation
 import Observation
+import OSLog
+
+private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "RoomManager")
 
 /// Where this device stands with the room it observes.
 public enum RoomConnectionState: Equatable, Sendable {
@@ -43,6 +46,12 @@ open class RoomManager {
     /// `.info/connected` observer that keeps this player's `isConnected`
     /// accurate, so the host can cover for an explainer who drops out.
     @ObservationIgnored private var connectivityHandle: DatabaseHandle?
+    /// A timed-out write may still land, so a retry must reuse the identity
+    /// of the attempt before it rather than mint a second room, player, or
+    /// team. Kept for the life of this manager.
+    @ObservationIgnored private var pendingCreation: PendingCreation?
+    @ObservationIgnored private var pendingPlayers: [String: OnlinePlayer] = [:]
+    @ObservationIgnored private var pendingTeams: [String: OnlineTeam] = [:]
     /// Stable per-device UUID kept in UserDefaults so reconnects map back
     /// to the same player record.
     internal var deviceId: String
@@ -76,28 +85,38 @@ open class RoomManager {
 
     // MARK: - Room Creation
     /// Draws codes until one is free. With 32^6 codes a collision is rare, so
-    /// a handful of attempts is plenty.
+    /// a handful of attempts is plenty. Retrying after a timeout re-sends the
+    /// same room, which counts as created if the first attempt landed.
     open func createRoom(hostName: String, settings: GameSettings) async throws -> String {
-        let host = OnlinePlayer(
-            deviceId: deviceId,
-            name: hostName,
-            isReady: true
-        )
+        var candidate = pendingCreation.flatMap { $0.matches(hostName, settings) ? $0.room : nil }
+            ?? Self.newRoom(hostName: hostName, settings: settings, deviceId: deviceId)
 
         for _ in 0..<5 {
-            let room = GameRoom(
-                id: RoomCode.random(),
-                hostId: host.id,
-                status: .waiting,
-                settings: settings,
-                players: [host]
-            )
-            guard try await firebaseService.createRoom(room) else { continue }
-            self.currentPlayerId = host.id
-            startObservingRoom(id: room.id)
-            return room.id
+            pendingCreation = PendingCreation(hostName: hostName, settings: settings, room: candidate)
+            let isCreated: Bool
+            do {
+                isCreated = try await firebaseService.createRoom(candidate)
+            } catch {
+                if !writeMayStillLand(error) { pendingCreation = nil }
+                throw error
+            }
+            if isCreated {
+                pendingCreation = nil
+                self.currentPlayerId = candidate.hostId
+                startObservingRoom(id: candidate.id)
+                return candidate.id
+            }
+            candidate = candidate.withCode(RoomCode.random())
         }
+        pendingCreation = nil
         throw NetworkingError.failedToGenerateRoomCode
+    }
+
+    /// The host starts offline: presence marks them connected once the
+    /// server confirms this client's connection.
+    private static func newRoom(hostName: String, settings: GameSettings, deviceId: String) -> GameRoom {
+        let host = OnlinePlayer(deviceId: deviceId, name: hostName, isReady: true, isConnected: false)
+        return GameRoom(id: RoomCode.random(), hostId: host.id, status: .waiting, settings: settings, players: [host])
     }
 
     // MARK: - Room Joining
@@ -113,15 +132,25 @@ open class RoomManager {
             throw RoomError.gameAlreadyStarted
         }
 
-        let playerId = UUID().uuidString
+        // One player identity per room code: a retry after a timed-out write
+        // rewrites the same node instead of adding a second player.
+        let pending = pendingPlayers[code]
         let player = OnlinePlayer(
-            id: playerId,
+            id: pending?.id ?? UUID().uuidString,
             deviceId: deviceId,
-            name: playerName
+            name: playerName,
+            isConnected: false,
+            joinedAt: pending?.joinedAt ?? Date()
         )
+        pendingPlayers[code] = player
 
-        try await firebaseService.addPlayer(player, toRoomId: code)
-        self.currentPlayerId = playerId
+        do {
+            try await firebaseService.addPlayer(player, toRoomId: code)
+        } catch {
+            if !writeMayStillLand(error) { pendingPlayers[code] = nil }
+            throw error
+        }
+        self.currentPlayerId = player.id
         startObservingRoom(id: code)
     }
 
@@ -233,8 +262,13 @@ open class RoomManager {
     /// Leaves the room. In the lobby the host's departure deletes the room
     /// and a guest's removes their player; once the game has started, or
     /// after the room closed, this only detaches, so the others keep their
-    /// game and results. The write happens before detaching, so on failure
-    /// the caller is still in the room and can retry.
+    /// game and results.
+    ///
+    /// A write the server refused leaves the caller in the room, presence
+    /// re-armed, to retry. A write that timed out is still queued and will
+    /// land when the connection returns, so the caller detaches as if it had
+    /// succeeded — re-arming presence there would let the queued offline
+    /// write recreate a player who is being removed.
     open func leaveRoom() async throws {
         let wasHost = isHost
         let roomId = observedRoomId
@@ -252,6 +286,8 @@ open class RoomManager {
                 } else {
                     try await firebaseService.removePlayer(playerId: playerId, fromRoomId: roomId)
                 }
+            } catch where writeMayStillLand(error) {
+                logger.info("Leave of \(roomId, privacy: .public) is pending; detaching")
             } catch {
                 startPresence(forRoomId: roomId)
                 throw error
@@ -268,8 +304,17 @@ open class RoomManager {
             throw NetworkingError.notAuthorized
         }
 
-        let team = OnlineTeam(name: name, colorHex: colorHex)
-        try await firebaseService.addTeam(team, toRoomId: roomId)
+        // Re-submitting the same team after a timeout reuses its id.
+        let key = "\(roomId)/\(name)/\(colorHex)"
+        let team = pendingTeams[key] ?? OnlineTeam(name: name, colorHex: colorHex)
+        pendingTeams[key] = team
+        do {
+            try await firebaseService.addTeam(team, toRoomId: roomId)
+            pendingTeams[key] = nil
+        } catch {
+            if !writeMayStillLand(error) { pendingTeams[key] = nil }
+            throw error
+        }
     }
 
     open func removeTeam(teamId: String) async throws {
@@ -296,24 +341,24 @@ open class RoomManager {
 
     // MARK: - Word Submission
     /// Adds the player's words and opens their submission gate in one
-    /// multi-path write, so a failure leaves neither half behind.
+    /// multi-path write, so a failure leaves neither half behind. Word ids
+    /// are derived from the player, so a resend overwrites rather than adds.
     open func submitWords(_ words: [String]) async throws {
         guard let playerId = currentPlayerId, let roomId = room?.id else { return }
 
-        let onlineWords = words.map { OnlineWord(text: $0, addedByPlayerId: playerId) }
+        let onlineWords = OnlineWord.submission(words, by: playerId)
         try await firebaseService.fillWords(onlineWords, markSubmittedPlayerIds: [playerId], toRoomId: roomId)
     }
 
     /// Host-only automatic word source. Atomically writes a host-generated
     /// pool and opens the submission gate for every player in one write — the
     /// host generated on behalf of the whole room, so no one types words.
-    /// All-or-nothing, so a transient failure can be retried without writing
-    /// duplicate words.
-    open func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
+    /// The caller builds `words` once and passes the same ones to every
+    /// retry, so an attempt that timed out but landed is simply rewritten.
+    open func fillRandomWords(_ words: [OnlineWord]) async throws {
         guard let roomId = room?.id else { return }
-        let onlineWords = texts.map { OnlineWord(text: $0, addedByPlayerId: hostPlayerId) }
         let playerIds = (room?.players ?? []).map(\.id)
-        try await firebaseService.fillWords(onlineWords, markSubmittedPlayerIds: playerIds, toRoomId: roomId)
+        try await firebaseService.fillWords(words, markSubmittedPlayerIds: playerIds, toRoomId: roomId)
     }
 
     // MARK: - Words
@@ -331,6 +376,34 @@ open class RoomManager {
         let newId = UUID().uuidString
         UserDefaults.standard.set(newId, forKey: key)
         return newId
+    }
+}
+
+/// A room whose create may still land; reused only for an identical request.
+private struct PendingCreation {
+    let hostName: String
+    let settings: GameSettings
+    let room: GameRoom
+
+    func matches(_ hostName: String, _ settings: GameSettings) -> Bool {
+        self.hostName == hostName && self.settings == settings
+    }
+}
+
+// MARK: - Code collisions
+private extension GameRoom {
+    func withCode(_ code: String) -> GameRoom {
+        GameRoom(
+            id: code,
+            hostId: hostId,
+            schemaVersion: schemaVersion,
+            status: status,
+            settings: settings,
+            teams: teams,
+            players: players,
+            gameState: gameState,
+            createdAt: createdAt
+        )
     }
 }
 

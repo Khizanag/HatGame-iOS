@@ -63,24 +63,33 @@ func runTransaction<Value: VersionedNode>(
 }
 
 /// Writes `value` at `reference` only if nothing is stored there yet.
-/// Returns `false` when the location is taken. A first invocation that sees
-/// an empty cache proposes the write; the server rejects it and re-runs the
-/// block with the stored value if one exists.
+/// Returns `false` when the location is taken by someone else. A value for
+/// which `isOwn` holds counts as created: an earlier attempt whose reply
+/// timed out landed after all. A first invocation that sees an empty cache
+/// proposes the write; the server rejects it and re-runs the block with the
+/// stored value if one exists.
 func runCreateIfAbsent<Value: Encodable & Sendable>(
     on reference: DatabaseReference,
-    value: Value
+    value: Value,
+    isOwn: @escaping @Sendable (Any) -> Bool
 ) async throws -> Bool {
     let object = try FirebaseCoding.object(from: value)
+    let foundOwn = Mutex(false)
     return try await withCheckedThrowingContinuation { continuation in
         reference.runTransactionBlock({ currentData in
-            guard currentData.value == nil || currentData.value is NSNull else { return .abort() }
+            if let stored = currentData.value, !(stored is NSNull) {
+                let isOwnValue = isOwn(stored)
+                foundOwn.withLock { $0 = isOwnValue }
+                return .abort()
+            }
+            foundOwn.withLock { $0 = false }
             currentData.value = object
             return .success(withValue: currentData)
         }, andCompletionBlock: { error, committed, _ in
             if let error {
                 continuation.resume(throwing: error)
             } else {
-                continuation.resume(returning: committed)
+                continuation.resume(returning: committed || foundOwn.withLock { $0 })
             }
         }, withLocalEvents: false)
     }

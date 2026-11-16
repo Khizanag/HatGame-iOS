@@ -70,6 +70,22 @@ struct RoomWritesTests {
         #expect(word["text"] as? String == "cat")
     }
 
+    @Test("A resent submission writes the same word nodes")
+    func submissionIsIdempotent() throws {
+        let first = try RoomWrites.fillWords(OnlineWord.submission(["cat", "dog"], by: "a"), markSubmitted: ["a"])
+        let resent = try RoomWrites.fillWords(OnlineWord.submission(["cat", "dog"], by: "a"), markSubmitted: ["a"])
+
+        #expect(first.keys.sorted() == resent.keys.sorted())
+        #expect(first.keys.sorted() == ["players/a/hasSubmittedWords", "words/a-0", "words/a-1"])
+    }
+
+    @Test("Different players' submissions never share an id")
+    func submissionsAreDisjoint() {
+        let ids = (OnlineWord.submission(["x"], by: "a") + OnlineWord.submission(["x"], by: "b")).map(\.id)
+
+        #expect(Set(ids).count == 2)
+    }
+
     @Test("Status writes its raw value")
     func status() {
         #expect(RoomWrites.status(.playing)["status"] as? String == "playing")

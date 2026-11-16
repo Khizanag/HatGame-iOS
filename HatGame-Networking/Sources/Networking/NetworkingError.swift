@@ -39,3 +39,10 @@ public enum NetworkingError: Error, LocalizedError {
         }
     }
 }
+
+/// True when a write that failed with `error` may still reach the server.
+/// Offline persistence queues writes, so a timeout or a cancelled wait is a
+/// write in flight, not a write refused.
+func writeMayStillLand(_ error: any Error) -> Bool {
+    error as? NetworkingError == .timeout || error is CancellationError
+}

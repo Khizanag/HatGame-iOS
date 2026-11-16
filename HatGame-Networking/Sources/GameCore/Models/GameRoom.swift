@@ -155,7 +155,7 @@ private struct PlayerRecord: Decodable {
     }
 }
 
-public struct GameSettings: Codable, Sendable {
+public struct GameSettings: Codable, Equatable, Sendable {
     public var maxTeams: Int
     public var playersPerTeam: Int
     public var wordsPerPlayer: Int

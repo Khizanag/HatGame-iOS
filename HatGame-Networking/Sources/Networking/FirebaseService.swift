@@ -53,10 +53,14 @@ public final class FirebaseService: @unchecked Sendable {
     // MARK: - Room Operations
     /// Creates the room unless its code is already in use. Returns `false`
     /// on a collision so the caller can draw another code — a plain write
-    /// would silently replace someone else's room.
+    /// would silently replace someone else's room. A room already stored
+    /// with this host is this same room from an attempt that timed out.
     public func createRoom(_ room: GameRoom) async throws -> Bool {
-        try await transact { [self] in
-            try await runCreateIfAbsent(on: roomsRef.child(room.id), value: room)
+        let hostId = room.hostId
+        return try await transact { [self] in
+            try await runCreateIfAbsent(on: roomsRef.child(room.id), value: room) { stored in
+                (stored as? [String: Any])?["hostId"] as? String == hostId
+            }
         }
     }
 

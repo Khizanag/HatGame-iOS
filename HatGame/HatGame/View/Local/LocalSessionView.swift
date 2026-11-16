@@ -90,12 +90,13 @@ struct LocalSessionView: View {
         hasGeneratedWords = true
 
         let count = max(1, room.settings.wordsPerPlayer * room.players.count)
-        let texts = WordDatabase.randomWords(count: count)
         let hostId = localRoomManager.currentPlayerId ?? ""
+        // Built once: every retry sends the same ids.
+        let words = WordDatabase.randomWords(count: count).map { OnlineWord(text: $0, addedByPlayerId: hostId) }
         Task {
             for attempt in 1...3 {
                 do {
-                    try await localRoomManager.fillRandomWords(texts, hostPlayerId: hostId)
+                    try await localRoomManager.fillRandomWords(words)
                     return
                 } catch {
                     guard attempt < 3 else {

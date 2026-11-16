@@ -177,10 +177,11 @@ public final class LocalRoomManager: RoomManager {
         try perform(.submitWords(submitted))
     }
 
-    public override func fillRandomWords(_ texts: [String], hostPlayerId: String) async throws {
+    public override func fillRandomWords(_ generated: [OnlineWord]) async throws {
         guard isLocalHost else { throw LocalError.hostOnly }
         guard let room, let next = RoomRules.markAllWordsSubmitted(in: room) else { return }
-        words.append(contentsOf: texts.map { OnlineWord(text: $0, addedByPlayerId: hostPlayerId) })
+        let existingIds = Set(words.map(\.id))
+        words.append(contentsOf: generated.filter { !existingIds.contains($0.id) })
         self.room = next
         broadcastWords()
         broadcastSnapshot()
@@ -281,7 +282,7 @@ private extension LocalRoomManager {
             next = RoomRules.startGame(room)
         case let .submitWords(texts):
             next = RoomRules.submitWords(playerId: playerId, in: room)
-            addedWords = texts.map { OnlineWord(text: $0, addedByPlayerId: playerId) }
+            addedWords = OnlineWord.submission(texts, by: playerId)
         }
         guard let next else { return false }
         self.room = next
