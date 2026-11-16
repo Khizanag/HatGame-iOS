@@ -60,9 +60,13 @@ private extension TeamNameSuggestionRow {
                     .background {
                         Circle().fill(DesignBook.Color.Text.accent.opacity(0.12))
                     }
+                    .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                    .contentShape(.rect)
             }
             .buttonStyle(.plain)
+            .pointerHoverEffect()
             .accessibilityLabel(Text(localized("teamForm.suggestions.shuffle")))
+            .help(localized("teamForm.suggestions.shuffle"))
         }
     }
 }
@@ -80,7 +84,7 @@ struct SuggestionChip: View {
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .lineLimit(1)
                 .padding(.horizontal, DesignBook.Spacing.md)
-                .padding(.vertical, DesignBook.Spacing.sm)
+                .frame(minHeight: DesignBook.Size.touchTargetSize)
                 .background {
                     Capsule()
                         .fill(DesignBook.Color.Text.accent.opacity(0.10))
@@ -89,8 +93,10 @@ struct SuggestionChip: View {
                                 .strokeBorder(DesignBook.Color.Text.accent.opacity(0.30), lineWidth: 1)
                         }
                 }
+                .contentShape(.capsule)
         }
         .buttonStyle(.plain)
+        .pointerHoverEffect()
         .accessibilityLabel(Text(verbatim: text))
         .accessibilityHint(Text(localized("teamForm.suggestions.tap")))
     }

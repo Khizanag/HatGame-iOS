@@ -14,6 +14,13 @@ struct TeamFormView: View {
         case player(Int)
     }
 
+    /// What the form held when it opened; closing after a change confirms first.
+    private struct Snapshot {
+        let name: String
+        let players: [String]
+        let color: Color
+    }
+
     @Environment(GameManager.self) private var gameManager
     @Environment(\.dismiss) private var dismissSheet
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
@@ -29,6 +36,11 @@ struct TeamFormView: View {
     @State private var hasEditedTeamName: Bool = false
     /// Reveals the name + color cards. Hidden until the members are filled (sticky once shown).
     @State private var hasRevealedDetails: Bool = false
+    @State private var initialSnapshot: Snapshot?
+    /// The player-count error waits until the host leaves the last player field,
+    /// so it never scolds while they are still typing.
+    @State private var isPlayerValidationVisible = false
+    @State private var isDiscardConfirmationPresented = false
 
     @FocusState private var focusedField: Field?
     @ScaledMetric(relativeTo: .subheadline) private var playerBadgeSize: CGFloat = 24
@@ -37,10 +49,12 @@ struct TeamFormView: View {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
     }
 
+    private var trimmedPlayerNames: [String] {
+        playerNames.map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+    }
+
     private var filledPlayerNames: [String] {
-        playerNames
-            .map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
-            .filter { !$0.isEmpty }
+        trimmedPlayerNames.filter { !$0.isEmpty }
     }
 
     /// A team name built from the member names, e.g. "Anna & Ben".
@@ -55,14 +69,14 @@ struct TeamFormView: View {
     private var requiredPlayers: Int { gameManager.configuration.playersPerTeam }
 
     private var canSave: Bool {
-        !trimmedTeamName.isEmpty && filledPlayerNames.count == requiredPlayers
+        !trimmedTeamName.isEmpty && areAllPlayersFilled
     }
 
-    private var validationMessage: String? {
-        guard !trimmedTeamName.isEmpty, filledPlayerNames.count < requiredPlayers else {
-            return nil
-        }
-        return localized("teamForm.validation.exactPlayers \(requiredPlayers)")
+    private var hasUnsavedChanges: Bool {
+        guard let initialSnapshot else { return false }
+        return trimmedTeamName != initialSnapshot.name
+            || trimmedPlayerNames != initialSnapshot.players
+            || !teamColor.isApproximatelyEqual(to: initialSnapshot.color)
     }
 
     private var title: String {
@@ -80,10 +94,6 @@ struct TeamFormView: View {
             .map(\.color)
     }
 
-    private var primaryButtonIcon: String {
-        team == nil ? "plus.circle.fill" : "checkmark.circle.fill"
-    }
-
     init(
         team: Team? = nil,
         onPrimaryAction: @escaping (Team) -> Void
@@ -93,12 +103,44 @@ struct TeamFormView: View {
     }
 
     var body: some View {
+        ScrollViewReader { proxy in
+            formContent
+                .scrollDismissesKeyboard(.interactively)
+                .onChange(of: focusedField) { previous, field in
+                    handleFocusChange(from: previous, to: field, proxy: proxy)
+                }
+        }
+        .navigationTitle(title)
+        .inlineNavigationTitle()
+        .setDefaultBackground()
+        .toolbar {
+            CloseToolbarItem(action: handleClose)
+            ConfirmToolbarItem(title: primaryButtonTitle, canConfirm: canSave, action: handlePrimaryAction)
+        }
+        .interactiveDismissDisabled(hasUnsavedChanges)
+        .confirmationDialog(
+            localized("common.discardChanges"),
+            isPresented: $isDiscardConfirmationPresented,
+            titleVisibility: .hidden
+        ) {
+            Button(localized("common.discardChanges"), role: .destructive) { dismissSheet() }
+            Button(localized("common.keepEditing"), role: .cancel) {}
+        }
+        .onAppear(perform: handleAppear)
+        .onChange(of: playerNames) { _, _ in handlePlayerNamesChange() }
+    }
+}
+
+// MARK: - Subviews
+private extension TeamFormView {
+    var formContent: some View {
         ScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 playersCard
 
                 if hasRevealedDetails {
                     teamNameCard
+                        .id(Field.teamName)
                         .transition(.opacity.combined(with: .move(edge: .top)))
                     TeamColorCard(color: $teamColor, occupiedColors: otherTeamColors)
                         .transition(.opacity.combined(with: .move(edge: .top)))
@@ -108,29 +150,22 @@ struct TeamFormView: View {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .navigationTitle(title)
-        .setDefaultStyle()
-        .actionBar {
-            stackedActions
-                .paddingHorizontalDefault()
-                .padding(.top, DesignBook.Spacing.md)
-                .padding(.bottom, DesignBook.Spacing.md)
-        }
-        .onAppear(perform: handleAppear)
-        .onChange(of: playerNames) { _, _ in handlePlayerNamesChange() }
     }
-}
 
-// MARK: - Subviews
-private extension TeamFormView {
     var teamNameCard: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                TeamFormFieldLabel(icon: "person.3.fill", title: "teamForm.teamName")
+                TeamFormFieldLabel(icon: "textformat", title: "teamForm.teamName")
 
                 TextField(localized("teamForm.enterTeamName"), text: teamNameBinding)
                     .focused($focusedField, equals: .teamName)
-                    .hatFieldStyle(label: localized("teamForm.teamName"), font: DesignBook.Font.title3) {
+                    .hatFieldStyle(
+                        label: localized("teamForm.teamName"),
+                        font: DesignBook.Font.title3,
+                        submitLabel: .done,
+                        disablesAutocorrection: true,
+                        capitalization: .words
+                    ) {
                         focusedField = .teamName
                     }
                     .onSubmit { focusedField = nil }
@@ -160,17 +195,31 @@ private extension TeamFormView {
                         .monospacedDigit()
                 }
 
-                if let validationMessage {
-                    Text(validationMessage)
-                        .font(DesignBook.Font.subheadline)
-                        .foregroundStyle(DesignBook.Color.Status.error)
-                }
+                playersMessage
 
                 VStack(spacing: DesignBook.Spacing.md) {
                     ForEach(playerNames.indices, id: \.self) { index in
                         playerField(index: index)
+                            .id(Field.player(index))
                     }
                 }
+            }
+        }
+    }
+
+    /// Neutral guidance while the members are being typed; the error only
+    /// once the host has moved past the last player field.
+    @ViewBuilder
+    var playersMessage: some View {
+        if !areAllPlayersFilled {
+            if isPlayerValidationVisible {
+                Text(localized("teamForm.validation.exactPlayers \(requiredPlayers)"))
+                    .font(DesignBook.Font.subheadline)
+                    .foregroundStyle(DesignBook.Color.Status.error)
+            } else {
+                Text(localized("teamForm.helper.players \(requiredPlayers)"))
+                    .font(DesignBook.Font.subheadline)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
             }
         }
     }
@@ -184,6 +233,7 @@ private extension TeamFormView {
                 .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
                 .clipShape(Circle())
                 .monospacedDigit()
+                .accessibilityHidden(true)
 
             TextField(
                 localized("teamForm.playerName"),
@@ -195,24 +245,13 @@ private extension TeamFormView {
             .focused($focusedField, equals: .player(index))
             .hatFieldStyle(
                 label: localized("teamForm.playerField \(index + 1)"),
+                submitLabel: .next,
                 contentType: .givenName,
-                disablesAutocorrection: true
+                disablesAutocorrection: true,
+                capitalization: .words
             ) { focusedField = .player(index) }
-            .onSubmit {
-                let nextIndex = index + 1
-                focusedField = nextIndex < playerNames.count ? .player(nextIndex) : nil
-            }
+            .onSubmit { advanceFocus(fromPlayer: index) }
         }
-    }
-
-    var stackedActions: some View {
-        primarySubmitButton
-    }
-
-    var primarySubmitButton: some View {
-        PrimaryButton(title: primaryButtonTitle, icon: primaryButtonIcon, action: handlePrimaryAction)
-            .disabled(!canSave)
-            .opacity(canSave ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
     }
 }
 
@@ -237,10 +276,41 @@ private extension TeamFormView {
     }
 }
 
+// MARK: - Focus
+private extension TeamFormView {
+    /// Return moves through the players, then on to the team name. When a
+    /// player is still missing, it goes back to the first empty field.
+    func advanceFocus(fromPlayer index: Int) {
+        if index + 1 < playerNames.count {
+            focusedField = .player(index + 1)
+        } else if let firstEmpty = trimmedPlayerNames.firstIndex(where: \.isEmpty) {
+            isPlayerValidationVisible = true
+            focusedField = .player(firstEmpty)
+        } else {
+            focusedField = .teamName
+        }
+    }
+
+    /// Validates when focus leaves the last player field, and keeps the newly
+    /// focused field in view above the keyboard.
+    func handleFocusChange(from previous: Field?, to field: Field?, proxy: ScrollViewProxy) {
+        let lastPlayer = Field.player(max(playerNames.count - 1, 0))
+        if previous == lastPlayer, field != lastPlayer {
+            isPlayerValidationVisible = true
+        }
+        guard let field else { return }
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
+            proxy.scrollTo(field, anchor: .center)
+        }
+    }
+}
+
 // MARK: - Actions
 private extension TeamFormView {
     func handleAppear() {
+        guard initialSnapshot == nil else { return }
         loadInitialData()
+        initialSnapshot = Snapshot(name: trimmedTeamName, players: trimmedPlayerNames, color: teamColor)
         // Start the host straight on the first member field for a new team.
         if team == nil {
             focusedField = .player(0)
@@ -296,8 +366,17 @@ private extension TeamFormView {
         }
     }
 
+    /// Closing keeps nothing, so it asks first when something changed.
+    func handleClose() {
+        if hasUnsavedChanges {
+            isDiscardConfirmationPresented = true
+        } else {
+            dismissSheet()
+        }
+    }
+
     func handlePrimaryAction() {
-        guard !trimmedTeamName.isEmpty else { return }
+        guard canSave else { return }
 
         let teamId = team?.id ?? UUID()
         let updatedTeam = Team(

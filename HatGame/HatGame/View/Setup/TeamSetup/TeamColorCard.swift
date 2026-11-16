@@ -24,6 +24,13 @@ struct TeamColorCard: View {
         localized(isExpanded ? "common.state.expanded" : "common.state.collapsed")
     }
 
+    /// The palette name of the current color, or "Custom Color" for a picked one.
+    private var colorName: String {
+        suggestedColorOptions.firstIndex { color.isApproximatelyEqual(to: $0) }
+            .map(TeamColorName.name(forPaletteIndex:))
+            ?? localized("teamForm.customColor")
+    }
+
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
@@ -47,13 +54,14 @@ private extension TeamColorCard {
             }
         } label: {
             HStack(spacing: DesignBook.Spacing.sm) {
-                Image(systemName: "paintpalette.fill")
-                    .font(DesignBook.IconFont.medium)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-
-                Text(localized("teamForm.teamColor"))
-                    .font(DesignBook.Font.subheadlineSemibold)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                Label {
+                    Text(localized("teamForm.teamColor"))
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                } icon: {
+                    Image(systemName: "paintpalette.fill")
+                        .foregroundStyle(DesignBook.Color.Text.accent)
+                }
+                .font(DesignBook.Font.subheadlineSemibold)
 
                 Spacer()
 
@@ -66,9 +74,13 @@ private extension TeamColorCard {
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             }
+            // The whole row, not just its glyphs, toggles the card.
+            .frame(minHeight: DesignBook.Size.touchTargetSize)
+            .contentShape(.rect)
         }
         .buttonStyle(.plain)
-        .accessibilityValue(Text(colorSectionState))
+        .pointerHoverEffect()
+        .accessibilityValue(Text(verbatim: "\(colorName), \(colorSectionState)"))
     }
 
     var colorPicker: some View {
@@ -93,13 +105,13 @@ private extension TeamColorCard {
                     )
                 }
 
+                // The picker writes its binding back when it appears, so its
+                // setter only assigns — collapsing here would close the card
+                // the moment it opened.
                 ColorPicker(
                     localized("teamForm.customColor"),
-                    selection: Binding(
-                        get: { color },
-                        set: { selectColor($0) }
-                    ),
-                    supportsOpacity: true
+                    selection: $color,
+                    supportsOpacity: false
                 )
                 .labelsHidden()
                 .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
@@ -126,7 +138,9 @@ private extension TeamColorCard {
         occupiedColors.contains { candidate.isApproximatelyEqual(to: $0) }
     }
 
+    /// A palette pick is final, so the card closes on it.
     func selectColor(_ color: Color) {
+        DesignBook.Haptics.soft()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             self.color = color
             isExpanded = false

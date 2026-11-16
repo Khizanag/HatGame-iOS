@@ -23,8 +23,10 @@ struct ColorSwatchButton: View {
                 .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
                 .overlay(overlay.decorativeHeroSizing())
                 .opacity(isDisabled ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
+                .contentShape(.circle)
         }
         .buttonStyle(.plain)
+        .pointerHoverEffect()
         .disabled(isDisabled)
         .accessibilityLabel(Text(name))
         .accessibilityValue(isDisabled ? Text(localized("teamForm.color.swatch.taken")) : Text(verbatim: ""))

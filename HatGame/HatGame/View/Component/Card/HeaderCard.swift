@@ -8,12 +8,18 @@
 import DesignBook
 import SwiftUI
 
+/// A screen's intro card. Leave `title` out when it would repeat the
+/// navigation title; the description then carries the card.
 struct HeaderCard<Content: View>: View {
-    let title: String
+    let title: String?
     let description: String?
     @ViewBuilder let content: () -> Content
 
-    init(title: String, description: String? = nil, @ViewBuilder content: @escaping () -> Content = { EmptyView() }) {
+    init(
+        title: String? = nil,
+        description: String? = nil,
+        @ViewBuilder content: @escaping () -> Content = { EmptyView() }
+    ) {
         self.title = title
         self.description = description
         self.content = content
@@ -22,10 +28,12 @@ struct HeaderCard<Content: View>: View {
     var body: some View {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                Text(title)
-                    .font(DesignBook.Font.title3)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if let title {
+                    Text(title)
+                        .font(DesignBook.Font.title3)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 if let description {
                     Text(description)

@@ -65,6 +65,8 @@ struct GameFlowView: View {
         .environment(gameManager)
         .environment(gameManager.engine)
         .environment(gameNavigator)
+        // Where the flow is a sheet (macOS), a stray dismiss mustn't drop the teams.
+        .interactiveDismissDisabled(!gameManager.configuration.teams.isEmpty)
         .onReceive(gameNavigator.pleaseDismissViewPublisher) {
             dismiss()
         }

@@ -13,11 +13,13 @@ struct TeamSetupView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dismiss) private var dismiss
 
     @State private var isAddTeamSheetPresented = false
     @State private var editingTeam: Team?
     @State private var deletingTeam: Team?
     @State private var isEditing: Bool = false
+    @State private var isDiscardConfirmationPresented = false
 
     private var teams: [Team] { gameManager.configuration.teams }
     private var isEditMode: Bool { isEditing }
@@ -35,8 +37,19 @@ struct TeamSetupView: View {
         content
             .editModeEnvironment(isEditing: $isEditing)
             .navigationTitle(localized("teamSetup.title"))
-            .setDefaultStyle()
+            .inlineNavigationTitle()
+            .setDefaultBackground()
             .toolbar { toolbarContent }
+            .confirmationDialog(
+                localized("teamSetup.discard.title"),
+                isPresented: $isDiscardConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button(localized("common.discardChanges"), role: .destructive) { dismiss() }
+                Button(localized("common.keepEditing"), role: .cancel) {}
+            } message: {
+                Text(localized("teamSetup.discard.message"))
+            }
             .sheet(isPresented: $isAddTeamSheetPresented) {
                 NavigationStack {
                     AddTeamView(
@@ -82,10 +95,7 @@ private extension TeamSetupView {
     }
 
     var headerCard: some View {
-        HeaderCard(
-            title: localized("teamSetup.title"),
-            description: localized("teamSetup.description")
-        )
+        HeaderCard(description: localized("teamSetup.description"))
     }
 
     var populatedList: some View {
@@ -109,7 +119,7 @@ private extension TeamSetupView {
 
     var emptyState: some View {
         ContentUnavailableView {
-            Label(localized("teamSetup.empty.title"), systemImage: "person.3")
+            Label(localized("teamSetup.empty.title"), systemImage: "person.2")
         } description: {
             Text(localized("teamSetup.empty.description \(gameManager.configuration.minTeams)"))
         } actions: {
@@ -128,8 +138,8 @@ private extension TeamSetupView {
             PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
                 navigator.push(.wordSettings)
             }
+            .keyboardShortcut(.defaultAction)
             .disabled(!canContinue)
-            .opacity(canContinue ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
 
             if !canContinue {
                 requirementText
@@ -155,12 +165,13 @@ private extension TeamSetupView {
             TeamCard(team: team, playersPerTeam: gameManager.configuration.playersPerTeam)
         }
         .buttonStyle(.plain)
+        .pointerHoverEffect()
         .paddingHorizontalDefault()
         .padding(.vertical, DesignBook.Spacing.sm)
         .listRowInsets(EdgeInsets())
         .listRowBackground(Color.clear)
         .listRowSeparator(.hidden)
-        .accessibilityLabel(Text(String(format: localized("teamSetup.editTeam.a11y %@"), team.name)))
+        .accessibilityLabel(Text(rowAccessibilityLabel(for: team)))
         .accessibilityHint(Text(localized("teamSetup.editTeam.a11yHint")))
         .swipeActions(edge: .trailing, allowsFullSwipe: false) {
             deleteSwipeAction(for: team)
@@ -178,6 +189,14 @@ private extension TeamSetupView {
                 Label(localized("common.buttons.delete"), systemImage: "trash")
             }
         }
+    }
+
+    /// "Alpha, players: Ann and Ben" — the members, not just the name.
+    func rowAccessibilityLabel(for team: Team) -> String {
+        let members = team.players
+            .map(\.name)
+            .formatted(.list(type: .and).locale(AppConfiguration.shared.locale))
+        return String(format: localized("teamSetup.teamRow.a11y %@ %@"), team.name, members)
     }
 
     func deleteSwipeAction(for team: Team) -> some View {
@@ -222,6 +241,7 @@ private extension TeamSetupView {
 private extension TeamSetupView {
     @ToolbarContentBuilder
     var toolbarContent: some ToolbarContent {
+        CloseToolbarItem(action: handleClose)
         #if !os(macOS)
         if canReorder {
             ToolbarItem(placement: .trailingAction) {
@@ -237,7 +257,17 @@ private extension TeamSetupView {
                     Image(systemName: "plus")
                 }
                 .accessibilityLabel(Text(localized("teamSetup.addTeam")))
+                .help(localized("teamSetup.addTeam"))
             }
+        }
+    }
+
+    /// Closing the setup drops every team added so far, so it asks first.
+    func handleClose() {
+        if hasTeams {
+            isDiscardConfirmationPresented = true
+        } else {
+            dismiss()
         }
     }
 
