@@ -101,7 +101,7 @@ private extension OnlinePlayView {
                 explainerName: explainerName,
                 isOwnTeam: roomManager.currentPlayer?.teamId == team.id,
                 remainingSeconds: remainingSeconds,
-                totalSeconds: gameState?.roundDuration ?? 60,
+                totalSeconds: gameState.map(OnlineGameRules.turnDuration) ?? 60,
                 teamScore: teamScoreThisRound,
                 totalWords: totalWordCount,
                 remainingWords: remainingWordCount
@@ -115,7 +115,7 @@ private extension OnlinePlayView {
         VStack(spacing: DesignBook.Spacing.lg) {
             CircularTimerView(
                 remainingSeconds: remainingSeconds,
-                totalSeconds: gameState?.roundDuration ?? 60,
+                totalSeconds: gameState.map(OnlineGameRules.turnDuration) ?? 60,
                 isPaused: false,
                 tint: tint
             )
@@ -252,11 +252,11 @@ private extension OnlinePlayView {
         }
         guard let startedAt = state.timerStartedAt else {
             // Pre-turn: show the full duration so the ring sits at 100%.
-            remainingSeconds = state.roundDuration
+            remainingSeconds = OnlineGameRules.turnDuration(state)
             return
         }
         let elapsed = Int(Date().timeIntervalSince(startedAt))
-        remainingSeconds = max(0, state.roundDuration - elapsed)
+        remainingSeconds = max(0, OnlineGameRules.turnDuration(state) - elapsed)
     }
 
     func startTimerLoop() {

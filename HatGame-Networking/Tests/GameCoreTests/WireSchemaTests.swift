@@ -53,7 +53,7 @@ struct WireSchemaTests {
         let state = OnlineGameState(schemaVersion: Self.newer, remainingWordIds: ["w1"], activePlayerId: "a")
 
         #expect(!state.isSupported)
-        #expect(OnlineGameRules.startTurn(state, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(state, teams: [], now: Fixture.epoch) == nil)
         #expect(OnlineGameRules.endTurn(state) == nil)
     }
 

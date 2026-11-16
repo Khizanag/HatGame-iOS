@@ -65,6 +65,12 @@ public struct OnlineGameState: VersionedNode {
     /// Frozen at game start from the host's `GameSettings` — authoritative for
     /// every peer so all clients agree on whether skipping is allowed.
     public var isSkippingEnabled: Bool
+    /// Seconds a team keeps for its next turn after emptying the hat with
+    /// time left (see `docs/rounds.md`). Consumed when that turn starts.
+    public var carryOverSeconds: [String: Int]
+    /// Length of the running turn — a full `roundDuration` or a carried-over
+    /// remainder. `nil` between turns.
+    public var turnSeconds: Int?
 
     public init(
         schemaVersion: Int = WireSchema.currentVersion,
@@ -79,7 +85,9 @@ public struct OnlineGameState: VersionedNode {
         activePlayerId: String? = nil,
         timerStartedAt: Date? = nil,
         roundDuration: Int = 60,
-        isSkippingEnabled: Bool = true
+        isSkippingEnabled: Bool = true,
+        carryOverSeconds: [String: Int] = [:],
+        turnSeconds: Int? = nil
     ) {
         self.schemaVersion = schemaVersion
         self.currentRound = currentRound
@@ -94,6 +102,8 @@ public struct OnlineGameState: VersionedNode {
         self.timerStartedAt = timerStartedAt
         self.roundDuration = roundDuration
         self.isSkippingEnabled = isSkippingEnabled
+        self.carryOverSeconds = carryOverSeconds
+        self.turnSeconds = turnSeconds
     }
 
     public func getScore(for teamId: String, in round: OnlineGameRound) -> Int {
@@ -121,7 +131,7 @@ public struct OnlineGameState: VersionedNode {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case schemaVersion, currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
              remainingWordIds, allWordIds, scores, phase, activePlayerId,
-             timerStartedAt, roundDuration, isSkippingEnabled
+             timerStartedAt, roundDuration, isSkippingEnabled, carryOverSeconds, turnSeconds
     }
 
     public static var knownKeys: Set<String> {
@@ -147,5 +157,7 @@ public struct OnlineGameState: VersionedNode {
         self.timerStartedAt = try container.decodeIfPresent(Date.self, forKey: .timerStartedAt)
         self.roundDuration = try container.decode(Int.self, forKey: .roundDuration)
         self.isSkippingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSkippingEnabled) ?? true
+        self.carryOverSeconds = try container.decodeIfPresent([String: Int].self, forKey: .carryOverSeconds) ?? [:]
+        self.turnSeconds = try container.decodeIfPresent(Int.self, forKey: .turnSeconds)
     }
 }

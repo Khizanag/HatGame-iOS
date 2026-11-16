@@ -42,7 +42,7 @@ public enum OnlineGameRules {
     ) -> OnlineGameState? {
         switch action {
         case .startTurn:
-            startTurn(state, now: context.now)
+            startTurn(state, teams: context.teams, now: context.now)
         case let .markGuessed(wordId):
             markGuessed(state, expectedWordId: wordId, teams: context.teams, now: context.now)
         case let .skip(wordId):
@@ -153,7 +153,9 @@ public enum OnlineGameRules {
 
     // MARK: - Turn
     /// `.teamPrep` → `.playing`, anchoring every peer's countdown at `now`.
-    public static func startTurn(_ state: OnlineGameState, now: Date) -> OnlineGameState? {
+    /// A team that emptied the hat last round plays this turn on its
+    /// carried-over seconds; everyone else gets a full timer.
+    public static func startTurn(_ state: OnlineGameState, teams: [OnlineTeam], now: Date) -> OnlineGameState? {
         guard state.isSupported,
               state.phase == .teamPrep,
               state.activePlayerId != nil,
@@ -161,6 +163,9 @@ public enum OnlineGameRules {
         var next = state
         next.phase = .playing
         next.timerStartedAt = now
+        next.turnSeconds = currentTeam(state, teams: teams)
+            .flatMap { next.carryOverSeconds.removeValue(forKey: $0.id) }
+            ?? state.roundDuration
         next.currentWordId = state.currentWordId ?? firstWordId
         return next
     }
@@ -185,10 +190,22 @@ public enum OnlineGameRules {
         next.remainingWordIds.removeAll { $0 == expectedWordId }
         next.currentWordId = next.remainingWordIds.first
         if next.remainingWordIds.isEmpty {
+            if let deadline = deadline(state) {
+                next.carryOverSeconds[team.id] = carryOverSeconds(remaining: deadline.timeIntervalSince(now))
+            }
             next.phase = .turnResults
             next.timerStartedAt = nil
+            next.turnSeconds = nil
         }
         return next
+    }
+
+    /// Whole seconds a team carries after emptying the hat with `remaining`
+    /// on the clock: what its countdown showed, rounded up, never below one
+    /// — a guess accepted in the grace period after zero still carries one.
+    /// Matches the single-device `GameRules.carryOverSeconds(for:)`.
+    public static func carryOverSeconds(remaining: TimeInterval) -> Int {
+        max(1, Int(remaining.rounded(.up)))
     }
 
     /// Moves the current word to the back of the hat. Allowed only when the
@@ -214,6 +231,7 @@ public enum OnlineGameRules {
         var next = state
         next.phase = .turnResults
         next.timerStartedAt = nil
+        next.turnSeconds = nil
         return next
     }
 
@@ -259,10 +277,14 @@ public enum OnlineGameRules {
         next.timerStartedAt = nil
 
         guard let upcoming = state.currentRound.next else {
+            next.carryOverSeconds = [:]
             next.phase = .finished
             return next
         }
 
+        // Only the team that emptied the hat carries time into the round.
+        let starterId = currentTeam(state, teams: teams)?.id
+        next.carryOverSeconds = state.carryOverSeconds.filter { $0.key == starterId }
         next.currentRound = upcoming
         next.remainingWordIds = shuffle(state.allWordIds)
         next.currentWordId = next.remainingWordIds.first
@@ -308,7 +330,12 @@ public enum OnlineGameRules {
 
     /// When the running turn's timer reaches zero, or `nil` between turns.
     public static func deadline(_ state: OnlineGameState) -> Date? {
-        state.timerStartedAt?.addingTimeInterval(TimeInterval(state.roundDuration))
+        state.timerStartedAt?.addingTimeInterval(TimeInterval(turnDuration(state)))
+    }
+
+    /// Seconds on the running turn's clock when it started.
+    public static func turnDuration(_ state: OnlineGameState) -> Int {
+        state.turnSeconds ?? state.roundDuration
     }
 
     // MARK: - Helpers

@@ -47,19 +47,19 @@ private enum Table {
 
     static func playing(words: [String] = words, isSkippingEnabled: Bool = true) throws -> OnlineGameState {
         let state = try initial(words: words, isSkippingEnabled: isSkippingEnabled)
-        return try #require(OnlineGameRules.startTurn(state, now: Fixture.epoch))
+        return try #require(OnlineGameRules.startTurn(state, teams: Table.teams, now: Fixture.epoch))
     }
 
     /// Plays one turn for the current team: start, time's up, continue.
     static func passTurn(_ state: OnlineGameState) throws -> OnlineGameState {
-        let started = try #require(OnlineGameRules.startTurn(state, now: Fixture.epoch))
+        let started = try #require(OnlineGameRules.startTurn(state, teams: Table.teams, now: Fixture.epoch))
         let ended = try #require(OnlineGameRules.endTurn(started))
         return try #require(OnlineGameRules.advanceAfterTurnResults(ended, teams: teams, players: players))
     }
 
     /// Guesses every remaining word in the current turn.
     static func clearHat(_ state: OnlineGameState) throws -> OnlineGameState {
-        var current = try #require(OnlineGameRules.startTurn(state, now: Fixture.epoch))
+        var current = try #require(OnlineGameRules.startTurn(state, teams: Table.teams, now: Fixture.epoch))
         while let wordId = current.currentWordId, current.phase == .playing {
             current = try #require(
                 OnlineGameRules.markGuessed(current, expectedWordId: wordId, teams: teams, now: Fixture.epoch)
@@ -148,9 +148,9 @@ struct GameRulesTurnTests {
         var emptyHat = try Table.initial()
         emptyHat.remainingWordIds = []
 
-        #expect(OnlineGameRules.startTurn(playing, now: Fixture.epoch) == nil)
-        #expect(OnlineGameRules.startTurn(noExplainer, now: Fixture.epoch) == nil)
-        #expect(OnlineGameRules.startTurn(emptyHat, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(playing, teams: Table.teams, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(noExplainer, teams: Table.teams, now: Fixture.epoch) == nil)
+        #expect(OnlineGameRules.startTurn(emptyHat, teams: Table.teams, now: Fixture.epoch) == nil)
     }
 
     @Test("Got it scores the current team and draws the next word")
