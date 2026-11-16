@@ -119,6 +119,9 @@ private extension CircularTimerView {
                     .tracking(1.2)
             }
         }
+        // Keeps the digits inside the ring, so at large text sizes they
+        // shrink to fit instead of spilling over the stroke.
+        .padding(.horizontal, DesignBook.Spacing.md)
     }
 }
 

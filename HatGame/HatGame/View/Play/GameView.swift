@@ -117,17 +117,15 @@ private extension GameView {
         }
     }
 
-    /// Side by side when both labels fit; stacked (Got It first) at large text sizes.
+    /// Side by side normally; stacked at accessibility sizes, where two
+    /// half-width buttons would truncate their labels.
     var actionButtons: some View {
-        ViewThatFits(in: .horizontal) {
-            HStack(spacing: DesignBook.Spacing.md) {
-                skipButton
-                gotItButton
-            }
-            VStack(spacing: DesignBook.Spacing.sm) {
-                gotItButton
-                skipButton
-            }
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(spacing: DesignBook.Spacing.sm))
+            : AnyLayout(HStackLayout(spacing: DesignBook.Spacing.md))
+        return layout {
+            skipButton
+            gotItButton
         }
     }
 
@@ -137,6 +135,7 @@ private extension GameView {
             Button(action: skipCurrentWord) {
                 Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
                     .font(DesignBook.Font.title3)
+                    .lineLimit(1)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
             }
@@ -152,6 +151,7 @@ private extension GameView {
         Button(action: markCurrentWordGuessed) {
             Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
                 .font(DesignBook.Font.title3)
+                .lineLimit(1)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, DesignBook.Spacing.sm)
         }
