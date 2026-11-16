@@ -20,6 +20,7 @@ struct OnlineTeamCreationView: View {
     @State private var teamName: String = ""
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var isCreating: Bool = false
+    @State private var isDiscardConfirmationPresented: Bool = false
     @State private var error: Error?
 
     @FocusState private var focusedField: Field?
@@ -30,15 +31,33 @@ struct OnlineTeamCreationView: View {
 
     private var canCreate: Bool { !trimmedName.isEmpty && !isCreating }
 
+    /// A typed name is the only input worth protecting; the color is
+    /// preselected.
+    private var hasUnsavedChanges: Bool { !trimmedName.isEmpty }
+
     var body: some View {
         NavigationStack {
             content
                 .navigationTitle(localized("createTeam.title"))
                 .inlineNavigationTitle()
                 .toolbar {
-                    CloseToolbarItem { dismiss() }
+                    CloseToolbarItem(action: close)
+                    ConfirmToolbarItem(
+                        title: localized("createTeam.confirm"),
+                        canConfirm: canCreate,
+                        action: createTeam
+                    )
                 }
                 .setDefaultBackground()
+                .interactiveDismissDisabled(hasUnsavedChanges)
+                .confirmationDialog(
+                    localized("createTeam.discard.title"),
+                    isPresented: $isDiscardConfirmationPresented,
+                    titleVisibility: .visible
+                ) {
+                    Button(localized("createTeam.discard.confirm"), role: .destructive) { dismiss() }
+                    Button(localized("createTeam.discard.keepEditing"), role: .cancel) { }
+                }
                 .errorAlert($error, title: localized("error.title.createTeam"))
         }
     }
@@ -56,11 +75,12 @@ private extension OnlineTeamCreationView {
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
-        .actionBar {
-            primaryButton
-                .paddingHorizontalDefault()
-                .padding(.top, DesignBook.Spacing.md)
-                .padding(.bottom, DesignBook.Spacing.sm)
+        .overlay {
+            if isCreating {
+                ProgressView()
+                    .controlSize(.large)
+                    .tint(DesignBook.Color.Text.accent)
+            }
         }
         .onAppear {
             focusedField = .name
@@ -72,7 +92,7 @@ private extension OnlineTeamCreationView {
         GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack(spacing: DesignBook.Spacing.sm) {
-                    Image(systemName: "person.3.fill")
+                    Image(systemName: "textformat")
                         .font(DesignBook.IconFont.medium)
                         .foregroundStyle(DesignBook.Color.Text.accent)
                     Text(localized("createTeam.teamName"))
@@ -81,9 +101,15 @@ private extension OnlineTeamCreationView {
                 }
                 TextField(localized("createTeam.enterName"), text: $teamName)
                     .focused($focusedField, equals: .name)
-                    .hatFieldStyle(label: localized("createTeam.teamName"), font: DesignBook.Font.title3) {
+                    .hatFieldStyle(
+                        label: localized("createTeam.teamName"),
+                        font: DesignBook.Font.title3,
+                        submitLabel: .done,
+                        disablesAutocorrection: true
+                    ) {
                         focusedField = .name
                     }
+                    .onSubmit(createTeam)
             }
         }
     }
@@ -167,28 +193,18 @@ private extension OnlineTeamCreationView {
             teamColor = color
         }
     }
-
-    var primaryButton: some View {
-        Group {
-            if isCreating {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
-                    .scaleEffect(1.2)
-                    .padding(.vertical, DesignBook.Spacing.md)
-            } else {
-                PrimaryButton(title: localized("createTeam.create"), icon: "plus.circle.fill") {
-                    createTeam()
-                }
-                .disabled(!canCreate)
-                .opacity(canCreate ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
-                .keyboardShortcut(.defaultAction)
-            }
-        }
-    }
 }
 
 // MARK: - Actions
 private extension OnlineTeamCreationView {
+    func close() {
+        if hasUnsavedChanges {
+            isDiscardConfirmationPresented = true
+        } else {
+            dismiss()
+        }
+    }
+
     func createTeam() {
         guard canCreate else { return }
         isCreating = true

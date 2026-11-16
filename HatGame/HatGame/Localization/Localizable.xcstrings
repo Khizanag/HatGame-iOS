@@ -66,6 +66,74 @@
         }
       }
     },
+    "createTeam.confirm" : {
+      "comment" : "Toolbar button that creates the team in the online/nearby Create Team sheet.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Create"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შექმნა"
+          }
+        }
+      }
+    },
+    "createTeam.discard.confirm" : {
+      "comment" : "Destructive button that closes the Create Team sheet without creating the team.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard Changes"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ცვლილებების გაუქმება"
+          }
+        }
+      }
+    },
+    "createTeam.discard.keepEditing" : {
+      "comment" : "Cancel button that keeps the Create Team sheet open.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep Editing"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რედაქტირების გაგრძელება"
+          }
+        }
+      }
+    },
+    "createTeam.discard.title" : {
+      "comment" : "Confirmation title when closing the Create Team sheet with a typed name.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard This Team?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაუქმდეს ეს გუნდი?"
+          }
+        }
+      }
+    },
     "error.title.deleteTeam" : {
       "comment" : "Alert title when the host failed to delete a team in the lobby.",
       "localizations" : {
