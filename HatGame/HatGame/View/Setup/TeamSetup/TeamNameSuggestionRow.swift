@@ -46,7 +46,7 @@ private extension TeamNameSuggestionRow {
 
             Text(localized("teamForm.suggestions.title"))
                 .font(DesignBook.Font.caption1Semibold)
-                .textCase(.uppercase)
+                .uppercaseLabel()
                 .tracking(1.2)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 

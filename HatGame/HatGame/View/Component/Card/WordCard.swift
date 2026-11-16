@@ -140,7 +140,7 @@ private extension WordCard {
                 .fontWeight(.bold)
             Text(localized(label))
                 .font(DesignBook.Font.subheadlineSemibold)
-                .textCase(.uppercase)
+                .uppercaseLabel()
                 .tracking(1.4)
         }
         .foregroundStyle(color)
@@ -174,7 +174,7 @@ private extension WordCard {
 
             Text(localized("game.card.swipeHint"))
                 .font(DesignBook.Font.caption1Semibold)
-                .textCase(.uppercase)
+                .uppercaseLabel()
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                 .padding(.bottom, DesignBook.Spacing.lg)

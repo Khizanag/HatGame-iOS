@@ -146,7 +146,7 @@ private extension ResultsView {
             Text(localized("game.results.winner"))
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
-                .textCase(.uppercase)
+                .uppercaseLabel()
                 .tracking(1.6)
 
             Text(winner.name)
@@ -165,7 +165,7 @@ private extension ResultsView {
             Text(localized("game.results.totalPoints"))
                 .font(DesignBook.Font.subheadline)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .textCase(.uppercase)
+                .uppercaseLabel()
                 .tracking(1.2)
         }
     }

@@ -8,18 +8,18 @@
 import DesignBook
 import SwiftUI
 
-/// Compact header shown above the timer: round name (caps), team name (tinted),
-/// and a live badge with the number of words guessed this turn.
+/// Compact header shown above the timer: the team name (tinted) and a live
+/// badge with the number of words guessed this turn. The round is the
+/// navigation title, so it isn't repeated here.
 struct GameHeaderBar: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
-    let round: GameRound
     let team: Team
     let guessedCount: Int
 
     var body: some View {
-        HStack(alignment: .firstTextBaseline) {
-            roundAndTeam
+        HStack(alignment: .center) {
+            teamName
             Spacer()
             TurnScoreBadge(count: guessedCount, reduceMotion: reduceMotion)
         }
@@ -28,22 +28,17 @@ struct GameHeaderBar: View {
 
 // MARK: - Subviews
 private extension GameHeaderBar {
-    var roundAndTeam: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            Text(round.title.uppercased())
-                .font(DesignBook.Font.caption1Semibold)
-                .tracking(1.5)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-
-            HStack(spacing: DesignBook.Spacing.sm) {
-                Circle()
-                    .fill(team.color)
-                    .frame(width: 10, height: 10)
-                Text(team.name)
-                    .font(DesignBook.Font.title1)
-                    .foregroundStyle(DesignBook.Color.teamText(for: team.color))
-                    .lineLimit(1)
-            }
+    var teamName: some View {
+        HStack(spacing: DesignBook.Spacing.sm) {
+            Circle()
+                .fill(team.color)
+                .frame(width: 10, height: 10)
+                .accessibilityHidden(true)
+            Text(team.name)
+                .font(DesignBook.Font.title1)
+                .foregroundStyle(DesignBook.Color.teamText(for: team.color))
+                .lineLimit(1)
+                .minimumScaleFactor(0.6)
         }
     }
 }

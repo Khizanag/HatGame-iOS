@@ -52,7 +52,6 @@ private extension GameView {
         VStack(spacing: DesignBook.Spacing.lg) {
             if let team {
                 GameHeaderBar(
-                    round: engine.state.round,
                     team: team,
                     guessedCount: engine.state.turn?.guessedWordIds.count ?? 0
                 )

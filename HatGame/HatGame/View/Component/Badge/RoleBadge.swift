@@ -47,7 +47,7 @@ struct RoleBadge: View {
     var body: some View {
         Text(localized(style.titleKey))
             .font(DesignBook.Font.caption1Semibold)
-            .textCase(.uppercase)
+            .uppercaseLabel()
             .tracking(1.0)
             .foregroundStyle(style.textColor)
             .padding(.horizontal, DesignBook.Spacing.sm)

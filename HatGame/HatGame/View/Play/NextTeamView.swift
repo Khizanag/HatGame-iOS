@@ -95,7 +95,7 @@ private extension NextTeamView {
 
             Text(localized("game.nextTeam.title"))
                 .font(DesignBook.Font.caption1Semibold)
-                .textCase(.uppercase)
+                .uppercaseLabel()
                 .tracking(1.6)
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 
@@ -118,7 +118,7 @@ private extension NextTeamView {
                     Text(localized("game.currentScoreLabel.suffix"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
-                        .textCase(.uppercase)
+                        .uppercaseLabel()
                         .tracking(1.2)
                 }
                 .foregroundStyle(DesignBook.Color.teamText(for: team.color))
@@ -266,7 +266,7 @@ private extension NextTeamView {
 
         return Text(text)
             .font(DesignBook.Font.subheadlineSemibold)
-            .textCase(.uppercase)
+            .uppercaseLabel()
             .tracking(1.1)
             .foregroundStyle(fg)
             .padding(.horizontal, DesignBook.Spacing.sm)
