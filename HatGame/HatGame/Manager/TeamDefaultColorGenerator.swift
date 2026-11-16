@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TeamDefaultColorGenerator {
-    static let defaultColors: [Color] = [
+    nonisolated static let defaultColors: [Color] = [
         Color(red: 0.3, green: 0.6, blue: 1.0),
         Color(red: 1.0, green: 0.4, blue: 0.4),
         Color(red: 0.4, green: 0.8, blue: 0.4),

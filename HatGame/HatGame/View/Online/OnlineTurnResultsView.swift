@@ -120,7 +120,7 @@ private extension OnlineTurnResultsView {
                 if let team = currentTeam {
                     Text(team.name)
                         .font(DesignBook.Font.title3)
-                        .foregroundStyle(tint)
+                        .foregroundStyle(DesignBook.Color.teamText(for: tint))
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                 }
@@ -128,7 +128,7 @@ private extension OnlineTurnResultsView {
                     AnimatedScoreText(
                         value: roundScore,
                         font: DesignBook.Font.heroScore,
-                        color: tint,
+                        color: DesignBook.Color.teamText(for: tint),
                         duration: 0.7
                     )
                     Text(localized("game.turnResults.wordsUnit \(roundScore)"))
@@ -177,7 +177,7 @@ private extension OnlineTurnResultsView {
                             value: gameState?.getTotalScore(for: team.id) ?? 0,
                             font: DesignBook.Font.title1,
                             color: index == 0
-                                ? team.color
+                                ? DesignBook.Color.teamText(for: team.color)
                                 : DesignBook.Color.Text.secondary,
                             duration: 0.6
                         )

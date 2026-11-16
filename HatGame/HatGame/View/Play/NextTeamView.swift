@@ -104,7 +104,7 @@ private extension NextTeamView {
                 .font(DesignBook.Font.displayLarge)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
-                .foregroundStyle(team.color)
+                .foregroundStyle(DesignBook.Color.teamText(for: team.color))
                 .multilineTextAlignment(.center)
 
             if hasGameStarted {
@@ -114,7 +114,7 @@ private extension NextTeamView {
                     AnimatedScoreText(
                         value: engine.scoreboard.totalScore(for: team),
                         font: DesignBook.Font.title3,
-                        color: team.color
+                        color: DesignBook.Color.teamText(for: team.color)
                     )
                     Text(localized("game.currentScoreLabel.suffix"))
                         .font(DesignBook.Font.subheadlineSemibold)
@@ -122,7 +122,7 @@ private extension NextTeamView {
                         .textCase(.uppercase)
                         .tracking(1.2)
                 }
-                .foregroundStyle(team.color)
+                .foregroundStyle(DesignBook.Color.teamText(for: team.color))
                 .padding(.horizontal, DesignBook.Spacing.md)
                 .padding(.vertical, DesignBook.Spacing.sm)
                 .background {
@@ -263,7 +263,7 @@ private extension NextTeamView {
 
     func roleBadge(isSelected: Bool) -> some View {
         let text = localized(isSelected ? "game.nextTeam.role.explaining" : "game.nextTeam.role.guessing")
-        let fg: Color = isSelected ? team.color : DesignBook.Color.Text.secondary
+        let fg: Color = isSelected ? DesignBook.Color.teamText(for: team.color) : DesignBook.Color.Text.secondary
         let bg: Color = isSelected ? team.color.opacity(0.15) : DesignBook.Color.Background.card
 
         return Text(text)

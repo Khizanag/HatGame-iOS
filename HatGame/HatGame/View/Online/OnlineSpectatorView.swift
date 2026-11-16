@@ -69,7 +69,7 @@ private extension OnlineSpectatorView {
                 Circle().fill(tint).frame(width: 10, height: 10)
                 Text(team.name)
                     .font(DesignBook.Font.title1)
-                    .foregroundStyle(tint)
+                    .foregroundStyle(DesignBook.Color.teamText(for: tint))
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
             }

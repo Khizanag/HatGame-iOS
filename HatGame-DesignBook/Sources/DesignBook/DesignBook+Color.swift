@@ -6,6 +6,11 @@
 //
 
 import SwiftUI
+#if canImport(UIKit)
+import UIKit
+#elseif canImport(AppKit)
+import AppKit
+#endif
 
 extension DesignBook {
     public enum Color {
@@ -51,6 +56,30 @@ extension DesignBook {
             return contrastWithBlack > contrastWithWhite ? .black : .white
         }
 
+        /// `teamColor` adjusted for use as text: darkened in light mode and
+        /// lightened in dark mode just enough to reach 4.5:1 against
+        /// `Background.primary`. It re-resolves for the current appearance,
+        /// including Increase Contrast. Use it wherever a team color tints
+        /// text (names, scores, timer digits); fills, dots, and rings keep the
+        /// raw team color.
+        public static func teamText(for teamColor: SwiftUI.Color) -> SwiftUI.Color {
+            #if canImport(UIKit)
+            SwiftUI.Color(uiColor: UIColor { traits in
+                let team = UIColor(teamColor).resolvedColor(with: traits)
+                let background = UIColor(Background.primary).resolvedColor(with: traits)
+                return readable(team, against: background)
+            })
+            #elseif canImport(AppKit)
+            SwiftUI.Color(nsColor: NSColor(name: nil) { appearance in
+                var result = NSColor(teamColor)
+                appearance.performAsCurrentDrawingAppearance {
+                    result = readable(NSColor(teamColor), against: NSColor(Background.primary))
+                }
+                return result
+            })
+            #endif
+        }
+
         /// `color` with its alpha forced to 1. `onAccent(for:)` ignores alpha,
         /// so a fill behind its content must be opaque for the contrast to hold.
         /// An already-opaque color is returned as is, keeping any appearance variants.
@@ -60,5 +89,39 @@ extension DesignBook {
             resolved.opacity = 1
             return SwiftUI.Color(resolved)
         }
+    }
+}
+
+// MARK: - Readable platform colors
+#if canImport(UIKit)
+private typealias PlatformColor = UIColor
+#elseif canImport(AppKit)
+private typealias PlatformColor = NSColor
+#endif
+
+private extension DesignBook.Color {
+    /// `color` adjusted to reach the text contrast minimum against
+    /// `background`; both must already be resolved for one appearance.
+    static func readable(_ color: PlatformColor, against background: PlatformColor) -> PlatformColor {
+        let (foreground, alpha) = components(of: color)
+        let adjusted = DesignBook.Contrast.adjusted(foreground, against: components(of: background).rgb)
+        return PlatformColor(red: adjusted.red, green: adjusted.green, blue: adjusted.blue, alpha: alpha)
+    }
+
+    static func components(of color: PlatformColor) -> (rgb: DesignBook.Contrast.RGB, alpha: CGFloat) {
+        #if canImport(AppKit) && !canImport(UIKit)
+        let color = color.usingColorSpace(.sRGB) ?? color
+        #endif
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 0
+        color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        let rgb = DesignBook.Contrast.RGB(
+            red: min(max(red, 0), 1),
+            green: min(max(green, 0), 1),
+            blue: min(max(blue, 0), 1)
+        )
+        return (rgb, alpha)
     }
 }

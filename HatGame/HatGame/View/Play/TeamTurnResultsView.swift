@@ -116,14 +116,14 @@ private extension TeamTurnResultsView {
             VStack(spacing: DesignBook.Spacing.sm) {
                 Text(String(format: localized("game.turnResults.teamTitle"), team.name))
                     .font(DesignBook.Font.title3)
-                    .foregroundStyle(team.color)
+                    .foregroundStyle(DesignBook.Color.teamText(for: team.color))
                     .multilineTextAlignment(.center)
 
                 HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.sm) {
                     AnimatedScoreText(
                         value: guessedWords.count,
                         font: DesignBook.Font.heroScore,
-                        color: team.color,
+                        color: DesignBook.Color.teamText(for: team.color),
                         duration: 0.7
                     )
                     Text(wordsUnit)

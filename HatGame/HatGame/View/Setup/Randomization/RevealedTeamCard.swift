@@ -29,7 +29,7 @@ struct RevealedTeamCard: View {
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                         .fontWeight(.bold)
-                        .foregroundStyle(team.color)
+                        .foregroundStyle(DesignBook.Color.teamText(for: team.color))
 
                     Text(localized("randomization.startingTeam.goesFirst"))
                         .font(DesignBook.Font.body)

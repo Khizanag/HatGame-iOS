@@ -41,7 +41,7 @@ private extension GameHeaderBar {
                     .frame(width: 10, height: 10)
                 Text(team.name)
                     .font(DesignBook.Font.title1)
-                    .foregroundStyle(team.color)
+                    .foregroundStyle(DesignBook.Color.teamText(for: team.color))
                     .lineLimit(1)
             }
         }

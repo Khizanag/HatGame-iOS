@@ -113,7 +113,7 @@ private extension OnlineNextTeamView {
             if let team = currentTeam {
                 Text(team.name)
                     .font(DesignBook.Font.displayLarge)
-                    .foregroundStyle(tint)
+                    .foregroundStyle(DesignBook.Color.teamText(for: tint))
                     .multilineTextAlignment(.center)
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
@@ -121,7 +121,7 @@ private extension OnlineNextTeamView {
                 if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
                     Text(localized("game.currentScoreLabel \(totalScore)"))
                         .font(DesignBook.Font.title3)
-                        .foregroundStyle(tint)
+                        .foregroundStyle(DesignBook.Color.teamText(for: tint))
                 }
             }
         }
@@ -213,7 +213,7 @@ private extension OnlineNextTeamView {
                 Circle().fill(tint).frame(width: 8, height: 8)
                 Text(playerName)
                     .font(DesignBook.Font.bodySemibold)
-                    .foregroundStyle(tint)
+                    .foregroundStyle(DesignBook.Color.teamText(for: tint))
                 if isMe {
                     Text(localized("onlineNextTeam.you"))
                         .font(DesignBook.Font.subheadlineSemibold)

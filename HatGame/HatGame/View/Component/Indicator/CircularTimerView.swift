@@ -44,6 +44,11 @@ struct CircularTimerView: View {
         }
     }
 
+    /// The digits' color: the ring's color, made readable when it is the team tint.
+    private var timeTextColor: Color {
+        isUrgent || isPaused ? displayColor : DesignBook.Color.teamText(for: tint)
+    }
+
     private var formattedTime: String {
         let minutes = remainingSeconds / 60
         let seconds = remainingSeconds % 60
@@ -100,7 +105,7 @@ private extension CircularTimerView {
                 .font(DesignBook.Font.timer)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
-                .foregroundStyle(displayColor)
+                .foregroundStyle(timeTextColor)
                 .contentTransition(.numericText())
                 .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: remainingSeconds)
                 .accessibilityLabel(accessibilityTimeLabel)

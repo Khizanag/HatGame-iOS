@@ -96,7 +96,7 @@ private extension OnlineResultsView {
 
                     Text(winner.name)
                         .font(DesignBook.Font.displayMedium)
-                        .foregroundStyle(winner.color)
+                        .foregroundStyle(DesignBook.Color.teamText(for: winner.color))
                         .multilineTextAlignment(.center)
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
@@ -104,7 +104,7 @@ private extension OnlineResultsView {
                     AnimatedScoreText(
                         value: gameState?.getTotalScore(for: winner.id) ?? 0,
                         font: DesignBook.Font.scaled(56, relativeTo: .largeTitle, weight: .bold),
-                        color: winner.color
+                        color: DesignBook.Color.teamText(for: winner.color)
                     )
 
                     Text(localized("game.results.totalPoints"))
@@ -122,13 +122,13 @@ private extension OnlineResultsView {
                         VStack(spacing: 4) {
                             Text(winner.name)
                                 .font(DesignBook.Font.title1)
-                                .foregroundStyle(winner.color)
+                                .foregroundStyle(DesignBook.Color.teamText(for: winner.color))
                                 .lineLimit(1)
                                 .minimumScaleFactor(0.5)
                             AnimatedScoreText(
                                 value: gameState?.getTotalScore(for: winner.id) ?? 0,
                                 font: DesignBook.Font.displaySmall,
-                                color: winner.color
+                                color: DesignBook.Color.teamText(for: winner.color)
                             )
                         }
                     }

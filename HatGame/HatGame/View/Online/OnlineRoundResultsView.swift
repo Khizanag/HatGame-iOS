@@ -123,7 +123,7 @@ private extension OnlineRoundResultsView {
                             value: gameState?.getScore(for: team.id, in: currentRound) ?? 0,
                             font: DesignBook.Font.title1,
                             color: isLeader
-                                ? team.color
+                                ? DesignBook.Color.teamText(for: team.color)
                                 : DesignBook.Color.Text.secondary,
                             duration: 0.6
                         )
@@ -177,7 +177,7 @@ private extension OnlineRoundResultsView {
                             value: gameState?.getTotalScore(for: team.id) ?? 0,
                             font: DesignBook.Font.title1,
                             color: rank == 0
-                                ? team.color
+                                ? DesignBook.Color.teamText(for: team.color)
                                 : DesignBook.Color.Text.secondary,
                             duration: 0.7
                         )

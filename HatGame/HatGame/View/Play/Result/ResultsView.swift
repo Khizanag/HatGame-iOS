@@ -152,13 +152,13 @@ private extension ResultsView {
                 .font(DesignBook.Font.displayMedium)
                 .lineLimit(1)
                 .minimumScaleFactor(0.5)
-                .foregroundStyle(winner.color)
+                .foregroundStyle(DesignBook.Color.teamText(for: winner.color))
                 .multilineTextAlignment(.center)
 
             AnimatedScoreText(
                 value: scoreboard.totalScore(for: winner),
                 font: DesignBook.Font.displayLarge,
-                color: winner.color
+                color: DesignBook.Color.teamText(for: winner.color)
             )
 
             Text(localized("game.results.totalPoints"))
@@ -180,12 +180,12 @@ private extension ResultsView {
                     VStack(spacing: DesignBook.Spacing.xs) {
                         Text(winner.name)
                             .font(DesignBook.Font.title1)
-                            .foregroundStyle(winner.color)
+                            .foregroundStyle(DesignBook.Color.teamText(for: winner.color))
 
                         AnimatedScoreText(
                             value: scoreboard.totalScore(for: winner),
                             font: DesignBook.Font.displaySmall,
-                            color: winner.color
+                            color: DesignBook.Color.teamText(for: winner.color)
                         )
                     }
                 }

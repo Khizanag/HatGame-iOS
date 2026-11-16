@@ -277,7 +277,7 @@ private extension RoomLobbyView {
                     Circle().fill(color).frame(width: 14, height: 14)
                     Text(team.name)
                         .font(DesignBook.Font.title3)
-                        .foregroundStyle(color)
+                        .foregroundStyle(DesignBook.Color.teamText(for: color))
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                     Spacer()

@@ -88,7 +88,7 @@ private extension TeamScoreRowView {
         AnimatedScoreText(
             value: score,
             font: DesignBook.Font.title1,
-            color: isWinner ? color : DesignBook.Color.Text.secondary,
+            color: isWinner ? DesignBook.Color.teamText(for: color) : DesignBook.Color.Text.secondary,
             duration: 0.6
         )
     }

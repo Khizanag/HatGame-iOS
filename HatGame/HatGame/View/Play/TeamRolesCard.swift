@@ -85,7 +85,7 @@ private extension TeamRolesCard {
 
             Text(explainer.name)
                 .font(DesignBook.Font.bodySemibold)
-                .foregroundStyle(team.color)
+                .foregroundStyle(DesignBook.Color.teamText(for: team.color))
         }
         .padding(DesignBook.Spacing.sm)
         .frame(maxWidth: .infinity, alignment: .leading)
