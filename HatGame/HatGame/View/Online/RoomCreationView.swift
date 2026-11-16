@@ -85,7 +85,7 @@ private extension RoomCreationView {
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-                TextField("createRoom.enterName", text: $playerName)
+                TextField(localized("createRoom.enterName"), text: $playerName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)

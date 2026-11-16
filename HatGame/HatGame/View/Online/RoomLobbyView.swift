@@ -114,7 +114,7 @@ private extension RoomLobbyView {
                                 DesignBook.Haptics.tap()
                                 Platform.copyToClipboard(code)
                             } label: {
-                                Label("lobby.copyCode", systemImage: "doc.on.doc")
+                                Label(localized("lobby.copyCode"), systemImage: "doc.on.doc")
                                     .font(DesignBook.Font.caption)
                             }
                             .glassButtonStyle()
@@ -123,7 +123,7 @@ private extension RoomLobbyView {
                                 item: String(format: localized("lobby.shareMessage"), code),
                                 preview: SharePreview(localized("online.title"))
                             ) {
-                                Label("lobby.share", systemImage: "square.and.arrow.up")
+                                Label(localized("lobby.share"), systemImage: "square.and.arrow.up")
                                     .font(DesignBook.Font.caption)
                             }
                             .glassButtonStyle()
@@ -211,7 +211,7 @@ private extension RoomLobbyView {
                         DesignBook.Haptics.tap()
                         showingTeamCreation = true
                     } label: {
-                        Label("lobby.addTeam", systemImage: "plus.circle.fill")
+                        Label(localized("lobby.addTeam"), systemImage: "plus.circle.fill")
                             .font(DesignBook.Font.caption)
                             .foregroundStyle(DesignBook.Color.Text.accent)
                     }
@@ -287,7 +287,7 @@ private extension RoomLobbyView {
                 Button {
                     leaveTeam()
                 } label: {
-                    Label("lobby.leaveTeam", systemImage: "arrow.uturn.left")
+                    Label(localized("lobby.leaveTeam"), systemImage: "arrow.uturn.left")
                         .font(DesignBook.Font.captionBold)
                 }
                 .glassButtonStyle()
@@ -296,7 +296,7 @@ private extension RoomLobbyView {
                 Button {
                     joinTeam(team.id)
                 } label: {
-                    Label("lobby.joinTeam", systemImage: "person.crop.circle.fill.badge.plus")
+                    Label(localized("lobby.joinTeam"), systemImage: "person.crop.circle.fill.badge.plus")
                         .font(DesignBook.Font.captionBold)
                 }
                 .glassProminentButtonStyle()

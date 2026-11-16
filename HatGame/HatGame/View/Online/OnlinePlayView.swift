@@ -193,7 +193,7 @@ private extension OnlinePlayView {
         HStack(spacing: DesignBook.Spacing.md) {
             if isSkippingAllowed {
                 Button(action: skipCurrentWord) {
-                    Label("game.skip", systemImage: "arrow.uturn.forward")
+                    Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
                         .font(DesignBook.Font.headline)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
@@ -206,7 +206,7 @@ private extension OnlinePlayView {
             }
 
             Button(action: markGuessed) {
-                Label("game.gotIt", systemImage: "checkmark.circle.fill")
+                Label(localized("game.gotIt"), systemImage: "checkmark.circle.fill")
                     .font(DesignBook.Font.headline)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, DesignBook.Spacing.sm)
@@ -223,7 +223,7 @@ private extension OnlinePlayView {
         if isActivePlayer {
             ToolbarItem(placement: .cancellationAction) {
                 Button { showingGiveUpConfirmation = true } label: {
-                    Label("game.giveUp.button", systemImage: "flag")
+                    Label(localized("game.giveUp.button"), systemImage: "flag")
                         .foregroundStyle(DesignBook.Color.Status.error)
                 }
                 .buttonStyle(.plain)

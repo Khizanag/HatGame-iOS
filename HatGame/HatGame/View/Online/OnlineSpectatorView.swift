@@ -57,7 +57,7 @@ struct OnlineSpectatorView: View {
 private extension OnlineSpectatorView {
     var roleBanner: some View {
         VStack(spacing: 4) {
-            Text(isOwnTeam ? "onlineSpectator.yourTurn" : "onlineSpectator.othersTurn")
+            Text(localized(isOwnTeam ? "onlineSpectator.yourTurn" : "onlineSpectator.othersTurn"))
                 .font(DesignBook.Font.smallCaption)
                 .textCase(.uppercase)
                 .tracking(1.6)
@@ -106,7 +106,7 @@ private extension OnlineSpectatorView {
                     .foregroundStyle(tint)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
 
-                Text(isOwnTeam ? "onlineSpectator.listen" : "onlineSpectator.watching")
+                Text(localized(isOwnTeam ? "onlineSpectator.listen" : "onlineSpectator.watching"))
                     .font(DesignBook.Font.title3)
                     .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)

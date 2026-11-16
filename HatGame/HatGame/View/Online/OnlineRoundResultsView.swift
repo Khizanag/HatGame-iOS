@@ -75,7 +75,7 @@ private extension OnlineRoundResultsView {
 
     var header: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            Text("🏁").font(DesignBook.IconFont.emoji)
+            Text(verbatim: "🏁").font(DesignBook.IconFont.emoji)
             Text(localized("onlineRoundResults.roundComplete"))
                 .font(DesignBook.Font.largeTitle)
                 .foregroundStyle(DesignBook.Color.Text.primary)
@@ -204,9 +204,9 @@ private extension OnlineRoundResultsView {
     @ViewBuilder
     func medalIcon(for index: Int) -> some View {
         switch index {
-        case 0: Text("🥇").font(DesignBook.Font.title3)
-        case 1: Text("🥈").font(DesignBook.Font.title3)
-        case 2: Text("🥉").font(DesignBook.Font.title3)
+        case 0: Text(verbatim: "🥇").font(DesignBook.Font.title3)
+        case 1: Text(verbatim: "🥈").font(DesignBook.Font.title3)
+        case 2: Text(verbatim: "🥉").font(DesignBook.Font.title3)
         default:
             Text(verbatim: "\(index + 1)")
                 .font(DesignBook.Font.headline)

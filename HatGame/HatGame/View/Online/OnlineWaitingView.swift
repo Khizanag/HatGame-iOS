@@ -128,7 +128,7 @@ private extension OnlineWaitingView {
                 RoleBadge(style: .you)
             }
             Spacer()
-            Text(isDone ? "online.submitted" : "online.typing")
+            Text(localized(isDone ? "online.submitted" : "online.typing"))
                 .font(DesignBook.Font.caption)
                 .foregroundStyle(isDone ? DesignBook.Color.Status.success : DesignBook.Color.Text.tertiary)
         }

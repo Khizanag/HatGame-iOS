@@ -81,7 +81,7 @@ private extension RoomJoinView {
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
 
-                TextField("joinRoom.enterCode", text: $roomCode)
+                TextField(localized("joinRoom.enterCode"), text: $roomCode)
                     .textFieldStyle(.plain)
                     // Room-code entry: monospaced display size with no token match.
                     // swiftlint:disable:next no_inline_font
@@ -122,7 +122,7 @@ private extension RoomJoinView {
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-                TextField("joinRoom.enterName", text: $playerName)
+                TextField(localized("joinRoom.enterName"), text: $playerName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)

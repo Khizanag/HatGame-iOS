@@ -89,7 +89,7 @@ private extension OnlineTeamCreationView {
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-                TextField("createTeam.enterName", text: $teamName)
+                TextField(localized("createTeam.enterName"), text: $teamName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
@@ -127,7 +127,7 @@ private extension OnlineTeamCreationView {
             ForEach(TeamDefaultColorGenerator.defaultColors.indices, id: \.self) { index in
                 colorOption(TeamDefaultColorGenerator.defaultColors[index])
             }
-            ColorPicker("", selection: $teamColor, supportsOpacity: false)
+            ColorPicker(localized("createTeam.teamColor"), selection: $teamColor, supportsOpacity: false)
                 .labelsHidden()
                 .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
                 .padding(DesignBook.Spacing.sm)

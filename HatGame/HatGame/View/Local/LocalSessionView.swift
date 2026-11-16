@@ -60,8 +60,8 @@ struct LocalSessionView: View {
                     showHostLostAlert = true
                 }
             }
-            .alert("local.session.hostLost", isPresented: $showHostLostAlert) {
-                Button("local.session.hostLost.action", role: .cancel, action: leaveSession)
+            .alert(localized("local.session.hostLost"), isPresented: $showHostLostAlert) {
+                Button(localized("local.session.hostLost.action"), role: .cancel, action: leaveSession)
             } message: {
                 Text(localized("local.session.hostLost.message"))
             }

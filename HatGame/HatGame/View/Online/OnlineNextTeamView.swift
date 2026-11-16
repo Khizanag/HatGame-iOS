@@ -190,7 +190,7 @@ private extension OnlineNextTeamView {
 
     func rolePill(
         icon: String,
-        label: LocalizedStringKey,
+        label: String.LocalizationValue,
         playerName: String,
         isMe: Bool,
         emphasized: Bool
@@ -200,7 +200,7 @@ private extension OnlineNextTeamView {
                 Image(systemName: icon)
                     .font(DesignBook.Font.caption)
                     .foregroundStyle(tint)
-                Text(label)
+                Text(localized(label))
                     .font(DesignBook.Font.smallCaption)
                     .textCase(.uppercase)
                     .tracking(1.2)

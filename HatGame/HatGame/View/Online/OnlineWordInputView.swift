@@ -155,7 +155,7 @@ private extension OnlineWordInputView {
 
     var textField: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
-            TextField("onlineWordInput.enterWord", text: $currentWord)
+            TextField(localized("onlineWordInput.enterWord"), text: $currentWord)
                 .textFieldStyle(.plain)
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.primary)

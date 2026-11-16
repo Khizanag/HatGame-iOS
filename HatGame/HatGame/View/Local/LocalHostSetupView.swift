@@ -114,7 +114,7 @@ private extension LocalHostSetupView {
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-                TextField("createRoom.enterName", text: $hostName)
+                TextField(localized("createRoom.enterName"), text: $hostName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)

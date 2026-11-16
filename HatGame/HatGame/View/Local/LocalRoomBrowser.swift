@@ -72,7 +72,7 @@ private extension LocalRoomBrowser {
                         .font(DesignBook.Font.captionBold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                 }
-                TextField("createRoom.enterName", text: $playerName)
+                TextField(localized("createRoom.enterName"), text: $playerName)
                     .textFieldStyle(.plain)
                     .font(DesignBook.Font.headline)
                     .foregroundStyle(DesignBook.Color.Text.primary)
@@ -115,7 +115,7 @@ private extension LocalRoomBrowser {
 
     var emptyState: some View {
         ContentUnavailableView {
-            Label("local.browser.empty", systemImage: "antenna.radiowaves.left.and.right")
+            Label(localized("local.browser.empty"), systemImage: "antenna.radiowaves.left.and.right")
         } description: {
             Text(localized("local.browser.empty.hint"))
         }
