@@ -25,10 +25,17 @@ struct GameLoopView: View {
         phaseContent
             .navigationBarBackButtonHidden()
             .interactiveDismissDisabled()
-            .toolbar { endGameToolbar }
-            .alert(localized("game.endGame.title"), isPresented: $isEndGameConfirmationPresented) {
-                Button(localized("common.buttons.cancel"), role: .cancel) {}
+            .toolbar { leavingToolbar }
+            .confirmationDialog(
+                localized("game.endGame.title"),
+                isPresented: $isEndGameConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button(localized("game.endGame.saveAndExit"), action: saveAndExit)
+                    .accessibilityIdentifier("game.endGame.saveAndExit")
                 Button(localized("game.endGame.confirm"), role: .destructive, action: endGame)
+                    .accessibilityIdentifier("game.endGame.confirm")
+                Button(localized("common.buttons.cancel"), role: .cancel) {}
             } message: {
                 Text(localized("game.endGame.message"))
             }
@@ -80,25 +87,38 @@ private extension GameLoopView {
     }
 }
 
-// MARK: - End game
+// MARK: - Leaving the game
 private extension GameLoopView {
     /// Leaving mid-game is a deliberate act, so it lives behind a confirmation
     /// and only between turns — during a turn the clock has its own Give Up.
+    /// Once the game is over, Close simply returns to Home.
     @ToolbarContentBuilder
-    var endGameToolbar: some ToolbarContent {
+    var leavingToolbar: some ToolbarContent {
         if engine.phase == .nextTeam || engine.phase == .turnResults {
             ToolbarItem(placement: .cancellationAction) {
-                Button(localized("game.endGame.button"), systemImage: "flag.checkered") {
+                Button(localized("game.endGame.button")) {
                     isEndGameConfirmationPresented = true
                 }
                 .accessibilityIdentifier("game.endGame")
             }
+        } else if engine.phase == .finished {
+            CloseToolbarItem(action: returnToMain)
         }
+    }
+
+    /// Leaves the game as it is; it stays saved and Home offers to resume it.
+    func saveAndExit() {
+        engine.handleLeavingForeground()
+        returnToMain()
     }
 
     func endGame() {
         DesignBook.Haptics.warning()
         engine.abandon()
+        returnToMain()
+    }
+
+    func returnToMain() {
         navigator.dismissToRoot()
         navigator.dismiss()
     }

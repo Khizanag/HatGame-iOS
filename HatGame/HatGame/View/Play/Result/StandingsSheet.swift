@@ -7,8 +7,9 @@
 
 import SwiftUI
 
-/// The mid-game standings, presented as a sheet over the game loop. Its Done
-/// button (and Escape) closes it on platforms without a swipe-down gesture.
+/// The mid-game standings, presented as a view-only sheet over the game
+/// loop: medium or large, with the standard Close button (and Escape) for
+/// platforms without a swipe-down gesture.
 struct StandingsSheet: View {
     @Environment(\.dismiss) private var dismiss
 
@@ -16,14 +17,9 @@ struct StandingsSheet: View {
         NavigationStack {
             ResultsView()
                 .toolbar {
-                    ToolbarItem(placement: .confirmationAction) {
-                        Button(localized("common.buttons.done")) {
-                            dismiss()
-                        }
-                        .keyboardShortcut(.cancelAction)
-                        .accessibilityIdentifier("standings.done")
-                    }
+                    CloseToolbarItem { dismiss() }
                 }
         }
+        .presentationDetents([.medium, .large])
     }
 }

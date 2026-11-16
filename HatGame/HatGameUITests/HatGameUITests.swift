@@ -66,14 +66,14 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(resume.waitForExistence(timeout: 10))
         resume.tap()
 
-        let restoredGotIt = relaunched.buttons["game.gotIt"]
-        XCTAssertTrue(restoredGotIt.waitForExistence(timeout: 5))
+        XCTAssertTrue(relaunched.buttons["game.pause"].waitForExistence(timeout: 5))
         XCTAssertTrue(
             relaunched.otherElements["game.pausedOverlay"].waitForExistence(timeout: 5)
                 || relaunched.descendants(matching: .any)["game.pausedOverlay"].exists,
             "A restored turn should come back paused"
         )
-        XCTAssertFalse(restoredGotIt.isEnabled)
+        // While paused, the turn's controls sit behind the modal overlay.
+        XCTAssertFalse(relaunched.buttons["game.gotIt"].exists)
 
         relaunched.terminate()
         launchClearingSavedGame().terminate()
@@ -86,10 +86,9 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(endGame.waitForExistence(timeout: 10))
         endGame.tap()
 
-        let alert = app.alerts.firstMatch
-        XCTAssertTrue(alert.waitForExistence(timeout: 5))
-        // Cancel comes first; the destructive confirmation is the last button.
-        alert.buttons.element(boundBy: alert.buttons.count - 1).tap()
+        let confirm = app.buttons["game.endGame.confirm"]
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        confirm.tap()
 
         XCTAssertTrue(app.buttons["nextTeam.play"].waitForNonExistence(timeout: 5))
         app.terminate()
@@ -98,6 +97,22 @@ final class HatGameUITests: XCTestCase {
         relaunched.launch()
         XCTAssertFalse(relaunched.buttons["home.resumeButton"].waitForExistence(timeout: 3))
         relaunched.terminate()
+    }
+
+    @MainActor
+    func testSaveAndExitKeepsTheGameForResume() throws {
+        let app = launchIntoTestGame()
+        let endGame = app.buttons["game.endGame"]
+        XCTAssertTrue(endGame.waitForExistence(timeout: 10))
+        endGame.tap()
+
+        let saveAndExit = app.buttons["game.endGame.saveAndExit"]
+        XCTAssertTrue(saveAndExit.waitForExistence(timeout: 5))
+        saveAndExit.tap()
+
+        XCTAssertTrue(app.buttons["home.resumeButton"].waitForExistence(timeout: 5))
+        app.terminate()
+        launchClearingSavedGame().terminate()
     }
 }
 

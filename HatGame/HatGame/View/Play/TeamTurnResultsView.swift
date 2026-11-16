@@ -32,11 +32,12 @@ struct TeamTurnResultsView: View {
             .navigationTitle(localized("game.turnResults.title"))
             .inlineNavigationTitle()
             .setDefaultBackground()
-            .overlay {
-                if isCelebratory {
-                    ConfettiView(isActive: hasCelebrated, retriggerId: confettiBurst)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(localized("game.standings.title")) {
+                        isStandingsPresented = true
+                    }
+                    .accessibilityIdentifier("game.standings")
                 }
             }
             .sheet(isPresented: $isStandingsPresented) {
@@ -69,8 +70,16 @@ private extension TeamTurnResultsView {
             .paddingHorizontalDefault()
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
+        // Inside the action bar's content, so the confetti falls behind the button.
+        .overlay {
+            if isCelebratory {
+                ConfettiView(isActive: hasCelebrated, retriggerId: confettiBurst)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
+        }
         .actionBar {
-            buttonsSection
+            continueButton
                 .paddingHorizontalDefault()
         }
     }
@@ -130,6 +139,8 @@ private extension TeamTurnResultsView {
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
                 .padding(.top, DesignBook.Spacing.xs)
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text(verbatim: "\(guessedWords.count) \(wordsUnit)"))
             }
         }
     }
@@ -184,16 +195,11 @@ private extension TeamTurnResultsView {
         }
     }
 
-    var buttonsSection: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: localized("game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
-                isStandingsPresented = true
-            }
-
-            PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
-                engine.continueAfterTurn()
-            }
-            .accessibilityIdentifier("turnResults.continue")
+    var continueButton: some View {
+        PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
+            engine.continueAfterTurn()
         }
+        .keyboardShortcut(.defaultAction)
+        .accessibilityIdentifier("turnResults.continue")
     }
 }

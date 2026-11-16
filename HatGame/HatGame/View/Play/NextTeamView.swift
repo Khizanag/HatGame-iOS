@@ -37,6 +37,14 @@ struct NextTeamView: View {
         content
             .navigationTitle(localized("game.nextTeam.title"))
             .setDefaultStyle()
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button(localized("game.standings.title")) {
+                        isStandingsPresented = true
+                    }
+                    .accessibilityIdentifier("game.standings")
+                }
+            }
             .sheet(isPresented: $isStandingsPresented) {
                 StandingsSheet()
                     .environment(gameManager)
@@ -71,7 +79,7 @@ private extension NextTeamView {
             .padding(.bottom, DesignBook.Spacing.xxl)
         }
         .actionBar {
-            buttonsSection
+            playButton
                 .paddingHorizontalDefault()
         }
     }
@@ -92,12 +100,6 @@ private extension NextTeamView {
             }
             .accessibilityHidden(true)
             .decorativeHeroSizing()
-
-            Text(localized("game.nextTeam.title"))
-                .font(DesignBook.Font.caption1Semibold)
-                .uppercaseLabel()
-                .tracking(1.6)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
 
             Text(team.name)
                 .font(DesignBook.Font.displayLarge)
@@ -127,6 +129,8 @@ private extension NextTeamView {
                 .background {
                     Capsule().fill(team.color.opacity(0.12))
                 }
+                .accessibilityElement(children: .ignore)
+                .accessibilityLabel(Text(localized("game.currentScoreLabel \(engine.scoreboard.totalScore(for: team))")))
             }
         }
         .padding(.top, DesignBook.Spacing.md)
@@ -183,21 +187,7 @@ private extension NextTeamView {
 
                     Spacer()
 
-                    Button(action: randomizeExplainer) {
-                        Image(systemName: isRandomizingExplainer ? "sparkles" : "shuffle")
-                            .font(DesignBook.Font.body)
-                            .foregroundStyle(DesignBook.Color.Text.accent)
-                            .symbolEffect(
-                                .pulse,
-                                options: .repeating,
-                                isActive: isRandomizingExplainer && !reduceMotion
-                            )
-                            .padding(DesignBook.Spacing.sm)
-                            .background(DesignBook.Color.Background.secondary)
-                            .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-                    }
-                    .disabled(isRandomizingExplainer || team.players.count < 2)
-                    .accessibilityLabel(Text(localized("game.nextTeam.shuffleExplainer")))
+                    shuffleExplainerButton
                 }
 
                 VStack(spacing: DesignBook.Spacing.sm) {
@@ -215,11 +205,31 @@ private extension NextTeamView {
                             )
                         }
                         .buttonStyle(.plain)
+                        .pointerHoverEffect()
                         .disabled(isRandomizingExplainer)
+                        .accessibilityAddTraits(selectedExplainerIndex == index ? .isSelected : [])
                     }
                 }
             }
         }
+    }
+
+    var shuffleExplainerButton: some View {
+        let shape = RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous)
+        return Button(action: randomizeExplainer) {
+            Image(systemName: isRandomizingExplainer ? "sparkles" : "shuffle")
+                .font(DesignBook.Font.body)
+                .foregroundStyle(DesignBook.Color.Text.accent)
+                .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingExplainer && !reduceMotion)
+                .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                .background(DesignBook.Color.Background.secondary, in: shape)
+                .contentShape(shape)
+        }
+        .buttonStyle(.plain)
+        .pointerHoverEffect()
+        .disabled(isRandomizingExplainer || team.players.count < 2)
+        .accessibilityLabel(Text(localized("game.nextTeam.shuffleExplainer")))
+        .help(localized("game.nextTeam.shuffleExplainer"))
     }
 
     func playerSelectionRow(player: Player, index: Int, isSelected: Bool) -> some View {
@@ -256,7 +266,7 @@ private extension NextTeamView {
             RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
                 .strokeBorder(isSelected ? team.color.opacity(0.35) : Color.clear, lineWidth: 1.5)
         )
-        .contentShape(Rectangle())
+        .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
     }
 
     func roleBadge(isSelected: Bool) -> some View {
@@ -274,19 +284,14 @@ private extension NextTeamView {
             .background(Capsule().fill(bg))
     }
 
-    var buttonsSection: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            SecondaryButton(title: localized("game.turnResults.checkStandings"), icon: "list.bullet.rectangle") {
-                isStandingsPresented = true
-            }
-
-            PrimaryButton(title: localized("common.buttons.play"), icon: "play.fill") {
-                DesignBook.Haptics.confirm()
-                engine.beginTurn(explainerIndex: isFirstPlay ? selectedExplainerIndex : nil)
-            }
-            .disabled(isRandomizingExplainer || !isPlayArmed)
-            .accessibilityIdentifier("nextTeam.play")
+    var playButton: some View {
+        PrimaryButton(title: localized("common.buttons.play"), icon: "play.fill") {
+            DesignBook.Haptics.confirm()
+            engine.beginTurn(explainerIndex: isFirstPlay ? selectedExplainerIndex : nil)
         }
+        .keyboardShortcut(.defaultAction)
+        .disabled(isRandomizingExplainer || !isPlayArmed)
+        .accessibilityIdentifier("nextTeam.play")
     }
 }
 

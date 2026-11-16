@@ -26,16 +26,9 @@ struct ResultsView: View {
     var body: some View {
         content
             .navigationTitle(
-                localized(isFinal ? "game.results.gameOverTitle" : "game.results.roundResultsTitle")
+                localized(isFinal ? "game.results.gameOverTitle" : "game.standings.title")
             )
             .setDefaultStyle()
-            .overlay(alignment: .top) {
-                if isFinal {
-                    ConfettiView(isActive: hasCelebrated)
-                        .ignoresSafeArea()
-                        .allowsHitTesting(false)
-                }
-            }
             .onAppear(perform: handleAppear)
             .task {
                 guard isFinal else { return }
@@ -66,6 +59,14 @@ private extension ResultsView {
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
+        }
+        // Inside the action bar's content, so the confetti falls behind the buttons.
+        .overlay(alignment: .top) {
+            if isFinal {
+                ConfettiView(isActive: hasCelebrated)
+                    .ignoresSafeArea()
+                    .allowsHitTesting(false)
+            }
         }
         .actionBar {
             actionSection
@@ -266,10 +267,9 @@ private extension ResultsView {
     @ViewBuilder
     var actionSection: some View {
         if isFinal {
-            VStack(spacing: DesignBook.Spacing.md) {
-                playAgainButton
+            VStack(spacing: DesignBook.Spacing.sm) {
                 newWordsButton
-                returnToMainButton
+                playAgainButton
             }
         }
     }
@@ -279,23 +279,20 @@ private extension ResultsView {
             PrimaryButton(title: localized("game.results.playAgain"), icon: "arrow.counterclockwise.circle.fill") {
                 handlePlayAgain()
             }
+            .keyboardShortcut(.defaultAction)
+            .accessibilityHint(Text(localized("game.results.playAgain.note")))
             .accessibilityIdentifier("results.playAgain")
 
             Text(localized("game.results.playAgain.note"))
-                .font(DesignBook.Font.subheadline)
+                .font(DesignBook.Font.footnote)
                 .foregroundStyle(DesignBook.Color.Text.secondary)
+                .accessibilityHidden(true)
         }
     }
 
     var newWordsButton: some View {
         SecondaryButton(title: localized("game.results.newWords"), icon: "text.bubble.fill") {
             handleNewWords()
-        }
-    }
-
-    var returnToMainButton: some View {
-        SecondaryButton(title: localized("game.results.returnToMain"), icon: "house.fill") {
-            handleReturnToMain()
         }
     }
 
@@ -315,11 +312,6 @@ private extension ResultsView {
         gameManager.startOverWithNewWords()
         navigator.dismissToRoot()
         navigator.push(.wordSettings)
-    }
-
-    func handleReturnToMain() {
-        navigator.dismissToRoot()
-        navigator.dismiss()
     }
 }
 
