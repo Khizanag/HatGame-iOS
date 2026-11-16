@@ -26,8 +26,9 @@ struct OnlineWordInputView: View {
 
     private var wordsPerPlayer: Int { roomManager.room?.settings.wordsPerPlayer ?? 5 }
     private var trimmed: String { currentWord.trimmingCharacters(in: .whitespacesAndNewlines) }
+    private var isDuplicate: Bool { !trimmed.isEmpty && playerWords.contains(trimmed) }
     private var canAdd: Bool {
-        !trimmed.isEmpty && playerWords.count < wordsPerPlayer && !playerWords.contains(trimmed)
+        !trimmed.isEmpty && playerWords.count < wordsPerPlayer && !isDuplicate
     }
     private var canSubmit: Bool { playerWords.count == wordsPerPlayer && !isSubmitting }
 
@@ -138,33 +139,53 @@ private extension OnlineWordInputView {
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.primary)
             Spacer()
-            Button { removeWord(at: index) } label: {
+            Button(role: .destructive) { removeWord(at: index) } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(DesignBook.IconFont.small)
                     .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
+                    .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                    .contentShape(.rect)
             }
             .buttonStyle(.plain)
-            .accessibilityLabel(Text(localized("wordInput.removeWord")))
+            .accessibilityLabel(Text(String(format: localized("onlineWordInput.removeWord"), playerWords[index])))
+            .help(String(format: localized("onlineWordInput.removeWord"), playerWords[index]))
         }
-        .padding(DesignBook.Spacing.md)
+        .padding(.leading, DesignBook.Spacing.md)
+        .padding(.vertical, DesignBook.Spacing.xs)
         .background(DesignBook.Color.Background.secondary)
         .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 
     var textField: some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            TextField(localized("onlineWordInput.enterWord"), text: $currentWord)
-                .focused($isFieldFocused)
-                .hatFieldStyle(label: localized("textField.word")) { isFieldFocused = true }
-                .onSubmit { addWord() }
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            HStack(spacing: DesignBook.Spacing.sm) {
+                TextField(localized("onlineWordInput.enterWord"), text: $currentWord)
+                    .focused($isFieldFocused)
+                    .hatFieldStyle(label: localized("textField.word")) { isFieldFocused = true }
+                    .onSubmit { addWord() }
 
-            Button { addWord() } label: {
-                Image(systemName: "plus.circle.fill")
-                    .font(DesignBook.Font.displaySmall)
-                    .foregroundStyle(canAdd ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
+                Button { addWord() } label: {
+                    Image(systemName: "plus.circle.fill")
+                        .font(DesignBook.Font.displaySmall)
+                        .foregroundStyle(canAdd ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
+                        .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .disabled(!canAdd)
+                .accessibilityLabel(Text(localized("wordInput.addWord")))
+                .help(localized("wordInput.addWord"))
             }
-            .buttonStyle(.plain)
-            .disabled(!canAdd)
+            if isDuplicate {
+                Label(localized("onlineWordInput.duplicate"), systemImage: "exclamationmark.circle")
+                    .font(DesignBook.Font.subheadline)
+                    .foregroundStyle(DesignBook.Color.Status.error)
+            }
+        }
+        .onChange(of: isDuplicate) { _, isDuplicate in
+            if isDuplicate {
+                AccessibilityNotification.Announcement(localized("onlineWordInput.duplicate")).post()
+            }
         }
     }
 
@@ -252,6 +273,9 @@ private extension OnlineWordInputView {
             playerWords.append(trimmed)
         }
         currentWord = ""
+        // Return adds the word; the field stays ready for the next one
+        // until the list is full and the submit step takes over.
+        if playerWords.count < wordsPerPlayer { isFieldFocused = true }
     }
 
     func removeWord(at index: Int) {

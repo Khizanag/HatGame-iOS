@@ -542,6 +542,40 @@
         }
       }
     },
+    "onlineWordInput.duplicate" : {
+      "comment" : "Caption under the online/nearby word field when the typed word is already on the player’s list.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Already on your list"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "უკვე გაქვს სიაში"
+          }
+        }
+      }
+    },
+    "onlineWordInput.removeWord" : {
+      "comment" : "Accessibility label and tooltip of the button that removes a word from the online/nearby word list. %@ is the word.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove %@"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წაშლა: %@"
+          }
+        }
+      }
+    },
     "session.leave" : {
       "comment" : "Accessibility label of the close button that leaves an online or nearby room.",
       "localizations" : {
