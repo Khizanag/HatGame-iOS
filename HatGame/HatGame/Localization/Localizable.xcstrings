@@ -2415,57 +2415,6 @@
         }
       }
     },
-    "game.card.hint.gotIt" : {
-      "comment" : "Badge shown on the word card while dragging right to mark the word as guessed.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Got it"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გამოვიცანი"
-          }
-        }
-      }
-    },
-    "game.card.hint.skip" : {
-      "comment" : "Badge shown on the word card while dragging left to skip the current word.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გამოტოვება"
-          }
-        }
-      }
-    },
-    "game.card.swipeHint" : {
-      "comment" : "Subtle hint on the word card teaching the swipe gesture.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Swipe right if guessed · left to skip"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გადაასრიალე მარჯვნივ — გამოცნობა · მარცხნივ — გამოტოვება"
-          }
-        }
-      }
-    },
     "game.currentScoreLabel %lld" : {
       "comment" : "A team's running total on the next-team screen. Argument is the score.",
       "localizations" : {
