@@ -10,15 +10,29 @@ struct HatGameBuildNotes {
     let routes: LabRoutes
 
     var current: [BuildNote] {
-        [heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings]
+        [liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var liquidGlass: BuildNote {
+        BuildNote(
+            commit: "9e391a1",
+            title: lab("Liquid Glass controls"),
+            howToTest: lab("""
+                Pass and Play: Add Team ▸ name suggestions and shuffle; Add Words ▸ Auto-fill, then tap \
+                the word field and watch Add Word melt into the round button; Next Team ▸ shuffle and \
+                Standings (a glass sheet at half height).
+                """),
+            systemImage: "drop.fill",
+            color: .cyan
+        ) { routes.passAndPlay() }
+    }
+
     var heroNumbers: BuildNote {
         BuildNote(
-            commit: "752bbc4",
+            commit: "450e0ef",
             title: lab("Setup numbers roll without clipping"),
             howToTest: lab("""
                 Pass and Play ▸ Continue, then tap + and − on Words and Timer: digits roll in and out \
