@@ -8,6 +8,9 @@
 import Navigation
 import Networking
 import SwiftUI
+#if DEBUG
+import TestingLab
+#endif
 
 @main
 struct HatGameApp: App {
@@ -25,6 +28,9 @@ struct HatGameApp: App {
             // AnyPage destinations + full-screen covers underneath.
             FlowNavigationView {
                 HomeView()
+                    #if DEBUG
+                    .hatGameTestingLab(isRoot: true)
+                    #endif
             }
             .environment(roomManager)
             .environment(gameSyncManager)
@@ -44,6 +50,17 @@ struct HatGameApp: App {
         .commands {
             // A party game has no documents; drop the default File ▸ New Window.
             CommandGroup(replacing: .newItem) { }
+            #if DEBUG
+            // A Mac can't be shaken: the lab gets a menu item instead.
+            CommandGroup(after: .appSettings) {
+                Button {
+                    OpenTestingLabAction()()
+                } label: {
+                    Text(verbatim: "Testing Lab")
+                }
+                .keyboardShortcut("t", modifiers: [.command, .option])
+            }
+            #endif
         }
         #endif
 

@@ -1,5 +1,5 @@
 {
-  "originHash" : "3cd45d4ccb7d493d5f9bceeb248d53729057e04528cb34f3925c98cb254ae816",
+  "originHash" : "dc63b4562eee8939c55fe5437c89ee5bc970feb5213fe4079c95626aaed0209d",
   "pins" : [
     {
       "identity" : "abseil-cpp-binary",
@@ -125,6 +125,15 @@
       "state" : {
         "revision" : "55d7a1cc5666b85c13464aea1c4b4a90feccb4c8",
         "version" : "1.38.1"
+      }
+    },
+    {
+      "identity" : "testinglab-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Khizanag/TestingLab-iOS",
+      "state" : {
+        "revision" : "37c2b3aab8d3843039887d611159f49c389e8c29",
+        "version" : "1.1.0"
       }
     }
   ],

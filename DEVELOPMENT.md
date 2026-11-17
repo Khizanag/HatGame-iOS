@@ -65,6 +65,8 @@ Three packages live as siblings of the app and are referenced as local SPM packa
   - Nearby: `LocalMultipeerService` (thin `MultipeerConnectivity` wrapper, Bonjour service `hg-hat-game`), `LocalRoomManager`, `LocalGameSyncManager`, `LocalMessage`.
 - **DesignBook** (swift-tools 6.2) — the `DesignBook` token namespace plus a bundled color asset catalog.
 
+One remote package: [TestingLab](https://github.com/Khizanag/TestingLab-iOS) (`from: 1.1.0`), the debug-only developer screen shared by the personal apps. Release builds contain none of it.
+
 ## Navigation
 
 Banned in feature code (enforced by SwiftLint): `NavigationLink`, and `.navigationDestination(for:)` anywhere except a flow view's own `NavigationStack`. Navigate instead through the `Navigator` in the environment:
@@ -124,7 +126,8 @@ UI strings live in `HatGame/Localization/Localizable.xcstrings` (English and Geo
 
 - **Unit tests** (`HatGameTests`) use the **Swift Testing** framework — `@Test`, `#expect`, `#require`, `@MainActor` suites. Not XCTest.
 - **UI tests** (`HatGameUITests`) use XCUITest.
-- **Test mode:** enable in Settings → Developer Info. `GameManager` then loads `GameConfiguration.mockForTesting` (two ready teams and words), skipping manual setup.
+- **Testing Lab (debug builds):** shake the device (Device ▸ Shake in the simulator), tap Settings ▸ Developer Info ▸ Testing Lab, press ⌥⌘T on a Mac, or launch with `-openTestingLab YES`. It lists this build's changes, each of which can jump to its screen, and has the app's tools: a started quick game, Test Mode, the gameplay switches, language and appearance, the multiplayer setup, and every top-level screen. `View/TestingLab/` holds Hat Game's part; rewrite `HatGameBuildNotes` for each build handed over for testing.
+- **Test mode:** a switch in the Testing Lab. `GameManager` then loads `GameConfiguration.mockForTesting` (two ready teams and words), skipping manual setup.
 
 Run a single test by target/suite/function:
 

@@ -48,5 +48,9 @@ struct LocalFlowView: View {
         .onDisappear {
             Task { try? await roomManager.leaveRoom() }
         }
+        #if DEBUG
+        // Outside the flow's own navigator: the lab routes on the app's.
+        .hatGameTestingLab()
+        #endif
     }
 }

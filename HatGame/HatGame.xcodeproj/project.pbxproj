@@ -10,6 +10,7 @@
 		72686A0F2EDB6F8D0006C09D /* DesignBook in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000002 /* DesignBook */; };
 		72686BD42EDB72370006C09D /* Navigation in Frameworks */ = {isa = PBXBuildFile; productRef = C27047BB3C7F4864B77B427F /* Navigation */; };
 		AA0000000000000000000004 /* Networking in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000005 /* Networking */; };
+		AA0000000000000000000008 /* TestingLab in Frameworks */ = {isa = PBXBuildFile; productRef = AA0000000000000000000007 /* TestingLab */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,6 +75,7 @@
 				72686BD42EDB72370006C09D /* Navigation in Frameworks */,
 				72686A0F2EDB6F8D0006C09D /* DesignBook in Frameworks */,
 				AA0000000000000000000004 /* Networking in Frameworks */,
+				AA0000000000000000000008 /* TestingLab in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +139,7 @@
 				AA0000000000000000000002 /* DesignBook */,
 				C27047BB3C7F4864B77B427F /* Navigation */,
 				AA0000000000000000000005 /* Networking */,
+				AA0000000000000000000007 /* TestingLab */,
 			);
 			productName = HatGame;
 			productReference = 725A48222EC9076F00E3EB88 /* HatGame.app */;
@@ -225,6 +228,7 @@
 				AA0000000000000000000001 /* XCLocalSwiftPackageReference "../HatGame-DesignBook" */,
 				DECC24037B2C4A7A939F33E0 /* XCLocalSwiftPackageReference "../HatGame-Navigation" */,
 				AA0000000000000000000003 /* XCLocalSwiftPackageReference "../HatGame-Networking" */,
+				AA0000000000000000000006 /* XCRemoteSwiftPackageReference "TestingLab-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 725A48232EC9076F00E3EB88 /* Products */;
@@ -694,6 +698,17 @@
 		};
 /* End XCLocalSwiftPackageReference section */
 
+/* Begin XCRemoteSwiftPackageReference section */
+		AA0000000000000000000006 /* XCRemoteSwiftPackageReference "TestingLab-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Khizanag/TestingLab-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
 /* Begin XCSwiftPackageProductDependency section */
 		AA0000000000000000000002 /* DesignBook */ = {
 			isa = XCSwiftPackageProductDependency;
@@ -704,6 +719,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = AA0000000000000000000003 /* XCLocalSwiftPackageReference "../HatGame-Networking" */;
 			productName = Networking;
+		};
+		AA0000000000000000000007 /* TestingLab */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = AA0000000000000000000006 /* XCRemoteSwiftPackageReference "TestingLab-iOS" */;
+			productName = TestingLab;
 		};
 		C27047BB3C7F4864B77B427F /* Navigation */ = {
 			isa = XCSwiftPackageProductDependency;

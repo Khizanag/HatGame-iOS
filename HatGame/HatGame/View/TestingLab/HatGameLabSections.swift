@@ -1,0 +1,147 @@
+#if DEBUG
+import Navigation
+import Networking
+import SwiftUI
+import TestingLab
+
+/// Hat Game's own tools in the Testing Lab: a game to jump into, the
+/// switches, how the app looks, the multiplayer setup, and any screen.
+/// English only, like the lab itself.
+struct HatGameLabSections: View {
+    @Environment(\.closeTestingLab) private var closeTestingLab
+    @Environment(Navigator.self) private var navigator
+
+    @Bindable private var configuration = AppConfiguration.shared
+
+    var body: some View {
+        playSection
+        switchesSection
+        lookSection
+        multiplayerSection
+        screensSection
+    }
+}
+
+// MARK: - Sections
+private extension HatGameLabSections {
+    var routes: LabRoutes { LabRoutes(navigator: navigator) }
+
+    var playSection: some View {
+        Section {
+            go("Start a Quick Game", "play.fill", .green) { routes.quickGame() }
+            toggle("Test Mode", $configuration.isTestMode, "wrench.adjustable.fill", .orange)
+        } header: {
+            Text(verbatim: "Play")
+        } footer: {
+            Text(verbatim: "A quick game is two teams of two and a two-word hat, already started. "
+                + "Test Mode fills Pass and Play with sample teams and words.")
+        }
+    }
+
+    var switchesSection: some View {
+        Section {
+            toggle("Haptics", $configuration.isHapticsEnabled, "iphone.radiowaves.left.and.right", .pink)
+            toggle("Time's Up Sound", $configuration.isTimeUpSoundEnabled, "speaker.wave.2.fill", .green)
+            toggle("Allow Skipping", $configuration.defaultSkippingEnabled, "arrow.uturn.forward", .orange)
+            toggle("Allow Duplicate Words", $configuration.allowDuplicateWords, "doc.on.doc.fill", .purple)
+            toggle("Right-Handed Layout", $configuration.isRightHanded, "hand.point.right.fill", .blue)
+        } header: {
+            Text(verbatim: "Switches")
+        } footer: {
+            Text(verbatim: "The same settings as in the app; new games start with them.")
+        }
+    }
+
+    var lookSection: some View {
+        Section {
+            Picker(selection: $configuration.language) {
+                ForEach(AppLanguage.allCases, id: \.self) { language in
+                    Text(verbatim: "\(language.flag) \(language.displayName)").tag(language)
+                }
+            } label: {
+                LabRow(verbatim: "Language", systemImage: "globe", color: .blue)
+            }
+            Picker(selection: $configuration.colorScheme) {
+                ForEach(AppColorScheme.allCases, id: \.self) { scheme in
+                    Text(verbatim: scheme.displayName).tag(scheme)
+                }
+            } label: {
+                LabRow(verbatim: "Appearance", systemImage: "circle.lefthalf.filled", color: .indigo)
+            }
+        } header: {
+            Text(verbatim: "Look")
+        } footer: {
+            Text(verbatim: "Georgian is the language to check text that runs long.")
+        }
+    }
+
+    var multiplayerSection: some View {
+        Section {
+            status(
+                "Online",
+                Networking.isConfigured ? "Firebase connected" : "Firebase not configured",
+                "globe",
+                .blue
+            )
+            status(
+                "Nearby Service",
+                "_\(LocalMultipeerService.serviceType)._tcp",
+                "dot.radiowaves.left.and.right",
+                .teal
+            )
+        } header: {
+            Text(verbatim: "Multiplayer")
+        } footer: {
+            Text(verbatim: "Nearby needs two devices on the same network; online needs four players to start a game.")
+        }
+    }
+
+    var screensSection: some View {
+        Section {
+            go("Pass and Play", "person.2.fill", .green) { routes.passAndPlay() }
+            go("Play Nearby", "dot.radiowaves.left.and.right", .teal) { routes.playNearby() }
+            go("Play Online", "globe", .blue) { routes.playOnline() }
+            DisclosureGroup {
+                go("Settings", "gearshape.fill", .gray) { routes.push(.settings) }
+                go("Default Game Settings", "slider.horizontal.3", .orange) { routes.push(.defaultsSettings) }
+                go("App Icon", "app.badge.fill", .indigo) { routes.push(.appIconSelection) }
+                go("Developer Info", "person.circle.fill", .purple) { routes.push(.developerInfo) }
+                go("Feedback", "envelope.fill", .blue) { routes.push(.feedback) }
+            } label: {
+                LabRow(verbatim: "Settings Screens", systemImage: "list.bullet", color: .gray)
+            }
+        } header: {
+            Text(verbatim: "Open a Screen")
+        }
+    }
+}
+
+// MARK: - Rows
+private extension HatGameLabSections {
+    /// Closes the lab, then goes there, so the screen isn't hidden behind it.
+    func go(
+        _ title: String,
+        _ glyph: String,
+        _ color: Color,
+        _ route: @escaping @MainActor () -> Void
+    ) -> some View {
+        Button { closeTestingLab(then: route) } label: {
+            LabRow(verbatim: title, systemImage: glyph, color: color)
+        }
+    }
+
+    func toggle(_ title: String, _ isOn: Binding<Bool>, _ glyph: String, _ color: Color) -> some View {
+        Toggle(isOn: isOn) {
+            LabRow(verbatim: title, systemImage: glyph, color: color)
+        }
+    }
+
+    func status(_ title: String, _ value: String, _ glyph: String, _ color: Color) -> some View {
+        LabeledContent {
+            Text(verbatim: value)
+        } label: {
+            LabRow(verbatim: title, systemImage: glyph, color: color)
+        }
+    }
+}
+#endif

@@ -63,6 +63,8 @@ enum UITestConfiguration {
             navigator.push(.defaultsSettings)
         case "appIcon":
             navigator.push(.appIconSelection)
+        case "developer":
+            navigator.push(.developerInfo)
         case "game":
             navigator.present(.uiTestGame)
         default:

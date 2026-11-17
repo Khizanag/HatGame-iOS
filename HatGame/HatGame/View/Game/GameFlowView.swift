@@ -73,6 +73,10 @@ struct GameFlowView: View {
         .task {
             await startUITestGameIfNeeded()
         }
+        #if DEBUG
+        // Outside the flow's own navigator: the lab routes on the app's.
+        .hatGameTestingLab()
+        #endif
     }
 }
 

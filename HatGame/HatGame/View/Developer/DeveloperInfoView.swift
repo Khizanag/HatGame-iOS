@@ -7,9 +7,14 @@
 
 import DesignBook
 import SwiftUI
+#if DEBUG
+import TestingLab
+#endif
 
 struct DeveloperInfoView: View {
-    private let appConfiguration = AppConfiguration.shared
+    #if DEBUG
+    @Environment(\.openTestingLab) private var openTestingLab
+    #endif
 
     var body: some View {
         Form {
@@ -18,7 +23,7 @@ struct DeveloperInfoView: View {
             contactSection
             creditsSection
             #if DEBUG
-            testModeSection
+            testingLabSection
             #endif
         }
         .formStyle(.grouped)
@@ -91,18 +96,16 @@ private extension DeveloperInfoView {
     }
 
     #if DEBUG
-    var testModeSection: some View {
+    /// The way into the lab where a shake isn't: a Mac, Vision Pro, or a
+    /// tester who'd rather tap.
+    var testingLabSection: some View {
         Section {
-            SettingsToggleRow(
-                icon: appConfiguration.isTestMode ? "wrench.adjustable.fill" : "wrench.adjustable",
-                title: localized("settings.testMode.title"),
-                isOn: Binding(
-                    get: { appConfiguration.isTestMode },
-                    set: { appConfiguration.isTestMode = $0 }
-                )
-            )
+            SettingsLinkRow(icon: "flask.fill", tint: .teal, title: "Testing Lab") {
+                openTestingLab()
+            }
+            .accessibilityIdentifier("developer.testingLab")
         } footer: {
-            Text(localized("settings.testMode.description"))
+            Text(verbatim: "Debug builds only. On iPhone and iPad, shake the device to open it from anywhere.")
         }
     }
     #endif

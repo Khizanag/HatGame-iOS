@@ -6866,40 +6866,6 @@
         }
       }
     },
-    "settings.testMode.description" : {
-      "comment" : "A description of the test mode toggle in the settings.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Prefill teams, players, and sample words so you can explore the flow instantly. You can still edit everything after enabling it."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "წინასწარ შეავსეთ გუნდები, მოთამაშეები და ნიმუშის სიტყვები, რათა მყისიერად გამოიკვლიოთ ნაკადი. ჩართვის შემდეგ კვლავ შეგიძლიათ ყველაფრის რედაქტირება."
-          }
-        }
-      }
-    },
-    "settings.testMode.title" : {
-      "comment" : "A section title for test mode settings.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Test Mode"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ტესტ რეჟიმი"
-          }
-        }
-      }
-    },
     "settings.timeUpSound.description" : {
       "comment" : "Footer explaining the time's-up sound setting.",
       "localizations" : {

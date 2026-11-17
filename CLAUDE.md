@@ -105,6 +105,15 @@ This project predates / diverges from the generic personal-org house pattern. **
 - **Sheets:** never `.presentationDragIndicator(...)` — the system shows the grabber on multi-detent sheets. View-only sheets offer `[.medium, .large]`.
 - **Misc:** trailing commas mandatory in multiline collections; no 3+ stacked unclosed `(` on one line; `Package.swift` URLs have no trailing `.git` and use `from:` not `.upToNextMajor(from:)`.
 
+## Testing Lab (debug builds)
+
+The [TestingLab](https://github.com/Khizanag/TestingLab-iOS) package (remote, `from: 1.1.0`, everything inside `#if DEBUG`) is the developer screen. Hat Game's part lives in `View/TestingLab/`: `HatGameBuildNotes` (this build's changes; rewrite it for every build handed over for testing), `HatGameLabSections` (the app's tools), and `LabRoutes` (where notes and shortcuts go, on the app's **root** navigator).
+
+- **Hosts:** a sheet can't open over a full-screen flow from below it, so the lab is hosted on Home (`.hatGameTestingLab(isRoot: true)`, which stands aside while a flow is presented) and on the root of each flow view (`GameFlowView`, `OnlineFlowView`, `LocalFlowView`, outside the flow's own navigator). A new full-screen flow gets `.hatGameTestingLab()` the same way.
+- **Ways in:** shake (iOS), Settings ▸ Developer Info ▸ Testing Lab (every platform), ⌥⌘T (macOS menu), `-openTestingLab YES` at launch.
+- **Routes:** opening a flow leaves the stack alone. Popping the stack while a flow zooms open crashes UIKit's zoom transition.
+- The lab is English only and kept out of the String Catalog: wrap its text in `lab("…")` or `Text(verbatim:)`.
+
 ## Localization
 
 All UI strings live in `HatGame/Localization/Localizable.xcstrings` (English + Georgian). No hardcoded user-facing strings. Use dot-notation keys (`home.title`, `wordInput.addWord`). In-app language switching is driven by `AppLanguage` / `AppConfiguration.locale` (re-renders in place).
@@ -114,7 +123,7 @@ All UI strings live in `HatGame/Localization/Localizable.xcstrings` (English + G
 - **`README.md` and `DEVELOPMENT.md` are current** (updated 2026-11-16): product overview and the longer technical reference. When code and docs disagree, trust the code and fix the doc — game rules live in `docs/`.
 - **Commit/PR messages must NOT include AI attribution.** Solo repo: commit directly to `main` and push — no feature branches or PRs.
 - **App Store configuration:** `HatGame/PrivacyInfo.xcprivacy` declares the `UserDefaults` reason (`CA92.1`) and the data sent to Firebase — update it when the app sends anything new. `HatGame/InfoPlist.xcstrings` localizes the display name and permission prompts (en + ka). Alternate icons compile via `ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES` (iOS SDKs only); never hand-write `CFBundleIcons` in `Info.plist`. Icon PNGs must have no alpha channel — `swift Scripts/flatten-icons.swift <png>...`.
-- **Firebase gating:** `GoogleService-Info.plist` is committed, so online play works out of the box. Online code paths must gate on `Networking.isConfigured` / `FirebaseService.shared.isAvailable` (both require a non-empty `DATABASE_URL` in the plist) before reads/writes. Test mode: `AppConfiguration.shared.isTestMode` makes `GameManager` load `GameConfiguration.mockForTesting`.
+- **Firebase gating:** `GoogleService-Info.plist` is committed, so online play works out of the box. Online code paths must gate on `Networking.isConfigured` / `FirebaseService.shared.isAvailable` (both require a non-empty `DATABASE_URL` in the plist) before reads/writes. Test mode (a Testing Lab switch): `AppConfiguration.shared.isTestMode` makes `GameManager` load `GameConfiguration.mockForTesting`.
 - **Multipeer requires** `NSLocalNetworkUsageDescription`, `NSBluetoothAlwaysUsageDescription`, and `NSBonjourServices` (`_hg-hat-game._tcp`/`._udp`) — already in `Info.plist`; keep them if touching local multiplayer.
 - **CI:** `.github/workflows/ci.yml` runs on push to `main` (and on demand): `swiftlint --strict`, `HatGameTests` on an iOS 26 iPhone simulator, using the newest runner Xcode 26 that has one installed, and an unsigned macOS build. `firebase-database-rules.yml` deploys Realtime Database rules when `database.rules.json` / `firebase.json` / `.firebaserc` change on `main`. The `FIREBASE_SERVICE_ACCOUNT` GitHub secret is the only real secret.
 - Logging uses `OSLog` with subsystem `com.khizanag.hat-game`.
