@@ -56,15 +56,8 @@ private extension TeamNameSuggestionRow {
                 Image(systemName: "shuffle")
                     .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.accent)
-                    .padding(6)
-                    .background {
-                        Circle().fill(DesignBook.Color.Text.accent.opacity(0.12))
-                    }
-                    .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
-                    .contentShape(.rect)
             }
-            .buttonStyle(.plain)
-            .pointerHoverEffect()
+            .glassIconButtonStyle()
             .accessibilityLabel(Text(localized("teamForm.suggestions.shuffle")))
             .help(localized("teamForm.suggestions.shuffle"))
         }
@@ -83,20 +76,10 @@ struct SuggestionChip: View {
                 .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .lineLimit(1)
-                .padding(.horizontal, DesignBook.Spacing.md)
-                .frame(minHeight: DesignBook.Size.touchTargetSize)
-                .background {
-                    Capsule()
-                        .fill(DesignBook.Color.Text.accent.opacity(0.10))
-                        .overlay {
-                            Capsule()
-                                .strokeBorder(DesignBook.Color.Text.accent.opacity(0.30), lineWidth: 1)
-                        }
-                }
-                .contentShape(.capsule)
         }
-        .buttonStyle(.plain)
-        .pointerHoverEffect()
+        .glassButtonStyle()
+        .buttonBorderShape(.capsule)
+        .controlSize(.large)
         .accessibilityLabel(Text(verbatim: text))
         .accessibilityHint(Text(localized("teamForm.suggestions.tap")))
     }

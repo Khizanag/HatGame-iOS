@@ -165,13 +165,10 @@ private extension OnlineWordInputView {
                     .onSubmit { addWord() }
 
                 Button { addWord() } label: {
-                    Image(systemName: "plus.circle.fill")
-                        .font(DesignBook.Font.displaySmall)
-                        .foregroundStyle(canAdd ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
-                        .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
-                        .contentShape(.rect)
+                    Image(systemName: "plus")
+                        .font(DesignBook.Font.bodySemibold)
                 }
-                .buttonStyle(.plain)
+                .glassIconButtonStyle(isProminent: true)
                 .disabled(!canAdd)
                 .accessibilityLabel(Text(localized("wordInput.addWord")))
                 .help(localized("wordInput.addWord"))
@@ -236,7 +233,6 @@ private extension OnlineWordInputView {
                     addWord()
                 }
                 .disabled(!canAdd)
-                .opacity(canAdd ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
             }
         }
     }

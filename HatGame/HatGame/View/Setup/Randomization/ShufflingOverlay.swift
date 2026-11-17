@@ -11,7 +11,6 @@ import SwiftUI
 /// The dimmed spinning-hat overlay shown while the hat is shuffled. The
 /// whole overlay is one button: a tap skips straight to the game.
 struct ShufflingOverlay: View {
-    @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     let reduceMotion: Bool
     let onSkip: () -> Void
 
@@ -89,18 +88,10 @@ private extension ShufflingOverlay {
         }
     }
 
+    /// A glass disc floating over the dimmed screen.
     var disc: some View {
-        ZStack {
-            if reduceTransparency {
-                Circle().fill(DesignBook.Color.Background.card)
-            } else {
-                Circle().fill(.thinMaterial)
-            }
-        }
-        .frame(width: 128, height: 128)
-        .overlay {
-            Circle().strokeBorder(Color.white.opacity(0.18), lineWidth: 1)
-        }
-        .shadow(color: .black.opacity(0.35), radius: 20, x: 0, y: 12)
+        Color.clear
+            .frame(width: 128, height: 128)
+            .glassSurface(in: .circle)
     }
 }

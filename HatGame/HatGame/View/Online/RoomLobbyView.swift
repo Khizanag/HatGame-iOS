@@ -401,7 +401,6 @@ private extension RoomLobbyView {
                     startGame()
                 }
                 .disabled(!canStartGame || isUpdating)
-                .opacity(canStartGame ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
 
                 if !canStartGame {
                     Text(localized("lobby.needMorePlayers"))

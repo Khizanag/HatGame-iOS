@@ -16,14 +16,17 @@ struct FloatingAddButton: View {
 
     var body: some View {
         Button(action: action) {
-            Image(systemName: "plus.circle.fill")
+            // The glass is the circle; a circled glyph would draw a second ring.
+            Image(systemName: "plus")
                 .font(DesignBook.IconFont.large)
+                .fontWeight(.semibold)
                 .frame(width: DesignBook.Size.floatingButtonSize, height: DesignBook.Size.floatingButtonSize)
                 .decorativeHeroSizing()
         }
         .glassProminentButtonStyle()
+        .buttonBorderShape(.circle)
         .disabled(isDisabled)
-        .matchedGeometryEffect(id: "addButton", in: namespace)
+        .glassMorphID("addButton", in: namespace)
         .accessibilityLabel(Text(localized("wordInput.addWord")))
         .help(localized("wordInput.addWord"))
         .accessibilityShowsLargeContentViewer()

@@ -120,7 +120,6 @@ private extension RoomSetupForm {
             } else {
                 PrimaryButton(title: actionTitle, icon: actionIcon, action: submit)
                     .disabled(!canSubmit)
-                    .opacity(canSubmit ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                     .keyboardShortcut(.defaultAction)
             }
         }

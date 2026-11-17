@@ -215,18 +215,13 @@ private extension NextTeamView {
     }
 
     var shuffleExplainerButton: some View {
-        let shape = RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous)
-        return Button(action: randomizeExplainer) {
+        Button(action: randomizeExplainer) {
             Image(systemName: isRandomizingExplainer ? "sparkles" : "shuffle")
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.accent)
                 .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingExplainer && !reduceMotion)
-                .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
-                .background(DesignBook.Color.Background.secondary, in: shape)
-                .contentShape(shape)
         }
-        .buttonStyle(.plain)
-        .pointerHoverEffect()
+        .glassIconButtonStyle()
         .disabled(isRandomizingExplainer || team.players.count < 2)
         .accessibilityLabel(Text(localized("game.nextTeam.shuffleExplainer")))
         .help(localized("game.nextTeam.shuffleExplainer"))

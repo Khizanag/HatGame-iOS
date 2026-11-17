@@ -202,7 +202,9 @@ private extension WordInputView {
 
     @ViewBuilder
     var footer: some View {
-        Group {
+        // One container, so the bar's Add Word melts into the floating button
+        // when the keyboard opens, and back.
+        GlassContainer {
             if isWordFieldFocused, !isCurrentPlayerDone, !Platform.isMac {
                 HStack {
                     Spacer()
@@ -227,7 +229,7 @@ private extension WordInputView {
                 handleAddWord()
             }
             .disabled(isAddWordButtonDisabled)
-            .matchedGeometryEffect(id: "addButton", in: addButtonNamespace)
+            .glassMorphID("addButton", in: addButtonNamespace)
         } else {
             PrimaryButton(title: nextActionTitle, icon: nextActionIcon, action: handleSaveWords)
                 .keyboardShortcut(.defaultAction)

@@ -113,6 +113,54 @@ extension View {
     }
 }
 
+// MARK: - Glass controls in content
+extension View {
+    /// A round Liquid Glass button for an icon action inside content, such as
+    /// a shuffle beside a heading. Prominent for the one action a field or
+    /// card leads to, such as adding the word just typed.
+    @ViewBuilder
+    func glassIconButtonStyle(isProminent: Bool = false) -> some View {
+        Group {
+            if isProminent {
+                glassProminentButtonStyle()
+            } else {
+                glassButtonStyle()
+            }
+        }
+        .buttonBorderShape(.circle)
+        .controlSize(.large)
+    }
+
+    /// A Liquid Glass surface for something that floats above content, such
+    /// as the disc over the shuffle. Interactive when it responds to touch.
+    /// Glass follows Reduce Transparency and Increase Contrast by itself.
+    /// visionOS has no `glassEffect` (its windows are already glass), so there
+    /// it is the regular material.
+    @ViewBuilder
+    func glassSurface(in shape: some Shape, isInteractive: Bool = false) -> some View {
+        #if os(visionOS)
+        background(.regularMaterial, in: shape)
+        #else
+        glassEffect(isInteractive ? .regular.interactive() : .regular, in: shape)
+        #endif
+    }
+}
+
+// MARK: - Glass morph
+extension View {
+    /// Morphs this view's glass into the glass with the same `id` that
+    /// replaces it, inside one `GlassContainer`. visionOS has no glass
+    /// effects, so there it is a matched-geometry move.
+    @ViewBuilder
+    func glassMorphID(_ id: String, in namespace: Namespace.ID) -> some View {
+        #if os(visionOS)
+        matchedGeometryEffect(id: id, in: namespace)
+        #else
+        glassEffectID(id, in: namespace)
+        #endif
+    }
+}
+
 // MARK: - Glass effect container
 /// Groups Liquid Glass shapes so they blend and morph together. visionOS has
 /// no `GlassEffectContainer` (its windows are already glass), so there the

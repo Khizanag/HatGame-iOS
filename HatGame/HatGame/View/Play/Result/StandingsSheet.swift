@@ -20,6 +20,9 @@ struct StandingsSheet: View {
                     CloseToolbarItem { dismiss() }
                 }
         }
+        // The glass sheet shows through at medium height; at large the
+        // system turns it opaque.
+        .environment(\.showsScreenBackground, false)
         .presentationDetents([.medium, .large])
     }
 }

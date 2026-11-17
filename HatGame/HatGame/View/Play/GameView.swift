@@ -118,14 +118,17 @@ private extension GameView {
     }
 
     /// Side by side normally; stacked at accessibility sizes, where two
-    /// half-width buttons would truncate their labels.
+    /// half-width buttons would truncate their labels. One glass container,
+    /// so the pair reads as one control group.
     var actionButtons: some View {
         let layout = dynamicTypeSize.isAccessibilitySize
             ? AnyLayout(VStackLayout(spacing: DesignBook.Spacing.sm))
             : AnyLayout(HStackLayout(spacing: DesignBook.Spacing.md))
-        return layout {
-            skipButton
-            gotItButton
+        return GlassContainer(spacing: DesignBook.Spacing.md) {
+            layout {
+                skipButton
+                gotItButton
+            }
         }
     }
 

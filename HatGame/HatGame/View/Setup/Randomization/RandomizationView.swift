@@ -111,14 +111,10 @@ private extension RandomizationView {
                             .font(DesignBook.Font.subheadline)
                     }
                     .foregroundStyle(DesignBook.Color.Text.accent)
-                    .padding(.horizontal, DesignBook.Spacing.md)
-                    .frame(minHeight: DesignBook.Size.touchTargetSize)
-                    .background(DesignBook.Color.Text.accent.opacity(0.1))
-                    .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
-                    .contentShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
                 }
-                .buttonStyle(.plain)
-                .pointerHoverEffect()
+                .glassButtonStyle()
+                .buttonBorderShape(.capsule)
+                .controlSize(.large)
                 .disabled(isRandomizingTeam)
             }
         }

@@ -189,7 +189,14 @@ private extension OnlinePlayView {
         }
     }
 
+    /// One glass container, so the pair reads as one control group.
     var actionRow: some View {
+        GlassContainer(spacing: DesignBook.Spacing.md) {
+            actionButtons
+        }
+    }
+
+    var actionButtons: some View {
         HStack(spacing: DesignBook.Spacing.md) {
             if isSkippingAllowed {
                 Button(action: skipCurrentWord) {
@@ -201,7 +208,6 @@ private extension OnlinePlayView {
                 .glassButtonStyle()
                 .tint(DesignBook.Color.Status.warning)
                 .disabled(!isSkipEnabled || isSubmitting)
-                .opacity(isSkipEnabled ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                 .keyboardShortcut(.leftArrow, modifiers: [])
             }
 

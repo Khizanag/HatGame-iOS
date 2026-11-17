@@ -14,11 +14,7 @@ extension View {
     /// (HIG materials.md, visionOS).
     @ViewBuilder
     func setDefaultBackground() -> some View {
-        #if os(visionOS)
-        self
-        #else
-        background(DesignBook.Color.Background.primary.ignoresSafeArea())
-        #endif
+        modifier(ScreenBackground())
     }
 
     func setDefaultStyle(titleDisplay: NavigationTitleDisplay = .inline) -> some View {
@@ -48,5 +44,29 @@ private struct DefaultStyleModifier: ViewModifier {
             .setDefaultBackground()
             .navigationTitleDisplay(titleDisplay)
             .navigationButtonToolbar()
+    }
+}
+
+// MARK: - Screen background
+extension EnvironmentValues {
+    /// False inside a sheet at a partial height, so the system's Liquid Glass
+    /// sheet shows through instead of the opaque screen color. At full height
+    /// the system makes the sheet opaque on its own.
+    @Entry var showsScreenBackground = true
+}
+
+private struct ScreenBackground: ViewModifier {
+    @Environment(\.showsScreenBackground) private var showsScreenBackground
+
+    func body(content: Content) -> some View {
+        #if os(visionOS)
+        content
+        #else
+        if showsScreenBackground {
+            content.background(DesignBook.Color.Background.primary.ignoresSafeArea())
+        } else {
+            content
+        }
+        #endif
     }
 }

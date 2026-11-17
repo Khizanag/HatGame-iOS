@@ -136,7 +136,6 @@ private extension RoomJoinView {
                     joinRoom()
                 }
                 .disabled(!canJoin)
-                .opacity(canJoin ? DesignBook.Opacity.enabled : DesignBook.Opacity.disabled)
                 .keyboardShortcut(.defaultAction)
             }
         }
