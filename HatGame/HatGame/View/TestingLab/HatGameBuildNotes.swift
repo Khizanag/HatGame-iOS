@@ -11,14 +11,28 @@ struct HatGameBuildNotes {
 
     var current: [BuildNote] {
         [
-            startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
-            appIconCards, saveAndExit, leaveRoom, haptics, settings,
+            hatLanding, startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass,
+            heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings,
         ]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var hatLanding: BuildNote {
+        BuildNote(
+            commit: "b9745bb",
+            title: lab("The hat sits centered and bobs as each word goes in"),
+            howToTest: lab("""
+                On Fill the Hat the upturned hat sits in the middle of its circle, and it swells the \
+                moment a name or word disappears into it. Start Game on Starting Team: the slips hop \
+                over the brim and drop in one by one, with a bob for each.
+                """),
+            systemImage: "hat.widebrim.fill",
+            color: .indigo
+        ) { routes.passAndPlay() }
+    }
+
     var startingTeam: BuildNote {
         BuildNote(
             commit: "a1c2480",
