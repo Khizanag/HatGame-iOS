@@ -25,7 +25,7 @@ private extension HatGameBuildNotes {
             title: lab("Fill the Hat replaces two setup screens"),
             howToTest: lab("""
                 Pass and Play ▸ teams ▸ Continue ▸ Timer ▸ Continue: one screen sets words per player and \
-                where the words come from. The total rolls as you step, players' names drop into the hat, \
+                where the words come from. The total rolls as you step, players' names fly into the upturned hat, \
                 and Pick for Us drops sample words instead. Continue says Write Words or Draw Words.
                 """),
             systemImage: "hat.widebrim.fill",
