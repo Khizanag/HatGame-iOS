@@ -1562,8 +1562,59 @@
         }
       }
     },
-    "wordSettings.wordCount %lld" : {
-      "comment" : "Spoken value of the words-per-player controls.",
+    "wordSource.automatic.detail" : {
+      "comment" : "Fill the Hat tile for picked words: what choosing it means.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No typing: the app draws them from its word list."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აკრეფა არ არის საჭირო: აპი სიტყვებს თავისი სიაიდან ამოიღებს."
+          }
+        }
+      }
+    },
+    "wordSource.continue.automatic" : {
+      "comment" : "Fill the Hat continue button when the app picks the words.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Draw Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვების ამოღება"
+          }
+        }
+      }
+    },
+    "wordSource.continue.manual" : {
+      "comment" : "Fill the Hat continue button when players type their own words.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Write Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვების წერა"
+          }
+        }
+      }
+    },
+    "wordSource.hero.a11y %lld" : {
+      "comment" : "VoiceOver label for the total on Fill the Hat.",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -1571,13 +1622,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld word"
+                  "value" : "%lld word in the hat"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld words"
+                  "value" : "%lld words in the hat"
                 }
               }
             }
@@ -1589,13 +1640,13 @@
               "one" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld სიტყვა"
+                  "value" : "ქუდში %lld სიტყვა"
                 }
               },
               "other" : {
                 "stringUnit" : {
                   "state" : "translated",
-                  "value" : "%lld სიტყვა"
+                  "value" : "ქუდში %lld სიტყვა"
                 }
               }
             }
@@ -1603,19 +1654,97 @@
         }
       }
     },
-    "wordSettings.wordsPerPlayer" : {
-      "comment" : "Label of the words-per-player slider and stepper.",
+    "wordSource.hero.caption %lld %lld" : {
+      "comment" : "Under the total on Fill the Hat: player count times words per player.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Words per player"
+            "value" : "%1$lld players × %2$lld words each"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "სიტყვა თითო მოთამაშეზე"
+            "value" : "%1$lld მოთამაშე × %2$lld სიტყვა თითოეულზე"
+          }
+        }
+      }
+    },
+    "wordSource.hero.unit %lld" : {
+      "comment" : "Unit beside the big total on Fill the Hat. The number is drawn separately, so this holds only the words after it.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@unit@"
+          },
+          "substitutions" : {
+            "unit" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "word in the hat"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "words in the hat"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@unit@"
+          },
+          "substitutions" : {
+            "unit" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "სიტყვა ქუდში"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "სიტყვა ქუდში"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "wordSource.manual.detail" : {
+      "comment" : "Fill the Hat tile for typing words: what choosing it means.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Each player adds their own words, in secret."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თითოეული მოთამაშე თავის სიტყვებს ფარულად დაამატებს."
           }
         }
       }
@@ -1626,13 +1755,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Choose Words"
+            "value" : "Fill the Hat"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "სიტყვების არჩევა"
+            "value" : "ქუდის შევსება"
           }
         }
       }
@@ -8260,113 +8389,6 @@
         }
       }
     },
-    "wordSettings.headerDescription" : {
-      "comment" : "Word settings header description.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Every player will add the same number of words. Choose what feels right for today's game."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "თითოეული მოთამაშე დაამატებს სიტყვების ერთსა და იმავე რაოდენობას. აირჩიეთ რაც ყველაზე კარგად ერგება დღევანდელ თამაშს."
-          }
-        }
-      }
-    },
-    "wordSettings.headerTitle" : {
-      "comment" : "Word settings header title.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "How many words?"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "რამდენი სიტყვა?"
-          }
-        }
-      }
-    },
-    "wordSettings.legend.balanced" : {
-      "comment" : "Legend tag for balanced rounds.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Balanced"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "დაბალანსებული"
-          }
-        }
-      }
-    },
-    "wordSettings.legend.epic" : {
-      "comment" : "Legend tag for long rounds.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Epic round"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "ეპიკური ტური"
-          }
-        }
-      }
-    },
-    "wordSettings.legend.short" : {
-      "comment" : "Legend tag for short rounds.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Short & speedy"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "მოკლე და სწრაფი"
-          }
-        }
-      }
-    },
-    "wordSettings.title" : {
-      "comment" : "Title of the word settings view.",
-      "isCommentAutoGenerated" : true,
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Word Settings"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვების პარამეტრები"
-          }
-        }
-      }
-    },
     "wordSource.automatic.description" : {
       "comment" : "Description of the automatic word option.",
       "localizations" : {
@@ -8390,7 +8412,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick for me"
+            "value" : "Pick for Us"
           }
         },
         "ka" : {
@@ -8401,70 +8423,36 @@
         }
       }
     },
-    "wordSource.description" : {
-      "comment" : "Header subtitle on the word-source choice screen.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Type your own words, or let the app pick them for you."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "შეიყვანეთ საკუთარი სიტყვები, ან მიანდეთ აპს არჩევა."
-          }
-        }
-      }
-    },
-    "wordSource.manual.description" : {
-      "comment" : "Description of the manual word-entry option.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Each player types in their own words."
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "თითოეული მოთამაშე თავის სიტყვებს თავად შეიყვანს."
-          }
-        }
-      }
-    },
     "wordSource.manual.title" : {
       "comment" : "Title of the manual word-entry option.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Enter manually"
+            "value" : "Write Our Own"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "ხელით შეყვანა"
+            "value" : "ჩვენით დავწერთ"
           }
         }
       }
     },
     "wordSource.question" : {
-      "comment" : "Header on the word-source choice screen.",
+      "comment" : "Heading above the two ways to fill the hat on Fill the Hat.",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "How do you want to add words?"
+            "value" : "Where do the words come from?"
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "როგორ გსურთ სიტყვების დამატება?"
+            "value" : "საიდან იქნება სიტყვები?"
           }
         }
       }

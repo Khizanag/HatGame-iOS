@@ -7,9 +7,9 @@ This page traces a game from launch to final results. It describes the pass-and-
 ```mermaid
 flowchart TD
     Home([Home]) -->|New Game| TS[Team Setup]
-    TS --> WS[Word Settings] --> TMS[Timer Settings] --> WSRC{Word Source}
-    WSRC -->|Enter manually| WI[Word Input]
-    WSRC -->|Pick for me| WG[Word Generation]
+    TS --> TMS[Timer Settings] --> WSRC{Fill the Hat}
+    WSRC -->|Write Our Own| WI[Word Input]
+    WSRC -->|Pick for Us| WG[Word Generation]
     WI --> RND[Randomize + choose starting team]
     WG --> RND
     RND --> NT[Next Team: confirm explainer]
@@ -20,7 +20,7 @@ flowchart TD
     TR -->|Continue: Round 3 finished| FR[Final Results]
     TR -. Check Standings .-> ST[/Standings/]
     FR -->|Play Again: same teams and words| RND
-    FR -->|New Words: same teams| WS
+    FR -->|New Words: same teams| WSRC
     FR -->|Return to Main| Home
     Home -->|Resume a saved game| NT
 ```
@@ -32,9 +32,8 @@ A new game walks through the setup screens once, in order:
 | Screen | Purpose |
 |---|---|
 | Team Setup | Create 2–6 teams and their players. |
-| Word Settings | Set how many words each player adds. |
 | Timer Settings | Set the turn length, whether skipping is allowed, and the skip penalty. |
-| Word Source | Choose manual entry or automatic word generation. |
+| Fill the Hat | Set how many words each player adds, and whether players type them or the app picks them. |
 | Word Input *or* Word Generation | Fill the hat — players type their words, or the app generates them. |
 | Randomization | Shuffle the words and pick the starting team. |
 

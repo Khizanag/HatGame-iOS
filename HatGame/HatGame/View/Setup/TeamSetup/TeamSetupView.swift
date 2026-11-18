@@ -136,7 +136,7 @@ private extension TeamSetupView {
     var continueSection: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             PrimaryButton(title: localized("common.buttons.continue"), icon: "arrow.right.circle.fill") {
-                navigator.push(.wordSettings)
+                navigator.push(.timerSettings)
             }
             .keyboardShortcut(.defaultAction)
             .disabled(!canContinue)

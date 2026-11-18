@@ -67,6 +67,8 @@ enum UITestConfiguration {
             navigator.push(.developerInfo)
         case "game":
             navigator.present(.uiTestGame)
+        case "fillHat":
+            navigator.present(.uiTestFillHat)
         default:
             break
         }
@@ -118,6 +120,12 @@ extension Page {
     static var uiTestGame: Page<GameFlowView> {
         Page<GameFlowView>(id: "uiTestGame") {
             GameFlowView(launch: .uiTestGame)
+        }
+    }
+
+    static var uiTestFillHat: Page<GameFlowView> {
+        Page<GameFlowView>(id: "uiTestFillHat") {
+            GameFlowView(launch: .uiTestFillHat)
         }
     }
 }

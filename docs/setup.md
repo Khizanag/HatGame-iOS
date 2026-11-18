@@ -5,11 +5,10 @@ Before play begins, a game is configured in a fixed sequence of steps. This page
 ## Setup steps, in order
 
 1. **Teams and players** — create the teams and their members.
-2. **Word settings** — how many words each player contributes.
-3. **Timer settings** — turn length, whether skipping is allowed, and what a skip costs.
-4. **Word source** — type words manually, or have the app pick them.
-5. **Add words** — every player fills the hat (manual), or the app fills it (automatic).
-6. **Randomize** — shuffle the words and choose which team starts.
+2. **Timer settings** — turn length, whether skipping is allowed, and what a skip costs.
+3. **Fill the hat** — how many words each player contributes, and whether players type them or the app picks them.
+4. **Add words** — every player fills the hat (manual), or the app fills it (automatic).
+5. **Randomize** — shuffle the words and choose which team starts.
 
 ## 1. Teams and players
 
@@ -17,26 +16,22 @@ Before play begins, a game is configured in a fixed sequence of steps. This page
 - Each team needs at least **2 players** (one to explain, at least one to guess) and may have up to **6**. The default is **2 players per team**.
 - Each team has a name and a color used throughout the game.
 
-## 2. Word settings
-
-- Each player contributes the same number of words to the hat.
-- Default is **10 words per player**; this is configurable (typically 3–20).
-- The hat's total size is therefore *players × words-per-player*.
-
-## 3. Timer settings
+## 2. Timer settings
 
 - **Turn length** — how long each timed turn lasts. Default is **60 seconds**; configurable from 5 to 120 seconds in 5-second steps.
 - **Allow skipping** — whether players may pass on a word and return it to the hat during a turn. **On by default.** See [A Turn](turn.md#skipping).
 - **Skip penalty** — points a team loses for each word it skips: none, 1, 2, or 3. **1 by default.** Shown only while skipping is allowed. See [Scoring](scoring.md#points).
 
-## 4. Word source
+## 3. Fill the hat
 
-Choose how the hat is filled:
+One screen sets the hat's size and where its words come from. The total — *players × words-per-player* — is shown as it changes.
 
-- **Enter manually** — each player types in their own words.
-- **Pick for me** — the app chooses words automatically from a built-in word database, with no typing.
+- **Words per player** — each player contributes the same number of words. Default is **10**; configurable from 3 to 20. Lowering it after words were typed keeps each player's first words up to the new count.
+- **Where the words come from:**
+  - **Write Our Own** — each player types in their own words, in secret.
+  - **Pick for Us** — the app chooses words automatically from a built-in word database, with no typing. If players already typed words, the app asks before replacing them.
 
-## 5. Add words
+## 4. Add words
 
 ### Manual entry
 
@@ -53,7 +48,7 @@ Choose how the hat is filled:
 - The database matches the app language: Georgian words for Georgian, English words for every other language. The same list powers auto-fill during manual entry.
 - If the word list can't be loaded, the app says so and offers manual entry instead of starting with an empty hat.
 
-## 6. Randomize and start
+## 5. Randomize and start
 
 - The collected words are shuffled into a random order.
 - You choose which team takes the first turn, or let the app pick a **starting team** at random.

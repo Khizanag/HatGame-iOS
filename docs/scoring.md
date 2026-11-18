@@ -5,7 +5,7 @@ Scoring in Hat Game is simple: every word a team guesses is worth one point, and
 ## Points
 
 - A team scores **one point for each word its teammates correctly guess** (the "Got It" action during a [turn](turn.md)).
-- A team **loses the skip penalty for each word it skips** — **1 point by default**, set per game to none, 1, 2, or 3 in [timer settings](setup.md#3-timer-settings). With skipping turned off there is no penalty.
+- A team **loses the skip penalty for each word it skips** — **1 point by default**, set per game to none, 1, 2, or 3 in [timer settings](setup.md#2-timer-settings). With skipping turned off there is no penalty.
 - Penalties count in the round the skip happened, so a turn — and a team's total — can go below zero.
 - Words left in the hat when time runs out score nothing and cost nothing.
 - The [turn results](turn.md#turn-results) show the turn's net points, with the words guessed and skipped beneath when skips cost points.
@@ -33,7 +33,7 @@ After the third round ends:
 From the final results you can:
 
 - **Play Again** — a rematch: the **same teams** and the **same words**. Every score resets to zero, you choose (or randomize) the starting team again, and a fresh three-round game begins.
-- **New Words** — keep the **same teams** but empty the hat. The game returns to word settings, players add new words, then a fresh three-round game begins.
+- **New Words** — keep the **same teams** but empty the hat. The game returns to [Fill the Hat](setup.md#3-fill-the-hat), players add new words, then a fresh three-round game begins.
 - **Return to Main** — leave the game and go back to the home screen.
 
 Neither option carries anything over from the finished game: scores, explainer roles, and leftover time all start fresh.

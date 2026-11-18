@@ -185,6 +185,7 @@ private extension WordInputView {
     var wordTextField: some View {
         TextField(localized("wordInput.enterWord"), text: $currentWord)
             .focused($isWordFieldFocused)
+            .accessibilityIdentifier("wordInput.wordField")
             .hatFieldStyle(
                 label: localized("textField.word"),
                 // Return adds the word; on the last one it finishes this player.

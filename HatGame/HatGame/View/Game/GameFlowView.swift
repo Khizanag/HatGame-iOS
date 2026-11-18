@@ -18,6 +18,8 @@ struct GameFlowView: View {
         #if DEBUG
         /// A tiny started game for UI tests.
         case uiTestGame
+        /// The UI test teams on Fill the Hat, with an empty hat.
+        case uiTestFillHat
         #endif
     }
 
@@ -46,6 +48,12 @@ struct GameFlowView: View {
         case .uiTestGame:
             manager = GameManager(configuration: .uiTestGame)
             navigator.navigationPath = [Page<GameLoopView>.gameLoop.eraseToAnyPage()]
+        case .uiTestFillHat:
+            let configuration = GameConfiguration.uiTestGame
+            configuration.words = []
+            configuration.wordsPerPlayer = 10
+            manager = GameManager(configuration: configuration)
+            navigator.navigationPath = [Page<WordSourceView>.wordSource.eraseToAnyPage()]
         #endif
         }
         _gameManager = State(initialValue: manager)

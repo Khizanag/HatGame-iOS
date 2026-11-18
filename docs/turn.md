@@ -11,7 +11,7 @@ Before a team's turn, one player is designated the **explainer**; the rest are *
 
 ## The timer
 
-- A turn is timed. The default length is **60 seconds** (configurable; see [Setup](setup.md#3-timer-settings)).
+- A turn is timed. The default length is **60 seconds** (configurable; see [Setup](setup.md#2-timer-settings)).
 - A turn normally starts with a **full** timer. The exception: a team that ended the previous round by emptying the hat resumes with its **carried-over leftover time** for its first turn of the new round. See [The Three Rounds](rounds.md#carrying-over-between-rounds).
 - In the final seconds the device gives **urgency haptics**, and a sound plays when time runs out. VoiceOver announces the time left at 10 and 5 seconds, and announces when time is up.
 - If the app leaves the foreground mid-turn — backgrounded, or interrupted by Control Center, a notification, or a call banner — the turn **auto-pauses** so the clock can't run down unseen; the player resumes manually.
@@ -36,7 +36,7 @@ The screen also shows the active team, the round, how many words have been guess
 
 Skipping lets the explainer pass on a hard word and come back to it later in the same round.
 
-- Skipping is **allowed by default** but can be turned off per game in [timer settings](setup.md#3-timer-settings).
+- Skipping is **allowed by default** but can be turned off per game in [timer settings](setup.md#2-timer-settings).
 - A skipped word **stays in the hat** — it is *not* scored and *not* removed. A different random word is shown instead.
 - Each skip costs the team the game's **skip penalty** — **1 point by default**, configurable from none to three. The Skip button shows the cost ("Skip −1"), and the turn's live score drops with each skip. See [Scoring](scoring.md#points).
 - A skip that lands after the clock has run out is refused, so it never costs a point.

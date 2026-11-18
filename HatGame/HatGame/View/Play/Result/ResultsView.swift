@@ -314,11 +314,11 @@ private extension ResultsView {
         navigator.push(.randomization)
     }
 
-    /// Same teams, an empty hat; back to word settings to collect new words.
+    /// Same teams, an empty hat; back to Fill the Hat to collect new words.
     func handleNewWords() {
         gameManager.startOverWithNewWords()
         navigator.dismissToRoot()
-        navigator.push(.wordSettings)
+        navigator.push(.wordSource)
     }
 }
 

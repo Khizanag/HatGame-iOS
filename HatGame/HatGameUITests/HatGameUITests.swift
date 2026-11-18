@@ -36,6 +36,45 @@ final class HatGameUITests: XCTestCase {
     }
 
     @MainActor
+    func testFillTheHatTypesWordsByDefaultAndCanPickThem() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestScreen", "fillHat", "-uiTestResetState", "-uiTestDisableAnimations"]
+        app.launch()
+
+        let manual = app.buttons["wordSource.manual"]
+        let automatic = app.buttons["wordSource.automatic"]
+        let next = app.buttons["wordSource.continue"]
+        XCTAssertTrue(manual.waitForExistence(timeout: 10), "manual tile missing")
+        XCTAssertTrue(manual.isSelected, "manual not selected")
+        XCTAssertFalse(automatic.isSelected)
+        XCTAssertEqual(next.label, "Write Words")
+
+        automatic.tap()
+        XCTAssertTrue(automatic.isSelected, "automatic not selected")
+        XCTAssertFalse(manual.isSelected)
+        XCTAssertEqual(next.label, "Draw Words")
+
+        next.tap()
+        XCTAssertTrue(
+            app.descendants(matching: .any)["wordGeneration.status"].waitForExistence(timeout: 5),
+            "word generation didn't open"
+        )
+    }
+
+    @MainActor
+    func testFillTheHatWriteWordsOpensWordInput() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestScreen", "fillHat", "-uiTestResetState", "-uiTestDisableAnimations"]
+        app.launch()
+
+        let next = app.buttons["wordSource.continue"]
+        XCTAssertTrue(next.waitForExistence(timeout: 10))
+        next.tap()
+
+        XCTAssertTrue(app.textFields["wordInput.wordField"].waitForExistence(timeout: 5))
+    }
+
+    @MainActor
     func testSwipeBackIsDisabledInsideTheGameLoop() throws {
         let app = launchIntoTestGame()
         let play = app.buttons["nextTeam.play"]

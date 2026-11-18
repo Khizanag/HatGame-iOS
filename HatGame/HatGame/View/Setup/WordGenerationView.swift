@@ -165,6 +165,7 @@ private extension WordGenerationView {
                 .contentTransition(.opacity)
         }
         .accessibilityElement(children: .combine)
+        .accessibilityIdentifier("wordGeneration.status")
     }
 
     var wordCard: some View {

@@ -52,12 +52,6 @@ extension Page {
         }
     }
 
-    static var wordSettings: Page<WordSettingsView> {
-        Page<WordSettingsView>(id: "wordSettings") {
-            WordSettingsView()
-        }
-    }
-
     static var timerSettings: Page<TimerSettingsView> {
         Page<TimerSettingsView>(id: "timerSettings") {
             TimerSettingsView()

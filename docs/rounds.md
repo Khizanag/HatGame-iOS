@@ -23,7 +23,7 @@ Because every word must be guessed before a round ends, every team gets multiple
 
 ## Who starts each round
 
-- **Round 1** starts with the team chosen during [randomization](setup.md#6-randomize-and-start).
+- **Round 1** starts with the team chosen during [randomization](setup.md#5-randomize-and-start).
 - **Each later round** starts with the team that **emptied the hat** to end the previous round. That team carries over (see below).
 
 ## Carrying over between rounds
