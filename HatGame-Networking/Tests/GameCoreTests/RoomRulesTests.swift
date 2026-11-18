@@ -165,6 +165,32 @@ struct RoomRulesTests {
         Self.expectConsistent(started)
     }
 
+    @Test("Teams are fixed once the room leaves the lobby", arguments: [
+        (RoomStatus.waiting, true), (.setup, true), (.playing, false), (.finished, false),
+    ])
+    func teamsLockAfterStart(status: RoomStatus, isOpen: Bool) {
+        var room = Self.lobby()
+        room.status = status
+
+        #expect(RoomRules.canChangeTeams(in: room) == isOpen)
+    }
+
+    @Test("A start re-checked against the live room names why it cannot start")
+    func startRefusal() throws {
+        var room = Self.lobby()
+        for (player, team) in [("host", "red"), ("p1", "red"), ("p2", "blue"), ("p3", "blue")] {
+            room = try #require(RoomRules.joinTeam(team, playerId: player, in: room))
+        }
+        let lostPlayer = try #require(RoomRules.leaveTeam(playerId: "p3", in: room))
+        let lostTeam = try #require(RoomRules.removeTeam("blue", in: room))
+        let started = try #require(RoomRules.startGame(room))
+
+        #expect(RoomRules.startRefusal(room) == nil)
+        #expect(RoomRules.startRefusal(lostPlayer) == .notEnoughPlayers)
+        #expect(RoomRules.startRefusal(lostTeam) == .notEnoughTeams)
+        #expect(RoomRules.startRefusal(started) == .notInLobby)
+    }
+
     @Test("A team with one player blocks the start")
     func startNeedsFullTeams() throws {
         var room = Self.lobby()

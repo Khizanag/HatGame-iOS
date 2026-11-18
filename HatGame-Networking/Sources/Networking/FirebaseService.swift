@@ -262,6 +262,18 @@ public final class FirebaseService: @unchecked Sendable {
         }
     }
 
+    /// Starts the game only if the live room still passes
+    /// `RoomRules.startGame`, so a team change racing the Start tap either
+    /// lands first and is re-checked, or lands after and finds the lobby
+    /// closed.
+    func startGame(roomId: String) async throws -> LeafTransactionOutcome<GameRoom> {
+        try await transact { [self] in
+            try await runLeafTransaction(on: roomsRef.child(roomId), leaf: "status", decoding: GameRoom.self) { room in
+                RoomRules.startGame(room)?.status.rawValue
+            }
+        }
+    }
+
     public func updateRoomStatus(_ status: RoomStatus, forRoomId roomId: String) async throws {
         try await update(roomId: roomId, RoomWrites.status(status))
     }

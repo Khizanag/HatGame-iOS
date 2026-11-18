@@ -95,6 +95,65 @@ func runCreateIfAbsent<Value: Encodable & Sendable>(
     }
 }
 
+/// Sets one string leaf of the node at `reference` when `decide`, run on the
+/// live node, returns a value for it. Every other child is written back
+/// exactly as the server holds it, so the check and the write are atomic
+/// against concurrent writes anywhere in the node. Returns `.committed`, or
+/// `.declined` with the node `decide` last refused (`nil` when the node is
+/// gone).
+func runLeafTransaction<Node: Decodable & Sendable>(
+    on reference: DatabaseReference,
+    leaf: String,
+    decoding _: Node.Type,
+    _ decide: @escaping @Sendable (Node) -> String?
+) async throws -> LeafTransactionOutcome<Node> {
+    let outcome = Mutex<Result<LeafTransactionOutcome<Node>, any Error>>(.success(.declined(nil)))
+    return try await withCheckedThrowingContinuation { continuation in
+        reference.runTransactionBlock({ currentData in
+            guard let stored = currentData.value, !(stored is NSNull) else {
+                // Possibly just an empty cache: proposing no change makes the
+                // server re-run the block with the stored value, if any.
+                outcome.withLock { $0 = .success(.declined(nil)) }
+                return .success(withValue: currentData)
+            }
+            if let version = WireSchema.storedVersion(of: stored), !WireSchema.isSupported(version) {
+                outcome.withLock { $0 = .failure(NetworkingError.unsupportedVersion) }
+                return .abort()
+            }
+            let node: Node
+            do {
+                node = try FirebaseCoding.decode(Node.self, from: stored)
+            } catch {
+                outcome.withLock { $0 = .failure(error) }
+                return .abort()
+            }
+            guard let value = decide(node) else {
+                outcome.withLock { $0 = .success(.declined(node)) }
+                return .abort()
+            }
+            currentData.childData(byAppendingPath: leaf).value = value
+            outcome.withLock { $0 = .success(.committed) }
+            return .success(withValue: currentData)
+        }, andCompletionBlock: { error, committed, _ in
+            let result = outcome.withLock { $0 }
+            if let error {
+                continuation.resume(throwing: error)
+            } else if case let .failure(failure) = result {
+                continuation.resume(throwing: failure)
+            } else if case .success(.committed) = result, !committed {
+                continuation.resume(returning: .declined(nil))
+            } else {
+                continuation.resume(with: result)
+            }
+        }, withLocalEvents: false)
+    }
+}
+
+enum LeafTransactionOutcome<Node: Sendable>: Sendable {
+    case committed
+    case declined(Node?)
+}
+
 /// What the last transform invocation decided. Firebase may call the block
 /// several times on its own queue; only the final call matters.
 private final class TransactionOutcome<Value: Sendable>: Sendable {

@@ -276,6 +276,7 @@ open class RoomManager {
     // MARK: - Player Actions
     open func joinTeam(teamId: String) async throws {
         guard let player = currentPlayer, let room else { return }
+        guard RoomRules.canChangeTeams(in: room) else { throw RoomError.gameAlreadyStarted }
         try await firebaseService.reassignPlayerToTeam(
             playerId: player.id,
             previousTeamId: player.teamId,
@@ -287,6 +288,7 @@ open class RoomManager {
 
     open func leaveTeam() async throws {
         guard let player = currentPlayer, let room else { return }
+        guard RoomRules.canChangeTeams(in: room) else { throw RoomError.gameAlreadyStarted }
         try await firebaseService.reassignPlayerToTeam(
             playerId: player.id,
             previousTeamId: player.teamId,
@@ -337,9 +339,11 @@ open class RoomManager {
 
     // MARK: - Host Actions
     open func createTeam(name: String, colorHex: String) async throws {
-        guard isHost, let roomId = room?.id else {
+        guard isHost, let room else {
             throw NetworkingError.notAuthorized
         }
+        guard RoomRules.canChangeTeams(in: room) else { throw RoomError.gameAlreadyStarted }
+        let roomId = room.id
 
         // Re-submitting the same team after a timeout reuses its id.
         let key = "\(roomId)/\(name)/\(colorHex)"
@@ -372,22 +376,33 @@ open class RoomManager {
         guard isHost, let room else {
             throw NetworkingError.notAuthorized
         }
+        guard RoomRules.canChangeTeams(in: room) else { throw RoomError.gameAlreadyStarted }
 
         let memberIds = RoomRules.members(ofTeam: teamId, in: room).map(\.id)
         try await firebaseService.removeTeam(teamId: teamId, unassigning: memberIds, fromRoomId: room.id)
     }
 
     /// Host-only. Starts the game once `RoomRules` agrees the teams are
-    /// playable — the same check the lobby's Start button uses.
+    /// playable — the same check the lobby's Start button uses — re-checked
+    /// atomically against the live room, so a player switching or leaving a
+    /// team at the same moment cannot start a game with an unplayable team.
+    /// A start that already landed (a retry after a timeout) succeeds.
     open func startGame() async throws {
         guard isHost, let room else {
             throw NetworkingError.notAuthorized
         }
-        guard let started = RoomRules.startGame(room) else {
-            throw room.teams.count < RoomRules.minimumTeams ? RoomError.notEnoughTeams : RoomError.notEnoughPlayers
+        if let refusal = RoomRules.startRefusal(room) {
+            throw RoomError(refusal)
         }
 
-        try await firebaseService.updateRoomStatus(started.status, forRoomId: room.id)
+        switch try await firebaseService.startGame(roomId: room.id) {
+        case .committed:
+            return
+        case let .declined(live):
+            guard let live else { throw NetworkingError.roomNotFound }
+            guard let refusal = RoomRules.startRefusal(live), refusal != .notInLobby else { return }
+            throw RoomError(refusal)
+        }
     }
 
     // MARK: - Word Submission
@@ -464,6 +479,14 @@ public enum RoomError: Error, LocalizedError {
     case teamFull
     case notEnoughPlayers
     case notEnoughTeams
+
+    init(_ refusal: StartRefusal) {
+        switch refusal {
+        case .notInLobby: self = .gameAlreadyStarted
+        case .notEnoughTeams: self = .notEnoughTeams
+        case .notEnoughPlayers: self = .notEnoughPlayers
+        }
+    }
 
     public var errorDescription: String? {
         switch self {

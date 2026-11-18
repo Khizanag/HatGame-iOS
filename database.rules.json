@@ -45,8 +45,11 @@
             // Also refuses a lone isConnected write for a player who has
             // already left, which would otherwise recreate a partial node.
             // A new player may appear only while the lobby is open; an
-            // existing one (a returning device) may still be updated.
-            ".validate": "newData.hasChildren(['id', 'deviceId', 'name', 'joinedAt']) && newData.child('id').val() === $playerId && (data.exists() || newData.parent().parent().child('status').val() === 'waiting' || newData.parent().parent().child('status').val() === 'setup')",
+            // existing one (a returning device) may still be updated. Team
+            // membership is fixed once the game starts: checked here rather
+            // than on teamId, since leaving a team deletes that leaf and
+            // .validate never runs on a delete.
+            ".validate": "newData.hasChildren(['id', 'deviceId', 'name', 'joinedAt']) && newData.child('id').val() === $playerId && (data.exists() || newData.parent().parent().child('status').val() === 'waiting' || newData.parent().parent().child('status').val() === 'setup') && (newData.child('teamId').val() === data.child('teamId').val() || newData.parent().parent().child('status').val() === 'waiting' || newData.parent().parent().child('status').val() === 'setup')",
             // id, deviceId and joinedAt are written once, when the player joins.
             "id": { ".validate": "newData.isString() && (!data.exists() || newData.val() === data.val())" },
             "deviceId": { ".validate": "newData.isString() && newData.val().length <= 64 && (!data.exists() || newData.val() === data.val())" },

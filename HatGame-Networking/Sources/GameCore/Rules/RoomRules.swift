@@ -93,6 +93,12 @@ public enum RoomRules {
     }
 
     // MARK: - Teams
+    /// Teams and their members are fixed once the game leaves the lobby:
+    /// `currentTeamIndex` and explainer rotation index into them.
+    public static func canChangeTeams(in room: GameRoom) -> Bool {
+        room.status.isLobby
+    }
+
     public static func joinTeam(_ teamId: String, playerId: String, in room: GameRoom) -> GameRoom? {
         guard room.status.isLobby,
               let playerIndex = room.players.firstIndex(where: { $0.id == playerId }),
@@ -154,10 +160,17 @@ public enum RoomRules {
     }
 
     public static func startGame(_ room: GameRoom) -> GameRoom? {
-        guard room.status.isLobby, canStartGame(room) else { return nil }
+        guard startRefusal(room) == nil else { return nil }
         var next = room
         next.status = .playing
         return next
+    }
+
+    /// Why `room` cannot start now, or `nil` when it can.
+    public static func startRefusal(_ room: GameRoom) -> StartRefusal? {
+        guard canChangeTeams(in: room) else { return .notInLobby }
+        guard room.teams.count >= minimumTeams else { return .notEnoughTeams }
+        return canStartGame(room) ? nil : .notEnoughPlayers
     }
 
     // MARK: - Words
@@ -227,6 +240,15 @@ public enum RoomRules {
             && anyWordsSubmitted(room)
             && !allWordsSubmitted(room)
     }
+}
+
+/// Why a room cannot start.
+public enum StartRefusal: Equatable, Sendable {
+    /// The game has already left the lobby.
+    case notInLobby
+    case notEnoughTeams
+    /// A team has fewer than `RoomRules.minimumPlayersPerTeam` members.
+    case notEnoughPlayers
 }
 
 /// Host-side work between pressing Start and the first turn.

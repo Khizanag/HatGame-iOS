@@ -150,6 +150,12 @@ private extension RulesScenario {
         let latecomer = OnlinePlayer(id: "late", deviceId: "device-late", name: "Late", isConnected: false)
         update("new player after the start", try RoomWrites.addPlayer(latecomer), allowed: false)
         update("returning player reconnects", RoomWrites.playerFlag(.isConnected, to: true, playerId: third.id))
+        let lineup = [red, blue]
+        let switchTeam = RoomWrites.reassign(playerId: guest.id, previousTeamId: red.id, newTeamId: blue.id, teams: lineup)
+        update("switch team after the start", switchTeam, allowed: false)
+        let leaveTeam = RoomWrites.reassign(playerId: guest.id, previousTeamId: red.id, newTeamId: nil, teams: lineup)
+        update("leave team after the start", leaveTeam, allowed: false)
+        update("remove a team after the start", RoomWrites.removeTeam(blue.id, unassigning: [third.id]), allowed: false)
 
         let guestWords = OnlineWord.submission(["cat", "dog"], by: guest.id)
         update("submit words", try RoomWrites.fillWords(guestWords, markSubmitted: [guest.id]))
