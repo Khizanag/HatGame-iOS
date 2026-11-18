@@ -457,8 +457,10 @@ private extension LocalRoomManager {
     /// Host-only. A peer gets an identity only once `RoomRules` admits the
     /// player it announced: a returning device gets its own seat back, and
     /// anyone else joins the open lobby under an unused id, so a guest
-    /// cannot claim the host's (or anyone's) seat, and one peer cannot
-    /// register twice.
+    /// cannot claim the host's seat, and one peer cannot register twice. A
+    /// device that rejoins before its old peer's drop is noticed takes the
+    /// seat over; the stale peer is unbound, so its late disconnect cannot
+    /// mark the seat away or remove it.
     func admitGuest(_ player: OnlinePlayer, protocolVersion: Int, fromPeer peer: MCPeerID) {
         guard isLocalHost else { return }
         guard LocalProtocol.isCompatible(protocolVersion) else {
@@ -474,14 +476,9 @@ private extension LocalRoomManager {
             service.send(.wordsSnapshot(words), to: [peer])
             return
         }
-        let admission = RoomRules.admitGuest(
-            player,
-            to: room,
-            now: Date(),
-            boundPlayerIds: Set(peerToPlayerId.values)
-        )
-        switch admission {
+        switch RoomRules.admitGuest(player, to: room, now: Date()) {
         case let .admitted(next, playerId):
+            peerToPlayerId = peerToPlayerId.filter { $0.value != playerId }
             peerToPlayerId[peer] = playerId
             self.room = next
             broadcastSnapshot()

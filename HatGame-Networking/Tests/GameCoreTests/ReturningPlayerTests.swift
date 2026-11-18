@@ -141,8 +141,7 @@ struct ReturningPlayerTests {
         let admission = RoomRules.admitGuest(
             Self.hello(id: "fresh-id", device: "device-g1"),
             to: Self.room(status: .playing),
-            now: Self.now,
-            boundPlayerIds: []
+            now: Self.now
         )
 
         guard case let .admitted(room, playerId) = admission else {
@@ -157,17 +156,35 @@ struct ReturningPlayerTests {
         #expect(room.players.count == 2)
     }
 
-    @Test("A seat bound to another live peer is not handed out")
-    func boundSeatIsNotReadmitted() {
+    @Test("A quick rejoin takes the seat over from the device's stale peer", arguments: [
+        RoomStatus.waiting, .playing,
+    ])
+    func quickRejoinRebindsSeat(status: RoomStatus) throws {
         let admission = RoomRules.admitGuest(
             Self.hello(id: "fresh-id", device: "device-g1"),
-            to: Self.room(status: .playing, guestConnected: true),
-            now: Self.now,
-            boundPlayerIds: ["g1"]
+            to: Self.room(status: status, guestConnected: true),
+            now: Self.now
         )
 
-        guard case .refused(.gameInProgress) = admission else {
-            Issue.record("Expected a mid-game refusal")
+        guard case let .admitted(room, playerId) = admission else {
+            Issue.record("Expected admission")
+            return
+        }
+        #expect(playerId == "g1")
+        #expect(room.players.map(\.id) == ["host", "g1"])
+        #expect(room.players.filter { $0.deviceId == "device-g1" }.count == 1)
+    }
+
+    @Test("A guest declaring the host's device gets no seat in the lobby either")
+    func hostDeviceRefusedInLobby() {
+        let admission = RoomRules.admitGuest(
+            Self.hello(id: "fresh-id", device: "device-host"),
+            to: Self.room(status: .waiting),
+            now: Self.now
+        )
+
+        guard case .refused(.duplicate) = admission else {
+            Issue.record("Expected a duplicate refusal")
             return
         }
     }
@@ -177,8 +194,7 @@ struct ReturningPlayerTests {
         let admission = RoomRules.admitGuest(
             Self.hello(id: "fresh-id", device: "device-host"),
             to: Self.room(status: .playing),
-            now: Self.now,
-            boundPlayerIds: []
+            now: Self.now
         )
 
         guard case .refused(.gameInProgress) = admission else {
@@ -192,8 +208,7 @@ struct ReturningPlayerTests {
         let admission = RoomRules.admitGuest(
             Self.hello(id: "new", device: "device-new"),
             to: Self.room(status: .waiting),
-            now: Self.now,
-            boundPlayerIds: []
+            now: Self.now
         )
 
         guard case let .admitted(room, playerId) = admission else {
@@ -215,8 +230,7 @@ struct ReturningPlayerTests {
         let admission = RoomRules.admitGuest(
             Self.hello(id: "g1", device: "device-other"),
             to: Self.room(status: .waiting),
-            now: Self.now,
-            boundPlayerIds: []
+            now: Self.now
         )
 
         guard case .refused(.duplicate) = admission else {

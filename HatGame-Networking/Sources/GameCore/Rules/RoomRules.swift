@@ -43,22 +43,20 @@ public enum RoomRules {
     }
 
     /// Admits a nearby guest from its self-declared hello. A device whose
-    /// record is in the room and not bound to another live peer gets that
-    /// record back, team and words intact, at any point in the game. Anyone
-    /// else joins only while the lobby is open, as a fresh player: the host
-    /// owns team, submission, presence, and join time, so a guest cannot
-    /// claim a team, skip word entry, or seniority for host failover. The
-    /// host's own record is never handed out.
-    public static func admitGuest(
-        _ declared: OnlinePlayer,
-        to room: GameRoom,
-        now: Date,
-        boundPlayerIds: Set<String>
-    ) -> GuestAdmission {
-        if let returning = returningPlayer(deviceId: declared.deviceId, in: room),
-           returning.id != room.hostId,
-           !boundPlayerIds.contains(returning.id),
-           let index = room.players.firstIndex(where: { $0.id == returning.id }) {
+    /// record is in the room gets that record back, team and words intact,
+    /// at any point in the game — even while the seat is still bound to the
+    /// device's previous peer, whose drop the host may not have noticed yet;
+    /// the caller moves the seat to the new peer. One device never holds two
+    /// seats. Anyone else joins only while the lobby is open, as a fresh
+    /// player: the host owns team, submission, presence, and join time, so a
+    /// guest cannot claim a team, skip word entry, or seniority for host
+    /// failover. The host's own record is never handed out.
+    public static func admitGuest(_ declared: OnlinePlayer, to room: GameRoom, now: Date) -> GuestAdmission {
+        if let returning = returningPlayer(deviceId: declared.deviceId, in: room) {
+            guard returning.id != room.hostId,
+                  let index = room.players.firstIndex(where: { $0.id == returning.id }) else {
+                return .refused(room.status.isLobby ? .duplicate : .gameInProgress)
+            }
             var next = room
             next.players[index].isConnected = true
             return .admitted(next, playerId: returning.id)
