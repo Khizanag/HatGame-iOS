@@ -10,12 +10,39 @@ struct HatGameBuildNotes {
     let routes: LabRoutes
 
     var current: [BuildNote] {
-        [liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings]
+        [setupFixes, onlineFixes, liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var setupFixes: BuildNote {
+        BuildNote(
+            commit: "d24de3d",
+            title: lab("Teams of 2 to 6, and setup that keeps its words"),
+            howToTest: lab("""
+                Add Team ▸ Add Player for a third seat. Then go back and forth through setup: edit a team, \
+                switch between Pick for me and Enter manually, lower words per player — the hat stays right. \
+                Finish a game and tap Play Again twice in a row.
+                """),
+            systemImage: "person.3.fill",
+            color: .green
+        ) { routes.passAndPlay() }
+    }
+
+    var onlineFixes: BuildNote {
+        BuildNote(
+            commit: "d1596e3",
+            title: lab("Multiplayer turns start on a fresh word"),
+            howToTest: lab("""
+                In an online or nearby game, let time run out: the next team gets a different word, not the \
+                one just explained. Starting a room locks the teams.
+                """),
+            systemImage: "person.2.wave.2.fill",
+            color: .blue
+        ) { routes.playNearby() }
+    }
+
     var liquidGlass: BuildNote {
         BuildNote(
             commit: "9e391a1",
