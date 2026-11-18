@@ -390,7 +390,7 @@
       }
     },
     "game.endGame.button" : {
-      "comment" : "Toolbar button that abandons the single-device game in progress.",
+      "comment" : "VoiceOver label of the Close button that leaves the single-device game in progress (it asks to save or end the game).",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -475,7 +475,7 @@
       }
     },
     "game.standings.title" : {
-      "comment" : "Title of the mid-game standings sheet and of the toolbar button that opens it.",
+      "comment" : "Title of the mid-game standings sheet, and the VoiceOver label and tooltip of the toolbar symbol that opens it.",
       "localizations" : {
         "en" : {
           "stringUnit" : {

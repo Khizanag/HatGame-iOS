@@ -16,6 +16,7 @@ struct CloseToolbarItem: ToolbarContent {
     /// Overrides the system "Close" label when the button does more than
     /// dismiss, such as leaving a room.
     var accessibilityLabel: String?
+    var accessibilityIdentifier = "common.close"
     let action: () -> Void
 
     var body: some ToolbarContent {
@@ -24,6 +25,7 @@ struct CloseToolbarItem: ToolbarContent {
             // supply a localized one.
             closeButton
                 .accessibilityLabel(Text(accessibilityLabel ?? localized("common.buttons.close")))
+                .accessibilityIdentifier(accessibilityIdentifier)
         }
     }
 

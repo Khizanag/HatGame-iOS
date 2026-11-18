@@ -38,12 +38,7 @@ struct NextTeamView: View {
             .navigationTitle(localized("game.nextTeam.title"))
             .setDefaultStyle()
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(localized("game.standings.title")) {
-                        isStandingsPresented = true
-                    }
-                    .accessibilityIdentifier("game.standings")
-                }
+                StandingsToolbarItem { isStandingsPresented = true }
             }
             .sheet(isPresented: $isStandingsPresented) {
                 StandingsSheet()

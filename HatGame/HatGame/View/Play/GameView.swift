@@ -165,8 +165,9 @@ private extension GameView {
         .accessibilityIdentifier("game.gotIt")
     }
 
-    /// Give Up is a text item — a flag can't say what it does. Escape pauses
-    /// and resumes, since it should never end the turn.
+    /// Give Up stays text, the HIG's exception for an action no symbol says:
+    /// a flag reads as Report, and an xmark would read as leaving the game.
+    /// Escape pauses and resumes, since it should never end the turn.
     @ToolbarContentBuilder
     var gameToolbar: some ToolbarContent {
         ToolbarItem(placement: .cancellationAction) {

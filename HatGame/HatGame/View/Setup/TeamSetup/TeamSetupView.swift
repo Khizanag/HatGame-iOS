@@ -247,6 +247,13 @@ private extension TeamSetupView {
             ToolbarItem(placement: .trailingAction) {
                 editToggleButton
             }
+            // A text item beside a symbol reads as one action; the HIG keeps
+            // them in separate groups. visionOS has no toolbar spacer.
+            #if os(iOS)
+            if canAddMore {
+                ToolbarSpacer(.fixed, placement: .trailingAction)
+            }
+            #endif
         }
         #endif
         if canAddMore {

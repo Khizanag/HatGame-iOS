@@ -89,17 +89,17 @@ private extension GameLoopView {
 
 // MARK: - Leaving the game
 private extension GameLoopView {
-    /// Leaving mid-game is a deliberate act, so it lives behind a confirmation
-    /// and only between turns — during a turn the clock has its own Give Up.
-    /// Once the game is over, Close simply returns to Home.
+    /// The flow's standard Close, offered only between turns (a turn has its
+    /// own Give Up). Mid-game it asks first, offering Save and Exit; once
+    /// the game is over it simply returns to Home.
     @ToolbarContentBuilder
     var leavingToolbar: some ToolbarContent {
         if engine.phase == .nextTeam || engine.phase == .turnResults {
-            ToolbarItem(placement: .cancellationAction) {
-                Button(localized("game.endGame.button")) {
-                    isEndGameConfirmationPresented = true
-                }
-                .accessibilityIdentifier("game.endGame")
+            CloseToolbarItem(
+                accessibilityLabel: localized("game.endGame.button"),
+                accessibilityIdentifier: "game.endGame"
+            ) {
+                isEndGameConfirmationPresented = true
             }
         } else if engine.phase == .finished {
             CloseToolbarItem(action: returnToMain)

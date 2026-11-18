@@ -33,12 +33,7 @@ struct TeamTurnResultsView: View {
             .inlineNavigationTitle()
             .setDefaultBackground()
             .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button(localized("game.standings.title")) {
-                        isStandingsPresented = true
-                    }
-                    .accessibilityIdentifier("game.standings")
-                }
+                StandingsToolbarItem { isStandingsPresented = true }
             }
             .sheet(isPresented: $isStandingsPresented) {
                 StandingsSheet()
