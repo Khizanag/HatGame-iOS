@@ -134,6 +134,36 @@ struct CarryOverTests {
         #expect(ended.turnSeconds == nil)
     }
 
+    @Test("A forfeited carried turn leaves the team a full timer for its next turn")
+    func forfeitDropsCarryOver() throws {
+        let emptied = try Self.emptyHat(secondsIn: 59)
+        let results = try #require(
+            OnlineGameRules.advanceAfterTurnResults(emptied, teams: Self.teams, players: Self.players)
+        )
+        let nextRound = try #require(
+            OnlineGameRules.advanceAfterRoundResults(results, teams: Self.teams, players: Self.players) { _ in
+                ["w1", "w2"]
+            }
+        )
+        #expect(nextRound.carryOverSeconds == ["A": 1])
+
+        let forfeited = try #require(OnlineGameRules.endTurn(nextRound))
+        let passed = try #require(
+            OnlineGameRules.advanceAfterTurnResults(forfeited, teams: Self.teams, players: Self.players)
+        )
+        #expect(passed.carryOverSeconds.isEmpty)
+
+        let bTurn = try #require(OnlineGameRules.startTurn(passed, teams: Self.teams, now: Fixture.epoch))
+        let bEnded = try #require(OnlineGameRules.endTurn(bTurn))
+        let backToA = try #require(
+            OnlineGameRules.advanceAfterTurnResults(bEnded, teams: Self.teams, players: Self.players)
+        )
+        let aTurn = try #require(OnlineGameRules.startTurn(backToA, teams: Self.teams, now: Fixture.epoch))
+
+        #expect(aTurn.currentTeamIndex == 0)
+        #expect(aTurn.turnSeconds == 60)
+    }
+
     @Test("Carry-over survives a Firebase round trip")
     func roundTrip() throws {
         let state = OnlineGameState(carryOverSeconds: ["A": 13], turnSeconds: 13)

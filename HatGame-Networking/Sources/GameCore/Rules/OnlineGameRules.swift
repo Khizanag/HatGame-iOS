@@ -258,6 +258,9 @@ public enum OnlineGameRules {
         if let previousTeam = currentTeam(state, teams: teams) {
             let teamSize = max(playersInTeam(previousTeam, allPlayers: players).count, 1)
             next.teamExplainerIndices[previousTeam.id] = (state.explainerIndex(for: previousTeam.id) + 1) % teamSize
+            // Carried time belongs to the turn just passed; a forfeited
+            // turn never consumed it, and the team's next turn gets a full timer.
+            next.carryOverSeconds.removeValue(forKey: previousTeam.id)
         }
         next.currentTeamIndex = (normalizedIndex(state.currentTeamIndex, count: teams.count) + 1) % teams.count
         assignExplainer(of: teams[next.currentTeamIndex], in: &next, players: players)
