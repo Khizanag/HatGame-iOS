@@ -5,14 +5,19 @@
 //  Created by Giga Khizanishvili on 16.11.26.
 //
 
-/// Read-only standings over a game's scores. One point per guessed word;
-/// ties keep the teams' setup order so rankings are stable.
+/// Read-only standings over a game's scores. One point per guessed word,
+/// less `skipPenalty` per skipped word, so a score can go below zero. Ties
+/// keep the teams' setup order so rankings are stable.
 nonisolated struct Scoreboard: Sendable {
     let teams: [Team]
     let scores: [GameRound: [Team.ID: [Word.ID]]]
+    var skipCounts: [GameRound: [Team.ID: Int]] = [:]
+    var skipPenalty = 0
 
     func score(for team: Team, in round: GameRound) -> Int {
-        scores[round]?[team.id]?.count ?? 0
+        let guessed = scores[round]?[team.id]?.count ?? 0
+        let skipped = skipCounts[round]?[team.id] ?? 0
+        return guessed - skipped * skipPenalty
     }
 
     func totalScore(for team: Team) -> Int {
@@ -35,9 +40,13 @@ nonisolated struct Scoreboard: Sendable {
         return teams.filter { totalScore(for: $0) == top }
     }
 
-    /// Whether any team has scored yet.
+    /// Whether any team has guessed or been penalized yet.
     var hasAnyScore: Bool {
-        teams.contains { totalScore(for: $0) > 0 }
+        teams.contains { team in
+            GameRound.allCases.contains { round in
+                !(scores[round]?[team.id] ?? []).isEmpty || (skipCounts[round]?[team.id] ?? 0) * skipPenalty > 0
+            }
+        }
     }
 }
 

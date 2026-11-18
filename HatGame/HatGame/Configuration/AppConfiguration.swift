@@ -29,6 +29,7 @@ final class AppConfiguration {
     private static let appIconKey = "HatGame.appIcon"
     private static let allowDuplicateWordsKey = "HatGame.allowDuplicateWords"
     private static let defaultSkippingEnabledKey = "HatGame.defaultSkippingEnabled"
+    private static let defaultSkipPenaltyKey = "HatGame.defaultSkipPenalty"
     private static let isTimeUpSoundEnabledKey = "HatGame.isTimeUpSoundEnabled"
     private static let isHapticsEnabledKey = "HatGame.isHapticsEnabled"
     private static let languageKey = "HatGame.language"
@@ -80,6 +81,13 @@ final class AppConfiguration {
     var defaultSkippingEnabled: Bool {
         didSet {
             userDefaults.set(defaultSkippingEnabled, forKey: Self.defaultSkippingEnabledKey)
+        }
+    }
+
+    /// Default points a skip costs in newly created games.
+    var defaultSkipPenalty: Int {
+        didSet {
+            userDefaults.set(defaultSkipPenalty, forKey: Self.defaultSkipPenaltyKey)
         }
     }
 
@@ -149,6 +157,9 @@ final class AppConfiguration {
 
         allowDuplicateWords = userDefaults.object(forKey: Self.allowDuplicateWordsKey) as? Bool ?? false
         defaultSkippingEnabled = userDefaults.object(forKey: Self.defaultSkippingEnabledKey) as? Bool ?? true
+        let storedPenalty = userDefaults.object(forKey: Self.defaultSkipPenaltyKey) as? Int
+        defaultSkipPenalty = storedPenalty.flatMap { GameRules.skipPenaltyRange.contains($0) ? $0 : nil }
+            ?? GameRules.defaultSkipPenalty
         isTimeUpSoundEnabled = userDefaults.object(forKey: Self.isTimeUpSoundEnabledKey) as? Bool ?? true
         isHapticsEnabled = userDefaults.object(forKey: Self.isHapticsEnabledKey) as? Bool ?? true
 
@@ -169,6 +180,7 @@ final class AppConfiguration {
             wordsPerPlayer: defaultWordsPerPlayer,
             roundDuration: defaultRoundDuration,
             isSkippingEnabled: defaultSkippingEnabled,
+            skipPenalty: defaultSkipPenalty,
             allowsDuplicateWords: allowDuplicateWords
         )
     }

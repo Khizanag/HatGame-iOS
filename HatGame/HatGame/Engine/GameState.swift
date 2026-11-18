@@ -29,6 +29,8 @@ nonisolated struct GameState: Codable, Sendable, Equatable {
     var carryOverSeconds: [Team.ID: Int] = [:]
     /// Guessed words per round and team. Keyed by id, so renaming a team keeps its score.
     var scores: [GameRound: [Team.ID: [Word.ID]]] = [:]
+    /// Words skipped per round and team; each costs `settings.skipPenalty` points.
+    var skipCounts: [GameRound: [Team.ID: Int]] = [:]
     var turn: Turn?
 
     init(settings: Settings, teams: [Team], words: [Word]) {
@@ -69,6 +71,8 @@ nonisolated extension GameState {
         /// Full turn length, in seconds.
         var roundDuration: Int
         var isSkippingEnabled: Bool
+        /// Points a team loses for each word it skips.
+        var skipPenalty: Int = GameRules.defaultSkipPenalty
     }
 
     /// The turn in progress, or the one whose results are showing.
@@ -79,6 +83,7 @@ nonisolated extension GameState {
         var remaining: Duration
         var isPaused: Bool = false
         var guessedWordIds: [Word.ID] = []
+        var skippedCount: Int = 0
         var endReason: PlayCompletionReason?
     }
 }
@@ -106,6 +111,13 @@ nonisolated extension GameState {
         (turn?.guessedWordIds ?? []).compactMap(word(withId:))
     }
 
+    /// Points the current (or just-ended) turn earned: its guesses less its
+    /// skip penalties. Negative when skips outweigh guesses.
+    var turnPoints: Int {
+        guard let turn else { return 0 }
+        return turn.guessedWordIds.count - turn.skippedCount * settings.skipPenalty
+    }
+
     /// Rounds that have begun, in order — all three once the game is over.
     var startedRounds: [GameRound] {
         guard phase != .finished else { return GameRound.allCases }
@@ -114,7 +126,7 @@ nonisolated extension GameState {
     }
 
     var scoreboard: Scoreboard {
-        Scoreboard(teams: teams, scores: scores)
+        Scoreboard(teams: teams, scores: scores, skipCounts: skipCounts, skipPenalty: settings.skipPenalty)
     }
 
     /// Whether the state can be played from. A saved game that decodes but
@@ -128,7 +140,8 @@ nonisolated extension GameState {
         }
         guard Set(remainingWordIds).isSubset(of: wordIds),
               Set(scoredIds).isSubset(of: wordIds),
-              explainersValid
+              explainersValid,
+              GameRules.skipPenaltyRange.contains(settings.skipPenalty)
         else { return false }
         // A game under way needs a clock and someone to explain on every team.
         guard phase == .setup || phase == .finished
@@ -181,5 +194,66 @@ nonisolated extension GameState {
         return team.players.enumerated()
             .filter { $0.offset != explainerIndex }
             .map(\.element)
+    }
+}
+
+// MARK: - Decoding
+// Saves written before skip penalties existed lack their keys. Those games
+// were started without a penalty, so they decode with none and keep their
+// scores as they were.
+nonisolated extension GameState {
+    private enum CodingKeys: String, CodingKey {
+        case schemaVersion, settings, teams, words, phase, round, currentTeamId, remainingWordIds,
+             currentWordId, explainerIndices, lockedTeamIds, carryOverSeconds, scores, skipCounts, turn
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.init(
+            settings: try container.decode(Settings.self, forKey: .settings),
+            teams: try container.decode([Team].self, forKey: .teams),
+            words: try container.decode([Word].self, forKey: .words)
+        )
+        schemaVersion = try container.decode(Int.self, forKey: .schemaVersion)
+        phase = try container.decode(Phase.self, forKey: .phase)
+        round = try container.decode(GameRound.self, forKey: .round)
+        currentTeamId = try container.decodeIfPresent(Team.ID.self, forKey: .currentTeamId)
+        remainingWordIds = try container.decode([Word.ID].self, forKey: .remainingWordIds)
+        currentWordId = try container.decodeIfPresent(Word.ID.self, forKey: .currentWordId)
+        explainerIndices = try container.decode([Team.ID: Int].self, forKey: .explainerIndices)
+        lockedTeamIds = try container.decode(Set<Team.ID>.self, forKey: .lockedTeamIds)
+        carryOverSeconds = try container.decode([Team.ID: Int].self, forKey: .carryOverSeconds)
+        scores = try container.decode([GameRound: [Team.ID: [Word.ID]]].self, forKey: .scores)
+        skipCounts = try container.decodeIfPresent([GameRound: [Team.ID: Int]].self, forKey: .skipCounts) ?? [:]
+        turn = try container.decodeIfPresent(Turn.self, forKey: .turn)
+    }
+}
+
+nonisolated extension GameState.Settings {
+    private enum CodingKeys: String, CodingKey {
+        case roundDuration, isSkippingEnabled, skipPenalty
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        roundDuration = try container.decode(Int.self, forKey: .roundDuration)
+        isSkippingEnabled = try container.decode(Bool.self, forKey: .isSkippingEnabled)
+        skipPenalty = try container.decodeIfPresent(Int.self, forKey: .skipPenalty) ?? 0
+    }
+}
+
+nonisolated extension GameState.Turn {
+    private enum CodingKeys: String, CodingKey {
+        case teamId, remaining, isPaused, guessedWordIds, skippedCount, endReason
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        teamId = try container.decode(Team.ID.self, forKey: .teamId)
+        remaining = try container.decode(Duration.self, forKey: .remaining)
+        isPaused = try container.decode(Bool.self, forKey: .isPaused)
+        guessedWordIds = try container.decode([Word.ID].self, forKey: .guessedWordIds)
+        skippedCount = try container.decodeIfPresent(Int.self, forKey: .skippedCount) ?? 0
+        endReason = try container.decodeIfPresent(PlayCompletionReason.self, forKey: .endReason)
     }
 }

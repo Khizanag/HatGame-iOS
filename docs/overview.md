@@ -30,7 +30,7 @@ Score the most points across three rounds. A team earns **one point for every wo
 
 - The **same words repeat** in all three rounds — only the explaining rule changes.
 - The team that **empties the hat** to end a round keeps its leftover time and its current explainer when the next round begins; every other team starts fresh. See [The Three Rounds](rounds.md).
-- **Skipping** a word (returning it to the hat) is allowed by default but can be turned off per game. See [A Turn](turn.md).
+- **Skipping** a word (returning it to the hat) is allowed by default but can be turned off per game. Each skip costs the team a point by default (configurable from none to three). See [A Turn](turn.md).
 
 ## See also
 

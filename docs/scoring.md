@@ -1,11 +1,14 @@
 # Scoring and Winning
 
-Scoring in Hat Game is simple: every word a team guesses is worth one point. This page covers how points accumulate, how standings are shown, and how the game ends.
+Scoring in Hat Game is simple: every word a team guesses is worth one point, and every word it skips costs the game's skip penalty. This page covers how points accumulate, how standings are shown, and how the game ends.
 
 ## Points
 
 - A team scores **one point for each word its teammates correctly guess** (the "Got It" action during a [turn](turn.md)).
-- Skipped words score nothing. Words left in the hat when time runs out score nothing.
+- A team **loses the skip penalty for each word it skips** — **1 point by default**, set per game to none, 1, 2, or 3 in [timer settings](setup.md#3-timer-settings). With skipping turned off there is no penalty.
+- Penalties count in the round the skip happened, so a turn — and a team's total — can go below zero.
+- Words left in the hat when time runs out score nothing and cost nothing.
+- The [turn results](turn.md#turn-results) show the turn's net points, with the words guessed and skipped beneath when skips cost points.
 - Points are tracked **per team, per round**. Because the same words are replayed each round, a team can score on the same word in all three rounds.
 
 ## Standings

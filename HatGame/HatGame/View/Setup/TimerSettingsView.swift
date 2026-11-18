@@ -12,9 +12,11 @@ import SwiftUI
 struct TimerSettingsView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var selectedDuration: Int = GameDefaults.standard.roundDuration
     @State private var isSkippingEnabled: Bool = GameDefaults.standard.isSkippingEnabled
+    @State private var skipPenalty: Int = GameDefaults.standard.skipPenalty
     @State private var hasLoadedConfiguration = false
 
     var body: some View {
@@ -125,24 +127,38 @@ private extension TimerSettingsView {
 
     var rulesCard: some View {
         GameCard {
-            Toggle(isOn: $isSkippingEnabled) {
-                HStack(spacing: DesignBook.Spacing.md) {
-                    Image(systemName: "arrow.uturn.forward")
-                        .font(DesignBook.IconFont.small)
-                        .foregroundStyle(DesignBook.Color.Status.warning)
-                        .frame(width: DesignBook.Size.touchTargetSize, height: DesignBook.Size.touchTargetSize)
-                        .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
-                        .decorativeHeroSizing()
+            VStack(spacing: DesignBook.Spacing.md) {
+                skippingToggle
+                if isSkippingEnabled {
+                    Divider()
+                    SkipPenaltyRow(penalty: $skipPenalty)
+                }
+            }
+            .animation(
+                DesignBook.Motion.respectingReducedMotion(.snappy, reduceMotion: reduceMotion),
+                value: isSkippingEnabled
+            )
+        }
+    }
 
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text(localized("timerSettings.allowSkipping.title"))
-                            .font(DesignBook.Font.title3)
-                            .foregroundStyle(DesignBook.Color.Text.primary)
-                        Text(localized("timerSettings.allowSkipping.description"))
-                            .font(DesignBook.Font.subheadline)
-                            .foregroundStyle(DesignBook.Color.Text.secondary)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
+    var skippingToggle: some View {
+        Toggle(isOn: $isSkippingEnabled) {
+            HStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: "arrow.uturn.forward")
+                    .font(DesignBook.IconFont.small)
+                    .foregroundStyle(DesignBook.Color.Status.warning)
+                    .frame(width: DesignBook.Size.touchTargetSize, height: DesignBook.Size.touchTargetSize)
+                    .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
+                    .decorativeHeroSizing()
+
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                    Text(localized("timerSettings.allowSkipping.title"))
+                        .font(DesignBook.Font.title3)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                    Text(localized("timerSettings.allowSkipping.description"))
+                        .font(DesignBook.Font.subheadline)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
             }
         }
@@ -173,11 +189,13 @@ private extension TimerSettingsView {
         hasLoadedConfiguration = true
         selectedDuration = gameManager.configuration.roundDuration
         isSkippingEnabled = gameManager.configuration.isSkippingEnabled
+        skipPenalty = gameManager.configuration.skipPenalty
     }
 
     func handleContinue() {
         gameManager.configuration.roundDuration = selectedDuration
         gameManager.configuration.isSkippingEnabled = isSkippingEnabled
+        gameManager.configuration.skipPenalty = skipPenalty
         navigator.push(.wordSource)
     }
 }

@@ -9,19 +9,19 @@ import DesignBook
 import SwiftUI
 
 /// Compact header shown above the timer: the team name (tinted) and a live
-/// badge with the number of words guessed this turn. The round is the
-/// navigation title, so it isn't repeated here.
+/// badge with the points this turn has earned (guesses less skip penalties).
+/// The round is the navigation title, so it isn't repeated here.
 struct GameHeaderBar: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     let team: Team
-    let guessedCount: Int
+    let points: Int
 
     var body: some View {
         HStack(alignment: .center) {
             teamName
             Spacer()
-            TurnScoreBadge(count: guessedCount, reduceMotion: reduceMotion)
+            TurnScoreBadge(points: points, reduceMotion: reduceMotion)
         }
     }
 }
@@ -43,32 +43,37 @@ private extension GameHeaderBar {
     }
 }
 
-/// Live "X words guessed this turn" pill. Bounces when the count changes.
+/// Live "X points this turn" pill. Bounces when the count changes.
 private struct TurnScoreBadge: View {
-    let count: Int
+    let points: Int
     let reduceMotion: Bool
+
+    /// Orange once skip penalties push the turn below zero.
+    private var tint: Color {
+        points < 0 ? DesignBook.Color.Status.warning : DesignBook.Color.Status.success
+    }
 
     var body: some View {
         HStack(spacing: DesignBook.Spacing.xs) {
             Image(systemName: "checkmark.seal.fill")
                 .font(DesignBook.Font.subheadlineSemibold)
-            Text(verbatim: "\(count)")
+            Text(points, format: .number)
                 .font(DesignBook.Font.title1)
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }
-        .foregroundStyle(DesignBook.Color.Status.success)
+        .foregroundStyle(tint)
         .padding(.horizontal, DesignBook.Spacing.md)
         .padding(.vertical, DesignBook.Spacing.sm)
         .background {
             Capsule()
-                .fill(DesignBook.Color.Status.success.opacity(0.12))
+                .fill(tint.opacity(0.12))
                 .overlay {
                     Capsule()
-                        .strokeBorder(DesignBook.Color.Status.success.opacity(0.4), lineWidth: 1)
+                        .strokeBorder(tint.opacity(0.4), lineWidth: 1)
                 }
         }
-        .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: count)
-        .accessibilityLabel(Text(localized("game.turn.score.accessibility \(count)")))
+        .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: points)
+        .accessibilityLabel(Text(localized("game.turn.points.accessibility \(points)")))
     }
 }

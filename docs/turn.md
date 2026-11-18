@@ -38,6 +38,8 @@ Skipping lets the explainer pass on a hard word and come back to it later in the
 
 - Skipping is **allowed by default** but can be turned off per game in [timer settings](setup.md#3-timer-settings).
 - A skipped word **stays in the hat** — it is *not* scored and *not* removed. A different random word is shown instead.
+- Each skip costs the team the game's **skip penalty** — **1 point by default**, configurable from none to three. The Skip button shows the cost ("Skip −1"), and the turn's live score drops with each skip. See [Scoring](scoring.md#points).
+- A skip that lands after the clock has run out is refused, so it never costs a point.
 - Skipping is only possible when **more than one word remains** in the hat (otherwise there is nothing to swap to). When skipping is off, or only one word is left, the skip action is unavailable.
 
 ## How a turn ends

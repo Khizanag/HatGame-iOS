@@ -22,6 +22,7 @@ nonisolated struct GameDefaults: Sendable, Equatable {
     var wordsPerPlayer = 10
     var roundDuration = 60
     var isSkippingEnabled = true
+    var skipPenalty = GameRules.defaultSkipPenalty
     var allowsDuplicateWords = false
 
     static let standard = GameDefaults()
@@ -38,6 +39,8 @@ final class GameConfiguration {
     var wordsPerPlayer: Int
     var roundDuration: Int
     var isSkippingEnabled: Bool
+    /// Points a team loses for each skipped word.
+    var skipPenalty: Int
     /// Whether two players may put the same word in the hat.
     let allowsDuplicateWords: Bool
     var wordSource: WordSource
@@ -52,6 +55,7 @@ final class GameConfiguration {
         wordsPerPlayer: Int? = nil,
         roundDuration: Int? = nil,
         isSkippingEnabled: Bool? = nil,
+        skipPenalty: Int? = nil,
         wordSource: WordSource = .manual,
         teams: [Team] = [],
         words: [Word] = []
@@ -62,6 +66,7 @@ final class GameConfiguration {
         self.wordsPerPlayer = wordsPerPlayer ?? defaults.wordsPerPlayer
         self.roundDuration = roundDuration ?? defaults.roundDuration
         self.isSkippingEnabled = isSkippingEnabled ?? defaults.isSkippingEnabled
+        self.skipPenalty = skipPenalty ?? defaults.skipPenalty
         self.allowsDuplicateWords = defaults.allowsDuplicateWords
         self.wordSource = wordSource
         self.teams = teams
@@ -73,7 +78,11 @@ final class GameConfiguration {
     }
 
     var settings: GameState.Settings {
-        GameState.Settings(roundDuration: roundDuration, isSkippingEnabled: isSkippingEnabled)
+        GameState.Settings(
+            roundDuration: roundDuration,
+            isSkippingEnabled: isSkippingEnabled,
+            skipPenalty: isSkippingEnabled ? skipPenalty : 0
+        )
     }
 
     /// A not-yet-started game with this configuration's teams, words, and settings.
@@ -94,6 +103,7 @@ extension GameConfiguration {
             wordsPerPlayer: playerCount > 0 ? max(1, state.words.count / playerCount) : nil,
             roundDuration: state.settings.roundDuration,
             isSkippingEnabled: state.settings.isSkippingEnabled,
+            skipPenalty: state.settings.isSkippingEnabled ? state.settings.skipPenalty : nil,
             teams: state.teams,
             words: state.words
         )

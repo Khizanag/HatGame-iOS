@@ -34,6 +34,29 @@ struct GameStateCodingTests {
         #expect(decoded.scoreboard.hasAnyScore)
     }
 
+    @Test("A save from before skip penalties loads with none, keeping its scores")
+    func preSkipPenaltySaveLoads() throws {
+        var generator = SeededGenerator()
+        var state = Fixtures.started().clearingRound(remaining: .seconds(9))
+        state = GameRules.beginTurn(state, explainerIndex: nil, using: &generator)
+        var json = try #require(JSONSerialization.jsonObject(with: JSONEncoder().encode(state)) as? [String: Any])
+        var settings = try #require(json["settings"] as? [String: Any])
+        var turn = try #require(json["turn"] as? [String: Any])
+        settings["skipPenalty"] = nil
+        turn["skippedCount"] = nil
+        json["settings"] = settings
+        json["turn"] = turn
+        json["skipCounts"] = nil
+
+        let decoded = try JSONDecoder().decode(GameState.self, from: JSONSerialization.data(withJSONObject: json))
+
+        #expect(decoded.settings.skipPenalty == 0)
+        #expect(decoded.skipCounts.isEmpty)
+        #expect(decoded.turn?.skippedCount == 0)
+        #expect(decoded.scores == state.scores)
+        #expect(decoded.isConsistent)
+    }
+
     @Test("Teams keep their color through coding")
     func teamColorRoundTrips() throws {
         let team = Team(name: "Red", color: TeamDefaultColorGenerator.defaultColors[1])

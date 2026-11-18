@@ -32,10 +32,15 @@ enum Fixtures {
         teams: [Team] = Fixtures.teams(),
         words: [Word] = Fixtures.words(),
         roundDuration: Int = 60,
-        isSkippingEnabled: Bool = true
+        isSkippingEnabled: Bool = true,
+        skipPenalty: Int = 0
     ) -> GameState {
         GameState(
-            settings: GameState.Settings(roundDuration: roundDuration, isSkippingEnabled: isSkippingEnabled),
+            settings: GameState.Settings(
+                roundDuration: roundDuration,
+                isSkippingEnabled: isSkippingEnabled,
+                skipPenalty: skipPenalty
+            ),
             teams: teams,
             words: words
         )
@@ -47,11 +52,18 @@ enum Fixtures {
         words: [Word] = Fixtures.words(),
         roundDuration: Int = 60,
         isSkippingEnabled: Bool = true,
+        skipPenalty: Int = 0,
         startingTeamIndex: Int = 0
     ) -> GameState {
         var generator = SeededGenerator()
         return GameRules.start(
-            state(teams: teams, words: words, roundDuration: roundDuration, isSkippingEnabled: isSkippingEnabled),
+            state(
+                teams: teams,
+                words: words,
+                roundDuration: roundDuration,
+                isSkippingEnabled: isSkippingEnabled,
+                skipPenalty: skipPenalty
+            ),
             startingTeamIndex: startingTeamIndex,
             using: &generator
         )
@@ -62,11 +74,18 @@ enum Fixtures {
         teams: [Team] = Fixtures.teams(),
         words: [Word] = Fixtures.words(),
         roundDuration: Int = 60,
-        isSkippingEnabled: Bool = true
+        isSkippingEnabled: Bool = true,
+        skipPenalty: Int = 0
     ) -> GameState {
         var generator = SeededGenerator()
         return GameRules.beginTurn(
-            started(teams: teams, words: words, roundDuration: roundDuration, isSkippingEnabled: isSkippingEnabled),
+            started(
+                teams: teams,
+                words: words,
+                roundDuration: roundDuration,
+                isSkippingEnabled: isSkippingEnabled,
+                skipPenalty: skipPenalty
+            ),
             explainerIndex: 0,
             using: &generator
         )

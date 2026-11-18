@@ -6,7 +6,7 @@ Before play begins, a game is configured in a fixed sequence of steps. This page
 
 1. **Teams and players** — create the teams and their members.
 2. **Word settings** — how many words each player contributes.
-3. **Timer settings** — turn length, and whether skipping is allowed.
+3. **Timer settings** — turn length, whether skipping is allowed, and what a skip costs.
 4. **Word source** — type words manually, or have the app pick them.
 5. **Add words** — every player fills the hat (manual), or the app fills it (automatic).
 6. **Randomize** — shuffle the words and choose which team starts.
@@ -27,6 +27,7 @@ Before play begins, a game is configured in a fixed sequence of steps. This page
 
 - **Turn length** — how long each timed turn lasts. Default is **60 seconds**; configurable from 5 to 120 seconds in 5-second steps.
 - **Allow skipping** — whether players may pass on a word and return it to the hat during a turn. **On by default.** See [A Turn](turn.md#skipping).
+- **Skip penalty** — points a team loses for each word it skips: none, 1, 2, or 3. **1 by default.** Shown only while skipping is allowed. See [Scoring](scoring.md#points).
 
 ## 4. Word source
 
@@ -67,6 +68,7 @@ Choose how the hat is filled:
 | Words per player | 10 | 3–20 |
 | Turn length | 60 seconds | 5–120 (step 5) |
 | Allow skipping | On | On / Off |
+| Skip penalty | 1 point | None–3 |
 
 Defaults can be changed in the app's settings and are applied to each new game.
 

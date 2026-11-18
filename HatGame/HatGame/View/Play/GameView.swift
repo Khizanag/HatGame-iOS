@@ -59,10 +59,7 @@ private extension GameView {
     var content: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             if let team {
-                GameHeaderBar(
-                    team: team,
-                    guessedCount: engine.state.turn?.guessedWordIds.count ?? 0
-                )
+                GameHeaderBar(team: team, points: engine.state.turnPoints)
             }
 
             CircularTimerView(
@@ -136,7 +133,7 @@ private extension GameView {
     var skipButton: some View {
         if engine.state.settings.isSkippingEnabled {
             Button(action: skipCurrentWord) {
-                Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
+                Label(SkipPenaltyRow.skipTitle(penalty: skipPenalty), systemImage: "arrow.uturn.forward")
                     .font(DesignBook.Font.title3)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity)
@@ -146,6 +143,7 @@ private extension GameView {
             .tint(DesignBook.Color.Status.warning)
             .disabled(!engine.canSkip)
             .keyboardShortcut(.leftArrow, modifiers: [])
+            .accessibilityLabel(Text(SkipPenaltyRow.skipAccessibilityLabel(penalty: skipPenalty)))
             .accessibilityIdentifier("game.skip")
         }
     }
@@ -184,6 +182,10 @@ private extension GameView {
             .keyboardShortcut(.cancelAction)
             .accessibilityIdentifier("game.pause")
         }
+    }
+
+    var skipPenalty: Int {
+        engine.state.settings.skipPenalty
     }
 
     var pauseButtonTitle: String {

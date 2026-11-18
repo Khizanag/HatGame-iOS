@@ -117,7 +117,7 @@ private extension OnlineNextTeamView {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
 
-                if let totalScore = gameState?.getTotalScore(for: team.id), totalScore > 0 {
+                if let totalScore = gameState?.getTotalScore(for: team.id), totalScore != 0 {
                     Text(localized("game.currentScoreLabel \(totalScore)"))
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.teamText(for: tint))

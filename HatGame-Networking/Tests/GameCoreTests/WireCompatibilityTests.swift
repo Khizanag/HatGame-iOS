@@ -68,6 +68,15 @@ struct WireCompatibilityTests {
         #expect(state.isSkippingEnabled)
     }
 
+    @Test("Rooms and games from before skip penalties decode with none")
+    func missingSkipPenaltyIsNone() throws {
+        let room = try Fixture.decode(GameRoom.self, json: Self.roomJSON(gameState: Self.stateJSON()))
+
+        #expect(room.settings.skipPenalty == 0)
+        #expect(room.gameState?.skipPenalty == 0)
+        #expect(GameSettings().skipPenalty == GameSettings.defaultSkipPenalty)
+    }
+
     @Test(
         "Malformed game state values throw instead of resetting",
         arguments: [

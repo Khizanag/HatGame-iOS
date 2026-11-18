@@ -174,6 +174,65 @@ struct GameRulesTests {
         #expect(state.scores.isEmpty)
     }
 
+    @Test("Each skip costs the team the game's penalty, in the turn and on the scoreboard", arguments: [1, 2, 3])
+    mutating func skipCostsPenalty(penalty: Int) throws {
+        let playing = Fixtures.playing(skipPenalty: penalty)
+        let team = try #require(playing.currentTeam)
+
+        let state = GameRules.skip(GameRules.skip(playing, using: &generator), using: &generator)
+
+        #expect(state.turn?.skippedCount == 2)
+        #expect(state.turnPoints == -2 * penalty)
+        #expect(state.scoreboard.score(for: team, in: .first) == -2 * penalty)
+        #expect(state.scoreboard.totalScore(for: team) == -2 * penalty)
+        #expect(state.scoreboard.hasAnyScore)
+    }
+
+    @Test("Guesses and penalized skips net out per round and in the total")
+    mutating func skipPenaltyNetsWithGuesses() throws {
+        let playing = Fixtures.playing(words: Fixtures.words(["a", "b", "c", "d"]), skipPenalty: 1)
+        let team = try #require(playing.currentTeam)
+
+        var state = GameRules.skip(playing, using: &generator)
+        state = GameRules.guess(state, remaining: .seconds(30), using: &generator)
+        state = GameRules.guess(state, remaining: .seconds(20), using: &generator)
+
+        #expect(state.turnPoints == 1)
+        #expect(state.scoreboard.score(for: team, in: .first) == 1)
+        #expect(state.scoreboard.ranking(in: .first).first == team)
+    }
+
+    @Test("Without a penalty skips are counted but cost nothing")
+    mutating func freeSkipsCostNothing() throws {
+        let playing = Fixtures.playing(skipPenalty: 0)
+        let team = try #require(playing.currentTeam)
+
+        let state = GameRules.skip(playing, using: &generator)
+
+        #expect(state.turn?.skippedCount == 1)
+        #expect(state.turnPoints == 0)
+        #expect(state.scoreboard.totalScore(for: team) == 0)
+        #expect(!state.scoreboard.hasAnyScore)
+    }
+
+    @Test("A rematch clears skip penalties with the rest of the score")
+    mutating func rematchClearsSkips() {
+        var state = GameRules.skip(Fixtures.playing(skipPenalty: 1), using: &generator)
+        state.phase = .finished
+
+        #expect(GameRules.rematch(state).skipCounts.isEmpty)
+    }
+
+    @Test("A penalty outside none to three can't start and isn't playable")
+    func outOfRangePenaltyIsRefused() {
+        #expect(!GameRules.canStart(Fixtures.state(skipPenalty: 4)))
+        #expect(!GameRules.canStart(Fixtures.state(skipPenalty: -1)))
+        #expect(GameRules.canStart(Fixtures.state(skipPenalty: 3)))
+        var broken = Fixtures.playing(skipPenalty: 1)
+        broken.settings.skipPenalty = 7
+        #expect(!broken.isConsistent)
+    }
+
     @Test("Skipping is unavailable when disabled, paused, or on the last word")
     mutating func skipGuards() {
         let disabled = Fixtures.playing(isSkippingEnabled: false)

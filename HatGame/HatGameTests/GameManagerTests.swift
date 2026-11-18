@@ -136,7 +136,17 @@ struct GameManagerTests {
         #expect(configuration.roundDuration == 30)
         #expect(!configuration.isSkippingEnabled)
         #expect(configuration.allowsDuplicateWords)
-        #expect(configuration.settings == GameState.Settings(roundDuration: 30, isSkippingEnabled: false))
+        #expect(configuration.settings == GameState.Settings(roundDuration: 30, isSkippingEnabled: false, skipPenalty: 0))
+    }
+
+    @Test("The skip penalty comes from the defaults and is dropped when skipping is off")
+    func skipPenaltyFollowsSkipping() {
+        let configuration = GameConfiguration(defaults: GameDefaults(skipPenalty: 2))
+
+        #expect(configuration.settings.skipPenalty == 2)
+        configuration.isSkippingEnabled = false
+        #expect(configuration.settings.skipPenalty == 0)
+        #expect(GameConfiguration().settings.skipPenalty == GameRules.defaultSkipPenalty)
     }
 
     @Test("Explicit values win over the defaults")

@@ -36,6 +36,7 @@
           "wordsPerPlayer": { ".validate": "newData.isNumber()" },
           "roundDuration": { ".validate": "newData.isNumber()" },
           "isSkippingEnabled": { ".validate": "newData.isBoolean()" },
+          "skipPenalty": { ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 3" },
           "isAutomaticWords": { ".validate": "newData.isBoolean()" },
           "$other": { ".validate": false }
         },

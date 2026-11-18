@@ -65,6 +65,9 @@ public struct OnlineGameState: VersionedNode {
     /// Frozen at game start from the host's `GameSettings` — authoritative for
     /// every peer so all clients agree on whether skipping is allowed.
     public var isSkippingEnabled: Bool
+    /// Points a team loses per skipped word, frozen at game start like
+    /// `isSkippingEnabled`. Already taken off `scores` as each skip lands.
+    public var skipPenalty: Int
     /// Seconds a team keeps for its next turn after emptying the hat with
     /// time left (see `docs/rounds.md`). Consumed when that turn starts.
     public var carryOverSeconds: [String: Int]
@@ -86,6 +89,7 @@ public struct OnlineGameState: VersionedNode {
         timerStartedAt: Date? = nil,
         roundDuration: Int = 60,
         isSkippingEnabled: Bool = true,
+        skipPenalty: Int = 0,
         carryOverSeconds: [String: Int] = [:],
         turnSeconds: Int? = nil
     ) {
@@ -102,6 +106,7 @@ public struct OnlineGameState: VersionedNode {
         self.timerStartedAt = timerStartedAt
         self.roundDuration = roundDuration
         self.isSkippingEnabled = isSkippingEnabled
+        self.skipPenalty = skipPenalty
         self.carryOverSeconds = carryOverSeconds
         self.turnSeconds = turnSeconds
     }
@@ -131,7 +136,7 @@ public struct OnlineGameState: VersionedNode {
     private enum CodingKeys: String, CodingKey, CaseIterable {
         case schemaVersion, currentRound, currentTeamIndex, teamExplainerIndices, currentWordId,
              remainingWordIds, allWordIds, scores, phase, activePlayerId,
-             timerStartedAt, roundDuration, isSkippingEnabled, carryOverSeconds, turnSeconds
+             timerStartedAt, roundDuration, isSkippingEnabled, skipPenalty, carryOverSeconds, turnSeconds
     }
 
     public static var knownKeys: Set<String> {
@@ -157,6 +162,7 @@ public struct OnlineGameState: VersionedNode {
         self.timerStartedAt = try container.decodeIfPresent(Date.self, forKey: .timerStartedAt)
         self.roundDuration = try container.decode(Int.self, forKey: .roundDuration)
         self.isSkippingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSkippingEnabled) ?? true
+        self.skipPenalty = try container.decodeIfPresent(Int.self, forKey: .skipPenalty) ?? 0
         self.carryOverSeconds = try container.decodeIfPresent([String: Int].self, forKey: .carryOverSeconds) ?? [:]
         self.turnSeconds = try container.decodeIfPresent(Int.self, forKey: .turnSeconds)
     }

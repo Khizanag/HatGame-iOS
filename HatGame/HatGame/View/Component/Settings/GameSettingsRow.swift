@@ -23,9 +23,12 @@ struct GameSettingsRow: View {
     let range: ClosedRange<Int>
     let step: Int
     var suffix: String?
+    /// Spells out the value when a number and suffix can't, such as "None".
+    var format: ((Int) -> String)?
 
     private var formattedValue: String {
-        suffix.map { "\(value) \($0)" } ?? "\(value)"
+        if let format { return format(value) }
+        return suffix.map { "\(value) \($0)" } ?? "\(value)"
     }
 
     var body: some View {

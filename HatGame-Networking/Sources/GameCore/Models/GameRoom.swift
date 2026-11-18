@@ -161,7 +161,13 @@ public struct GameSettings: Codable, Equatable, Sendable {
     public var wordsPerPlayer: Int
     public var roundDuration: Int
     public var isSkippingEnabled: Bool
+    /// Points a team loses for each word it skips.
+    public var skipPenalty: Int
     public var isAutomaticWords: Bool
+
+    /// Points a skip can cost; the database rules enforce the same bounds.
+    public static let skipPenaltyRange = 0...3
+    public static let defaultSkipPenalty = 1
 
     public init(
         maxTeams: Int = 4,
@@ -169,6 +175,7 @@ public struct GameSettings: Codable, Equatable, Sendable {
         wordsPerPlayer: Int = 5,
         roundDuration: Int = 60,
         isSkippingEnabled: Bool = true,
+        skipPenalty: Int = GameSettings.defaultSkipPenalty,
         isAutomaticWords: Bool = false
     ) {
         self.maxTeams = maxTeams
@@ -176,6 +183,7 @@ public struct GameSettings: Codable, Equatable, Sendable {
         self.wordsPerPlayer = wordsPerPlayer
         self.roundDuration = roundDuration
         self.isSkippingEnabled = isSkippingEnabled
+        self.skipPenalty = skipPenalty
         self.isAutomaticWords = isAutomaticWords
     }
 
@@ -185,7 +193,7 @@ public struct GameSettings: Codable, Equatable, Sendable {
     /// in-flight rooms keep decoding with today's behavior as the default.
     private enum CodingKeys: String, CodingKey {
         case maxTeams, playersPerTeam, wordsPerPlayer, roundDuration,
-             isSkippingEnabled, isAutomaticWords
+             isSkippingEnabled, skipPenalty, isAutomaticWords
     }
 
     public init(from decoder: Decoder) throws {
@@ -195,6 +203,8 @@ public struct GameSettings: Codable, Equatable, Sendable {
         self.wordsPerPlayer = try container.decodeIfPresent(Int.self, forKey: .wordsPerPlayer) ?? 5
         self.roundDuration = try container.decodeIfPresent(Int.self, forKey: .roundDuration) ?? 60
         self.isSkippingEnabled = try container.decodeIfPresent(Bool.self, forKey: .isSkippingEnabled) ?? true
+        // Rooms from before skip penalties played without one.
+        self.skipPenalty = try container.decodeIfPresent(Int.self, forKey: .skipPenalty) ?? 0
         self.isAutomaticWords = try container.decodeIfPresent(Bool.self, forKey: .isAutomaticWords) ?? false
     }
 }

@@ -82,6 +82,9 @@ private extension DefaultsSettingsView {
                 title: localized("settings.defaultSkipping.title"),
                 isOn: skippingBinding
             )
+            if appConfiguration.defaultSkippingEnabled {
+                SkipPenaltyRow(penalty: skipPenaltyBinding)
+            }
         } footer: {
             Text(localized("settings.defaultSkipping.description"))
         }
@@ -142,6 +145,13 @@ private extension DefaultsSettingsView {
         Binding(
             get: { appConfiguration.defaultSkippingEnabled },
             set: { appConfiguration.defaultSkippingEnabled = $0 }
+        )
+    }
+
+    var skipPenaltyBinding: Binding<Int> {
+        Binding(
+            get: { appConfiguration.defaultSkipPenalty },
+            set: { appConfiguration.defaultSkipPenalty = $0 }
         )
     }
 

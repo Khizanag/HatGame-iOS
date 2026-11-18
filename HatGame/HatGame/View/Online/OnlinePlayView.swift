@@ -138,6 +138,10 @@ private extension OnlinePlayView {
 
     /// Whether the skip control is actionable right now: allowed AND more than
     /// one word remains (parity with the offline rule).
+    var skipPenalty: Int {
+        gameState?.skipPenalty ?? 0
+    }
+
     var isSkipEnabled: Bool {
         isSkippingAllowed && remainingWordCount > 1
     }
@@ -200,7 +204,7 @@ private extension OnlinePlayView {
         HStack(spacing: DesignBook.Spacing.md) {
             if isSkippingAllowed {
                 Button(action: skipCurrentWord) {
-                    Label(localized("game.skip"), systemImage: "arrow.uturn.forward")
+                    Label(SkipPenaltyRow.skipTitle(penalty: skipPenalty), systemImage: "arrow.uturn.forward")
                         .font(DesignBook.Font.title3)
                         .frame(maxWidth: .infinity)
                         .padding(.vertical, DesignBook.Spacing.sm)
@@ -209,6 +213,7 @@ private extension OnlinePlayView {
                 .tint(DesignBook.Color.Status.warning)
                 .disabled(!isSkipEnabled || isSubmitting)
                 .keyboardShortcut(.leftArrow, modifiers: [])
+                .accessibilityLabel(Text(SkipPenaltyRow.skipAccessibilityLabel(penalty: skipPenalty)))
             }
 
             Button(action: markGuessed) {

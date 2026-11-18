@@ -33,7 +33,7 @@ A new game walks through the setup screens once, in order:
 |---|---|
 | Team Setup | Create 2–6 teams and their players. |
 | Word Settings | Set how many words each player adds. |
-| Timer Settings | Set the turn length and whether skipping is allowed. |
+| Timer Settings | Set the turn length, whether skipping is allowed, and the skip penalty. |
 | Word Source | Choose manual entry or automatic word generation. |
 | Word Input *or* Word Generation | Fill the hat — players type their words, or the app generates them. |
 | Randomization | Shuffle the words and pick the starting team. |

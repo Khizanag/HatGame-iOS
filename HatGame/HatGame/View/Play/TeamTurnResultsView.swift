@@ -16,6 +16,10 @@ struct TeamTurnResultsView: View {
 
     let team: Team
     let guessedWords: [Word]
+    /// Guesses less skip penalties; equals the guess count without penalties.
+    let points: Int
+    /// Penalized skips this turn; zero when skipping costs nothing.
+    let skippedCount: Int
     let completionReason: PlayCompletionReason
     @State private var isStandingsPresented = false
     @State private var hasCelebrated: Bool = false
@@ -23,8 +27,10 @@ struct TeamTurnResultsView: View {
 
     private var isCelebratory: Bool { completionReason == .allWordsGuessed }
 
-    private var wordsUnit: String {
-        localized("game.turnResults.wordsUnit \(guessedWords.count)")
+    private var scoreUnit: String {
+        skippedCount > 0
+            ? localized("game.turnResults.pointsUnit \(points)")
+            : localized("game.turnResults.wordsUnit \(points)")
     }
 
     var body: some View {
@@ -124,18 +130,25 @@ private extension TeamTurnResultsView {
 
                 HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.sm) {
                     AnimatedScoreText(
-                        value: guessedWords.count,
+                        value: points,
                         font: DesignBook.Font.heroScore,
                         color: DesignBook.Color.teamText(for: team.color),
                         duration: 0.7
                     )
-                    Text(wordsUnit)
+                    Text(scoreUnit)
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 }
                 .padding(.top, DesignBook.Spacing.xs)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(Text(verbatim: "\(guessedWords.count) \(wordsUnit)"))
+                .accessibilityLabel(Text(verbatim: "\(points) \(scoreUnit)"))
+
+                if skippedCount > 0 {
+                    Text(localized("game.turnResults.breakdown \(guessedWords.count) \(skippedCount)"))
+                        .font(DesignBook.Font.subheadline)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                        .multilineTextAlignment(.center)
+                }
             }
         }
     }

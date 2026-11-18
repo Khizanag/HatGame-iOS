@@ -80,6 +80,7 @@ final class AppConfigurationTests {
         configuration.defaultWordsPerPlayer = 6
         configuration.defaultRoundDuration = 45
         configuration.defaultSkippingEnabled = false
+        configuration.defaultSkipPenalty = 2
         configuration.allowDuplicateWords = true
 
         let reloaded = AppConfiguration(userDefaults: defaults)
@@ -88,7 +89,14 @@ final class AppConfigurationTests {
             wordsPerPlayer: 6,
             roundDuration: 45,
             isSkippingEnabled: false,
+            skipPenalty: 2,
             allowsDuplicateWords: true
         ))
+    }
+
+    @Test func skipPenaltyDefaultsToOneAndIgnoresStoredJunk() {
+        #expect(AppConfiguration(userDefaults: defaults).defaultSkipPenalty == 1)
+        defaults.set(9, forKey: "HatGame.defaultSkipPenalty")
+        #expect(AppConfiguration(userDefaults: defaults).defaultSkipPenalty == 1)
     }
 }

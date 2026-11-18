@@ -69,6 +69,8 @@ private extension GameLoopView {
                 TeamTurnResultsView(
                     team: team,
                     guessedWords: engine.state.turnGuessedWords,
+                    points: engine.state.turnPoints,
+                    skippedCount: penalizedSkips,
                     completionReason: engine.state.turn?.endReason ?? .timeExpired
                 )
                 .transition(phaseTransition)
@@ -80,6 +82,11 @@ private extension GameLoopView {
             Color.clear
                 .setDefaultBackground()
         }
+    }
+
+    /// Skips that cost points this turn; free skips aren't worth reporting.
+    var penalizedSkips: Int {
+        engine.state.settings.skipPenalty > 0 ? engine.state.turn?.skippedCount ?? 0 : 0
     }
 
     var phaseTransition: AnyTransition {

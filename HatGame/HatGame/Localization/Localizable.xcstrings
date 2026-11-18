@@ -474,6 +474,64 @@
         }
       }
     },
+    "game.skip.penalty %lld" : {
+      "comment" : "Skip button during a turn when skipping costs points; the argument is the points lost.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip −%lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვება −%lld"
+          }
+        }
+      }
+    },
+    "game.skip.penalty.a11y %lld" : {
+      "comment" : "VoiceOver label of the Skip button when skipping costs points.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Skip, costs %lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "Skip, costs %lld points"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "გამოტოვება, −%lld ქულა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "გამოტოვება, −%lld ქულა"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "game.standings.title" : {
       "comment" : "Title of the mid-game standings sheet, and the VoiceOver label and tooltip of the toolbar symbol that opens it.",
       "localizations" : {
@@ -487,6 +545,125 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ცხრილი"
+          }
+        }
+      }
+    },
+    "game.turn.points.accessibility %lld" : {
+      "comment" : "VoiceOver label of the score badge during a turn: guesses less skip penalties. Can be negative.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld point this turn"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld points this turn"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ქულა ამ ტურში"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ქულა ამ ტურში"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "game.turnResults.breakdown %lld %lld" : {
+      "comment" : "Under the turn score when skips cost points: words guessed, then words skipped.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guessed %1$lld · Skipped %2$lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოცნობილი %1$lld · გამოტოვებული %2$lld"
+          }
+        }
+      }
+    },
+    "game.turnResults.pointsUnit %lld" : {
+      "comment" : "Unit next to the big turn score on turn results when skips cost points. The number is drawn separately, so this holds only the noun.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@unit@"
+          },
+          "substitutions" : {
+            "unit" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "point"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "points"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%#@unit@"
+          },
+          "substitutions" : {
+            "unit" : {
+              "argNum" : 1,
+              "formatSpecifier" : "lld",
+              "variations" : {
+                "plural" : {
+                  "one" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "ქულა"
+                    }
+                  },
+                  "other" : {
+                    "stringUnit" : {
+                      "state" : "translated",
+                      "value" : "ქულა"
+                    }
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -927,6 +1104,81 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "დანარჩენები შენს გარეშე გააგრძელებენ. ოთახში დაბრუნება კოდით შეგიძლია."
+          }
+        }
+      }
+    },
+    "skipPenalty.none" : {
+      "comment" : "Skip penalty value when skipping costs nothing.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "არ არის"
+          }
+        }
+      }
+    },
+    "skipPenalty.points %lld" : {
+      "comment" : "Skip penalty value: the points lost per skipped word. Keep the minus sign.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "−%lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "−%lld points"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "−%lld ქულა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "−%lld ქულა"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "skipPenalty.title" : {
+      "comment" : "Title of the setting for how many points a skipped word costs.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skip Penalty"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვების ჯარიმა"
           }
         }
       }
@@ -3180,47 +3432,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "თამაშის გაგრძელება"
-          }
-        }
-      }
-    },
-    "game.turn.score.accessibility %lld" : {
-      "comment" : "Accessibility label for the score badge during a turn. The argument is the number of words guessed.",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld word guessed this turn"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld words guessed this turn"
-                }
-              }
-            }
-          }
-        },
-        "ka" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld სიტყვა ამ ტურში"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld სიტყვა ამ ტურში"
-                }
-              }
-            }
           }
         }
       }

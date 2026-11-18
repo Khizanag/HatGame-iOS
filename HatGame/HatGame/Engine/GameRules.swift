@@ -19,6 +19,9 @@ nonisolated enum GameRules {
     static let minimumTeams = 2
     /// The fewest players a team needs: one explains, at least one guesses.
     static let minimumPlayersPerTeam = 2
+    /// Points a skip can cost (`docs/scoring.md`); none up to three.
+    static let skipPenaltyRange = 0...3
+    static let defaultSkipPenalty = 1
 
     /// Whether a game can start from `state`: enough teams, every one with an
     /// explainer and a guesser, and words in the hat.
@@ -26,6 +29,7 @@ nonisolated enum GameRules {
         state.phase == .setup
             && !state.words.isEmpty
             && state.settings.roundDuration > 0
+            && skipPenaltyRange.contains(state.settings.skipPenalty)
             && state.teams.count >= minimumTeams
             && state.teams.allSatisfy { $0.players.count >= minimumPlayersPerTeam }
     }
@@ -127,8 +131,9 @@ nonisolated enum GameRules {
         return next
     }
 
-    /// Puts the current word back and shows a different one. Needs skipping
-    /// enabled and at least two words in the hat.
+    /// Puts the current word back and shows a different one, costing the
+    /// team `skipPenalty` points. Needs skipping enabled and at least two
+    /// words in the hat.
     static func skip(
         _ state: GameState,
         using generator: inout some RandomNumberGenerator
@@ -139,6 +144,10 @@ nonisolated enum GameRules {
 
         var next = state
         next.currentWordId = nextWord
+        if let teamId = state.turn?.teamId {
+            next.turn?.skippedCount += 1
+            next.skipCounts[state.round, default: [:]][teamId, default: 0] += 1
+        }
         return next
     }
 

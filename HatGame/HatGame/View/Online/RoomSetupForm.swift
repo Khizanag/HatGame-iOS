@@ -108,6 +108,9 @@ private extension RoomSetupForm {
             isOn: $settings.isSkippingEnabled,
             tint: DesignBook.Color.Status.warning
         )
+        if settings.isSkippingEnabled {
+            SkipPenaltyRow(penalty: $settings.skipPenalty)
+        }
     }
 
     var submitButton: some View {

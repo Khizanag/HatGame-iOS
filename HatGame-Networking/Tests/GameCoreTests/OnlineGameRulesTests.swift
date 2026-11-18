@@ -25,6 +25,10 @@ private enum Table {
         Fixture.player("b2", team: "B", joinedOffset: 4),
     ]
 
+    static func skip(_ state: OnlineGameState, _ wordId: String, secondsIn: TimeInterval = 0) -> OnlineGameState? {
+        OnlineGameRules.skip(state, expectedWordId: wordId, teams: teams, now: Fixture.epoch.addingTimeInterval(secondsIn))
+    }
+
     static func context(
         now: Date = Fixture.epoch,
         players: [OnlinePlayer] = players
@@ -32,8 +36,12 @@ private enum Table {
         GameContext(hostId: host, teams: teams, players: players, now: now)
     }
 
-    static func initial(words: [String] = words, isSkippingEnabled: Bool = true) throws -> OnlineGameState {
-        let settings = GameSettings(roundDuration: 60, isSkippingEnabled: isSkippingEnabled)
+    static func initial(
+        words: [String] = words,
+        isSkippingEnabled: Bool = true,
+        skipPenalty: Int = 0
+    ) throws -> OnlineGameState {
+        let settings = GameSettings(roundDuration: 60, isSkippingEnabled: isSkippingEnabled, skipPenalty: skipPenalty)
         return try #require(
             OnlineGameRules.initialState(
                 teams: teams,
@@ -45,8 +53,12 @@ private enum Table {
         )
     }
 
-    static func playing(words: [String] = words, isSkippingEnabled: Bool = true) throws -> OnlineGameState {
-        let state = try initial(words: words, isSkippingEnabled: isSkippingEnabled)
+    static func playing(
+        words: [String] = words,
+        isSkippingEnabled: Bool = true,
+        skipPenalty: Int = 0
+    ) throws -> OnlineGameState {
+        let state = try initial(words: words, isSkippingEnabled: isSkippingEnabled, skipPenalty: skipPenalty)
         return try #require(OnlineGameRules.startTurn(state, teams: Table.teams, now: Fixture.epoch))
     }
 
@@ -216,11 +228,50 @@ struct GameRulesTurnTests {
     func skip() throws {
         let state = try Table.playing()
 
-        let next = try #require(OnlineGameRules.skip(state, expectedWordId: "w1"))
+        let next = try #require(Table.skip(state, "w1"))
 
         #expect(next.remainingWordIds == ["w2", "w3", "w4", "w1"])
         #expect(next.currentWordId == "w2")
         #expect(next.getTotalScore(for: "A") == 0)
+    }
+
+    @Test("Each skip takes the game's penalty off the team's round score", arguments: [1, 2, 3])
+    func skipPenalty(penalty: Int) throws {
+        let state = try Table.playing(skipPenalty: penalty)
+
+        let once = try #require(Table.skip(state, "w1"))
+        let twice = try #require(Table.skip(once, "w2"))
+
+        #expect(once.getScore(for: "A", in: .first) == -penalty)
+        #expect(twice.getScore(for: "A", in: .first) == -2 * penalty)
+        #expect(twice.getTotalScore(for: "B") == 0)
+    }
+
+    @Test("A guess after skips nets out: one point less the penalties")
+    func skipPenaltyNetsWithGuesses() throws {
+        let state = try Table.playing(skipPenalty: 1)
+
+        let skipped = try #require(Table.skip(state, "w1"))
+        let guessed = try #require(
+            OnlineGameRules.markGuessed(skipped, expectedWordId: "w2", teams: Table.teams, now: Fixture.epoch)
+        )
+
+        #expect(guessed.getScore(for: "A", in: .first) == 0)
+    }
+
+    @Test("A skip after the clock runs out is refused, so it can't cost a point")
+    func lateSkipIsRefused() throws {
+        let state = try Table.playing(skipPenalty: 1)
+
+        #expect(Table.skip(state, "w1", secondsIn: 59) != nil)
+        #expect(Table.skip(state, "w1", secondsIn: 61) == nil)
+    }
+
+    @Test("The penalty is frozen at start, dropped when skipping is off, and capped")
+    func skipPenaltyIsFrozenAtStart() throws {
+        #expect(try Table.initial(skipPenalty: 2).skipPenalty == 2)
+        #expect(try Table.initial(isSkippingEnabled: false, skipPenalty: 2).skipPenalty == 0)
+        #expect(try Table.initial(skipPenalty: 9).skipPenalty == GameSettings.skipPenaltyRange.upperBound)
     }
 
     @Test("Skip needs skipping enabled, another word, the right word, and a running turn")
@@ -230,10 +281,10 @@ struct GameRulesTurnTests {
         let running = try Table.playing()
         let prep = try Table.initial()
 
-        #expect(OnlineGameRules.skip(disabled, expectedWordId: "w1") == nil)
-        #expect(OnlineGameRules.skip(lastWord, expectedWordId: "only") == nil)
-        #expect(OnlineGameRules.skip(running, expectedWordId: "w2") == nil)
-        #expect(OnlineGameRules.skip(prep, expectedWordId: "w1") == nil)
+        #expect(Table.skip(disabled, "w1") == nil)
+        #expect(Table.skip(lastWord, "only") == nil)
+        #expect(Table.skip(running, "w2") == nil)
+        #expect(Table.skip(prep, "w1") == nil)
     }
 
     @Test("End turn closes a running turn or forfeits one in team prep")
@@ -255,7 +306,7 @@ struct GameRulesTurnTests {
         round.currentRound = .unsupported
 
         #expect(OnlineGameRules.endTurn(state) == nil)
-        #expect(OnlineGameRules.skip(round, expectedWordId: "w1") == nil)
+        #expect(Table.skip(round, "w1") == nil)
         #expect(OnlineGameRules.reduce(state, .startTurn, context: Table.context()) == nil)
     }
 }

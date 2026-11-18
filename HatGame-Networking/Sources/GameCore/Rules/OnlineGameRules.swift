@@ -46,7 +46,7 @@ public enum OnlineGameRules {
         case let .markGuessed(wordId):
             markGuessed(state, expectedWordId: wordId, teams: context.teams, now: context.now)
         case let .skip(wordId):
-            skip(state, expectedWordId: wordId)
+            skip(state, expectedWordId: wordId, teams: context.teams, now: context.now)
         case .endTurn:
             endTurn(state)
         case .advanceAfterTurnResults:
@@ -145,7 +145,10 @@ public enum OnlineGameRules {
             scores: scores,
             phase: .teamPrep,
             roundDuration: settings.roundDuration,
-            isSkippingEnabled: settings.isSkippingEnabled
+            isSkippingEnabled: settings.isSkippingEnabled,
+            skipPenalty: settings.isSkippingEnabled
+                ? min(max(settings.skipPenalty, 0), GameSettings.skipPenaltyRange.upperBound)
+                : 0
         )
         assignExplainer(of: firstTeam, in: &state, players: players)
         return state
@@ -208,16 +211,28 @@ public enum OnlineGameRules {
         max(1, Int(remaining.rounded(.up)))
     }
 
-    /// Moves the current word to the back of the hat. Allowed only when the
-    /// game enables skipping and another word remains to show instead.
-    public static func skip(_ state: OnlineGameState, expectedWordId: String) -> OnlineGameState? {
+    /// Moves the current word to the back of the hat and takes the game's
+    /// skip penalty off the team's round score. Allowed only when the game
+    /// enables skipping, another word remains to show instead, and the clock
+    /// hasn't run out: a late skip would only cost a point.
+    public static func skip(
+        _ state: OnlineGameState,
+        expectedWordId: String,
+        teams: [OnlineTeam],
+        now: Date
+    ) -> OnlineGameState? {
         guard state.isSupported,
               state.phase == .playing,
               state.isSkippingEnabled,
               state.currentWordId == expectedWordId,
               state.remainingWordIds.count > 1,
-              state.remainingWordIds.contains(expectedWordId) else { return nil }
+              state.remainingWordIds.contains(expectedWordId),
+              let team = currentTeam(state, teams: teams),
+              !isPastDeadline(state, now: now, grace: 0) else { return nil }
         var next = state
+        if state.skipPenalty > 0 {
+            next.scores[team.id, default: [:]][state.currentRound, default: 0] -= state.skipPenalty
+        }
         next.remainingWordIds.removeAll { $0 == expectedWordId }
         next.remainingWordIds.append(expectedWordId)
         next.currentWordId = next.remainingWordIds.first
