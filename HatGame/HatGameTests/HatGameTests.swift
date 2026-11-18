@@ -66,10 +66,42 @@ struct HatGameTests {
         let edited = Team(id: original.id, name: "Renamed", players: original.players, teamColor: original.teamColor)
         manager.updateTeam(edited)
 
-        #expect(manager.configuration.teams.count == 2)
+        #expect(manager.configuration.teams.count == 3)
         #expect(manager.configuration.teams[0].id == original.id)
         #expect(manager.configuration.teams[0].name == "Renamed")
-        #expect(manager.configuration.teams[1].name == "Beta")
+        #expect(manager.configuration.teams[2].name == "Beta")
+    }
+
+    /// Editing a team keeps its players' words; a player taken off the team
+    /// takes their words out of the hat.
+    @Test func updateTeamKeepsWordsOfStayingPlayersOnly() throws {
+        let manager = makeManager(isSkippingEnabled: true)
+        let team = manager.configuration.teams[0]
+        let staying = try #require(team.players.first)
+        let leaving = try #require(team.players.last)
+        manager.configuration.words = []
+        manager.setWords(["kept"], for: staying)
+        manager.setWords(["gone"], for: leaving)
+
+        manager.updateTeam(Team(id: team.id, name: team.name, players: [staying], teamColor: team.teamColor))
+
+        #expect(manager.configuration.words.map(\.text) == ["kept"])
+    }
+
+    /// Switching from picked to typed words empties the picked ones; lowering
+    /// the per-player count trims each player to it.
+    @Test func wordSourceAndCountChangesKeepTheHatInStep() throws {
+        let manager = makeManager(isSkippingEnabled: true)
+        let player = try #require(manager.configuration.teams.first?.players.first)
+        manager.fillRandomWords(count: 3, from: ["a", "b", "c", "d"])
+        #expect(!manager.hasTypedWords)
+
+        manager.removePickedWords()
+        manager.setWords(["one", "two", "three"], for: player)
+        manager.trimWords(toPerPlayer: 2)
+
+        #expect(manager.hasTypedWords)
+        #expect(manager.configuration.words.map(\.text) == ["one", "two"])
     }
 
     // MARK: - Regression: idempotent transitions
@@ -142,19 +174,9 @@ struct HatGameTests {
 // MARK: - Helpers
 private extension HatGameTests {
     func makeManager(isSkippingEnabled: Bool) -> GameManager {
-        let teamId = UUID()
-        let team = Team(
-            id: teamId,
-            name: "Alpha",
-            players: [
-                Player(name: "Alice", teamId: teamId),
-                Player(name: "Bob", teamId: teamId),
-            ],
-            color: .blue
-        )
         let configuration = GameConfiguration(
             isSkippingEnabled: isSkippingEnabled,
-            teams: [team],
+            teams: Fixtures.teams(count: 2),
             words: [Word(text: "one"), Word(text: "two"), Word(text: "three")]
         )
         return GameManager(configuration: configuration, store: store, sound: SoundSpy())

@@ -30,6 +30,9 @@ struct TeamFormView: View {
 
     @State private var teamName: String = ""
     @State private var playerNames: [String] = []
+    /// The id of the player in each seat, `nil` for a new seat; kept beside
+    /// `playerNames` so removing a seat doesn't hand its words to a neighbour.
+    @State private var playerIds: [Player.ID?] = []
     @State private var teamColor: Color = TeamDefaultColorGenerator.defaultColors[0]
     @State private var nameSuggestions: [String] = TeamNameSuggestions.random()
     /// True once the user types/picks a team name themselves — stops auto-deriving it from members.
@@ -63,10 +66,14 @@ struct TeamFormView: View {
     }
 
     private var areAllPlayersFilled: Bool {
-        filledPlayerNames.count == requiredPlayers
+        playerNames.count >= minimumPlayers && filledPlayerNames.count == playerNames.count
     }
 
-    private var requiredPlayers: Int { gameManager.configuration.playersPerTeam }
+    /// Seats a new team starts with.
+    private var defaultPlayers: Int { gameManager.configuration.playersPerTeam }
+    private var minimumPlayers: Int { GameRules.minimumPlayersPerTeam }
+    private var maximumPlayers: Int { gameManager.configuration.maxTeamMembers }
+    private var canAddPlayer: Bool { playerNames.count < maximumPlayers }
 
     private var canSave: Bool {
         !trimmedTeamName.isEmpty && areAllPlayersFilled
@@ -189,7 +196,7 @@ private extension TeamFormView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     TeamFormFieldLabel(icon: "person.2.fill", title: "teamForm.players")
                     Spacer()
-                    Text(verbatim: "\(filledPlayerNames.count)/\(requiredPlayers)")
+                    Text(verbatim: "\(filledPlayerNames.count)/\(playerNames.count)")
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .monospacedDigit()
@@ -203,8 +210,24 @@ private extension TeamFormView {
                             .id(Field.player(index))
                     }
                 }
+
+                if canAddPlayer {
+                    addPlayerButton
+                }
             }
         }
+    }
+
+    var addPlayerButton: some View {
+        Button(action: addPlayer) {
+            Label(localized("teamForm.addPlayer"), systemImage: "person.badge.plus")
+                .font(DesignBook.Font.subheadlineSemibold)
+                .foregroundStyle(DesignBook.Color.Text.accent)
+        }
+        .glassButtonStyle()
+        .buttonBorderShape(.capsule)
+        .controlSize(.large)
+        .accessibilityIdentifier("teamForm.addPlayer")
     }
 
     /// Neutral guidance while the members are being typed; the error only
@@ -213,11 +236,11 @@ private extension TeamFormView {
     var playersMessage: some View {
         if !areAllPlayersFilled {
             if isPlayerValidationVisible {
-                Text(localized("teamForm.validation.exactPlayers \(requiredPlayers)"))
+                Text(localized("teamForm.validation.fillAllPlayers"))
                     .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Status.error)
             } else {
-                Text(localized("teamForm.helper.players \(requiredPlayers)"))
+                Text(localized("teamForm.helper.players \(playerNames.count)"))
                     .font(DesignBook.Font.subheadline)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             }
@@ -251,6 +274,22 @@ private extension TeamFormView {
                 capitalization: .words
             ) { focusedField = .player(index) }
             .onSubmit { advanceFocus(fromPlayer: index) }
+
+            // Seats past the minimum can go again, so a team can shrink back.
+            if index >= minimumPlayers {
+                Button(role: .destructive) {
+                    removePlayer(at: index)
+                } label: {
+                    Image(systemName: "minus.circle.fill")
+                        .font(DesignBook.IconFont.small)
+                        .foregroundStyle(DesignBook.Color.Status.error)
+                        .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
+                        .contentShape(.rect)
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel(Text(localized("teamForm.removePlayer \(index + 1)")))
+                .help(localized("teamForm.removePlayer \(index + 1)"))
+            }
         }
     }
 }
@@ -350,16 +389,21 @@ private extension TeamFormView {
         if let team {
             teamName = team.name
             var names = team.players.map(\.name)
-            while names.count < requiredPlayers { names.append("") }
-            if names.count > requiredPlayers { names = Array(names.prefix(requiredPlayers)) }
+            var ids: [Player.ID?] = team.players.map(\.id)
+            while names.count < minimumPlayers {
+                names.append("")
+                ids.append(nil)
+            }
             playerNames = names
+            playerIds = ids
             teamColor = team.color
             // Editing an existing team: keep its name and show everything up front.
             hasEditedTeamName = true
             hasRevealedDetails = true
         } else {
             teamName = ""
-            playerNames = Array(repeating: "", count: requiredPlayers)
+            playerNames = Array(repeating: "", count: defaultPlayers)
+            playerIds = Array(repeating: nil, count: defaultPlayers)
             teamColor = TeamDefaultColorGenerator().generateDefaultColor(for: gameManager.configuration)
             hasEditedTeamName = false
             hasRevealedDetails = false
@@ -375,16 +419,36 @@ private extension TeamFormView {
         }
     }
 
+    func addPlayer() {
+        guard canAddPlayer else { return }
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+            playerNames.append("")
+            playerIds.append(nil)
+        }
+        focusedField = .player(playerNames.count - 1)
+    }
+
+    func removePlayer(at index: Int) {
+        guard index >= minimumPlayers, playerNames.indices.contains(index) else { return }
+        if focusedField == .player(index) {
+            focusedField = nil
+        }
+        _ = withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+            playerNames.remove(at: index)
+        }
+        playerIds.remove(at: index)
+    }
+
     func handlePrimaryAction() {
         guard canSave else { return }
 
         let teamId = team?.id ?? UUID()
-        let updatedTeam = Team(
-            id: teamId,
-            name: trimmedTeamName,
-            players: filledPlayerNames.map { Player(name: $0, teamId: teamId) },
-            color: teamColor
-        )
+        // Each seat keeps its player's id, so words they already put in the
+        // hat stay theirs when the team is edited (a renamed typo, a new color).
+        let players = filledPlayerNames.enumerated().map { index, name in
+            Player(id: playerIds[safe: index].flatMap { $0 } ?? UUID(), name: name, teamId: teamId)
+        }
+        let updatedTeam = Team(id: teamId, name: trimmedTeamName, players: players, color: teamColor)
 
         onPrimaryAction(updatedTeam)
         dismissSheet()

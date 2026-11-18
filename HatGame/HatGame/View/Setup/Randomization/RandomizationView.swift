@@ -49,6 +49,7 @@ struct RandomizationView: View {
         .navigationBarBackButtonHidden(isShuffling)
         .hidesNavigationBar(isShuffling)
         .interactiveDismissDisabled(isShuffling)
+        .onAppear(perform: resetForNewGame)
         .task(id: teamShuffleId) {
             await shuffleStartingTeam()
         }
@@ -187,6 +188,16 @@ private extension RandomizationView {
             showTeamReveal = true
         }
         DesignBook.Haptics.success()
+    }
+
+    /// A second Play Again in a row pops back to this same screen, still
+    /// holding the last game's shuffle; without a reset the overlay would
+    /// stay up with navigation hidden and the start guard shut.
+    func resetForNewGame() {
+        guard gameManager.engine.phase == .setup else { return }
+        isShuffling = false
+        hasStartedGame = false
+        showTeamReveal = false
     }
 
     func shuffleAndStart() {

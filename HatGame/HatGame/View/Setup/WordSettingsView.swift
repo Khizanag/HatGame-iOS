@@ -150,6 +150,8 @@ private extension WordSettingsView {
 
     func handleContinue() {
         gameManager.configuration.wordsPerPlayer = selectedWordCount
+        // Words typed under a higher count would leave players over the limit.
+        gameManager.trimWords(toPerPlayer: selectedWordCount)
         navigator.push(.timerSettings)
     }
 }

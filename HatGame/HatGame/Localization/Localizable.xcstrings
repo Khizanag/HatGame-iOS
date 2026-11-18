@@ -931,6 +931,64 @@
         }
       }
     },
+    "teamCard.playerCount %lld" : {
+      "comment" : "VoiceOver label for the number of players on a team card.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld player"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld players"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld მოთამაშე"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld მოთამაშე"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "teamForm.addPlayer" : {
+      "comment" : "Button that adds another player seat to a team (up to 6).",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Player"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშის დამატება"
+          }
+        }
+      }
+    },
     "teamForm.helper.players %lld" : {
       "comment" : "Neutral guidance above the team form player fields before validation shows.",
       "localizations" : {
@@ -972,6 +1030,23 @@
         }
       }
     },
+    "teamForm.removePlayer %lld" : {
+      "comment" : "Accessibility label for removing an extra player seat; the number is the seat.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove Player %lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშე %lld-ის წაშლა"
+          }
+        }
+      }
+    },
     "teamForm.suggestions.shuffle" : {
       "comment" : "Accessibility label for the shuffle button that refreshes suggested team names.",
       "localizations" : {
@@ -985,6 +1060,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სახელების არევა"
+          }
+        }
+      }
+    },
+    "teamForm.validation.fillAllPlayers" : {
+      "comment" : "Shown when a team has an empty player seat.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fill in every player's name, or remove the empty spot."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეავსე ყველა მოთამაშის სახელი ან წაშალე ცარიელი ველი."
           }
         }
       }
@@ -1289,6 +1381,57 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "სიტყვების არჩევა"
+          }
+        }
+      }
+    },
+    "wordSource.replaceTyped.confirm" : {
+      "comment" : "Destructive confirmation button: replace typed words with picked ones.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace Words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჩანაცვლება"
+          }
+        }
+      }
+    },
+    "wordSource.replaceTyped.message" : {
+      "comment" : "Confirmation message: automatic words replace typed ones.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Picking words for you removes the words players already typed."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ავტომატურად შერჩევა წაშლის მოთამაშეების მიერ უკვე აკრეფილ სიტყვებს."
+          }
+        }
+      }
+    },
+    "wordSource.replaceTyped.title" : {
+      "comment" : "Confirmation title when switching to automatic words after players typed some.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Replace Typed Words?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჩავანაცვლოთ აკრეფილი სიტყვები?"
           }
         }
       }
@@ -7153,47 +7296,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "ახალი გუნდი"
-          }
-        }
-      }
-    },
-    "teamForm.validation.exactPlayers %lld" : {
-      "comment" : "Validation message when team must have exact number of players.",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Must have exactly %lld player"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "Must have exactly %lld players"
-                }
-              }
-            }
-          }
-        },
-        "ka" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "უნდა იყოს ზუსტად %lld მოთამაშე"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "უნდა იყოს ზუსტად %lld მოთამაშე"
-                }
-              }
-            }
           }
         }
       }

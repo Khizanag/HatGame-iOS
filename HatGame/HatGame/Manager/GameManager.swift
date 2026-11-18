@@ -67,10 +67,16 @@ extension GameManager {
         }
     }
 
-    /// Replaces a team in place, preserving its position in the list.
+    /// Replaces a team in place, preserving its position in the list. Words
+    /// by players no longer on the team leave the hat with them.
     func updateTeam(_ team: Team) {
         guard let index = configuration.teams.firstIndex(where: { $0.id == team.id }) else { return }
+        let removedPlayerIds = Set(configuration.teams[index].players.map(\.id))
+            .subtracting(team.players.map(\.id))
         configuration.teams[index] = team
+        configuration.words.removeAll { word in
+            word.authorId.map(removedPlayerIds.contains) ?? false
+        }
     }
 
     func moveTeam(from source: IndexSet, to destination: Int) {
@@ -92,6 +98,28 @@ extension GameManager {
         configuration.words
             .filter { $0.authorId != player.id }
             .map(\.text)
+    }
+
+    /// Whether any player has typed words into the hat.
+    var hasTypedWords: Bool {
+        configuration.words.contains { $0.authorId != nil }
+    }
+
+    /// Takes the automatically picked words (they have no author) out of the
+    /// hat, so switching to typed words doesn't keep them.
+    func removePickedWords() {
+        configuration.words.removeAll { $0.authorId == nil }
+    }
+
+    /// Trims every player's words to `limit`, keeping the first ones they
+    /// added, after the words-per-player count is lowered.
+    func trimWords(toPerPlayer limit: Int) {
+        var counts: [Player.ID: Int] = [:]
+        configuration.words.removeAll { word in
+            guard let author = word.authorId else { return false }
+            counts[author, default: 0] += 1
+            return counts[author, default: 0] > limit
+        }
     }
 
     /// Replaces the hat with `count` distinct words drawn from `pool`.

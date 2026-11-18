@@ -18,6 +18,10 @@ struct ResultsView: View {
     @State private var isTotalScoresExpanded = false
     @State private var expandedRounds: Set<GameRound> = []
     @State private var hasCelebrated = false
+    /// The final actions stay off for a moment after Game Over appears, so a
+    /// second Return or tap meant for the last turn's Continue can't start a
+    /// rematch and wipe the scores before anyone sees them.
+    @State private var areFinalActionsArmed = false
 
     private var isFinal: Bool { engine.phase == .finished }
     private var scoreboard: Scoreboard { engine.scoreboard }
@@ -34,6 +38,8 @@ struct ResultsView: View {
                 guard isFinal else { return }
                 try? await Task.sleep(for: .milliseconds(180))
                 hasCelebrated = true
+                try? await Task.sleep(for: .milliseconds(420))
+                areFinalActionsArmed = true
             }
             .onChange(of: hasCelebrated) { _, celebrated in
                 if celebrated { DesignBook.Haptics.success() }
@@ -271,6 +277,7 @@ private extension ResultsView {
                 newWordsButton
                 playAgainButton
             }
+            .disabled(!areFinalActionsArmed)
         }
     }
 

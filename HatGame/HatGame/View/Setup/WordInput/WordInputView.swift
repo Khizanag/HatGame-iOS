@@ -317,9 +317,9 @@ private extension WordInputView {
     }
 
     /// Keeps the current player's words in the hat when they leave with Back,
-    /// so nothing typed is lost.
+    /// so nothing typed is lost — and nothing removed comes back.
     func keepCurrentPlayerWords() {
-        guard let currentPlayer, !playerWords.isEmpty else { return }
+        guard let currentPlayer else { return }
         gameManager.setWords(playerWords, for: currentPlayer)
     }
 
@@ -371,6 +371,12 @@ private extension WordInputView {
             navigator.push(.randomization)
         } else {
             currentPlayerIndex += 1
+            // Load the next player's words now, not on the next task run: a
+            // second Next (a held Return) would otherwise save this player's
+            // words as theirs.
+            if let nextPlayer = allPlayers[safe: currentPlayerIndex] {
+                playerWords = savedWords(of: nextPlayer)
+            }
         }
     }
 

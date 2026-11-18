@@ -162,7 +162,7 @@ private extension TeamSetupView {
         Button {
             editingTeam = team
         } label: {
-            TeamCard(team: team, playersPerTeam: gameManager.configuration.playersPerTeam)
+            TeamCard(team: team)
         }
         .buttonStyle(.plain)
         .pointerHoverEffect()

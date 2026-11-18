@@ -118,9 +118,14 @@ private extension GameLoopView {
         returnToMain()
     }
 
+    /// Waits for the save (or the clear) to land first, so Home's resume card
+    /// never reads the file before it. Dismisses without popping the stack,
+    /// which would flash Team Setup as the flow closes.
     func returnToMain() {
-        navigator.dismissToRoot()
-        navigator.dismiss()
+        Task {
+            await engine.waitForPendingWrites()
+            navigator.dismiss()
+        }
     }
 }
 

@@ -15,10 +15,22 @@ struct WordSourceView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
 
+    @State private var isReplaceConfirmationPresented = false
+
     var body: some View {
         content
             .navigationTitle(localized("wordSource.navTitle"))
             .setDefaultStyle()
+            .confirmationDialog(
+                localized("wordSource.replaceTyped.title"),
+                isPresented: $isReplaceConfirmationPresented,
+                titleVisibility: .visible
+            ) {
+                Button(localized("wordSource.replaceTyped.confirm"), role: .destructive, action: pickForMe)
+                Button(localized("common.buttons.cancel"), role: .cancel) {}
+            } message: {
+                Text(localized("wordSource.replaceTyped.message"))
+            }
     }
 }
 
@@ -97,12 +109,23 @@ private extension WordSourceView {
 
 // MARK: - Actions
 private extension WordSourceView {
+    /// Picked words have no author; typing your own replaces them.
     func chooseManual() {
+        gameManager.removePickedWords()
         gameManager.configuration.wordSource = .manual
         navigator.push(.wordInput)
     }
 
+    /// Picking words replaces the hat, so ask first if players typed some.
     func chooseAutomatic() {
+        if gameManager.hasTypedWords {
+            isReplaceConfirmationPresented = true
+        } else {
+            pickForMe()
+        }
+    }
+
+    func pickForMe() {
         gameManager.configuration.wordSource = .automatic
         navigator.push(.wordGeneration)
     }

@@ -10,7 +10,6 @@ import SwiftUI
 
 struct TeamCard: View {
     let team: Team
-    let playersPerTeam: Int
 
     var body: some View {
         GameCard {
@@ -43,10 +42,15 @@ private extension TeamCard {
 
             Spacer()
 
-            Text(verbatim: "\(team.players.count)/\(playersPerTeam)")
-                .font(DesignBook.Font.subheadlineSemibold)
-                .foregroundStyle(DesignBook.Color.Text.secondary)
-                .monospacedDigit()
+            Label {
+                Text(verbatim: "\(team.players.count)")
+                    .monospacedDigit()
+            } icon: {
+                Image(systemName: "person.fill")
+            }
+            .font(DesignBook.Font.subheadlineSemibold)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
+            .accessibilityLabel(Text(localized("teamCard.playerCount \(team.players.count)")))
         }
     }
 
