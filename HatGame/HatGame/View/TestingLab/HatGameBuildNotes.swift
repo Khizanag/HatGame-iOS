@@ -10,12 +10,28 @@ struct HatGameBuildNotes {
     let routes: LabRoutes
 
     var current: [BuildNote] {
-        [setupFixes, onlineFixes, liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings]
+        [
+            toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
+            appIconCards, saveAndExit, leaveRoom, haptics, settings,
+        ]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var toolbarSymbols: BuildNote {
+        BuildNote(
+            commit: "ac09f99",
+            title: lab("Toolbar symbols instead of words"),
+            howToTest: lab("""
+                In a game, between turns: Standings is a list symbol, and the round × closes the game — it \
+                still asks Save and Exit or End Game. Give Up stays a word during a turn.
+                """),
+            systemImage: "list.number",
+            color: .teal
+        ) { routes.quickGame() }
+    }
+
     var setupFixes: BuildNote {
         BuildNote(
             commit: "d24de3d",
@@ -85,7 +101,7 @@ private extension HatGameBuildNotes {
             commit: "1d4ef30",
             title: lab("Save and Exit"),
             howToTest: lab("""
-                In a game, tap End Game ▸ Save and Exit: Home offers Resume, and the turn comes back paused.
+                In a game, tap × ▸ Save and Exit: Home offers Resume, and the turn comes back paused.
                 """),
             systemImage: "tray.and.arrow.down.fill",
             color: .orange
