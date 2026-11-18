@@ -130,6 +130,10 @@ nonisolated extension GameState {
               Set(scoredIds).isSubset(of: wordIds),
               explainersValid
         else { return false }
+        // A game under way needs a clock and someone to explain on every team.
+        guard phase == .setup || phase == .finished
+                || (settings.roundDuration > 0 && teams.allSatisfy { !$0.players.isEmpty })
+        else { return false }
 
         switch phase {
         case .setup, .finished:
@@ -142,8 +146,10 @@ nonisolated extension GameState {
             else { return false }
             return remainingWordIds.contains(currentWordId)
         case .turnResults:
-            guard let currentTeamId, currentTeam != nil else { return false }
-            return turn?.teamId == currentTeamId
+            guard let currentTeamId, currentTeam != nil, let turn, turn.teamId == currentTeamId
+            else { return false }
+            // Only emptying the hat ends a turn with nothing left to play.
+            return turn.endReason == .allWordsGuessed || !remainingWordIds.isEmpty
         }
     }
 

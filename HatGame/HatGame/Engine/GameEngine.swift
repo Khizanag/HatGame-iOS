@@ -69,10 +69,13 @@ extension GameEngine {
 
 // MARK: - Intents
 extension GameEngine {
-    /// Starts a game built from setup. Ignored unless the engine is in `.setup`.
+    /// Starts a game built from setup. Ignored unless the engine is in `.setup`
+    /// and the setup can start; a rejected setup leaves the engine untouched.
     func start(_ setup: GameState, startingTeamIndex: Int) {
         guard state.phase == .setup else { return }
-        apply(GameRules.start(setup, startingTeamIndex: startingTeamIndex, using: &generator))
+        let started = GameRules.start(setup, startingTeamIndex: startingTeamIndex, using: &generator)
+        guard started.phase == .nextTeam else { return }
+        apply(started)
     }
 
     func beginTurn(explainerIndex: Int? = nil) {
@@ -90,6 +93,7 @@ extension GameEngine {
     }
 
     func skip() {
+        if expireIfTimeIsUp() { return }
         apply(GameRules.skip(state, using: &generator))
     }
 

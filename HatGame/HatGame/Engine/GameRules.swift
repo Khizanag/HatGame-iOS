@@ -15,14 +15,28 @@ import Foundation
 /// The canonical rules are in `docs/turn.md` and `docs/rounds.md`.
 nonisolated enum GameRules {
     // MARK: - Game lifecycle
-    /// Starts round one with `startingTeamIndex` up. Requires `.setup`, at least
-    /// one team, and a non-empty hat.
+    /// The fewest teams a game can start with (`docs/setup.md`).
+    static let minimumTeams = 2
+    /// The fewest players a team needs: one explains, at least one guesses.
+    static let minimumPlayersPerTeam = 2
+
+    /// Whether a game can start from `state`: enough teams, every one with an
+    /// explainer and a guesser, and words in the hat.
+    static func canStart(_ state: GameState) -> Bool {
+        state.phase == .setup
+            && !state.words.isEmpty
+            && state.settings.roundDuration > 0
+            && state.teams.count >= minimumTeams
+            && state.teams.allSatisfy { $0.players.count >= minimumPlayersPerTeam }
+    }
+
+    /// Starts round one with `startingTeamIndex` up. Requires `canStart`.
     static func start(
         _ state: GameState,
         startingTeamIndex: Int,
         using generator: inout some RandomNumberGenerator
     ) -> GameState {
-        guard state.phase == .setup, !state.words.isEmpty,
+        guard canStart(state),
               let startingTeam = state.teams[safe: startingTeamIndex] ?? state.teams.first
         else { return state }
 

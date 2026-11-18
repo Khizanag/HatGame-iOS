@@ -40,6 +40,32 @@ struct GameRulesTests {
         #expect(GameRules.start(setup, startingTeamIndex: 0, using: &generator).phase == .setup)
     }
 
+    @Test("A game needs two teams of at least two players and a running clock")
+    mutating func startRequiresPlayableTeams() {
+        let lonelyTeam = Fixtures.state(teams: Fixtures.teams(count: 1))
+        let soloPlayers = Fixtures.state(teams: Fixtures.teams(playersPerTeam: 1))
+        let noClock = Fixtures.state(roundDuration: 0)
+
+        #expect(GameRules.start(lonelyTeam, startingTeamIndex: 0, using: &generator).phase == .setup)
+        #expect(GameRules.start(soloPlayers, startingTeamIndex: 0, using: &generator).phase == .setup)
+        #expect(GameRules.start(noClock, startingTeamIndex: 0, using: &generator).phase == .setup)
+    }
+
+    @Test("A saved game without a clock, a player, or a word to go on is not playable")
+    func consistencyRejectsStuckStates() {
+        var noClock = Fixtures.started()
+        noClock.settings.roundDuration = 0
+        var emptyTeam = Fixtures.started()
+        emptyTeam.teams[1].players = []
+        var timedOutWithEmptyHat = GameRules.expire(Fixtures.playing())
+        timedOutWithEmptyHat.remainingWordIds = []
+
+        #expect(Fixtures.started().isConsistent)
+        #expect(!noClock.isConsistent)
+        #expect(!emptyTeam.isConsistent)
+        #expect(!timedOutWithEmptyHat.isConsistent)
+    }
+
     @Test("An out-of-range starting index falls back to the first team")
     mutating func startClampsTeamIndex() {
         let setup = Fixtures.state()
@@ -83,10 +109,14 @@ struct GameRulesTests {
 
     @Test("A locked team ignores a hand-picked explainer")
     mutating func lockedTeamIgnoresExplainerChoice() throws {
-        var state = Fixtures.started(teams: Fixtures.teams(count: 1, playersPerTeam: 3))
+        var state = Fixtures.started(teams: Fixtures.teams(count: 2, playersPerTeam: 3))
         let team = try #require(state.currentTeam)
-        state = GameRules.beginTurn(state, explainerIndex: 0, using: &generator)
-        state = GameRules.continueAfterTurn(GameRules.expire(state))
+        // The team plays, then the other team, so it is up again with roles locked.
+        for _ in 0..<2 {
+            state = GameRules.beginTurn(state, explainerIndex: 0, using: &generator)
+            state = GameRules.continueAfterTurn(GameRules.expire(state))
+        }
+        #expect(state.currentTeamId == team.id)
 
         state = GameRules.beginTurn(state, explainerIndex: 0, using: &generator)
 

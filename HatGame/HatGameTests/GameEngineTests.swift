@@ -236,6 +236,33 @@ struct GameEngineTests {
         #expect(await store.lastSaved?.turn?.remaining == .seconds(20))
     }
 
+    @Test("Skipping after the clock hit zero ends the turn instead")
+    func skipAtZeroExpires() async throws {
+        let engine = makeEngine(roundDuration: 3)
+        engine.beginTurn(explainerIndex: 0)
+        let word = try #require(engine.state.currentWordId)
+        await clock.advance(by: .seconds(3))
+
+        engine.skip()
+
+        #expect(engine.phase == .turnResults)
+        #expect(engine.state.turn?.endReason == .timeExpired)
+        #expect(engine.state.remainingWordIds.contains(word))
+    }
+
+    @Test("A setup that can't start leaves the engine and the save alone")
+    func rejectedStartChangesNothing() async {
+        let setup = Fixtures.state(words: [])
+        let engine = GameEngine(state: setup, clock: clock, generator: SeededGenerator(), store: store, sound: sound)
+
+        engine.start(Fixtures.state(teams: Fixtures.teams(count: 1)), startingTeamIndex: 0)
+        await engine.waitForPendingWrites()
+
+        #expect(engine.state == setup)
+        #expect(await store.clearCount == 0)
+        #expect(await store.saveCount == 0)
+    }
+
     @Test("Starting is ignored once a game is underway")
     func startIsIdempotent() {
         let engine = makeEngine()
