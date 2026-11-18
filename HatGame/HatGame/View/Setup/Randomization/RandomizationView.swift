@@ -22,6 +22,13 @@ struct RandomizationView: View {
     @State private var teamShuffleId: UUID?
     /// Set once the game starts, so a skip tap and the timer can't both start it.
     @State private var hasStartedGame = false
+    /// Seconds the shuffle overlay runs: in full the first time this session.
+    @State private var shuffleDuration = RandomizationView.fullShuffleSeconds
+    /// Bumped on each reveal to fire the confetti.
+    @State private var revealBurst = 0
+
+    private static let fullShuffleSeconds = 2.6
+    private static let shortShuffleSeconds = 0.8
 
     private var selectedTeam: Team? {
         gameManager.configuration.teams[safe: selectedStartingTeamIndex]
@@ -40,7 +47,7 @@ struct RandomizationView: View {
                 .accessibilityHidden(isShuffling)
 
             if isShuffling {
-                ShufflingOverlay(reduceMotion: reduceMotion, onSkip: startGame)
+                ShufflingOverlay(reduceMotion: reduceMotion, duration: shuffleDuration, onSkip: startGame)
                     .transition(.opacity)
             }
         }
@@ -63,15 +70,20 @@ struct RandomizationView: View {
 private extension RandomizationView {
     var readyContent: some View {
         ScrollView {
-            VStack(spacing: DesignBook.Spacing.xl) {
-                RandomizationHeaderCard()
-                WordsReadyCard(wordCount: gameManager.configuration.words.count)
+            VStack(spacing: DesignBook.Spacing.lg) {
+                hero
                 startingTeamSection
                 Spacer()
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
             .padding(.bottom, DesignBook.Spacing.xxl)
+        }
+        // Inside the action bar's content, so the confetti falls behind the button.
+        .overlay {
+            ConfettiView(isActive: showTeamReveal, palette: confettiPalette, retriggerId: revealBurst)
+                .ignoresSafeArea()
+                .allowsHitTesting(false)
         }
         .actionBar {
             shuffleButton
@@ -86,11 +98,55 @@ private extension RandomizationView {
 
             if showTeamReveal, let selectedTeam {
                 RevealedTeamCard(team: selectedTeam, isRevealed: showTeamReveal)
-                    .transition(reduceMotion ? .opacity : .scale.combined(with: .opacity))
+                    .transition(reduceMotion ? .opacity : .cardFlip)
+                    .accessibilityIdentifier("randomization.revealedTeam")
             } else {
                 teamsList
             }
         }
+    }
+
+    /// The filled hat, and how many words are in it.
+    var hero: some View {
+        VStack(spacing: DesignBook.Spacing.xs) {
+            ZStack {
+                Circle()
+                    .fill(DesignBook.Gradient.primary)
+                    .frame(width: 150, height: 150)
+                    .blur(radius: 34)
+                    .opacity(DesignBook.Opacity.semiTransparent)
+                Circle()
+                    .fill(DesignBook.Color.Background.card)
+                    .frame(width: 116, height: 116)
+                    .shadow(.large)
+                UpturnedHat()
+            }
+            .frame(height: 150)
+            .decorativeHeroSizing()
+            .accessibilityHidden(true)
+
+            Text(localized("randomization.header.title"))
+                .font(DesignBook.Font.displaySmall)
+                .foregroundStyle(DesignBook.Color.Text.primary)
+                .multilineTextAlignment(.center)
+                .lineLimit(2)
+                .minimumScaleFactor(0.5)
+                .accessibilityAddTraits(.isHeader)
+
+            Label(
+                localized("randomization.wordsReady.count \(gameManager.configuration.words.count)"),
+                systemImage: "checkmark.circle.fill"
+            )
+            .font(DesignBook.Font.body)
+            .foregroundStyle(DesignBook.Color.Text.secondary)
+            .symbolRenderingMode(.multicolor)
+        }
+    }
+
+    /// The starting team's color leads the burst.
+    var confettiPalette: [Color] {
+        guard let selectedTeam else { return ConfettiView.defaultPalette }
+        return [selectedTeam.color, selectedTeam.color] + ConfettiView.defaultPalette
     }
 
     var startingTeamHeader: some View {
@@ -117,6 +173,7 @@ private extension RandomizationView {
                 .buttonBorderShape(.capsule)
                 .controlSize(.large)
                 .disabled(isRandomizingTeam)
+                .accessibilityIdentifier("randomization.randomize")
             }
         }
     }
@@ -168,26 +225,41 @@ private extension RandomizationView {
         teamShuffleId = UUID()
     }
 
-    /// Cycles the highlight through the teams with haptics, then reveals a
-    /// random pick. Reduce Motion skips straight to the reveal.
+    /// Spins the highlight round the teams like a roulette wheel: quick at
+    /// first, slowing step by step with a tick each, until it stops on a
+    /// team picked up front. Reduce Motion skips straight to the reveal.
     func shuffleStartingTeam() async {
         let teamCount = gameManager.configuration.teams.count
         guard teamShuffleId != nil, teamCount > 0 else { return }
-        if !reduceMotion {
-            for _ in 1...20 {
-                guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
-                withAnimation(.easeInOut(duration: 0.1)) {
-                    selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
-                }
-            }
-            guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }
+        let winner = Int.random(in: 0..<teamCount)
+        if !reduceMotion, teamCount > 1 {
+            guard await spinRoulette(to: winner, teamCount: teamCount) else { return }
         }
-        withAnimation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.6)) {
-            selectedStartingTeamIndex = Int.random(in: 0..<teamCount)
+        withAnimation(reduceMotion ? nil : .spring(response: 0.55, dampingFraction: 0.72)) {
+            selectedStartingTeamIndex = winner
             isRandomizingTeam = false
             showTeamReveal = true
         }
+        revealBurst += 1
         DesignBook.Haptics.success()
+    }
+
+    /// Steps the highlight forward, at least a dozen times and whole laps
+    /// before landing on `winner`. Returns false if cancelled midway.
+    func spinRoulette(to winner: Int, teamCount: Int) async -> Bool {
+        let start = selectedStartingTeamIndex
+        let laps = max(2, Int((12.0 / Double(teamCount)).rounded(.up)))
+        let steps = laps * teamCount + (winner - start + teamCount) % teamCount
+        for step in 1...steps {
+            let fraction = Double(step) / Double(steps)
+            let delay = 0.05 + 0.34 * pow(fraction, 3)
+            guard (try? await Task.sleep(for: .seconds(delay))) != nil else { return false }
+            withAnimation(.snappy(duration: 0.14)) {
+                selectedStartingTeamIndex = (start + step) % teamCount
+            }
+            DesignBook.Haptics.tap()
+        }
+        return (try? await Task.sleep(for: .milliseconds(380))) != nil
     }
 
     /// A second Play Again in a row pops back to this same screen, still
@@ -202,21 +274,21 @@ private extension RandomizationView {
 
     func shuffleAndStart() {
         guard !isShuffling, canStart else { return }
+        let isShort = reduceMotion || SessionAnimations.hasPlayedShuffle
+        SessionAnimations.hasPlayedShuffle = true
+        shuffleDuration = isShort ? Self.shortShuffleSeconds : Self.fullShuffleSeconds
         DesignBook.Haptics.confirm()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isShuffling = true
         }
     }
 
-    /// Lets the shuffle animation play — in full only the first time this
-    /// session — then starts the game. A tap on the overlay starts it sooner.
+    /// Lets the shuffle play out — in full only the first time this session
+    /// — and the last slip go in, then starts the game. A tap on the overlay
+    /// starts it sooner.
     func startGameAfterShuffle() async {
         guard isShuffling else { return }
-        let isShort = reduceMotion || SessionAnimations.hasPlayedShuffle
-        SessionAnimations.hasPlayedShuffle = true
-        guard (try? await Task.sleep(for: isShort ? .milliseconds(600) : .milliseconds(2500))) != nil else {
-            return
-        }
+        guard (try? await Task.sleep(for: .seconds(shuffleDuration + 0.2))) != nil else { return }
         startGame()
     }
 

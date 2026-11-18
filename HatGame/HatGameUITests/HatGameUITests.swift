@@ -74,6 +74,25 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(app.textFields["wordInput.wordField"].waitForExistence(timeout: 5))
     }
 
+    /// Runs with animations on: the roulette and the shuffle play out in full.
+    @MainActor
+    func testRouletteRevealsAStartingTeamAndTheShuffleStartsTheGame() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestScreen", "randomization", "-uiTestResetState"]
+        app.launch()
+
+        let randomize = app.buttons["randomization.randomize"]
+        XCTAssertTrue(randomize.waitForExistence(timeout: 10))
+        randomize.tap()
+        XCTAssertTrue(
+            app.descendants(matching: .any)["randomization.revealedTeam"].waitForExistence(timeout: 8),
+            "no team revealed"
+        )
+
+        app.buttons["randomization.start"].tap()
+        XCTAssertTrue(app.buttons["nextTeam.play"].waitForExistence(timeout: 10), "the game didn't start")
+    }
+
     @MainActor
     func testSwipeBackIsDisabledInsideTheGameLoop() throws {
         let app = launchIntoTestGame()

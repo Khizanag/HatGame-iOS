@@ -84,3 +84,27 @@ private extension RevealedTeamCard {
         .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 }
+
+// MARK: - Flip transition
+extension AnyTransition {
+    /// The revealed team turns over into view like a card, in perspective.
+    static var cardFlip: AnyTransition {
+        .modifier(
+            active: CardFlip(angle: -100, scale: 0.85, opacity: 0),
+            identity: CardFlip(angle: 0, scale: 1, opacity: 1)
+        )
+    }
+}
+
+private struct CardFlip: ViewModifier {
+    let angle: Double
+    let scale: CGFloat
+    let opacity: Double
+
+    func body(content: Content) -> some View {
+        content
+            .perspectiveRotation(.degrees(angle), axis: RotationAxis(x: 0, y: 1), perspective: 0.45)
+            .scaleEffect(scale)
+            .opacity(opacity)
+    }
+}

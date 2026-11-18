@@ -5929,23 +5929,6 @@
         }
       }
     },
-    "randomization.header.subtitle" : {
-      "comment" : "Subtitle for randomization page header.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Choose starting team and let the fun begin"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "აირჩიეთ საწყისი გუნდი და დაიწყეთ თამაში"
-          }
-        }
-      }
-    },
     "randomization.header.title" : {
       "comment" : "Main title for randomization page header.",
       "localizations" : {
@@ -6143,23 +6126,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "randomization.wordsReady.title" : {
-      "comment" : "Title for words ready section.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Words Ready"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "სიტყვები მზადაა"
           }
         }
       }

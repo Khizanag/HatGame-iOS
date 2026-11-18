@@ -20,8 +20,6 @@ struct HatFillAnimation: View {
     @State private var landings = 0
 
     private static let dropInterval: Duration = .milliseconds(700)
-    /// Where the opening of the upturned hat sits, from the hero's center.
-    fileprivate static let openingY: CGFloat = -30
 
     var body: some View {
         ZStack {
@@ -41,56 +39,12 @@ struct HatFillAnimation: View {
                 FlyingChip(drop: drop) { land(drop) }
             }
 
-            hat
+            UpturnedHat(landings: landings)
         }
         .frame(height: 196)
         .frame(maxWidth: .infinity)
         .task(id: labels) { await dropWords() }
         .accessibilityHidden(true)
-    }
-}
-
-// MARK: - Hat
-private extension HatFillAnimation {
-    var hat: some View {
-        TimelineView(.animation(paused: reduceMotion)) { context in
-            let time = context.date.timeIntervalSinceReferenceDate
-            ZStack {
-                openingGlow
-                Text(verbatim: "🎩")
-                    .font(DesignBook.IconFont.emoji)
-                    .rotationEffect(.degrees(180))
-            }
-            .phaseAnimator([1.0, 1.08, 1.0], trigger: landings) { hat, scale in
-                hat.scaleEffect(scale, anchor: .bottom)
-            } animation: { _ in
-                .snappy(duration: 0.16)
-            }
-            .rotation3DEffect(
-                .degrees(reduceMotion ? 0 : sin(time * 1.3) * 14),
-                axis: (x: 0, y: 1, z: 0),
-                perspective: 0.6
-            )
-            .rotation3DEffect(
-                .degrees(reduceMotion ? 0 : 10 + sin(time * 0.9) * 4),
-                axis: (x: 1, y: 0, z: 0),
-                perspective: 0.6
-            )
-        }
-    }
-
-    /// A soft glow over the opening that flares as a word drops in.
-    var openingGlow: some View {
-        Ellipse()
-            .fill(DesignBook.Gradient.primary)
-            .frame(width: 76, height: 18)
-            .blur(radius: 8)
-            .offset(y: Self.openingY - 4)
-            .phaseAnimator([0.45, 0.95, 0.45], trigger: landings) { glow, opacity in
-                glow.opacity(opacity)
-            } animation: { _ in
-                .easeOut(duration: 0.3)
-            }
     }
 }
 
@@ -173,14 +127,14 @@ private struct ChipFlight: ViewModifier, Animatable {
         let point = position(at: progress)
         let fall = progress * progress
         return content
-            .rotation3DEffect(
+            .perspectiveRotation(
                 .degrees(drop.yaw * (1 - progress)),
-                axis: (x: 0, y: 1, z: 0),
+                axis: RotationAxis(x: 0, y: 1),
                 perspective: 0.5
             )
-            .rotation3DEffect(
+            .perspectiveRotation(
                 .degrees(60 * fall),
-                axis: (x: 1, y: 0, z: 0),
+                axis: RotationAxis(x: 1, y: 0),
                 anchor: .bottom,
                 perspective: 0.5
             )
@@ -200,7 +154,7 @@ private struct ChipFlight: ViewModifier, Animatable {
     /// into the opening.
     private func position(at time: Double) -> CGPoint {
         let start = drop.start
-        let end = CGPoint(x: 0, y: HatFillAnimation.openingY)
+        let end = CGPoint(x: 0, y: UpturnedHat.openingY)
         let control = CGPoint(x: start.x * 0.35, y: min(start.y, end.y) - 60)
         let rest = 1 - time
         let x = rest * rest * start.x + 2 * rest * time * control.x + time * time * end.x

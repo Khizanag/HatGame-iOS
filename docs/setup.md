@@ -51,7 +51,7 @@ One screen sets the hat's size and where its words come from. The total — *pla
 ## 5. Randomize and start
 
 - The collected words are shuffled into a random order.
-- You choose which team takes the first turn, or let the app pick a **starting team** at random.
+- You choose which team takes the first turn, or let the app pick a **starting team** at random: the highlight spins round the teams like a roulette wheel, slows, and stops on one.
 - Starting the game hands the first turn to that team. See [A Turn](turn.md) and [Game Flow](game-flow.md).
 
 ## Defaults summary

@@ -161,6 +161,40 @@ extension View {
     }
 }
 
+// MARK: - 3D rotation
+/// The axis a `perspectiveRotation` turns around.
+struct RotationAxis {
+    let x: CGFloat
+    let y: CGFloat
+    /// The z component, toward the viewer.
+    let depth: CGFloat
+
+    init(x: CGFloat = 0, y: CGFloat = 0, depth: CGFloat = 0) {
+        self.x = x
+        self.y = y
+        self.depth = depth
+    }
+}
+
+// MARK: - Perspective rotation
+extension View {
+    /// `rotation3DEffect` drawn in perspective. visionOS renders real depth
+    /// and deprecates `perspective`, so there it rotates around the center
+    /// without one.
+    func perspectiveRotation(
+        _ angle: Angle,
+        axis: RotationAxis,
+        anchor: UnitPoint = .center,
+        perspective: CGFloat = 0.5
+    ) -> some View {
+        #if os(visionOS)
+        rotation3DEffect(angle, axis: (x: axis.x, y: axis.y, z: axis.depth))
+        #else
+        rotation3DEffect(angle, axis: (x: axis.x, y: axis.y, z: axis.depth), anchor: anchor, perspective: perspective)
+        #endif
+    }
+}
+
 // MARK: - Glass effect container
 /// Groups Liquid Glass shapes so they blend and morph together. visionOS has
 /// no `GlassEffectContainer` (its windows are already glass), so there the

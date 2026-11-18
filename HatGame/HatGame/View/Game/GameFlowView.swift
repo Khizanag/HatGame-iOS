@@ -20,6 +20,8 @@ struct GameFlowView: View {
         case uiTestGame
         /// The UI test teams on Fill the Hat, with an empty hat.
         case uiTestFillHat
+        /// The UI test teams and words, choosing who starts.
+        case uiTestRandomization
         #endif
     }
 
@@ -54,6 +56,9 @@ struct GameFlowView: View {
             configuration.wordsPerPlayer = 10
             manager = GameManager(configuration: configuration)
             navigator.navigationPath = [Page<WordSourceView>.wordSource.eraseToAnyPage()]
+        case .uiTestRandomization:
+            manager = GameManager(configuration: .uiTestGame)
+            navigator.navigationPath = [Page<RandomizationView>.randomization.eraseToAnyPage()]
         #endif
         }
         _gameManager = State(initialValue: manager)

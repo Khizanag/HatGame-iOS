@@ -44,7 +44,8 @@ struct TeamSelectionRow: View {
                         .stroke(isSelected ? team.color : Color.clear, lineWidth: 2)
                 }
         }
-        .scaleEffect(isSelected ? 1.02 : 1.0)
+        .shadow(color: team.color.opacity(isSelected ? 0.45 : 0), radius: 14)
+        .scaleEffect(isSelected ? 1.03 : 1.0)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }
