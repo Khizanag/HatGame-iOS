@@ -101,15 +101,32 @@ private extension HatGameLabSections {
             go("Pass and Play", "person.2.fill", .green) { routes.passAndPlay() }
             go("Play Nearby", "dot.radiowaves.left.and.right", .teal) { routes.playNearby() }
             go("Play Online", "globe", .blue) { routes.playOnline() }
-            DisclosureGroup {
-                go("Settings", "gearshape.fill", .gray) { routes.push(.settings) }
-                go("Default Game Settings", "slider.horizontal.3", .orange) { routes.push(.defaultsSettings) }
-                go("App Icon", "app.badge.fill", .indigo) { routes.push(.appIconSelection) }
-                go("Developer Info", "person.circle.fill", .purple) { routes.push(.developerInfo) }
-                go("Feedback", "envelope.fill", .blue) { routes.push(.feedback) }
-            } label: {
-                LabRow(verbatim: "Settings Screens", systemImage: "list.bullet", color: .gray)
-            }
+            AllScreens([
+                LabDestination(title: "Pass and Play", systemImage: "person.2.fill", color: .green) {
+                    routes.passAndPlay()
+                },
+                LabDestination(title: "Play Nearby", systemImage: "dot.radiowaves.left.and.right", color: .teal) {
+                    routes.playNearby()
+                },
+                LabDestination(title: "Play Online", systemImage: "globe", color: .blue) {
+                    routes.playOnline()
+                },
+                LabDestination(title: "Settings", systemImage: "gearshape.fill", color: .gray) {
+                    routes.push(.settings)
+                },
+                LabDestination(title: "Default Game Settings", systemImage: "slider.horizontal.3", color: .orange) {
+                    routes.push(.defaultsSettings)
+                },
+                LabDestination(title: "App Icon", systemImage: "app.badge.fill", color: .indigo) {
+                    routes.push(.appIconSelection)
+                },
+                LabDestination(title: "Developer Info", systemImage: "person.circle.fill", color: .purple) {
+                    routes.push(.developerInfo)
+                },
+                LabDestination(title: "Feedback", systemImage: "envelope.fill", color: .blue) {
+                    routes.push(.feedback)
+                },
+            ])
         } header: {
             Text(verbatim: "Open a Screen")
         }

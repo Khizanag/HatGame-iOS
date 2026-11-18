@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Khizanag/TestingLab-iOS",
       "state" : {
-        "revision" : "37c2b3aab8d3843039887d611159f49c389e8c29",
-        "version" : "1.1.0"
+        "revision" : "6e1b94b9d893b8b053672c9e28cbdec4f6c37a64",
+        "version" : "1.2.0"
       }
     }
   ],
