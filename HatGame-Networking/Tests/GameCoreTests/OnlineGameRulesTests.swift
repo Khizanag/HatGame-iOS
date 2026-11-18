@@ -275,6 +275,32 @@ struct GameRulesAdvancementTests {
         #expect(next.timerStartedAt == nil)
     }
 
+    @Test("After time's up the next team starts on a different word")
+    func nextTeamDrawsAnotherWord() throws {
+        let playing = try Table.playing()
+        let unfinished = try #require(playing.currentWordId)
+        let ended = try #require(OnlineGameRules.endTurn(playing))
+
+        let next = try #require(
+            OnlineGameRules.advanceAfterTurnResults(ended, teams: Table.teams, players: Table.players)
+        )
+
+        #expect(next.currentWordId != unfinished)
+        #expect(next.remainingWordIds.last == unfinished)
+        #expect(Set(next.remainingWordIds) == Set(Table.words))
+    }
+
+    @Test("With one word left the next team gets that word")
+    func lastWordStaysInPlay() throws {
+        let ended = try #require(OnlineGameRules.endTurn(try Table.playing(words: ["only"])))
+
+        let next = try #require(
+            OnlineGameRules.advanceAfterTurnResults(ended, teams: Table.teams, players: Table.players)
+        )
+
+        #expect(next.currentWordId == "only")
+    }
+
     @Test("Uneven teams rotate independently and the team order wraps around")
     func unevenRotationWraps() throws {
         var state = try Table.initial()

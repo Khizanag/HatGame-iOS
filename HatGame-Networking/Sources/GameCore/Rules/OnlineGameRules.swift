@@ -238,7 +238,9 @@ public enum OnlineGameRules {
     // MARK: - Advancement
     /// After turn results: an empty hat ends the round with the same team and
     /// explainer in place; otherwise the team that just played rotates its
-    /// explainer and the next team takes the hat.
+    /// explainer and the next team takes the hat. The word left unfinished
+    /// goes to the back, so the next team does not start on the word the
+    /// previous one was just explaining.
     public static func advanceAfterTurnResults(
         _ state: OnlineGameState,
         teams: [OnlineTeam],
@@ -260,6 +262,7 @@ public enum OnlineGameRules {
         next.currentTeamIndex = (normalizedIndex(state.currentTeamIndex, count: teams.count) + 1) % teams.count
         assignExplainer(of: teams[next.currentTeamIndex], in: &next, players: players)
         next.phase = .teamPrep
+        next.remainingWordIds = movingToBack(state.currentWordId, in: state.remainingWordIds)
         next.currentWordId = next.remainingWordIds.first
         return next
     }
@@ -350,6 +353,12 @@ public enum OnlineGameRules {
         }
         state.teamExplainerIndices[team.id] = position
         state.activePlayerId = members[position].id
+    }
+
+    /// `wordIds` with `wordId` moved last, or unchanged when it is absent.
+    private static func movingToBack(_ wordId: String?, in wordIds: [String]) -> [String] {
+        guard let wordId, wordIds.contains(wordId) else { return wordIds }
+        return wordIds.filter { $0 != wordId } + [wordId]
     }
 
     private static func explainerPosition(in members: [OnlinePlayer], from index: Int) -> Int? {
