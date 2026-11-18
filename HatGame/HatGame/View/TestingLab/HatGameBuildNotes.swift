@@ -11,7 +11,7 @@ struct HatGameBuildNotes {
 
     var current: [BuildNote] {
         [
-            toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
+            skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
             appIconCards, saveAndExit, leaveRoom, haptics, settings,
         ]
     }
@@ -19,6 +19,20 @@ struct HatGameBuildNotes {
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var skipPenalty: BuildNote {
+        BuildNote(
+            commit: "e9d76e4",
+            title: lab("Skipping costs a point"),
+            howToTest: lab("""
+                Start a game and tap Skip −1: the turn score drops below zero and turns orange; Turn \
+                Results shows the net points with what was guessed and skipped. Pass and Play ▸ Timer \
+                Settings (and Settings ▸ Default Game Settings, and the room forms) set it from None to −3.
+                """),
+            systemImage: "minus.circle",
+            color: .orange
+        ) { routes.quickGame() }
+    }
+
     var toolbarSymbols: BuildNote {
         BuildNote(
             commit: "ac09f99",
