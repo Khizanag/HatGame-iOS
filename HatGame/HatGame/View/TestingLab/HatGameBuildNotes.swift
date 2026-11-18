@@ -11,7 +11,7 @@ struct HatGameBuildNotes {
 
     var current: [BuildNote] {
         [
-            fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
+            startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
             appIconCards, saveAndExit, leaveRoom, haptics, settings,
         ]
     }
@@ -19,6 +19,20 @@ struct HatGameBuildNotes {
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var startingTeam: BuildNote {
+        BuildNote(
+            commit: "a1c2480",
+            title: lab("A roulette for the starting team, and a real shuffle"),
+            howToTest: lab("""
+                Fill the hat, then on Starting Team tap Randomize: the highlight spins round the teams, \
+                slows, and the winner flips in with confetti. Start Game: blank slips swirl round the \
+                upturned hat and get pulled in. Tap to skip still works.
+                """),
+            systemImage: "dice.fill",
+            color: .pink
+        ) { routes.passAndPlay() }
+    }
+
     var fillTheHat: BuildNote {
         BuildNote(
             commit: "4ec939f",
