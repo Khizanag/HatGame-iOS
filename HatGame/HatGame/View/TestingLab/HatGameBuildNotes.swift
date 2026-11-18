@@ -21,7 +21,7 @@ struct HatGameBuildNotes {
 private extension HatGameBuildNotes {
     var fillTheHat: BuildNote {
         BuildNote(
-            commit: "a47db2d",
+            commit: "4ec939f",
             title: lab("Fill the Hat replaces two setup screens"),
             howToTest: lab("""
                 Pass and Play ▸ teams ▸ Continue ▸ Timer ▸ Continue: one screen sets words per player and \
