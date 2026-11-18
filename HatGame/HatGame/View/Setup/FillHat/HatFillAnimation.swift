@@ -89,6 +89,11 @@ private struct FlyingChip: View {
 
     @State private var progress: Double = 0
 
+    private static let flight = 1.1
+    /// How far through the flight the chip is out of sight behind the brim;
+    /// it counts as in from there, so the hat swells as it vanishes.
+    private static let hiddenAt = 0.95
+
     var body: some View {
         Text(drop.label)
             .font(DesignBook.Font.subheadlineSemibold)
@@ -100,11 +105,16 @@ private struct FlyingChip: View {
             .shadow(.medium)
             .modifier(ChipFlight(progress: progress, drop: drop))
             .onAppear {
-                withAnimation(.timingCurve(0.35, 0, 0.6, 1, duration: 1.15)) {
+                // Picks up speed as it falls, so it drops through the brim in
+                // the last instant.
+                withAnimation(.timingCurve(0.4, 0, 0.8, 0.55, duration: Self.flight)) {
                     progress = 1
-                } completion: {
-                    onLanded()
                 }
+            }
+            .task {
+                try? await Task.sleep(for: .seconds(Self.flight * Self.hiddenAt))
+                guard !Task.isCancelled else { return }
+                onLanded()
             }
     }
 }
@@ -146,7 +156,7 @@ private struct ChipFlight: ViewModifier, Animatable {
     /// Fades in as it sets off and out as it passes the brim.
     private var opacity: Double {
         if progress < 0.08 { return progress / 0.08 }
-        if progress > 0.9 { return (1 - progress) / 0.1 }
+        if progress > 0.95 { return (1 - progress) / 0.05 }
         return 1
     }
 

@@ -98,8 +98,9 @@ private extension ShufflingOverlay {
 
 // MARK: - Slip swirl
 /// Where every slip is at one moment of the shuffle. For the first part
-/// they orbit the hat on a tilted ring, nearer ones larger; then the ring
-/// tightens into the opening and each slip that reaches it goes in.
+/// they orbit the hat on a tilted ring, nearer ones larger; then each in
+/// turn hops up off the ring and drops through the opening, out of sight
+/// behind the brim, and the hat bobs as it goes in.
 private struct SlipSwirl {
     let elapsed: Double
     let progress: Double
@@ -115,9 +116,39 @@ private struct SlipSwirl {
         max(0, (progress - Self.closeStart) / (1 - Self.closeStart))
     }
 
-    /// Slips that have gone in so far; the hat bobs as this climbs.
+    /// How high a slip hops above the opening on its way in.
+    private static let hop: CGFloat = 44
+
+    /// Slips that have gone in so far; the hat bobs as each one does.
     var landings: Int {
-        Int(closing * Double(Self.count))
+        (0..<Self.count).filter { isInside($0) }.count
+    }
+
+    /// Whether a slip has dropped below the brim, out of sight: from then
+    /// on it counts as in. Judged at the highest point its swing could put
+    /// it, so it never pops back out as it spins.
+    private func isInside(_ index: Int) -> Bool {
+        let ownClose = fall(of: index)
+        guard ownClose > 0.5 else { return false }
+        let reach = CGFloat(1 - ownClose * ownClose)
+        let radius = Self.radius * reach
+        let scale = 0.35 + 0.65 * reach
+        let highestTop = UpturnedHat.openingY - radius * 0.36 - 18 * reach - lift(ownClose)
+            - Slip.height / 2 * scale
+        return highestTop > UpturnedHat.brimTopY
+    }
+
+    /// Rises off the ring, then comes down into the opening, so it never
+    /// crosses in front of the crown on the way in.
+    private func lift(_ ownClose: Double) -> CGFloat {
+        Self.hop * CGFloat(sin(.pi * ownClose))
+    }
+
+    /// How far one slip has spiralled from the ring into the opening, from
+    /// zero to one. Each falls at its own moment as the ring closes.
+    private func fall(of index: Int) -> Double {
+        let share = Double(index) / Double(Self.count)
+        return min(1, max(0, closing * 1.6 - share * 0.6))
     }
 
     @ViewBuilder
@@ -151,28 +182,30 @@ private struct SlipSwirl {
         let share = Double(index) / Double(Self.count)
         // Speeds up as the shuffle goes on, like a hand stirring faster.
         let angle = elapsed * (2.2 + 2.4 * progress) + share * 2 * .pi
-        // Each slip falls in at its own moment as the ring closes.
-        let ownClose = min(1, max(0, closing * 1.6 - share * 0.6))
+        let ownClose = fall(of: index)
         let radius = Self.radius * CGFloat(1 - ownClose * ownClose)
         let depth = sin(angle)
         let reach = radius / Self.radius
         return Placement(
             offsetX: CGFloat(cos(angle)) * radius,
-            offsetY: UpturnedHat.openingY + CGFloat(depth) * radius * 0.36 - 18 * reach,
+            offsetY: UpturnedHat.openingY + CGFloat(depth) * radius * 0.36 - 18 * reach - lift(ownClose),
             scale: (0.78 + 0.22 * CGFloat(depth + 1) / 2) * (0.35 + 0.65 * reach),
             spin: angle * 180 / .pi * 1.5,
-            opacity: ownClose >= 1 ? 0 : min(1, Double(reach) * 4),
-            isFront: depth > 0 && reach > 0.25
+            opacity: isInside(index) ? 0 : 1,
+            // Behind the hat for the drop, so the brim swallows it.
+            isFront: depth > 0 && ownClose < 0.5
         )
     }
 }
 
 /// A folded paper slip with a word on it, face hidden.
 private struct Slip: View {
+    static let height: CGFloat = 26
+
     var body: some View {
         RoundedRectangle(cornerRadius: 5, style: .continuous)
             .fill(DesignBook.Color.Background.card)
-            .frame(width: 40, height: 26)
+            .frame(width: 40, height: Self.height)
             .overlay {
                 VStack(spacing: 4) {
                     Capsule().frame(width: 24, height: 2.5)
