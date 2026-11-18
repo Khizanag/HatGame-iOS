@@ -38,4 +38,13 @@ public struct OnlineWord: Codable, Identifiable, Hashable, Sendable {
             OnlineWord(id: "\(playerId)-\(index)", text: text, addedByPlayerId: playerId)
         }
     }
+
+    /// The automatic pool drawn for the whole room. Ids depend only on
+    /// position, so a retry, or a stand-in host generating at the same time,
+    /// overwrites the same entries instead of adding a second pool.
+    public static func automatic(_ texts: [String], by playerId: String) -> [OnlineWord] {
+        texts.enumerated().map { index, text in
+            OnlineWord(id: "auto-\(index)", text: text, addedByPlayerId: playerId)
+        }
+    }
 }

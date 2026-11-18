@@ -21,8 +21,8 @@ enum OnlineGameSetup {
         gameSyncManager: GameSyncManager
     ) async {
         guard let step else { return }
-        // Drawn once: every retry sends the same word ids, so an attempt
-        // that timed out but landed is rewritten rather than duplicated.
+        // Drawn once per run. Automatic word ids are positional, so a retry
+        // or a second generator rewrites the same entries, never duplicates.
         let generated = step == .generateWords ? automaticWords(for: roomManager) : []
         var attempt = 0
         while !Task.isCancelled {
@@ -71,8 +71,8 @@ private extension OnlineGameSetup {
     }
 
     static func automaticWords(for roomManager: RoomManager) -> [OnlineWord] {
-        guard let room = roomManager.room, let hostId = roomManager.currentPlayerId else { return [] }
+        guard let room = roomManager.room, let playerId = roomManager.currentPlayerId else { return [] }
         let count = max(1, room.settings.wordsPerPlayer * room.players.count)
-        return WordDatabase.randomWords(count: count).map { OnlineWord(text: $0, addedByPlayerId: hostId) }
+        return OnlineWord.automatic(WordDatabase.randomWords(count: count), by: playerId)
     }
 }

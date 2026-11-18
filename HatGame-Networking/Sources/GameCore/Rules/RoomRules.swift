@@ -184,25 +184,26 @@ public enum RoomRules {
     }
 
     /// What `playerId`'s device still has to do to get a started game
-    /// going, or `nil` when it has nothing to do. Only the host generates
-    /// the automatic pool — two devices drawing words would fill the hat
-    /// twice — while the first state may be written by anyone who can act
-    /// as host, since that write is a create-if-absent transaction.
-    /// `startsWithSubmittedWords` is the host's choice not to wait for
-    /// players who have not submitted; it counts once anyone has.
+    /// going, or `nil` when it has nothing to do. Both steps belong to
+    /// anyone who can act as host, so a host who drops right after Start
+    /// does not hang the room: the automatic pool uses fixed ids
+    /// (`OnlineWord.automatic`), so a second generator overwrites rather
+    /// than doubles the hat, and the first state is a create-if-absent
+    /// transaction. `startsWithSubmittedWords` is the host's choice not to
+    /// wait for players who have not submitted; it counts once anyone has.
     public static func pendingSetupStep(
         in room: GameRoom,
         for playerId: String,
         startsWithSubmittedWords: Bool = false
     ) -> GameSetupStep? {
-        guard room.status == .playing, room.gameState == nil else { return nil }
+        guard room.status == .playing,
+              room.gameState == nil,
+              OnlineGameRules.canActAsHost(playerId, hostId: room.hostId, players: room.players) else { return nil }
         let isReady = allWordsSubmitted(room) || (startsWithSubmittedWords && anyWordsSubmitted(room))
         if room.settings.isAutomaticWords, !isReady {
-            return playerId == room.hostId ? .generateWords : nil
+            return .generateWords
         }
-        guard isReady,
-              OnlineGameRules.canActAsHost(playerId, hostId: room.hostId, players: room.players) else { return nil }
-        return .initializeGame
+        return isReady ? .initializeGame : nil
     }
 
     /// True once every connected player's submission gate is open. A player

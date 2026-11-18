@@ -87,4 +87,22 @@ struct SetupStepTests {
 
         #expect(RoomRules.pendingSetupStep(in: room, for: "guest") == .initializeGame)
     }
+
+    @Test("A stand-in draws the automatic pool when the host drops after Start")
+    func standInGeneratesWords() {
+        let room = Self.room(isAutomatic: true, offline: ["host"])
+
+        #expect(RoomRules.pendingSetupStep(in: room, for: "guest") == .generateWords)
+        #expect(RoomRules.pendingSetupStep(in: room, for: "host") == .generateWords)
+    }
+
+    @Test("Automatic word ids are positional, so two generators fill the same entries")
+    func automaticWordIdsAreDeterministic() {
+        let first = OnlineWord.automatic(["sun", "moon"], by: "host")
+        let second = OnlineWord.automatic(["star", "sky"], by: "guest")
+
+        #expect(first.map(\.id) == ["auto-0", "auto-1"])
+        #expect(first.map(\.id) == second.map(\.id))
+        #expect(first.map(\.text) == ["sun", "moon"])
+    }
 }

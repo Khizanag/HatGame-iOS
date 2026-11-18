@@ -401,11 +401,11 @@ open class RoomManager {
         try await firebaseService.fillWords(onlineWords, markSubmittedPlayerIds: [playerId], toRoomId: roomId)
     }
 
-    /// Host-only automatic word source. Atomically writes a host-generated
-    /// pool and opens the submission gate for every player in one write — the
-    /// host generated on behalf of the whole room, so no one types words.
-    /// The caller builds `words` once and passes the same ones to every
-    /// retry, so an attempt that timed out but landed is simply rewritten.
+    /// Automatic word source, run by whoever can act as host. Atomically
+    /// writes the generated pool and opens the submission gate for every
+    /// player in one write — the pool is drawn for the whole room, so no one
+    /// types words. Ids come from `OnlineWord.automatic`, so a retry or a
+    /// second generator rewrites the same entries instead of adding more.
     open func fillRandomWords(_ words: [OnlineWord]) async throws {
         guard let roomId = room?.id else { return }
         let playerIds = (room?.players ?? []).map(\.id)
