@@ -39,8 +39,10 @@ final class TestingLabUITests: XCTestCase {
     @MainActor
     func testANoteGoesWhereItsChangeIs() throws {
         let app = launch(["-openTestingLab", "YES"])
+        XCTAssertTrue(app.staticTexts["In This Build"].waitForExistence(timeout: 10))
+        // Newer notes sit above it, and the list builds rows as they scroll in.
         let note = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'App Icon cards'")).firstMatch
-        XCTAssertTrue(note.waitForExistence(timeout: 10))
+        for _ in 0 ..< 6 where !(note.exists && note.isHittable) { app.swipeUp() }
         note.tap()
 
         XCTAssertTrue(app.staticTexts["Choose the vibe that appears on your Home Screen."].waitForExistence(timeout: 10))
