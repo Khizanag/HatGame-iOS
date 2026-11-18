@@ -11,7 +11,7 @@ struct HatGameBuildNotes {
 
     var current: [BuildNote] {
         [
-            skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
+            fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass, heroNumbers,
             appIconCards, saveAndExit, leaveRoom, haptics, settings,
         ]
     }
@@ -19,6 +19,20 @@ struct HatGameBuildNotes {
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var fillTheHat: BuildNote {
+        BuildNote(
+            commit: "a47db2d",
+            title: lab("Fill the Hat replaces two setup screens"),
+            howToTest: lab("""
+                Pass and Play ▸ teams ▸ Continue ▸ Timer ▸ Continue: one screen sets words per player and \
+                where the words come from. The total rolls as you step, players' names drop into the hat, \
+                and Pick for Us drops sample words instead. Continue says Write Words or Draw Words.
+                """),
+            systemImage: "hat.widebrim.fill",
+            color: .purple
+        ) { routes.passAndPlay() }
+    }
+
     var skipPenalty: BuildNote {
         BuildNote(
             commit: "e9d76e4",
