@@ -11,14 +11,27 @@ struct HatGameBuildNotes {
 
     var current: [BuildNote] {
         [
-            hatLanding, startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes, liquidGlass,
-            heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings,
+            hatWords, hatLanding, startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes,
+            liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings,
         ]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var hatWords: BuildNote {
+        BuildNote(
+            commit: "41ac46d",
+            title: lab("Real words fly into the hat"),
+            howToTest: lab("""
+                Open Fill the Hat: the chips are short words from the word list in the app's language, \
+                not players' names, and they barely repeat. Switch the language to see Georgian ones.
+                """),
+            systemImage: "text.bubble",
+            color: .teal
+        ) { routes.passAndPlay() }
+    }
+
     var hatLanding: BuildNote {
         BuildNote(
             commit: "b9745bb",
@@ -53,8 +66,8 @@ private extension HatGameBuildNotes {
             title: lab("Fill the Hat replaces two setup screens"),
             howToTest: lab("""
                 Pass and Play ▸ teams ▸ Continue ▸ Timer ▸ Continue: one screen sets words per player and \
-                where the words come from. The total rolls as you step, players' names fly into the upturned hat, \
-                and Pick for Us drops sample words instead. Continue says Write Words or Draw Words.
+                where the words come from. The total rolls as you step and words fly into the upturned hat. \
+                Continue says Write Words or Draw Words.
                 """),
             systemImage: "hat.widebrim.fill",
             color: .purple
