@@ -9,9 +9,8 @@ import SwiftUI
 /// The hat on Fill the Hat, turned over like a magician's so its opening
 /// faces up. Word chips fly in from either side on a 3D arc, tumbling and
 /// shrinking with depth, and drop through the opening; the hat sways in
-/// perspective and bobs as each lands. `labels` are what the chips say —
-/// the players' names for typed words, sample words for picked ones. Still
-/// under Reduce Motion, where the hat simply sits.
+/// perspective and bobs as each lands. `labels` are what the chips say, in
+/// order. Still under Reduce Motion, where the hat simply sits.
 struct HatFillAnimation: View {
     let labels: [String]
 

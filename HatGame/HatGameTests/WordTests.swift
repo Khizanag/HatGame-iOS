@@ -105,6 +105,16 @@ struct WordDatabaseTests {
         #expect(picks.allSatisfy(pool.contains))
         #expect(WordDatabase.randomWords(count: 0).isEmpty)
     }
+
+    @MainActor
+    @Test("Random words can be kept short")
+    func randomWordsRespectMaxLength() {
+        let picks = WordDatabase.randomWords(count: 50, maxLength: 6)
+
+        #expect(picks.count == 50)
+        #expect(picks.allSatisfy { $0.count <= 6 })
+        #expect(Set(picks).count == picks.count)
+    }
 }
 
 @Suite("Team-name suggestions")

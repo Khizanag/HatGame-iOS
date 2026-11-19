@@ -10,9 +10,8 @@ import Navigation
 import SwiftUI
 
 /// Fill the Hat: how many words go in and where they come from — typed by
-/// the players or picked from the bundled word database. The hat at the top
-/// fills with whatever the choice means (players' names or sample words),
-/// and the total updates as the count changes.
+/// the players or picked from the bundled word database. Words from the list
+/// fly into the hat at the top, and the total updates as the count changes.
 struct WordSourceView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
@@ -24,6 +23,10 @@ struct WordSourceView: View {
     @State private var sampleWords: [String] = []
     @State private var hasLoadedConfiguration = false
     @State private var isReplaceConfirmationPresented = false
+
+    private static let sampleWordCount = 80
+    /// Short enough to read on a chip in flight.
+    private static let sampleWordMaxLength = 10
 
     private var playerCount: Int {
         gameManager.configuration.players.count
@@ -71,7 +74,7 @@ private extension WordSourceView {
 
     var hero: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
-            HatFillAnimation(labels: chipLabels)
+            HatFillAnimation(labels: sampleWords)
                 .decorativeHeroSizing()
 
             HStack(alignment: .firstTextBaseline, spacing: DesignBook.Spacing.xs) {
@@ -156,12 +159,6 @@ private extension WordSourceView {
         .keyboardShortcut(.defaultAction)
         .accessibilityIdentifier("wordSource.continue")
     }
-
-    /// Typed words come from the players, so the chips are their names;
-    /// picked words are a taste of the word list.
-    var chipLabels: [String] {
-        source == .manual ? gameManager.configuration.players.map(\.name) : sampleWords
-    }
 }
 
 // MARK: - Actions
@@ -172,7 +169,8 @@ private extension WordSourceView {
         hasLoadedConfiguration = true
         source = gameManager.configuration.wordSource
         wordsPerPlayer = gameManager.configuration.wordsPerPlayer
-        sampleWords = WordDatabase.randomWords(count: 12)
+        // Enough that a word rarely comes round again while the screen is open.
+        sampleWords = WordDatabase.randomWords(count: Self.sampleWordCount, maxLength: Self.sampleWordMaxLength)
     }
 
     func select(_ newSource: WordSource) {

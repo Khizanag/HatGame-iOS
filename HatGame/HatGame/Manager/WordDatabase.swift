@@ -89,9 +89,10 @@ extension WordDatabase {
         words(for: currentLanguage)
     }
 
-    /// Returns a random subset of `count` words in the app's current language.
-    static func randomWords(count: Int) -> [String] {
+    /// Returns a random subset of `count` words in the app's current language,
+    /// each at most `maxLength` characters.
+    static func randomWords(count: Int, maxLength: Int = .max) -> [String] {
         guard count > 0 else { return [] }
-        return Array(words.shuffled().prefix(count))
+        return Array(words.filter { $0.count <= maxLength }.shuffled().prefix(count))
     }
 }
