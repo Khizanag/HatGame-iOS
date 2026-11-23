@@ -32,16 +32,18 @@ struct TeamColorCard: View {
     }
 
     var body: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                colorCardHeader
+        // Folds open like `FoldableCard`, so it is glass the same way.
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+            colorCardHeader
 
-                if isExpanded {
-                    colorPicker
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                }
+            if isExpanded {
+                colorPicker
+                    .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .padding(DesignBook.Spacing.md)
+        .frame(maxWidth: .infinity)
+        .glassCard()
     }
 }
 

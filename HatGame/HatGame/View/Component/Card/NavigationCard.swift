@@ -8,6 +8,7 @@
 import DesignBook
 import SwiftUI
 
+/// A card that opens a mode or a screen, in Liquid Glass.
 struct NavigationCard: View {
     let icon: String
     let title: String
@@ -16,38 +17,34 @@ struct NavigationCard: View {
 
     var body: some View {
         Button(action: action) {
-            GameCard {
-                HStack(spacing: DesignBook.Spacing.md) {
-                    Image(systemName: icon)
-                        .font(DesignBook.IconFont.extraLarge)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
-                        .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
-                        .decorativeHeroSizing()
+            HStack(spacing: DesignBook.Spacing.md) {
+                Image(systemName: icon)
+                    .font(DesignBook.IconFont.extraLarge)
+                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
+                    .decorativeHeroSizing()
 
-                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                        Text(title)
-                            .font(DesignBook.Font.title3)
-                            .foregroundStyle(DesignBook.Color.Text.primary)
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
+                    Text(title)
+                        .font(DesignBook.Font.title3)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
 
-                        Text(description)
-                            .font(DesignBook.Font.subheadline)
-                            .foregroundStyle(DesignBook.Color.Text.secondary)
-                            .multilineTextAlignment(.leading)
-                            .fixedSize(horizontal: false, vertical: true)
-                    }
-
-                    Spacer(minLength: 0)
-
-                    Image(systemName: "chevron.right")
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(DesignBook.Color.Text.tertiary)
-                        .accessibilityHidden(true)
+                    Text(description)
+                        .font(DesignBook.Font.subheadline)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
+
+                Spacer(minLength: 0)
+
+                Image(systemName: "chevron.right")
+                    .font(DesignBook.Font.body)
+                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                    .accessibilityHidden(true)
             }
-            .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
-        .buttonStyle(.plain)
-        .pointerHoverEffect()
+        .buttonStyle(.glassCard)
         .accessibilityLabel(Text(title))
         .accessibilityHint(Text(description))
     }
@@ -69,5 +66,5 @@ struct NavigationCard: View {
         ) {}
     }
     .padding()
-    .background(DesignBook.Color.Background.primary)
+    .background(DesignBook.Gradient.brandBackdrop)
 }

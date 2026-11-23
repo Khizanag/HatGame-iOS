@@ -8,7 +8,8 @@
 import DesignBook
 import SwiftUI
 
-/// A selectable team in the starting-team list.
+/// A selectable team in the starting-team list: the label of a
+/// `.glassCard(selection:)` button.
 struct TeamSelectionRow: View {
     let team: Team
     let isSelected: Bool
@@ -35,17 +36,6 @@ struct TeamSelectionRow: View {
                 .font(DesignBook.IconFont.medium)
                 .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
         }
-        .padding(DesignBook.Spacing.md)
-        .background {
-            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                .fill(DesignBook.Color.Background.card)
-                .overlay {
-                    RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius)
-                        .stroke(isSelected ? team.color : Color.clear, lineWidth: 2)
-                }
-        }
-        .shadow(color: team.color.opacity(isSelected ? 0.45 : 0), radius: 14)
-        .scaleEffect(isSelected ? 1.03 : 1.0)
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])
     }

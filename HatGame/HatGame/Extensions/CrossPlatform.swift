@@ -132,16 +132,20 @@ extension View {
     }
 
     /// A Liquid Glass surface for something that floats above content, such
-    /// as the disc over the shuffle. Interactive when it responds to touch.
-    /// Glass follows Reduce Transparency and Increase Contrast by itself.
-    /// visionOS has no `glassEffect` (its windows are already glass), so there
-    /// it is the regular material.
+    /// as the disc over the shuffle. Interactive when it responds to touch;
+    /// `tint` colors the glass, as for a selected choice. Glass follows Reduce
+    /// Transparency and Increase Contrast by itself. visionOS has no
+    /// `glassEffect` (its windows are already glass), so there it is the
+    /// regular material.
     @ViewBuilder
-    func glassSurface(in shape: some Shape, isInteractive: Bool = false) -> some View {
+    func glassSurface(in shape: some Shape, isInteractive: Bool = false, tint: Color? = nil) -> some View {
         #if os(visionOS)
-        background(.regularMaterial, in: shape)
+        background {
+            shape.fill(.regularMaterial)
+                .overlay { shape.fill(tint ?? .clear) }
+        }
         #else
-        glassEffect(isInteractive ? .regular.interactive() : .regular, in: shape)
+        glassEffect(isInteractive ? .regular.tint(tint).interactive() : .regular.tint(tint), in: shape)
         #endif
     }
 }

@@ -245,26 +245,28 @@ private extension HomeView {
     }
 
     var multiDeviceModes: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            NavigationCard(
-                icon: "dot.radiowaves.left.and.right",
-                title: localized("home.nearbyGame"),
-                description: localized("home.nearbyGame.description")
-            ) {
-                navigator.present(.localFlow)
-            }
-            .navigationZoomSource(id: "localFlow", in: zoomNamespace)
-            .accessibilityIdentifier("home.playNearby")
+        GlassContainer(spacing: DesignBook.Spacing.xs) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                NavigationCard(
+                    icon: "dot.radiowaves.left.and.right",
+                    title: localized("home.nearbyGame"),
+                    description: localized("home.nearbyGame.description")
+                ) {
+                    navigator.present(.localFlow)
+                }
+                .navigationZoomSource(id: "localFlow", in: zoomNamespace)
+                .accessibilityIdentifier("home.playNearby")
 
-            NavigationCard(
-                icon: "globe",
-                title: localized("home.onlineGame"),
-                description: localized("home.onlineGame.description")
-            ) {
-                navigator.present(.onlineFlow)
+                NavigationCard(
+                    icon: "globe",
+                    title: localized("home.onlineGame"),
+                    description: localized("home.onlineGame.description")
+                ) {
+                    navigator.present(.onlineFlow)
+                }
+                .navigationZoomSource(id: "onlineFlow", in: zoomNamespace)
+                .accessibilityIdentifier("home.playOnline")
             }
-            .navigationZoomSource(id: "onlineFlow", in: zoomNamespace)
-            .accessibilityIdentifier("home.playOnline")
         }
         .paddingHorizontalDefault()
     }

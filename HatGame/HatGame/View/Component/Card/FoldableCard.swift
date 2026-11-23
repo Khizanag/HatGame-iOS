@@ -8,6 +8,8 @@
 import DesignBook
 import SwiftUI
 
+/// A card that folds open to show more, in Liquid Glass: the card is the
+/// control, its header the button.
 struct FoldableCard<Content: View>: View {
     // MARK: - Properties
     @Binding var isExpanded: Bool
@@ -40,16 +42,17 @@ struct FoldableCard<Content: View>: View {
     }
 
     var body: some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                headerButton
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+            headerButton
 
-                if isExpanded {
-                    content()
-                        .transition(.opacity.combined(with: .move(edge: .top)))
-                }
+            if isExpanded {
+                content()
+                    .transition(.opacity.combined(with: .move(edge: .top)))
             }
         }
+        .padding(DesignBook.Spacing.md)
+        .frame(maxWidth: .infinity)
+        .glassCard()
     }
 }
 

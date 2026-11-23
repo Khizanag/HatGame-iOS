@@ -179,18 +179,21 @@ private extension RandomizationView {
     }
 
     var teamsList: some View {
-        VStack(spacing: DesignBook.Spacing.md) {
-            ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
-                Button {
-                    selectTeam(at: index)
-                } label: {
-                    TeamSelectionRow(
-                        team: team,
-                        isSelected: selectedStartingTeamIndex == index
-                    )
+        GlassContainer(spacing: DesignBook.Spacing.xs) {
+            VStack(spacing: DesignBook.Spacing.md) {
+                ForEach(Array(gameManager.configuration.teams.enumerated()), id: \.offset) { index, team in
+                    Button {
+                        selectTeam(at: index)
+                    } label: {
+                        TeamSelectionRow(
+                            team: team,
+                            isSelected: selectedStartingTeamIndex == index
+                        )
+                    }
+                    .buttonStyle(.glassCard(selection: selectedStartingTeamIndex == index ? team.color : nil))
+                    .shadow(color: team.color.opacity(selectedStartingTeamIndex == index ? 0.45 : 0), radius: 14)
+                    .scaleEffect(selectedStartingTeamIndex == index ? 1.03 : 1.0)
                 }
-                .buttonStyle(.plain)
-                .pointerHoverEffect()
             }
         }
     }

@@ -113,22 +113,24 @@ private extension WordSourceView {
         let layout = dynamicTypeSize.isAccessibilitySize
             ? AnyLayout(VStackLayout(spacing: DesignBook.Spacing.md))
             : AnyLayout(HStackLayout(spacing: DesignBook.Spacing.md))
-        return layout {
-            WordSourceTile(
-                icon: "square.and.pencil",
-                title: localized("wordSource.manual.title"),
-                detail: localized("wordSource.manual.detail"),
-                isSelected: source == .manual
-            ) { select(.manual) }
-            .accessibilityIdentifier("wordSource.manual")
+        return GlassContainer(spacing: DesignBook.Spacing.xs) {
+            layout {
+                WordSourceTile(
+                    icon: "square.and.pencil",
+                    title: localized("wordSource.manual.title"),
+                    detail: localized("wordSource.manual.detail"),
+                    isSelected: source == .manual
+                ) { select(.manual) }
+                .accessibilityIdentifier("wordSource.manual")
 
-            WordSourceTile(
-                icon: "wand.and.stars",
-                title: localized("wordSource.automatic.title"),
-                detail: localized("wordSource.automatic.detail"),
-                isSelected: source == .automatic
-            ) { select(.automatic) }
-            .accessibilityIdentifier("wordSource.automatic")
+                WordSourceTile(
+                    icon: "wand.and.stars",
+                    title: localized("wordSource.automatic.title"),
+                    detail: localized("wordSource.automatic.detail"),
+                    isSelected: source == .automatic
+                ) { select(.automatic) }
+                .accessibilityIdentifier("wordSource.automatic")
+            }
         }
         .fixedSize(horizontal: false, vertical: true)
     }

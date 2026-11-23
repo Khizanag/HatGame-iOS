@@ -185,24 +185,25 @@ private extension NextTeamView {
                     shuffleExplainerButton
                 }
 
-                VStack(spacing: DesignBook.Spacing.sm) {
-                    ForEach(Array(team.players.enumerated()), id: \.element.id) { index, player in
-                        Button {
-                            guard !isRandomizingExplainer else { return }
-                            withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
-                                selectedExplainerIndex = index
+                GlassContainer(spacing: DesignBook.Spacing.xs) {
+                    VStack(spacing: DesignBook.Spacing.sm) {
+                        ForEach(Array(team.players.enumerated()), id: \.element.id) { index, player in
+                            Button {
+                                guard !isRandomizingExplainer else { return }
+                                withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
+                                    selectedExplainerIndex = index
+                                }
+                            } label: {
+                                playerSelectionRow(
+                                    player: player,
+                                    index: index,
+                                    isSelected: selectedExplainerIndex == index
+                                )
                             }
-                        } label: {
-                            playerSelectionRow(
-                                player: player,
-                                index: index,
-                                isSelected: selectedExplainerIndex == index
-                            )
+                            .buttonStyle(.glassCard(selection: selectedExplainerIndex == index ? team.color : nil))
+                            .disabled(isRandomizingExplainer)
+                            .accessibilityAddTraits(selectedExplainerIndex == index ? .isSelected : [])
                         }
-                        .buttonStyle(.plain)
-                        .pointerHoverEffect()
-                        .disabled(isRandomizingExplainer)
-                        .accessibilityAddTraits(selectedExplainerIndex == index ? .isSelected : [])
                     }
                 }
             }
@@ -247,16 +248,6 @@ private extension NextTeamView {
 
             roleBadge(isSelected: isSelected)
         }
-        .padding(DesignBook.Spacing.md)
-        .background(
-            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                .fill(isSelected ? team.color.opacity(0.08) : DesignBook.Color.Background.secondary)
-        )
-        .overlay(
-            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                .strokeBorder(isSelected ? team.color.opacity(0.35) : Color.clear, lineWidth: 1.5)
-        )
-        .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
     }
 
     func roleBadge(isSelected: Bool) -> some View {

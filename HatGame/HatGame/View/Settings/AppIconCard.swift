@@ -37,17 +37,8 @@ struct AppIconCard: View {
                 }
                 .multilineTextAlignment(.center)
             }
-            .padding(DesignBook.Spacing.md)
-            .frame(maxWidth: .infinity)
-            .cardSurface()
-            .overlay {
-                RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                    .strokeBorder(isSelected ? icon.displayColor : .clear, lineWidth: 2)
-            }
-            .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
         }
-        .buttonStyle(.plain)
-        .pointerHoverEffect()
+        .buttonStyle(.glassCard(selection: isSelected ? icon.displayColor : nil, alignment: .center))
         .accessibilityElement(children: .ignore)
         .accessibilityLabel(Text(icon.title))
         .accessibilityValue(Text(icon.subtitle))

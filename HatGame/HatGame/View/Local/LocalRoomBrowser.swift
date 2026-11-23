@@ -116,42 +116,39 @@ private extension LocalRoomBrowser {
         Button {
             join(host)
         } label: {
-            GameCard {
-                HStack(spacing: DesignBook.Spacing.md) {
-                    CircularIconContainer(
-                        icon: "antenna.radiowaves.left.and.right",
-                        size: 48,
-                        iconSize: 22,
-                        color: DesignBook.Color.Text.accent,
-                        backgroundColor: DesignBook.Color.Text.accent.opacity(0.12)
-                    )
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text(hostName(of: host))
-                            .font(DesignBook.Font.title3)
-                            .foregroundStyle(DesignBook.Color.Text.primary)
+            HStack(spacing: DesignBook.Spacing.md) {
+                CircularIconContainer(
+                    icon: "antenna.radiowaves.left.and.right",
+                    size: 48,
+                    iconSize: 22,
+                    color: DesignBook.Color.Text.accent,
+                    backgroundColor: DesignBook.Color.Text.accent.opacity(0.12)
+                )
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(hostName(of: host))
+                        .font(DesignBook.Font.title3)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                        .lineLimit(1)
+                    // The device's advertised name, when it adds anything.
+                    if host.displayName != hostName(of: host) {
+                        Text(host.displayName)
+                            .font(DesignBook.Font.subheadline)
+                            .foregroundStyle(DesignBook.Color.Text.tertiary)
                             .lineLimit(1)
-                        // The device's advertised name, when it adds anything.
-                        if host.displayName != hostName(of: host) {
-                            Text(host.displayName)
-                                .font(DesignBook.Font.subheadline)
-                                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                                .lineLimit(1)
-                        }
                     }
-                    Spacer()
-                    if isConnecting {
-                        ProgressView()
-                    } else {
-                        Image(systemName: "arrow.right.circle.fill")
-                            .font(DesignBook.Font.title1)
-                            .foregroundStyle(DesignBook.Color.Text.accent)
-                    }
+                }
+                Spacer()
+                if isConnecting {
+                    ProgressView()
+                } else {
+                    Image(systemName: "arrow.right.circle.fill")
+                        .font(DesignBook.Font.title1)
+                        .foregroundStyle(DesignBook.Color.Text.accent)
                 }
             }
         }
-        .buttonStyle(.plain)
+        .buttonStyle(.glassCard)
         .disabled(trimmedName.isEmpty || isConnecting)
-        .opacity(trimmedName.isEmpty ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
     }
 
     func join(_ host: LocalMultipeerService.DiscoveredHost) {

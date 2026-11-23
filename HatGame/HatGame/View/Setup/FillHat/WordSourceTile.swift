@@ -19,8 +19,8 @@ struct WordSourceTile: View {
         Button(action: action) {
             label
         }
-        .buttonStyle(.plain)
-        .pointerHoverEffect()
+        .buttonStyle(.glassCard(selection: isSelected ? DesignBook.Color.Text.accent : nil))
+        .scaleEffect(isSelected ? 1 : 0.97)
         .accessibilityLabel(Text(title))
         .accessibilityHint(Text(detail))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -56,15 +56,6 @@ private extension WordSourceTile {
 
             Spacer(minLength: 0)
         }
-        .padding(DesignBook.Spacing.md)
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        .cardSurface()
-        .overlay {
-            RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                .strokeBorder(DesignBook.Gradient.primary, lineWidth: isSelected ? 2.5 : 0)
-        }
-        .shadow(isSelected ? .accent : .medium)
-        .scaleEffect(isSelected ? 1 : 0.97)
-        .contentShape(.rect(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous))
     }
 }
