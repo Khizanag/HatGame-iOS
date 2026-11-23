@@ -8,8 +8,8 @@
 import DesignBook
 import SwiftUI
 
-/// A card that folds open to show more, in Liquid Glass: the card is the
-/// control, its header the button.
+/// A card that folds open to show more. What it reveals is reading content,
+/// so the card stays opaque; its header is the row that folds it.
 struct FoldableCard<Content: View>: View {
     // MARK: - Properties
     @Binding var isExpanded: Bool
@@ -42,17 +42,16 @@ struct FoldableCard<Content: View>: View {
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            headerButton
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                headerButton
 
-            if isExpanded {
-                content()
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                if isExpanded {
+                    content()
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
-        .padding(DesignBook.Spacing.md)
-        .frame(maxWidth: .infinity)
-        .glassCard()
     }
 }
 
@@ -70,7 +69,7 @@ private extension FoldableCard {
                         if let icon {
                             Image(systemName: icon)
                                 .font(titleFont)
-                                .foregroundStyle(DesignBook.Color.Text.accent)
+                                .foregroundStyle(DesignBook.Color.Text.primary)
                         }
 
                         Text(title)
@@ -100,7 +99,7 @@ private extension FoldableCard {
     var chevronIcon: some View {
         Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
             .font(DesignBook.Font.title3)
-            .foregroundStyle(DesignBook.Color.Text.accent)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .accessibilityHidden(true)
     }
 }

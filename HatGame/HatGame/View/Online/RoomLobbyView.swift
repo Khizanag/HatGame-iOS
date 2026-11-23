@@ -54,6 +54,7 @@ struct RoomLobbyView: View {
             }
             .sheet(isPresented: $showingTeamCreation) {
                 OnlineTeamCreationView()
+                    .environment(\.showsScreenBackground, false)
             }
             .confirmationDialog(
                 deletionTitle,
@@ -295,11 +296,12 @@ private extension RoomLobbyView {
                     Button {
                         showingTeamCreation = true
                     } label: {
-                        Label(localized("lobby.addTeam"), systemImage: "plus.circle.fill")
+                        Label(localized("lobby.addTeam"), systemImage: "plus")
                             .font(DesignBook.Font.subheadline)
-                            .foregroundStyle(DesignBook.Color.Text.accent)
                     }
-                    .buttonStyle(.plain)
+                    .glassButtonStyle()
+                    .buttonBorderShape(.capsule)
+                    .controlSize(.large)
                 }
             }
 
@@ -362,12 +364,36 @@ private extension RoomLobbyView {
                     }
                 }
 
-                teamActions(team, amIInTeam: amIInTeam, hasPlayers: !players.isEmpty, color: color)
+                teamActions(team, amIInTeam: amIInTeam, color: color)
+            }
+        }
+        .contextMenu {
+            if isHost {
+                deleteTeamButton(team, hasPlayers: !players.isEmpty)
+            }
+        }
+        .accessibilityActions {
+            if isHost {
+                deleteTeamButton(team, hasPlayers: !players.isEmpty)
             }
         }
     }
 
-    func teamActions(_ team: OnlineTeam, amIInTeam: Bool, hasPlayers: Bool, color: Color) -> some View {
+    /// Deleting a team lives in its long press (constitution article 12),
+    /// asking first when players would lose their team.
+    func deleteTeamButton(_ team: OnlineTeam, hasPlayers: Bool) -> some View {
+        Button(role: .destructive) {
+            if hasPlayers {
+                teamPendingDeletion = team
+            } else {
+                removeTeam(team.id)
+            }
+        } label: {
+            Label(String(format: localized("lobby.deleteTeam"), team.name), systemImage: "trash")
+        }
+    }
+
+    func teamActions(_ team: OnlineTeam, amIInTeam: Bool, color: Color) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
             if amIInTeam {
                 Button {
@@ -375,40 +401,21 @@ private extension RoomLobbyView {
                 } label: {
                     Label(localized("lobby.leaveTeam"), systemImage: "arrow.uturn.left")
                         .font(DesignBook.Font.subheadlineSemibold)
+                        .foregroundStyle(DesignBook.Color.Status.error)
                 }
                 .glassButtonStyle()
-                .tint(DesignBook.Color.Status.error)
             } else {
                 Button {
                     joinTeam(team.id)
                 } label: {
                     Label(localized("lobby.joinTeam"), systemImage: "person.crop.circle.fill.badge.plus")
                         .font(DesignBook.Font.subheadlineSemibold)
+                        .foregroundStyle(DesignBook.Color.teamText(for: color))
                 }
-                .glassProminentButtonStyle()
-                .tint(color)
+                .glassButtonStyle()
             }
 
             Spacer()
-
-            if isHost {
-                Button(role: .destructive) {
-                    if hasPlayers {
-                        teamPendingDeletion = team
-                    } else {
-                        removeTeam(team.id)
-                    }
-                } label: {
-                    Image(systemName: "trash")
-                        .font(DesignBook.Font.body)
-                        .foregroundStyle(DesignBook.Color.Status.error)
-                        .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
-                        .contentShape(.rect)
-                }
-                .buttonStyle(.plain)
-                .accessibilityLabel(Text(String(format: localized("lobby.deleteTeam"), team.name)))
-                .help(String(format: localized("lobby.deleteTeam"), team.name))
-            }
         }
     }
 

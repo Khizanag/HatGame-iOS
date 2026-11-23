@@ -62,6 +62,8 @@ struct TeamSetupView: View {
                 }
                 .environment(navigator)
                 .environment(gameManager)
+                // Sheets keep the system's own background (constitution article 4).
+                .environment(\.showsScreenBackground, false)
             }
             .sheet(isPresented: editTeamBinding) {
                 editTeamSheet
@@ -309,6 +311,7 @@ private extension TeamSetupView {
             }
             .environment(navigator)
             .environment(gameManager)
+            .environment(\.showsScreenBackground, false)
         }
     }
 

@@ -12,7 +12,6 @@ import SwiftUI
 struct HomeView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @Environment(\.navZoomNamespace) private var zoomNamespace
     @SceneStorage("HomeView.howToPlay.expanded.v2") private var isHowToPlayExpanded: Bool = false
     @AppStorage("HomeView.hasSeenHowToPlay") private var hasSeenHowToPlay: Bool = false
     @State private var isHeroFloating: Bool = false
@@ -201,7 +200,6 @@ private extension HomeView {
                     PrimaryButton(title: localized("home.resume.button"), icon: "play.fill") {
                         navigator.present(.resumeGame(state))
                     }
-                    .navigationZoomSource(id: "resumeGame", in: zoomNamespace)
                     .accessibilityIdentifier("home.resumeButton")
                 }
             }
@@ -236,14 +234,20 @@ private extension HomeView {
         .paddingHorizontalDefault()
     }
 
-    /// The one primary action — Pass and Play — rides in the action bar; the
-    /// two multi-device modes are cards in the content, each saying what it is.
+    /// The one primary action — Pass and Play — rides in the action bar,
+    /// prominent unless a saved game's Resume already is.
+    @ViewBuilder
     var actionButtons: some View {
-        PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill", action: startPassAndPlay)
-            .navigationZoomSource(id: "teamSetup", in: zoomNamespace)
-            .accessibilityIdentifier("home.passAndPlay")
-            .paddingHorizontalDefault()
-            .padding(.bottom, DesignBook.Spacing.sm)
+        Group {
+            if savedGame == nil {
+                PrimaryButton(title: localized("home.localGame"), icon: "person.2.fill", action: startPassAndPlay)
+            } else {
+                SecondaryButton(title: localized("home.localGame"), icon: "person.2.fill", action: startPassAndPlay)
+            }
+        }
+        .accessibilityIdentifier("home.passAndPlay")
+        .paddingHorizontalDefault()
+        .padding(.bottom, DesignBook.Spacing.sm)
     }
 
     var multiDeviceModes: some View {
@@ -256,7 +260,6 @@ private extension HomeView {
                 ) {
                     navigator.present(.localFlow)
                 }
-                .navigationZoomSource(id: "localFlow", in: zoomNamespace)
                 .accessibilityIdentifier("home.playNearby")
 
                 NavigationCard(
@@ -266,7 +269,6 @@ private extension HomeView {
                 ) {
                     navigator.present(.onlineFlow)
                 }
-                .navigationZoomSource(id: "onlineFlow", in: zoomNamespace)
                 .accessibilityIdentifier("home.playOnline")
             }
         }

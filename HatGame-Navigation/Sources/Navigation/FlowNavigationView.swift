@@ -41,24 +41,12 @@ public struct FlowNavigationView<RootContent: View>: View {
         }
     }
 
-    @ViewBuilder
+    /// A flow rises from the bottom edge as the system presents a cover,
+    /// never zoomed out of the button that opened it.
     private func coverContent(for page: AnyPage) -> some View {
-        #if os(macOS)
         page.view()
             .environment(navigator)
             .environment(\.navZoomNamespace, zoomNamespace)
-        #else
-        if #available(iOS 18.0, *) {
-            page.view()
-                .environment(navigator)
-                .environment(\.navZoomNamespace, zoomNamespace)
-                .navigationTransition(.zoom(sourceID: page.id, in: zoomNamespace))
-        } else {
-            page.view()
-                .environment(navigator)
-                .environment(\.navZoomNamespace, zoomNamespace)
-        }
-        #endif
     }
 }
 

@@ -173,30 +173,19 @@ private extension OnlinePlayView {
         } else if wordLoadFailed {
             wordLoadErrorCard
         } else {
-            RoundedRectangle(cornerRadius: 32, style: .continuous)
+            RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                 .fill(DesignBook.Color.Background.card)
                 .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
                 .aspectRatio(1.05, contentMode: .fit)
-                .opacity(0.4)
+                .opacity(DesignBook.Opacity.disabled)
         }
     }
 
     var wordLoadErrorCard: some View {
-        GameCard {
-            VStack(spacing: DesignBook.Spacing.md) {
-                Image(systemName: "wifi.exclamationmark")
-                    .font(DesignBook.IconFont.large)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                Text(localized("onlinePlay.wordsFailed"))
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-                    .multilineTextAlignment(.center)
-                SecondaryButton(title: localized("common.tryAgain"), icon: "arrow.clockwise") {
-                    retryLoadWords()
-                }
+        Callout(tone: .error, systemImage: "wifi.exclamationmark", message: localized("onlinePlay.wordsFailed")) {
+            SecondaryButton(title: localized("common.tryAgain"), icon: "arrow.clockwise") {
+                retryLoadWords()
             }
-            .frame(maxWidth: .infinity)
-            .padding(DesignBook.Spacing.md)
         }
     }
 

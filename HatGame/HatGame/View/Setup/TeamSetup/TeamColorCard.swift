@@ -33,18 +33,16 @@ struct TeamColorCard: View {
     }
 
     var body: some View {
-        // Folds open like `FoldableCard`, so it is glass the same way.
-        VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-            colorCardHeader
+        GameCard {
+            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
+                colorCardHeader
 
-            if isExpanded {
-                colorPicker
-                    .transition(.opacity.combined(with: .move(edge: .top)))
+                if isExpanded {
+                    colorPicker
+                        .transition(.opacity.combined(with: .move(edge: .top)))
+                }
             }
         }
-        .padding(DesignBook.Spacing.md)
-        .frame(maxWidth: .infinity)
-        .glassCard()
         .haptic(.selection, trigger: palettePicks)
     }
 }
@@ -60,10 +58,8 @@ private extension TeamColorCard {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Label {
                     Text(localized("teamForm.teamColor"))
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
                 } icon: {
                     Image(systemName: "paintpalette.fill")
-                        .foregroundStyle(DesignBook.Color.Text.accent)
                 }
                 .font(DesignBook.Font.subheadlineSemibold)
 
@@ -76,10 +72,10 @@ private extension TeamColorCard {
                 }
 
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
             }
             // The whole row, not just its glyphs, toggles the card.
             .frame(minHeight: DesignBook.Size.touchTargetSize)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .contentShape(.rect)
         }
         .buttonStyle(.plain)

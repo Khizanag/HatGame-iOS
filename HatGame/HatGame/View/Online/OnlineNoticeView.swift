@@ -19,23 +19,10 @@ struct OnlineNoticeView: View {
     let action: () -> Void
 
     var body: some View {
-        CenteredScrollView {
-            VStack(spacing: DesignBook.Spacing.lg) {
-                Image(systemName: symbol)
-                    .font(DesignBook.IconFont.extraLarge)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
-                    .accessibilityHidden(true)
-                Text(title)
-                    .font(DesignBook.Font.title1)
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                    .multilineTextAlignment(.center)
-                Text(message)
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, DesignBook.Spacing.lg)
-            }
-            .paddingHorizontalDefault()
+        ContentUnavailableView {
+            Label(title, systemImage: symbol)
+        } description: {
+            Text(message)
         }
         .actionBar {
             PrimaryButton(title: actionTitle, icon: "arrow.uturn.backward", action: action)
