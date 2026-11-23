@@ -60,12 +60,7 @@ struct CircularIconContainer: View {
                 .font(DesignBook.IconFont.sized(calculatedIconSize))
                 .foregroundStyle(color)
         }
-        .shadow(
-            color: hasShadow ? .black.opacity(DesignBook.Opacity.highlight) : .clear,
-            radius: hasShadow ? 8 : 0,
-            x: 0,
-            y: hasShadow ? 4 : 0
-        )
+        .shadow(hasShadow ? .medium : .none)
     }
 
     private var calculatedIconSize: CGFloat {

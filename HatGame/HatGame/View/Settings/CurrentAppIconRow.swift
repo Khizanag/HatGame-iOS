@@ -14,7 +14,7 @@ struct CurrentAppIconRow: View {
 
     var body: some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            AppIconPreview(icon: icon, size: 60)
+            AppIconPreview(icon: icon, size: DesignBook.Size.appIconPreviewSmall)
 
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 Text(icon.title)

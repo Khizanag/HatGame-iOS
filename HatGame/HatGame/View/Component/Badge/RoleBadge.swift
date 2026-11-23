@@ -37,7 +37,7 @@ struct RoleBadge: View {
             switch self {
             case .host: DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.light)
             case .you: DesignBook.Color.Background.secondary
-            case .noTeam: DesignBook.Color.Background.secondary.opacity(0.6)
+            case .noTeam: DesignBook.Color.Background.secondary.opacity(DesignBook.Opacity.semiTransparent)
             }
         }
     }
@@ -51,7 +51,7 @@ struct RoleBadge: View {
             .tracking(1.0)
             .foregroundStyle(style.textColor)
             .padding(.horizontal, DesignBook.Spacing.sm)
-            .padding(.vertical, 3)
+            .padding(.vertical, DesignBook.Spacing.xxs)
             .background { Capsule().fill(style.backgroundColor) }
     }
 }

@@ -99,8 +99,12 @@ private extension OnlineNextTeamView {
     var hero: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             ZStack {
-                Circle().fill(tint.opacity(0.15)).frame(width: 120, height: 120)
-                Circle().strokeBorder(tint.opacity(0.4), lineWidth: 2).frame(width: 120, height: 120)
+                Circle()
+                    .fill(tint.opacity(DesignBook.Opacity.tint))
+                    .frame(width: DesignBook.Size.heroEmblem, height: DesignBook.Size.heroEmblem)
+                Circle()
+                    .strokeBorder(tint.opacity(DesignBook.Opacity.disabled), lineWidth: DesignBook.Size.strokeThick)
+                    .frame(width: DesignBook.Size.heroEmblem, height: DesignBook.Size.heroEmblem)
                 Image(systemName: "target")
                     .font(DesignBook.IconFont.emoji)
                     .foregroundStyle(DesignBook.Color.teamText(for: tint))
@@ -168,7 +172,7 @@ private extension OnlineNextTeamView {
                                 .foregroundStyle(DesignBook.Color.Text.tertiary)
                         }
 
-                        VStack(alignment: .leading, spacing: 6) {
+                        VStack(alignment: .leading, spacing: DesignBook.Spacing.xsPlus) {
                             ForEach(guessers, id: \.id) { guesser in
                                 HStack(spacing: DesignBook.Spacing.sm) {
                                     Circle()
@@ -214,7 +218,7 @@ private extension OnlineNextTeamView {
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
             }
             HStack(spacing: DesignBook.Spacing.sm) {
-                Circle().fill(tint).frame(width: 8, height: 8)
+                Circle().fill(tint).frame(width: DesignBook.Size.dotMedium, height: DesignBook.Size.dotMedium)
                 Text(playerName)
                     .font(DesignBook.Font.bodySemibold)
                     .foregroundStyle(DesignBook.Color.teamText(for: tint))
@@ -223,7 +227,7 @@ private extension OnlineNextTeamView {
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.onAccent(for: tint))
                         .padding(.horizontal, DesignBook.Spacing.sm)
-                        .padding(.vertical, 2)
+                        .padding(.vertical, DesignBook.Spacing.xxs)
                         .background(Capsule().fill(tint))
                 }
             }
@@ -239,13 +243,13 @@ private extension OnlineNextTeamView {
             HStack(spacing: DesignBook.Spacing.md) {
                 CircularIconContainer(
                     icon: "flag.fill",
-                    size: 48,
+                    size: DesignBook.Size.largeIconSize,
                     iconSize: 22,
                     color: tint,
-                    backgroundColor: tint.opacity(0.12)
+                    backgroundColor: tint.opacity(DesignBook.Opacity.light)
                 )
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xxs) {
                     Text(currentRound.title)
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)

@@ -48,7 +48,7 @@ extension View {
         let shape = RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
         // The ring is part of the content so it sits on the glass, not under it.
         return overlay {
-            shape.strokeBorder(selection ?? .clear, lineWidth: 2)
+            shape.strokeBorder(selection ?? .clear, lineWidth: DesignBook.Size.strokeThick)
         }
         .contentShape(shape)
         .glassSurface(

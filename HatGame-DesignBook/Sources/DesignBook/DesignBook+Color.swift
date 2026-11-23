@@ -40,6 +40,26 @@ extension DesignBook {
             public static let errorFill = SwiftUI.Color(.Status.errorFill)
         }
 
+        /// The tinted tiles at the leading edge of Settings rows, matching the
+        /// system colours in every appearance, Increase Contrast included.
+        public enum Tile {
+            public static let orange = SwiftUI.Color(.Tile.orange)
+            public static let green = SwiftUI.Color(.Tile.green)
+            public static let teal = SwiftUI.Color(.Tile.teal)
+            public static let blue = SwiftUI.Color(.Tile.blue)
+            public static let indigo = SwiftUI.Color(.Tile.indigo)
+            public static let purple = SwiftUI.Color(.Tile.purple)
+            public static let pink = SwiftUI.Color(.Tile.pink)
+            public static let brown = SwiftUI.Color(.Tile.brown)
+        }
+
+        /// The dim laid over the screen under a full-screen moment, such as
+        /// the shuffle.
+        public static let scrim = SwiftUI.Color(.Effect.scrim)
+
+        /// The warm glow under a winner's trophy.
+        public static let celebrationGlow = SwiftUI.Color(.Effect.celebrationGlow)
+
         /// Foreground for glyphs and text on the brand gradients and on dimmed
         /// overlays, which stay dark-saturated in both appearances.
         public static let onGradient = SwiftUI.Color.white

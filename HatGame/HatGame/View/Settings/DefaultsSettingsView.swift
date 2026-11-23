@@ -65,7 +65,7 @@ private extension DefaultsSettingsView {
         Section {
             SettingsToggleRow(
                 icon: "doc.on.doc.fill",
-                tint: .purple,
+                tint: DesignBook.Color.Tile.purple,
                 title: localized("settings.allowDuplicateWords.title"),
                 isOn: duplicatesBinding
             )
@@ -78,7 +78,7 @@ private extension DefaultsSettingsView {
         Section {
             SettingsToggleRow(
                 icon: "arrow.uturn.forward",
-                tint: .orange,
+                tint: DesignBook.Color.Tile.orange,
                 title: localized("settings.defaultSkipping.title"),
                 isOn: skippingBinding
             )
@@ -94,7 +94,7 @@ private extension DefaultsSettingsView {
         Section {
             SettingsToggleRow(
                 icon: "speaker.wave.2.fill",
-                tint: .green,
+                tint: DesignBook.Color.Tile.green,
                 title: localized("settings.timeUpSound.title"),
                 isOn: soundBinding
             )
@@ -108,7 +108,7 @@ private extension DefaultsSettingsView {
         Section {
             SettingsToggleRow(
                 icon: "iphone.radiowaves.left.and.right",
-                tint: .pink,
+                tint: DesignBook.Color.Tile.pink,
                 title: localized("settings.haptics.title"),
                 isOn: hapticsBinding
             )

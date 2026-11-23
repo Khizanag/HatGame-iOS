@@ -22,7 +22,7 @@ struct PlayerStepIndicator: View {
                     .fill(index <= currentIndex ? color(for: index) : .clear)
                     .strokeBorder(
                         index <= currentIndex ? .clear : DesignBook.Color.Text.tertiary,
-                        lineWidth: 1
+                        lineWidth: DesignBook.Size.strokeThin
                     )
                     .frame(height: DesignBook.Size.dotSmall)
             }

@@ -50,7 +50,9 @@ struct RoomLobbyView: View {
             .haptic(.success, trigger: codeCopies)
             // The copy glyph turns to a check for a moment, in its own frame.
             .task(id: codeCopies) {
-                guard isCodeCopied, (try? await Task.sleep(for: .seconds(2))) != nil else { return }
+                guard isCodeCopied,
+                      (try? await Task.sleep(for: DesignBook.Motion.confirmationHold)) != nil
+                else { return }
                 isCodeCopied = false
             }
             .sheet(isPresented: $showingTeamCreation) {
@@ -208,7 +210,7 @@ private extension RoomLobbyView {
             HStack(spacing: DesignBook.Spacing.md) {
                 Circle()
                     .fill(teamColor(for: player.teamId))
-                    .frame(width: 12, height: 12)
+                    .frame(width: DesignBook.Size.dotLarge, height: DesignBook.Size.dotLarge)
                 Text(player.name)
                     .font(DesignBook.Font.body)
                     .foregroundStyle(memberNameColor(for: player, connected: DesignBook.Color.Text.primary))
@@ -334,7 +336,9 @@ private extension RoomLobbyView {
         return GameCard {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
                 HStack {
-                    Circle().fill(color).frame(width: 14, height: 14)
+                    Circle()
+                        .fill(color)
+                        .frame(width: DesignBook.Size.dotExtraLarge, height: DesignBook.Size.dotExtraLarge)
                     Text(team.name)
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.teamText(for: color))
@@ -349,10 +353,12 @@ private extension RoomLobbyView {
                         .font(DesignBook.Font.subheadline)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                 } else {
-                    VStack(alignment: .leading, spacing: 4) {
+                    VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                         ForEach(players, id: \.id) { player in
                             HStack(spacing: DesignBook.Spacing.sm) {
-                                Circle().fill(color.opacity(0.5)).frame(width: 6, height: 6)
+                                Circle()
+                                    .fill(color.opacity(DesignBook.Opacity.half))
+                                    .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
                                 Text(player.name)
                                     .font(DesignBook.Font.body)
                                     .foregroundStyle(memberNameColor(for: player))
@@ -438,7 +444,7 @@ private extension RoomLobbyView {
                     .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xxs) {
                     Text(localized("lobby.waitingForHost"))
                         .font(DesignBook.Font.bodySemibold)
                         .foregroundStyle(DesignBook.Color.Text.primary)
@@ -454,7 +460,10 @@ private extension RoomLobbyView {
                     .fill(DesignBook.Color.Background.card)
                     .overlay {
                         RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                            .strokeBorder(DesignBook.Color.Text.primary.opacity(0.18), lineWidth: 1)
+                            .strokeBorder(
+                                DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.highlight),
+                                lineWidth: DesignBook.Size.strokeThin
+                            )
                     }
             }
         }

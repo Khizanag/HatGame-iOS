@@ -24,7 +24,7 @@ struct WordCard: View {
             wordText
         }
         .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
-        .aspectRatio(1.05, contentMode: .fit)
+        .aspectRatio(DesignBook.Size.wordCardAspectRatio, contentMode: .fit)
         // Scoring is never the default (double-tap) action: Got It and Skip
         // are named actions, so a stray double-tap can't score a word.
         .accessibilityElement(children: .combine)
@@ -48,7 +48,7 @@ private extension WordCard {
                 RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                     .fill(DesignBook.Gradient.brandBackdrop)
             }
-            .shadow(color: teamTint.opacity(0.2), radius: 28, x: 0, y: 14)
+            .shadow(.lifted(teamTint))
     }
 
     var wordText: some View {

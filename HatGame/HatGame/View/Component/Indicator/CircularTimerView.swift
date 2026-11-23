@@ -71,7 +71,7 @@ struct CircularTimerView: View {
         }
         .scaleEffect(isPulsing ? 1.04 : 1.0)
         .animation(
-            isPulsing ? .easeInOut(duration: 0.45).repeatForever(autoreverses: true) : DesignBook.Motion.quick,
+            isPulsing ? DesignBook.Motion.urgentPulse : DesignBook.Motion.quick,
             value: isPulsing
         )
     }
@@ -83,7 +83,7 @@ private extension CircularTimerView {
         Circle()
             .stroke(
                 DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.light),
-                style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                style: StrokeStyle(lineWidth: DesignBook.Size.timerRingWidth, lineCap: .round)
             )
     }
 
@@ -92,11 +92,11 @@ private extension CircularTimerView {
             .trim(from: 0, to: progress)
             .stroke(
                 displayColor,
-                style: StrokeStyle(lineWidth: 10, lineCap: .round)
+                style: StrokeStyle(lineWidth: DesignBook.Size.timerRingWidth, lineCap: .round)
             )
             .rotationEffect(.degrees(-90))
-            .animation(reduceMotion ? nil : .linear(duration: 1), value: progress)
-            .shadow(color: displayColor.opacity(isUrgent ? 0.5 : 0.15), radius: isUrgent ? 12 : 6)
+            .animation(reduceMotion ? nil : DesignBook.Motion.countdownTick, value: progress)
+            .shadow(.timerGlow(displayColor, isUrgent: isUrgent))
     }
 
     var timeLabel: some View {

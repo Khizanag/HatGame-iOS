@@ -42,7 +42,7 @@ struct OnlineSpectatorView: View {
                     isPaused: false,
                     tint: tint
                 )
-                .frame(width: 168, height: 168)
+                .frame(width: DesignBook.Size.onlineTimerSize, height: DesignBook.Size.onlineTimerSize)
 
                 scoreChip
                 instructionCard
@@ -58,7 +58,7 @@ struct OnlineSpectatorView: View {
 // MARK: - Subviews
 private extension OnlineSpectatorView {
     var roleBanner: some View {
-        VStack(spacing: 4) {
+        VStack(spacing: DesignBook.Spacing.xs) {
             Text(localized(isOwnTeam ? "onlineSpectator.yourTurn" : "onlineSpectator.othersTurn"))
                 .font(DesignBook.Font.caption1Semibold)
                 .eyebrowUppercase()
@@ -66,7 +66,7 @@ private extension OnlineSpectatorView {
                 .foregroundStyle(DesignBook.Color.Text.tertiary)
 
             HStack(spacing: DesignBook.Spacing.sm) {
-                Circle().fill(tint).frame(width: 10, height: 10)
+                Circle().fill(tint).frame(width: DesignBook.Size.dotRegular, height: DesignBook.Size.dotRegular)
                 Text(team.name)
                     .font(DesignBook.Font.title1)
                     .foregroundStyle(DesignBook.Color.teamText(for: tint))
@@ -90,9 +90,12 @@ private extension OnlineSpectatorView {
         .padding(.vertical, DesignBook.Spacing.sm)
         .background {
             Capsule()
-                .fill(DesignBook.Color.Status.success.opacity(0.12))
+                .fill(DesignBook.Color.Status.success.opacity(DesignBook.Opacity.light))
                 .overlay {
-                    Capsule().strokeBorder(DesignBook.Color.Status.success.opacity(0.4), lineWidth: 1)
+                    Capsule().strokeBorder(
+                        DesignBook.Color.Status.success.opacity(DesignBook.Opacity.disabled),
+                        lineWidth: DesignBook.Size.strokeThin
+                    )
                 }
         }
         .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: teamScore)

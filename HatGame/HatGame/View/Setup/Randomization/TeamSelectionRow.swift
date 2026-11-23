@@ -18,7 +18,7 @@ struct TeamSelectionRow: View {
         HStack(spacing: DesignBook.Spacing.md) {
             RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
                 .fill(team.color)
-                .frame(width: 8)
+                .frame(width: DesignBook.Size.teamStripeWidth)
 
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                 Text(team.name)

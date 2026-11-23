@@ -58,7 +58,7 @@ struct TeamTurnResultsView: View {
             }
             .task {
                 guard !hasCelebrated else { return }
-                try? await Task.sleep(for: .milliseconds(120))
+                try? await Task.sleep(for: DesignBook.Motion.turnCelebrationDelay)
                 hasCelebrated = true
             }
     }
@@ -94,18 +94,18 @@ private extension TeamTurnResultsView {
     var header: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             ZStack {
-                Circle()
-                    .fill(team.color.opacity(0.12))
-                    .frame(width: 104, height: 104)
-                    .blur(radius: 16)
+                HeroGlow(.team, fill: team.color, opacity: DesignBook.Opacity.light)
 
                 Circle()
-                    .fill(team.color.opacity(0.22))
-                    .frame(width: 88, height: 88)
+                    .fill(team.color.opacity(DesignBook.Opacity.highlight))
+                    .frame(width: DesignBook.Size.heroBadge, height: DesignBook.Size.heroBadge)
 
                 Circle()
-                    .strokeBorder(team.color.opacity(0.45), lineWidth: 1.5)
-                    .frame(width: 88, height: 88)
+                    .strokeBorder(
+                        team.color.opacity(DesignBook.Opacity.emphasis),
+                        lineWidth: DesignBook.Size.strokeRegular
+                    )
+                    .frame(width: DesignBook.Size.heroBadge, height: DesignBook.Size.heroBadge)
 
                 Image(systemName: isCelebratory ? "sparkles" : "hourglass")
                     .font(DesignBook.IconFont.large)
@@ -139,7 +139,7 @@ private extension TeamTurnResultsView {
                         value: points,
                         font: DesignBook.Font.heroScore,
                         color: DesignBook.Color.teamText(for: team.color),
-                        duration: 0.7
+                        duration: DesignBook.Motion.scoreCountMedium
                     )
                     Text(scoreUnit)
                         .font(DesignBook.Font.title3)

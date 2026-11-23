@@ -126,7 +126,9 @@ private extension OnlineTeamCreationView {
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
                     Spacer()
-                    Circle().fill(teamColor).frame(width: 24, height: 24)
+                    Circle()
+                        .fill(teamColor)
+                        .frame(width: DesignBook.Size.smallSwatchSize, height: DesignBook.Size.smallSwatchSize)
                 }
                 colorPicker
             }

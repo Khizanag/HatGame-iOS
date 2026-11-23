@@ -9,8 +9,12 @@ import SwiftUI
 
 extension DesignBook {
     public enum Spacing {
+        /// 2
+        public static let xxs: CGFloat = 2
         /// 4
         public static let xs: CGFloat = 4
+        /// 6
+        public static let xsPlus: CGFloat = 6
         /// 8
         public static let sm: CGFloat = 8
         /// 16

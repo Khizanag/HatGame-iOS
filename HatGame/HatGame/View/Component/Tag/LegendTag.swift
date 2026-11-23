@@ -41,7 +41,7 @@ private extension LegendTag {
     }
 
     var label: some View {
-        VStack(spacing: 2) {
+        VStack(spacing: DesignBook.Spacing.xxs) {
             Text(title)
                 .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(

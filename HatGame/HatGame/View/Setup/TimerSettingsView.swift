@@ -150,7 +150,7 @@ private extension TimerSettingsView {
                     .font(DesignBook.IconFont.small)
                     .foregroundStyle(DesignBook.Color.Status.warning)
                     .frame(width: skipIconSize, height: skipIconSize)
-                    .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
+                    .background(Circle().fill(DesignBook.Color.Status.warning.opacity(DesignBook.Opacity.tint)))
                     .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {

@@ -65,7 +65,7 @@ struct OnlineTurnResultsView: View {
                 }
             }
             .task {
-                try? await Task.sleep(for: .milliseconds(180))
+                try? await Task.sleep(for: DesignBook.Motion.celebrationDelay)
                 guard !Task.isCancelled else { return }
                 hasCelebrated = true
             }
@@ -96,7 +96,9 @@ private extension OnlineTurnResultsView {
     var header: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             ZStack {
-                Circle().fill(DesignBook.Color.Status.success.opacity(0.18)).frame(width: 88, height: 88)
+                Circle()
+                    .fill(DesignBook.Color.Status.success.opacity(DesignBook.Opacity.highlight))
+                    .frame(width: DesignBook.Size.heroBadge, height: DesignBook.Size.heroBadge)
                 Image(systemName: "sparkles")
                     .font(DesignBook.IconFont.sized(38, relativeTo: .largeTitle, weight: .bold))
                     .decorativeHeroSizing()
@@ -127,7 +129,7 @@ private extension OnlineTurnResultsView {
                         value: roundScore,
                         font: DesignBook.Font.heroScore,
                         color: DesignBook.Color.teamText(for: tint),
-                        duration: 0.7
+                        duration: DesignBook.Motion.scoreCountMedium
                     )
                     Text(localized("game.turnResults.wordsUnit \(roundScore)"))
                         .font(DesignBook.Font.title3)
@@ -151,17 +153,17 @@ private extension OnlineTurnResultsView {
                             .foregroundStyle(index == 0
                                 ? DesignBook.Color.onAccent(for: team.color)
                                 : DesignBook.Color.Text.primary)
-                            .frame(width: 28, height: 28)
+                            .frame(width: DesignBook.Size.rankBadgeSize, height: DesignBook.Size.rankBadgeSize)
                             .background {
                                 Circle().fill(index == 0
                                     ? team.color
-                                    : DesignBook.Color.Text.tertiary.opacity(0.4))
+                                    : DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.disabled))
                             }
                             .monospacedDigit()
 
                         Circle()
                             .fill(team.color)
-                            .frame(width: 10, height: 10)
+                            .frame(width: DesignBook.Size.dotRegular, height: DesignBook.Size.dotRegular)
 
                         Text(team.name)
                             .font(DesignBook.Font.body)
@@ -177,7 +179,7 @@ private extension OnlineTurnResultsView {
                             color: index == 0
                                 ? DesignBook.Color.teamText(for: team.color)
                                 : DesignBook.Color.Text.secondary,
-                            duration: 0.6
+                            duration: DesignBook.Motion.scoreCountShort
                         )
                     }
                     .accessibilityElement(children: .combine)

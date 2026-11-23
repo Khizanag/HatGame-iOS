@@ -63,7 +63,7 @@ private extension HomeView {
         ZStack {
             DesignBook.Color.Background.primary
             DesignBook.Gradient.brandBackdrop
-                .opacity(0.9)
+                .opacity(DesignBook.Opacity.nearlyOpaque)
         }
     }
 
@@ -99,7 +99,7 @@ private extension HomeView {
             #if DEBUG
             if UITestConfiguration.disablesAnimations { return }
             #endif
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
+            withAnimation(DesignBook.Motion.heroLoop) {
                 isHeroFloating = true
             }
         }
@@ -131,38 +131,29 @@ private extension HomeView {
 
     var heroIcon: some View {
         ZStack {
-            // Soft glow halo behind the hat.
-            Circle()
-                .fill(DesignBook.Gradient.primary)
-                .frame(width: 156, height: 156)
-                .blur(radius: 36)
-                .opacity(0.55)
+            HeroGlow(.hero, opacity: DesignBook.Opacity.glow)
 
             // Inner glass disc.
             Circle()
                 .fill(DesignBook.Color.Background.card)
-                .frame(width: 136, height: 136)
+                .frame(width: DesignBook.Size.heroDisc, height: DesignBook.Size.heroDisc)
                 .overlay {
                     Circle()
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    DesignBook.Color.Text.accent.opacity(0.4),
-                                    DesignBook.Color.Text.accent.opacity(0.0),
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                        .strokeBorder(DesignBook.Gradient.heroRim, lineWidth: DesignBook.Size.strokeRegular)
                 }
                 .shadow(.large)
 
             Text(verbatim: "🎩")
                 .font(DesignBook.IconFont.emojiLarge)
-                .offset(y: reduceMotion ? 0 : (isHeroFloating ? -6 : 6))
+                .offset(y: floatOffset)
                 .accessibilityHidden(true)
         }
+    }
+
+    var floatOffset: CGFloat {
+        guard !reduceMotion else { return 0 }
+        let amplitude = DesignBook.Size.heroFloatAmplitude
+        return isHeroFloating ? -amplitude : amplitude
     }
 
     func resumeCard(for state: GameState) -> some View {
@@ -171,7 +162,7 @@ private extension HomeView {
                 HStack(spacing: DesignBook.Spacing.md) {
                     CircularIconContainer(
                         icon: "hourglass",
-                        size: 48,
+                        size: DesignBook.Size.largeIconSize,
                         iconSize: 22,
                         color: DesignBook.Color.Text.accent,
                         backgroundColor: DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight)

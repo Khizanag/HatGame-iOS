@@ -135,12 +135,12 @@ private extension LocalRoomBrowser {
             HStack(spacing: DesignBook.Spacing.md) {
                 CircularIconContainer(
                     icon: "antenna.radiowaves.left.and.right",
-                    size: 48,
+                    size: DesignBook.Size.largeIconSize,
                     iconSize: 22,
                     color: DesignBook.Color.Text.accent,
-                    backgroundColor: DesignBook.Color.Text.accent.opacity(0.12)
+                    backgroundColor: DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.light)
                 )
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xxs) {
                     Text(hostName(of: host))
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)

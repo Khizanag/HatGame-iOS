@@ -15,7 +15,7 @@ struct AnimatedScoreText: View {
     let value: Int
     var font: Font = DesignBook.Font.displaySmall
     var color: Color = DesignBook.Color.Text.primary
-    var duration: Double = 0.9
+    var duration: Double = DesignBook.Motion.scoreCount
 
     @State private var displayValue: Int = 0
 

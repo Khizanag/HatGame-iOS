@@ -61,7 +61,7 @@ private extension SettingsView {
         Section {
             SettingsLinkRow(
                 icon: "slider.horizontal.3",
-                tint: .orange,
+                tint: DesignBook.Color.Tile.orange,
                 title: localized("settings.defaults.title")
             ) {
                 navigator.push(.defaultsSettings)
@@ -87,7 +87,7 @@ private extension SettingsView {
         Section {
             SettingsLinkRow(
                 icon: "person.circle.fill",
-                tint: .purple,
+                tint: DesignBook.Color.Tile.purple,
                 title: localized("settings.developerInfo.title")
             ) {
                 navigator.push(.developerInfo)
@@ -95,20 +95,25 @@ private extension SettingsView {
 
             SettingsLinkRow(
                 icon: "envelope.fill",
-                tint: .blue,
+                tint: DesignBook.Color.Tile.blue,
                 title: localized("settings.feedback.title")
             ) {
                 navigator.push(.feedback)
             }
 
             if let appVersion {
-                infoRow(icon: "number", tint: .blue, title: localized("settings.about.version"), value: appVersion)
+                infoRow(
+                    icon: "number",
+                    tint: DesignBook.Color.Tile.blue,
+                    title: localized("settings.about.version"),
+                    value: appVersion
+                )
             }
 
             if let appBuild {
                 infoRow(
                     icon: "wrench.and.screwdriver",
-                    tint: .green,
+                    tint: DesignBook.Color.Tile.green,
                     title: localized("settings.about.build"),
                     value: appBuild
                 )

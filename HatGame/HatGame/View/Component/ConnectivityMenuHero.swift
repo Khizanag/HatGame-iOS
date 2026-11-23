@@ -31,28 +31,14 @@ struct ConnectivityMenuHero: View {
     var body: some View {
         VStack(spacing: DesignBook.Spacing.lg) {
             ZStack {
-                Circle()
-                    .fill(DesignBook.Gradient.primary)
-                    .frame(width: 156, height: 156)
-                    .blur(radius: 36)
-                    .opacity(0.55)
+                HeroGlow(.hero, opacity: DesignBook.Opacity.glow)
 
                 Circle()
                     .fill(DesignBook.Color.Background.card)
-                    .frame(width: 136, height: 136)
+                    .frame(width: DesignBook.Size.heroDisc, height: DesignBook.Size.heroDisc)
                     .overlay {
                         Circle()
-                            .strokeBorder(
-                                LinearGradient(
-                                    colors: [
-                                        DesignBook.Color.Text.accent.opacity(0.4),
-                                        DesignBook.Color.Text.accent.opacity(0.0),
-                                    ],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                ),
-                                lineWidth: 1.5
-                            )
+                            .strokeBorder(DesignBook.Gradient.heroRim, lineWidth: DesignBook.Size.strokeRegular)
                     }
                     .shadow(.large)
 
@@ -85,7 +71,7 @@ struct ConnectivityMenuHero: View {
         }
         .onAppear {
             guard !reduceMotion else { return }
-            withAnimation(.easeInOut(duration: 2.4).repeatForever(autoreverses: true)) {
+            withAnimation(DesignBook.Motion.heroLoop) {
                 isPulsing = true
             }
         }

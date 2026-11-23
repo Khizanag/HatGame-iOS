@@ -116,7 +116,7 @@ private extension OnlinePlayView {
                 isPaused: false,
                 tint: tint
             )
-            .frame(width: 168, height: 168)
+            .frame(width: DesignBook.Size.onlineTimerSize, height: DesignBook.Size.onlineTimerSize)
             .padding(.top, DesignBook.Spacing.sm)
 
             wordSection
@@ -176,7 +176,7 @@ private extension OnlinePlayView {
             RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                 .fill(DesignBook.Color.Background.card)
                 .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
-                .aspectRatio(1.05, contentMode: .fit)
+                .aspectRatio(DesignBook.Size.wordCardAspectRatio, contentMode: .fit)
                 .opacity(DesignBook.Opacity.disabled)
         }
     }

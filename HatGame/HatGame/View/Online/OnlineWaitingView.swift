@@ -54,14 +54,10 @@ private extension OnlineWaitingView {
     var hero: some View {
         VStack(spacing: DesignBook.Spacing.md) {
             ZStack {
-                Circle()
-                    .fill(DesignBook.Gradient.primary)
-                    .frame(width: 120, height: 120)
-                    .blur(radius: 28)
-                    .opacity(0.55)
+                HeroGlow(.status, opacity: DesignBook.Opacity.glow)
                 Circle()
                     .fill(DesignBook.Color.Background.card)
-                    .frame(width: 96, height: 96)
+                    .frame(width: DesignBook.Size.heroDiscSmall, height: DesignBook.Size.heroDiscSmall)
                     .shadow(.medium)
                 Image(systemName: "hourglass")
                     .font(DesignBook.IconFont.sized(44, relativeTo: .largeTitle, weight: .bold))
@@ -111,9 +107,9 @@ private extension OnlineWaitingView {
             ZStack {
                 Circle()
                     .fill(isDone
-                        ? DesignBook.Color.Status.success.opacity(0.20)
+                        ? DesignBook.Color.Status.success.opacity(DesignBook.Opacity.highlight)
                         : DesignBook.Color.Background.secondary)
-                    .frame(width: 36, height: 36)
+                    .frame(width: DesignBook.Size.statusDiscSize, height: DesignBook.Size.statusDiscSize)
                 if isDone {
                     Image(systemName: "checkmark")
                         .font(DesignBook.Font.subheadlineSemibold)

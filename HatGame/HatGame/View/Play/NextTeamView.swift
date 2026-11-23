@@ -85,12 +85,15 @@ private extension NextTeamView {
         VStack(spacing: DesignBook.Spacing.md) {
             ZStack {
                 Circle()
-                    .fill(team.color.opacity(0.15))
-                    .frame(width: 120, height: 120)
+                    .fill(team.color.opacity(DesignBook.Opacity.tint))
+                    .frame(width: DesignBook.Size.heroEmblem, height: DesignBook.Size.heroEmblem)
 
                 Circle()
-                    .strokeBorder(team.color.opacity(0.4), lineWidth: 2)
-                    .frame(width: 120, height: 120)
+                    .strokeBorder(
+                        team.color.opacity(DesignBook.Opacity.disabled),
+                        lineWidth: DesignBook.Size.strokeThick
+                    )
+                    .frame(width: DesignBook.Size.heroEmblem, height: DesignBook.Size.heroEmblem)
 
                 Image(systemName: "target")
                     .font(DesignBook.IconFont.emoji)
@@ -125,7 +128,7 @@ private extension NextTeamView {
                 .padding(.horizontal, DesignBook.Spacing.md)
                 .padding(.vertical, DesignBook.Spacing.sm)
                 .background {
-                    Capsule().fill(team.color.opacity(0.12))
+                    Capsule().fill(team.color.opacity(DesignBook.Opacity.light))
                 }
                 .accessibilityElement(children: .ignore)
                 .accessibilityLabel(Text(localized("game.currentScoreLabel \(engine.scoreboard.totalScore(for: team))")))
@@ -139,13 +142,13 @@ private extension NextTeamView {
             HStack(spacing: DesignBook.Spacing.md) {
                 CircularIconContainer(
                     icon: "flag.fill",
-                    size: 48,
+                    size: DesignBook.Size.largeIconSize,
                     iconSize: 22,
                     color: team.color,
-                    backgroundColor: team.color.opacity(0.12)
+                    backgroundColor: team.color.opacity(DesignBook.Opacity.light)
                 )
 
-                VStack(alignment: .leading, spacing: 2) {
+                VStack(alignment: .leading, spacing: DesignBook.Spacing.xxs) {
                     Text(round.title)
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
@@ -231,7 +234,7 @@ private extension NextTeamView {
                 Circle()
                     .stroke(
                         isSelected ? team.color : DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.medium),
-                        lineWidth: 2
+                        lineWidth: DesignBook.Size.strokeThick
                     )
                     .frame(width: selectionIndicatorSize, height: selectionIndicatorSize)
 
@@ -255,7 +258,7 @@ private extension NextTeamView {
     func roleBadge(isSelected: Bool) -> some View {
         let text = localized(isSelected ? "game.nextTeam.role.explaining" : "game.nextTeam.role.guessing")
         let fg: Color = isSelected ? DesignBook.Color.teamText(for: team.color) : DesignBook.Color.Text.secondary
-        let bg: Color = isSelected ? team.color.opacity(0.15) : DesignBook.Color.Background.card
+        let bg: Color = isSelected ? team.color.opacity(DesignBook.Opacity.tint) : DesignBook.Color.Background.card
 
         return Text(text)
             .font(DesignBook.Font.subheadlineSemibold)
@@ -263,7 +266,7 @@ private extension NextTeamView {
             .tracking(1.1)
             .foregroundStyle(fg)
             .padding(.horizontal, DesignBook.Spacing.sm)
-            .padding(.vertical, 6)
+            .padding(.vertical, DesignBook.Spacing.xsPlus)
             .background(Capsule().fill(bg))
     }
 
@@ -295,14 +298,14 @@ private extension NextTeamView {
         let playerCount = team.players.count
         if !reduceMotion {
             for _ in 1...20 {
-                guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
-                withAnimation(.easeInOut(duration: 0.1)) {
+                guard (try? await Task.sleep(for: DesignBook.Motion.flickerInterval)) != nil else { return }
+                withAnimation(DesignBook.Motion.flicker) {
                     selectedExplainerIndex = Int.random(in: 0..<playerCount)
                 }
             }
-            guard (try? await Task.sleep(for: .milliseconds(300))) != nil else { return }
+            guard (try? await Task.sleep(for: DesignBook.Motion.pickHold)) != nil else { return }
         }
-        withAnimation(reduceMotion ? nil : .spring(response: 0.5, dampingFraction: 0.6)) {
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
             selectedExplainerIndex = Int.random(in: 0..<playerCount)
             isRandomizingExplainer = false
         }

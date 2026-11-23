@@ -42,7 +42,7 @@ struct OnlineResultsView: View {
                 }
             }
             .task {
-                try? await Task.sleep(for: .milliseconds(180))
+                try? await Task.sleep(for: DesignBook.Motion.celebrationDelay)
                 hasCelebrated = true
                 announceWinners()
             }
@@ -86,8 +86,8 @@ private extension OnlineResultsView {
             ZStack {
                 Circle()
                     .fill(DesignBook.Gradient.celebration)
-                    .frame(width: 96, height: 96)
-                    .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.4), radius: 18, x: 0, y: 8)
+                    .frame(width: DesignBook.Size.heroDiscSmall, height: DesignBook.Size.heroDiscSmall)
+                    .shadow(.softCelebration)
 
                 Image(systemName: "trophy.fill")
                     .font(DesignBook.IconFont.extraLarge.bold())
@@ -130,7 +130,7 @@ private extension OnlineResultsView {
                         .font(DesignBook.Font.displaySmall)
                         .foregroundStyle(DesignBook.Color.Text.primary)
                     ForEach(winners, id: \.id) { winner in
-                        VStack(spacing: 4) {
+                        VStack(spacing: DesignBook.Spacing.xs) {
                             Text(winner.name)
                                 .font(DesignBook.Font.title1)
                                 .foregroundStyle(DesignBook.Color.teamText(for: winner.color))
@@ -153,7 +153,7 @@ private extension OnlineResultsView {
                 .fill(DesignBook.Color.Background.card)
                 .overlay {
                     RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                        .fill(DesignBook.Gradient.celebration.opacity(0.18))
+                        .fill(DesignBook.Gradient.celebration.opacity(DesignBook.Opacity.highlight))
                 }
         }
         .shadow(.large)
@@ -182,7 +182,7 @@ private extension OnlineResultsView {
                         HStack {
                             Circle()
                                 .fill(item.team.color)
-                                .frame(width: 8, height: 8)
+                                .frame(width: DesignBook.Size.dotMedium, height: DesignBook.Size.dotMedium)
                             Text(item.team.name)
                                 .font(DesignBook.Font.body)
                                 .foregroundStyle(DesignBook.Color.Text.primary)
@@ -194,7 +194,7 @@ private extension OnlineResultsView {
                                 .foregroundStyle(DesignBook.Color.Text.secondary)
                                 .monospacedDigit()
                         }
-                        .padding(.vertical, 2)
+                        .padding(.vertical, DesignBook.Spacing.xxs)
                     }
                 }
             }

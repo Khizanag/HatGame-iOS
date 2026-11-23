@@ -39,7 +39,7 @@ private extension ShufflingOverlay {
             let elapsed = context.date.timeIntervalSince(startDate)
             let progress = reduceMotion ? 1 : min(1, elapsed / max(duration, 0.1))
             ZStack {
-                Color.black.opacity(0.55).ignoresSafeArea()
+                DesignBook.Color.scrim.ignoresSafeArea()
 
                 VStack(spacing: DesignBook.Spacing.xl) {
                     hatStage(elapsed: elapsed, progress: progress)
@@ -55,21 +55,17 @@ private extension ShufflingOverlay {
     func hatStage(elapsed: Double, progress: Double) -> some View {
         let slips = SlipSwirl(elapsed: elapsed, progress: progress, isActive: !reduceMotion)
         return ZStack {
-            Circle()
-                .fill(DesignBook.Gradient.primary)
-                .frame(width: 168, height: 168)
-                .blur(radius: 30)
-                .opacity(0.7)
+            HeroGlow(.shuffle, opacity: DesignBook.Opacity.strong)
 
             Color.clear
-                .frame(width: 136, height: 136)
+                .frame(width: DesignBook.Size.heroDisc, height: DesignBook.Size.heroDisc)
                 .glassSurface(in: .circle)
 
             slips.layer(front: false)
             UpturnedHat(landings: slips.landings)
             slips.layer(front: true)
         }
-        .frame(width: 300, height: 240)
+        .frame(width: DesignBook.Size.shuffleStageWidth, height: DesignBook.Size.shuffleStageHeight)
     }
 
     func caption(progress: Double) -> some View {
@@ -84,7 +80,7 @@ private extension ShufflingOverlay {
             ProgressView(value: progress)
                 .progressViewStyle(.linear)
                 .tint(DesignBook.Color.onGradient)
-                .frame(width: 160)
+                .frame(width: DesignBook.Size.shuffleProgressWidth)
                 .opacity(reduceMotion ? 0 : 1)
 
             Text(localized("common.tapToSkip"))
@@ -200,14 +196,14 @@ private struct SlipSwirl {
 
 /// A folded paper slip with a word on it, face hidden.
 private struct Slip: View {
-    static let height: CGFloat = 26
+    static let height = DesignBook.Size.slipHeight
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 5, style: .continuous)
+        RoundedRectangle(cornerRadius: DesignBook.Size.slipCornerRadius, style: .continuous)
             .fill(DesignBook.Color.Background.card)
-            .frame(width: 40, height: Self.height)
+            .frame(width: DesignBook.Size.slipWidth, height: Self.height)
             .overlay {
-                VStack(spacing: 4) {
+                VStack(spacing: DesignBook.Spacing.xs) {
                     Capsule().frame(width: 24, height: 2.5)
                     Capsule().frame(width: 16, height: 2.5)
                 }

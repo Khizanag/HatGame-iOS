@@ -145,7 +145,7 @@ private extension OnlineWordInputView {
             Button(role: .destructive) { removeWord(at: index) } label: {
                 Image(systemName: "xmark.circle.fill")
                     .font(DesignBook.IconFont.small)
-                    .foregroundStyle(DesignBook.Color.Status.error.opacity(0.7))
+                    .foregroundStyle(DesignBook.Color.Status.error.opacity(DesignBook.Opacity.strong))
                     .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
                     .contentShape(.rect)
             }

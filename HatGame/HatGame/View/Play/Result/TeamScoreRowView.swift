@@ -26,14 +26,17 @@ struct TeamScoreRowView: View {
             scoreView
         }
         .padding(.horizontal, DesignBook.Spacing.md)
-        .padding(.vertical, DesignBook.Spacing.sm + 2)
+        .padding(.vertical, DesignBook.Spacing.sm + DesignBook.Spacing.xxs)
         .background {
             RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous)
                 .fill(rowBackgroundColor)
                 .overlay {
                     if isWinner {
                         RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous)
-                            .strokeBorder(color.opacity(0.35), lineWidth: 1.5)
+                            .strokeBorder(
+                                color.opacity(DesignBook.Opacity.outline),
+                                lineWidth: DesignBook.Size.strokeRegular
+                            )
                     }
                 }
         }
@@ -74,7 +77,7 @@ private extension TeamScoreRowView {
     var indicator: some View {
         Circle()
             .fill(color)
-            .frame(width: 10, height: 10)
+            .frame(width: DesignBook.Size.dotRegular, height: DesignBook.Size.dotRegular)
     }
 
     var nameView: some View {
@@ -89,19 +92,19 @@ private extension TeamScoreRowView {
             value: score,
             font: DesignBook.Font.title1,
             color: isWinner ? DesignBook.Color.teamText(for: color) : DesignBook.Color.Text.secondary,
-            duration: 0.6
+            duration: DesignBook.Motion.scoreCountShort
         )
     }
 
     var rowBackgroundColor: Color {
-        isWinner ? color.opacity(0.10) : DesignBook.Color.Background.secondary
+        isWinner ? color.opacity(DesignBook.Opacity.light) : DesignBook.Color.Background.secondary
     }
 
     var rankBackgroundColor: Color {
         switch rank {
         case 1: return DesignBook.Color.opaque(color)
-        case 2: return DesignBook.Color.Text.tertiary.opacity(0.4)
-        case 3: return DesignBook.Color.Text.tertiary.opacity(0.25)
+        case 2: return DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.disabled)
+        case 3: return DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.soft)
         default: return DesignBook.Color.Background.secondary
         }
     }

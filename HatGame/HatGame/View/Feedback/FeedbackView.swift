@@ -162,8 +162,8 @@ private extension FeedbackView {
             Spacer()
             ZStack {
                 Circle()
-                    .fill(DesignBook.Color.Status.success.opacity(0.15))
-                    .frame(width: 120, height: 120)
+                    .fill(DesignBook.Color.Status.success.opacity(DesignBook.Opacity.tint))
+                    .frame(width: DesignBook.Size.heroEmblem, height: DesignBook.Size.heroEmblem)
                 Image(systemName: "checkmark.circle.fill")
                     .font(DesignBook.IconFont.extraLarge)
                     .foregroundStyle(DesignBook.Color.Status.success)

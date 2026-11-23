@@ -189,14 +189,10 @@ private extension MultiplayerSessionView {
         CenteredScrollView {
             VStack(spacing: DesignBook.Spacing.lg) {
                 ZStack {
-                    Circle()
-                        .fill(DesignBook.Gradient.primary)
-                        .frame(width: 120, height: 120)
-                        .blur(radius: 28)
-                        .opacity(0.55)
+                    HeroGlow(.status, opacity: DesignBook.Opacity.glow)
                     Circle()
                         .fill(DesignBook.Color.Background.card)
-                        .frame(width: 96, height: 96)
+                        .frame(width: DesignBook.Size.heroDiscSmall, height: DesignBook.Size.heroDiscSmall)
                         .shadow(.medium)
                     Image(systemName: connecting.symbol)
                         .font(DesignBook.IconFont.sized(42, relativeTo: .largeTitle, weight: .bold))

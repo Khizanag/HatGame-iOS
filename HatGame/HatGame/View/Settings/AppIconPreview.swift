@@ -28,7 +28,10 @@ struct AppIconPreview: View {
             .clipShape(iconShape)
             .overlay {
                 iconShape
-                    .strokeBorder(DesignBook.Color.Text.primary.opacity(0.12), lineWidth: 0.5)
+                    .strokeBorder(
+                        DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.light),
+                        lineWidth: DesignBook.Size.hairline
+                    )
             }
             .accessibilityHidden(true)
     }
@@ -47,8 +50,8 @@ struct AppIconSelectedBadge: View {
         ZStack {
             Circle()
                 .fill(DesignBook.Color.onGradient)
-                .frame(width: 28, height: 28)
-                .shadow(color: .black.opacity(0.2), radius: 2, x: 0, y: 1)
+                .frame(width: DesignBook.Size.selectedBadgeSize, height: DesignBook.Size.selectedBadgeSize)
+                .shadow(.small)
 
             Image(systemName: "checkmark.circle.fill")
                 .font(DesignBook.IconFont.medium)

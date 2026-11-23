@@ -19,7 +19,7 @@ struct SettingsIconTile: View {
     var body: some View {
         ZStack {
             RoundedRectangle(cornerRadius: DesignBook.Size.smallCardCornerRadius)
-                .fill(tint.opacity(0.15))
+                .fill(tint.opacity(DesignBook.Opacity.tint))
                 .frame(width: tileSize, height: tileSize)
 
             Image(systemName: systemImage)

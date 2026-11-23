@@ -36,7 +36,7 @@ struct ResultsView: View {
             .onAppear(perform: handleAppear)
             .task {
                 guard isFinal else { return }
-                try? await Task.sleep(for: .milliseconds(180))
+                try? await Task.sleep(for: DesignBook.Motion.celebrationDelay)
                 hasCelebrated = true
                 announceWinners()
                 try? await Task.sleep(for: .milliseconds(420))
@@ -116,21 +116,11 @@ private extension ResultsView {
                 .fill(DesignBook.Color.Background.card)
                 .overlay {
                     RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                        .fill(DesignBook.Gradient.celebration.opacity(0.32))
+                        .fill(DesignBook.Gradient.celebration.opacity(DesignBook.Opacity.medium))
                 }
                 .overlay {
                     RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                        .strokeBorder(
-                            LinearGradient(
-                                colors: [
-                                    Color(red: 1.0, green: 0.78, blue: 0.27).opacity(0.6),
-                                    Color(red: 1.0, green: 0.45, blue: 0.40).opacity(0.2),
-                                ],
-                                startPoint: .topLeading,
-                                endPoint: .bottomTrailing
-                            ),
-                            lineWidth: 1.5
-                        )
+                        .strokeBorder(DesignBook.Gradient.celebrationRim, lineWidth: DesignBook.Size.strokeRegular)
                 }
         }
         .shadow(.large)
@@ -139,16 +129,12 @@ private extension ResultsView {
     var trophyIcon: some View {
         ZStack {
             // Ambient halo behind the trophy disc.
-            Circle()
-                .fill(DesignBook.Gradient.celebration)
-                .frame(width: 140, height: 140)
-                .blur(radius: 32)
-                .opacity(0.65)
+            HeroGlow(.trophy, fill: DesignBook.Gradient.celebration, opacity: DesignBook.Opacity.vivid)
 
             Circle()
                 .fill(DesignBook.Gradient.celebration)
-                .frame(width: 96, height: 96)
-                .shadow(color: Color(red: 1.0, green: 0.6, blue: 0.2).opacity(0.55), radius: 22, x: 0, y: 10)
+                .frame(width: DesignBook.Size.heroDiscSmall, height: DesignBook.Size.heroDiscSmall)
+                .shadow(.celebration)
 
             Image(systemName: "trophy.fill")
                 .font(DesignBook.IconFont.extraLarge)

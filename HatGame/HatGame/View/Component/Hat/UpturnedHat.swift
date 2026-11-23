@@ -37,7 +37,7 @@ struct UpturnedHat: View {
             .phaseAnimator([1.0, 1.1], trigger: landings) { hat, scale in
                 hat.scaleEffect(scale, anchor: .bottom)
             } animation: { scale in
-                scale > 1 ? .easeOut(duration: 0.07) : .spring(duration: 0.3, bounce: 0.45)
+                scale > 1 ? DesignBook.Motion.flash : DesignBook.Motion.rebound
             }
             .perspectiveRotation(
                 .degrees(reduceMotion ? 0 : sin(time * 1.3) * 14),
@@ -60,13 +60,13 @@ private extension UpturnedHat {
     var openingGlow: some View {
         Ellipse()
             .fill(DesignBook.Gradient.primary)
-            .frame(width: 76, height: 18)
-            .blur(radius: 8)
+            .frame(width: DesignBook.Size.hatOpeningGlowWidth, height: DesignBook.Size.hatOpeningGlowHeight)
+            .blur(radius: DesignBook.Size.hatOpeningGlowBlur)
             .offset(y: Self.openingY - 4)
             .phaseAnimator([0.45, 0.95], trigger: landings) { glow, opacity in
                 glow.opacity(opacity)
             } animation: { opacity in
-                opacity > 0.5 ? .easeOut(duration: 0.07) : .easeIn(duration: 0.35)
+                opacity > 0.5 ? DesignBook.Motion.flash : DesignBook.Motion.fadeBack
             }
     }
 }

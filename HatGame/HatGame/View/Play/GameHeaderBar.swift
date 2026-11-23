@@ -32,7 +32,7 @@ private extension GameHeaderBar {
         HStack(spacing: DesignBook.Spacing.sm) {
             Circle()
                 .fill(team.color)
-                .frame(width: 10, height: 10)
+                .frame(width: DesignBook.Size.dotRegular, height: DesignBook.Size.dotRegular)
                 .accessibilityHidden(true)
             Text(team.name)
                 .font(DesignBook.Font.title1)
@@ -67,10 +67,10 @@ private struct TurnScoreBadge: View {
         .padding(.vertical, DesignBook.Spacing.sm)
         .background {
             Capsule()
-                .fill(tint.opacity(0.12))
+                .fill(tint.opacity(DesignBook.Opacity.light))
                 .overlay {
                     Capsule()
-                        .strokeBorder(tint.opacity(0.4), lineWidth: 1)
+                        .strokeBorder(tint.opacity(DesignBook.Opacity.disabled), lineWidth: DesignBook.Size.strokeThin)
                 }
         }
         .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: points)

@@ -5,6 +5,7 @@
 //  Created by Giga Khizanishvili on 19.05.26.
 //
 
+import DesignBook
 import SwiftUI
 
 /// Lightweight, dependency-free confetti view used for win/celebration moments.
@@ -105,7 +106,7 @@ private struct ConfettiPiece: View {
     }
 
     var body: some View {
-        RoundedRectangle(cornerRadius: 2)
+        RoundedRectangle(cornerRadius: DesignBook.Size.confettiCornerRadius)
             .fill(color)
             .frame(width: pieceWidth, height: pieceHeight)
             .rotationEffect(.degrees(hasAppeared ? endRotation : rotation))

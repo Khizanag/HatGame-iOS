@@ -47,11 +47,11 @@ struct AppIconCard: View {
 private extension AppIconCard {
     var preview: some View {
         ZStack(alignment: .topTrailing) {
-            AppIconPreview(icon: icon, size: 100)
+            AppIconPreview(icon: icon, size: DesignBook.Size.appIconPreviewLarge)
 
             if isSelected {
                 AppIconSelectedBadge(color: icon.displayColor)
-                    .offset(x: 8, y: -8)
+                    .offset(x: DesignBook.Spacing.sm, y: -DesignBook.Spacing.sm)
             }
         }
     }

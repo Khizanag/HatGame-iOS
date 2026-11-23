@@ -49,9 +49,17 @@ private extension DeveloperInfoView {
 
     var technologiesSection: some View {
         Section {
-            technologyRow("settings.technologies.swiftui", icon: "swift", tint: .orange)
-            technologyRow("settings.technologies.navigation", icon: "arrow.triangle.branch", tint: .blue)
-            technologyRow("settings.technologies.designbook", icon: "paintpalette.fill", tint: .purple)
+            technologyRow("settings.technologies.swiftui", icon: "swift", tint: DesignBook.Color.Tile.orange)
+            technologyRow(
+                "settings.technologies.navigation",
+                icon: "arrow.triangle.branch",
+                tint: DesignBook.Color.Tile.blue
+            )
+            technologyRow(
+                "settings.technologies.designbook",
+                icon: "paintpalette.fill",
+                tint: DesignBook.Color.Tile.purple
+            )
         } header: {
             Text(localized("settings.developerInfo.technologies.title"))
         }
@@ -62,7 +70,7 @@ private extension DeveloperInfoView {
             linkRow(
                 destination: URL(string: "https://github.com/gigakhizanishvili")!,
                 icon: "link",
-                tint: .green,
+                tint: DesignBook.Color.Tile.green,
                 title: "GitHub: @gigakhizanishvili"
             )
         } header: {
@@ -75,7 +83,7 @@ private extension DeveloperInfoView {
     var creditsSection: some View {
         Section {
             HStack(spacing: DesignBook.Spacing.md) {
-                SettingsIconTile(systemImage: "person.fill", tint: .indigo)
+                SettingsIconTile(systemImage: "person.fill", tint: DesignBook.Color.Tile.indigo)
                 titleStack(
                     title: localized("home.director.name"),
                     subtitle: localized("settings.developerInfo.credits.rulesExplainer")
@@ -86,7 +94,7 @@ private extension DeveloperInfoView {
             linkRow(
                 destination: URL(string: "https://en.wiktionary.org/wiki/Category:Georgian_nouns")!,
                 icon: "text.book.closed.fill",
-                tint: .brown,
+                tint: DesignBook.Color.Tile.brown,
                 title: localized("settings.developerInfo.credits.words"),
                 subtitle: localized("settings.developerInfo.credits.wordsLicense")
             )
@@ -100,7 +108,7 @@ private extension DeveloperInfoView {
     /// tester who'd rather tap.
     var testingLabSection: some View {
         Section {
-            SettingsLinkRow(icon: "flask.fill", tint: .teal, title: "Testing Lab") {
+            SettingsLinkRow(icon: "flask.fill", tint: DesignBook.Color.Tile.teal, title: "Testing Lab") {
                 openTestingLab()
             }
             .accessibilityIdentifier("developer.testingLab")

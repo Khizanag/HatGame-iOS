@@ -21,15 +21,11 @@ struct SetupHero: View {
     var body: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             ZStack {
-                Circle()
-                    .fill(DesignBook.Gradient.primary)
-                    .frame(width: 96, height: 96)
-                    .blur(radius: 22)
-                    .opacity(DesignBook.Opacity.semiTransparent)
+                HeroGlow(.setup)
 
                 Circle()
                     .fill(DesignBook.Color.Background.card)
-                    .frame(width: 84, height: 84)
+                    .frame(width: DesignBook.Size.heroDiscCompact, height: DesignBook.Size.heroDiscCompact)
                     .shadow(.medium)
 
                 Image(systemName: systemImage)

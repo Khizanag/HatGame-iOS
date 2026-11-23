@@ -27,7 +27,7 @@ struct TeamNameSuggestionRow: View {
                         }
                     }
                 }
-                .padding(.vertical, 2)
+                .padding(.vertical, DesignBook.Spacing.xxs)
             }
             .scrollClipDisabled()
         }

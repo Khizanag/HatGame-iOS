@@ -426,7 +426,7 @@ private extension WordInputView {
         }
         for (index, word) in request.words.enumerated() {
             if !reduceMotion {
-                let delay: Duration = index == 0 ? .milliseconds(500) : .milliseconds(300)
+                let delay = index == 0 ? DesignBook.Motion.autoFillLead : DesignBook.Motion.autoFillInterval
                 guard (try? await Task.sleep(for: delay)) != nil else { return }
             }
             guard !isCurrentPlayerDone else { return }

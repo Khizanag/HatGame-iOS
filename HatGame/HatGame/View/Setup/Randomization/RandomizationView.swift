@@ -29,8 +29,8 @@ struct RandomizationView: View {
     @State private var revealBurst = 0
     @State private var teamPicks = 0
 
-    private static let fullShuffleSeconds = 2.6
-    private static let shortShuffleSeconds = 0.8
+    private static let fullShuffleSeconds = DesignBook.Motion.fullShuffle
+    private static let shortShuffleSeconds = DesignBook.Motion.shortShuffle
 
     private var selectedTeam: Team? {
         gameManager.configuration.teams[safe: selectedStartingTeamIndex]
@@ -114,18 +114,14 @@ private extension RandomizationView {
     var hero: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             ZStack {
-                Circle()
-                    .fill(DesignBook.Gradient.primary)
-                    .frame(width: 150, height: 150)
-                    .blur(radius: 34)
-                    .opacity(DesignBook.Opacity.semiTransparent)
+                HeroGlow(.filledHat)
                 Circle()
                     .fill(DesignBook.Color.Background.card)
-                    .frame(width: 116, height: 116)
+                    .frame(width: DesignBook.Size.heroDiscMedium, height: DesignBook.Size.heroDiscMedium)
                     .shadow(.large)
                 UpturnedHat()
             }
-            .frame(height: 150)
+            .frame(height: DesignBook.Size.Glow.filledHat.diameter)
             .decorativeHeroSizing()
             .accessibilityHidden(true)
 
@@ -202,7 +198,7 @@ private extension RandomizationView {
                         )
                     }
                     .buttonStyle(.glassCard(selection: selectedStartingTeamIndex == index ? team.color : nil))
-                    .shadow(color: team.color.opacity(selectedStartingTeamIndex == index ? 0.45 : 0), radius: 14)
+                    .shadow(.selectionGlow(team.color, isSelected: selectedStartingTeamIndex == index))
                     }
             }
         }
@@ -249,7 +245,7 @@ private extension RandomizationView {
         if !reduceMotion, teamCount > 1 {
             guard await spinRoulette(to: winner, teamCount: teamCount) else { return }
         }
-        withAnimation(reduceMotion ? nil : .spring(response: 0.55, dampingFraction: 0.72)) {
+        withAnimation(reduceMotion ? nil : DesignBook.Motion.reveal) {
             selectedStartingTeamIndex = winner
             isRandomizingTeam = false
             showTeamReveal = true
@@ -267,11 +263,11 @@ private extension RandomizationView {
             let fraction = Double(step) / Double(steps)
             let delay = 0.05 + 0.34 * pow(fraction, 3)
             guard (try? await Task.sleep(for: .seconds(delay))) != nil else { return false }
-            withAnimation(.snappy(duration: 0.14)) {
+            withAnimation(DesignBook.Motion.step) {
                 selectedStartingTeamIndex = (start + step) % teamCount
             }
         }
-        return (try? await Task.sleep(for: .milliseconds(380))) != nil
+        return (try? await Task.sleep(for: DesignBook.Motion.rouletteHold)) != nil
     }
 
     /// A second Play Again in a row pops back to this same screen, still
@@ -299,7 +295,8 @@ private extension RandomizationView {
     /// starts it sooner.
     func startGameAfterShuffle() async {
         guard isShuffling else { return }
-        guard (try? await Task.sleep(for: .seconds(shuffleDuration + 0.2))) != nil else { return }
+        let wait = Duration.seconds(shuffleDuration + DesignBook.Motion.shuffleSettle)
+        guard (try? await Task.sleep(for: wait)) != nil else { return }
         startGame()
     }
 

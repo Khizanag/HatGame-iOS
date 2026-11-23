@@ -50,12 +50,15 @@ private extension RevealedTeamCard {
             Circle()
                 .fill(
                     LinearGradient(
-                        colors: [team.color.opacity(0.3), team.color.opacity(0.1)],
+                        colors: [
+                            team.color.opacity(DesignBook.Opacity.medium),
+                            team.color.opacity(DesignBook.Opacity.light),
+                        ],
                         startPoint: .topLeading,
                         endPoint: .bottomTrailing
                     )
                 )
-                .frame(width: 80, height: 80)
+                .frame(width: DesignBook.Size.heroTrophy, height: DesignBook.Size.heroTrophy)
 
             Image(systemName: "trophy.fill")
                 .font(DesignBook.IconFont.large)
@@ -69,8 +72,8 @@ private extension RevealedTeamCard {
             ForEach(team.players) { player in
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Circle()
-                        .fill(team.color.opacity(0.3))
-                        .frame(width: 8, height: 8)
+                        .fill(team.color.opacity(DesignBook.Opacity.medium))
+                        .frame(width: DesignBook.Size.dotMedium, height: DesignBook.Size.dotMedium)
 
                     Text(player.name)
                         .font(DesignBook.Font.body)

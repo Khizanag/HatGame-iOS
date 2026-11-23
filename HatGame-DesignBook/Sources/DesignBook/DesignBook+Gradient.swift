@@ -35,9 +35,32 @@ extension DesignBook {
 
         /// Warm gradient for celebratory winner moments.
         public static let celebration = LinearGradient(
+            colors: celebrationColors,
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
+        /// The colors of `celebration`.
+        public static let celebrationColors: [SwiftUI.Color] = [
+            SwiftUI.Color(red: 1.00, green: 0.78, blue: 0.27),
+            SwiftUI.Color(red: 1.00, green: 0.45, blue: 0.40),
+        ]
+
+        /// The rim around the winner card, fading along `celebration`.
+        public static let celebrationRim = LinearGradient(
             colors: [
-                SwiftUI.Color(red: 1.00, green: 0.78, blue: 0.27),
-                SwiftUI.Color(red: 1.00, green: 0.45, blue: 0.40),
+                celebrationColors[0].opacity(DesignBook.Opacity.semiTransparent),
+                celebrationColors[1].opacity(DesignBook.Opacity.highlight),
+            ],
+            startPoint: .topLeading,
+            endPoint: .bottomTrailing
+        )
+
+        /// The rim around a hero disc: the accent catching its top edge.
+        public static let heroRim = LinearGradient(
+            colors: [
+                DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.disabled),
+                DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.transparent),
             ],
             startPoint: .topLeading,
             endPoint: .bottomTrailing

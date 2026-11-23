@@ -43,7 +43,7 @@ struct OnlineRoundResultsView: View {
                 }
             }
             .task {
-                try? await Task.sleep(for: .milliseconds(180))
+                try? await Task.sleep(for: DesignBook.Motion.celebrationDelay)
                 guard !Task.isCancelled else { return }
                 hasCelebrated = true
             }
@@ -108,10 +108,10 @@ private extension OnlineRoundResultsView {
                     let team = item.element
                     let isLeader = team.id == roundLeader?.id
                     HStack(spacing: DesignBook.Spacing.md) {
-                        medalIcon(for: rank).frame(width: 30)
+                        medalIcon(for: rank).frame(width: DesignBook.Size.medalColumnWidth)
                         Circle()
                             .fill(team.color)
-                            .frame(width: 10, height: 10)
+                            .frame(width: DesignBook.Size.dotRegular, height: DesignBook.Size.dotRegular)
                         Text(team.name)
                             .font(DesignBook.Font.body)
                             .foregroundStyle(DesignBook.Color.Text.primary)
@@ -124,7 +124,7 @@ private extension OnlineRoundResultsView {
                             color: isLeader
                                 ? DesignBook.Color.teamText(for: team.color)
                                 : DesignBook.Color.Text.secondary,
-                            duration: 0.6
+                            duration: DesignBook.Motion.scoreCountShort
                         )
                     }
                     .accessibilityElement(children: .combine)
@@ -153,17 +153,17 @@ private extension OnlineRoundResultsView {
                             .foregroundStyle(rank == 0
                                 ? DesignBook.Color.onAccent(for: team.color)
                                 : DesignBook.Color.Text.primary)
-                            .frame(width: 28, height: 28)
+                            .frame(width: DesignBook.Size.rankBadgeSize, height: DesignBook.Size.rankBadgeSize)
                             .background {
                                 Circle().fill(rank == 0
                                     ? team.color
-                                    : DesignBook.Color.Text.tertiary.opacity(0.4))
+                                    : DesignBook.Color.Text.tertiary.opacity(DesignBook.Opacity.disabled))
                             }
                             .monospacedDigit()
 
                         Circle()
                             .fill(team.color)
-                            .frame(width: 10, height: 10)
+                            .frame(width: DesignBook.Size.dotRegular, height: DesignBook.Size.dotRegular)
 
                         Text(team.name)
                             .font(DesignBook.Font.body)
@@ -179,7 +179,7 @@ private extension OnlineRoundResultsView {
                             color: rank == 0
                                 ? DesignBook.Color.teamText(for: team.color)
                                 : DesignBook.Color.Text.secondary,
-                            duration: 0.7
+                            duration: DesignBook.Motion.scoreCountMedium
                         )
                     }
                     .accessibilityElement(children: .combine)

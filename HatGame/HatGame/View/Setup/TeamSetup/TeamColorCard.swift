@@ -68,7 +68,7 @@ private extension TeamColorCard {
                 if !isExpanded {
                     Circle()
                         .fill(color)
-                        .frame(width: 24, height: 24)
+                        .frame(width: DesignBook.Size.smallSwatchSize, height: DesignBook.Size.smallSwatchSize)
                 }
 
                 Image(systemName: isExpanded ? "chevron.up" : "chevron.down")

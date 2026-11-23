@@ -118,20 +118,16 @@ private extension WordGenerationView {
 
     var hatHero: some View {
         ZStack {
-            Circle()
-                .fill(DesignBook.Gradient.primary)
-                .frame(width: 168, height: 168)
-                .blur(radius: 36)
-                .opacity(DesignBook.Opacity.semiTransparent)
+            HeroGlow(.wordDraw)
 
             Circle()
                 .fill(DesignBook.Color.Background.card)
-                .frame(width: 136, height: 136)
+                .frame(width: DesignBook.Size.heroDisc, height: DesignBook.Size.heroDisc)
                 .shadow(.large)
 
             Text(verbatim: "🎩")
                 .font(DesignBook.IconFont.emoji)
-                .offset(y: reduceMotion ? 0 : (isHatFloating ? -8 : 8))
+                .offset(y: hatFloatOffset)
         }
         .overlay(alignment: .bottomTrailing) {
             if phase == .ready {
@@ -140,10 +136,16 @@ private extension WordGenerationView {
                     .foregroundStyle(DesignBook.Color.Status.success)
                     .background(Circle().fill(DesignBook.Color.Background.primary))
                     .transition(.scale.combined(with: .opacity))
-                    .offset(x: 6, y: 6)
+                    .offset(x: DesignBook.Spacing.xsPlus, y: DesignBook.Spacing.xsPlus)
             }
         }
         .accessibilityHidden(true)
+    }
+
+    var hatFloatOffset: CGFloat {
+        guard !reduceMotion else { return 0 }
+        let amplitude = DesignBook.Size.hatFloatAmplitude
+        return isHatFloating ? -amplitude : amplitude
     }
 
     var statusSection: some View {
@@ -214,7 +216,7 @@ private extension WordGenerationView {
         }
 
         if !reduceMotion {
-            withAnimation(.easeInOut(duration: 1.6).repeatForever(autoreverses: true)) {
+            withAnimation(DesignBook.Motion.hatBob) {
                 isHatFloating = true
             }
         }
@@ -223,7 +225,7 @@ private extension WordGenerationView {
         let isShort = reduceMotion || SessionAnimations.hasPlayedWordDraw
         SessionAnimations.hasPlayedWordDraw = true
         let drawCount = isShort ? 5 : 14
-        let interval: Duration = reduceMotion ? .milliseconds(340) : .milliseconds(160)
+        let interval = reduceMotion ? DesignBook.Motion.reducedDrawInterval : DesignBook.Motion.drawInterval
         drawWord(from: pool)
         for draw in 2...drawCount {
             guard (try? await Task.sleep(for: interval)) != nil else {
@@ -232,7 +234,7 @@ private extension WordGenerationView {
             }
             if isSkipRequested { break }
             drawWord(from: pool)
-            withAnimation(reduceMotion ? nil : .linear(duration: 0.16)) {
+            withAnimation(reduceMotion ? nil : DesignBook.Motion.drawProgress) {
                 progress = Double(draw) / Double(drawCount)
             }
         }
@@ -252,13 +254,13 @@ private extension WordGenerationView {
     /// opacity cross-fade under Reduce Motion.
     func drawWord(from words: [String]) {
         if reduceMotion {
-            withAnimation(.easeInOut(duration: 0.3)) {
+            withAnimation(DesignBook.Motion.standard) {
                 displayWord = words.randomElement() ?? ""
             }
         } else {
             displayWord = words.randomElement() ?? ""
-            wordBlur = 16
-            withAnimation(.easeOut(duration: 0.34)) {
+            wordBlur = DesignBook.Size.drawnWordBlur
+            withAnimation(DesignBook.Motion.sharpen) {
                 wordBlur = 0
             }
         }

@@ -22,15 +22,11 @@ struct HatFillAnimation: View {
 
     var body: some View {
         ZStack {
-            Circle()
-                .fill(DesignBook.Gradient.primary)
-                .frame(width: 176, height: 176)
-                .blur(radius: 40)
-                .opacity(DesignBook.Opacity.semiTransparent)
+            HeroGlow(.hatFill)
 
             Circle()
                 .fill(DesignBook.Color.Background.card)
-                .frame(width: 136, height: 136)
+                .frame(width: DesignBook.Size.heroDisc, height: DesignBook.Size.heroDisc)
                 .shadow(.large)
 
             // Under the hat, so a chip reaching the opening slips behind the brim.
@@ -40,7 +36,7 @@ struct HatFillAnimation: View {
 
             UpturnedHat(landings: landings)
         }
-        .frame(height: 196)
+        .frame(height: DesignBook.Size.hatFillStageHeight)
         .frame(maxWidth: .infinity)
         .task(id: labels) { await dropWords() }
         .accessibilityHidden(true)

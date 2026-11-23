@@ -53,14 +53,10 @@ private extension LocalHostSetupView {
     var hero: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
             ZStack {
-                Circle()
-                    .fill(DesignBook.Gradient.primary)
-                    .frame(width: 96, height: 96)
-                    .blur(radius: 22)
-                    .opacity(0.55)
+                HeroGlow(.setup, opacity: DesignBook.Opacity.glow)
                 Circle()
                     .fill(DesignBook.Color.Background.card)
-                    .frame(width: 84, height: 84)
+                    .frame(width: DesignBook.Size.heroDiscCompact, height: DesignBook.Size.heroDiscCompact)
                     .shadow(.medium)
                 Image(systemName: "antenna.radiowaves.left.and.right")
                     .font(DesignBook.IconFont.sized(36, relativeTo: .largeTitle, weight: .bold))
