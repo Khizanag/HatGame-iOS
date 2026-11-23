@@ -162,6 +162,7 @@ private extension TimerSettingsView {
                 }
             }
         }
+        .accentTint()
     }
 
     var continueButton: some View {

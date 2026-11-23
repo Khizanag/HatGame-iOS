@@ -96,7 +96,7 @@ private struct FlyingChip: View {
     var body: some View {
         Text(drop.label)
             .font(DesignBook.Font.subheadlineSemibold)
-            .foregroundStyle(DesignBook.Color.Text.accent)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .lineLimit(1)
             .padding(.horizontal, DesignBook.Spacing.sm)
             .padding(.vertical, DesignBook.Spacing.xs)

@@ -78,7 +78,7 @@ private extension OnlineWaitingView {
 
             Text(verbatim: "\(submittedCount)/\(totalCount)")
                 .font(DesignBook.Font.title3)
-                .foregroundStyle(DesignBook.Color.Text.accent)
+                .foregroundStyle(DesignBook.Color.Text.primary)
                 .monospacedDigit()
                 .contentTransition(.numericText())
         }
@@ -90,7 +90,7 @@ private extension OnlineWaitingView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(localized("online.playersStatus"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
@@ -120,7 +120,7 @@ private extension OnlineWaitingView {
                         .foregroundStyle(DesignBook.Color.Status.success)
                 } else {
                     ProgressView()
-                        .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                        .progressViewStyle(.circular)
                         .scaleEffect(0.7)
                 }
             }

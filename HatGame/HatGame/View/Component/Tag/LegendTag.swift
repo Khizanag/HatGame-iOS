@@ -16,8 +16,6 @@ struct LegendTag: View {
     let range: String
     let isHighlighted: Bool
 
-    @Environment(\.accessibilityReduceMotion) private var reduceMotion
-
     var body: some View {
         VStack(spacing: DesignBook.Spacing.xs) {
             indicator
@@ -33,16 +31,13 @@ struct LegendTag: View {
 
 // MARK: - Sub-views
 private extension LegendTag {
+    /// Filled for the band the timer is in, an outline otherwise, so the
+    /// mark reads by shape as well as by colour (constitution article 8).
     var indicator: some View {
-        Circle()
-            .fill(
-                isHighlighted
-                ? DesignBook.Color.Text.accent
-                : DesignBook.Color.Text.tertiary.opacity(0.25)
-            )
-            .frame(width: 6, height: 6)
-            .scaleEffect(isHighlighted ? 1.25 : 1)
-            .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: isHighlighted)
+        Image(systemName: isHighlighted ? "circle.fill" : "circle")
+            .font(DesignBook.Font.caption2)
+            .foregroundStyle(isHighlighted ? DesignBook.Color.Text.primary : DesignBook.Color.Text.tertiary)
+            .contentTransition(.symbolEffect(.replace))
     }
 
     var label: some View {
@@ -51,7 +46,7 @@ private extension LegendTag {
                 .font(DesignBook.Font.subheadlineSemibold)
                 .foregroundStyle(
                     isHighlighted
-                    ? DesignBook.Color.Text.accent
+                    ? DesignBook.Color.Text.primary
                     : DesignBook.Color.Text.secondary
                 )
 
@@ -59,7 +54,7 @@ private extension LegendTag {
                 .font(DesignBook.Font.subheadline)
                 .foregroundStyle(
                     isHighlighted
-                    ? DesignBook.Color.Text.accent.opacity(0.8)
+                    ? DesignBook.Color.Text.secondary
                     : DesignBook.Color.Text.tertiary
                 )
                 .monospacedDigit()

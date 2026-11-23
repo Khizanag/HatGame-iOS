@@ -78,7 +78,7 @@ private extension RoomJoinView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "number")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(localized("joinRoom.roomCode"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
@@ -130,7 +130,7 @@ private extension RoomJoinView {
         Group {
             if isJoining {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                    .progressViewStyle(.circular)
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else {

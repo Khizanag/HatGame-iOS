@@ -27,7 +27,6 @@ struct AutoFillButton: View {
                     .symbolEffect(.pulse, options: .repeating, isActive: isAutoFilling && !reduceMotion)
             }
             .font(DesignBook.Font.body)
-            .foregroundStyle(DesignBook.Color.Text.accent)
             .frame(maxWidth: .infinity)
         }
         .glassButtonStyle()

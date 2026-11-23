@@ -62,7 +62,7 @@ struct OnlineNextTeamView: View {
     }
 
     private var tint: Color {
-        currentTeam?.color ?? DesignBook.Color.Text.accent
+        currentTeam?.color ?? TeamDefaultColorGenerator.defaultColors[0]
     }
 
     private var currentRound: OnlineGameRound { gameState?.currentRound ?? .first }
@@ -141,7 +141,7 @@ private extension OnlineNextTeamView {
                     Spacer()
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .font(DesignBook.Font.subheadline)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
                 }
 
                 if let explainer {
@@ -159,7 +159,7 @@ private extension OnlineNextTeamView {
                         HStack(spacing: DesignBook.Spacing.xs) {
                             Image(systemName: "lightbulb.fill")
                                 .font(DesignBook.Font.subheadline)
-                                .foregroundStyle(DesignBook.Color.Text.accent)
+                                .foregroundStyle(DesignBook.Color.Text.tertiary)
                             Text(localized("game.nextTeam.role.guessing"))
                                 .font(DesignBook.Font.caption1Semibold)
                                 .eyebrowUppercase()
@@ -171,7 +171,7 @@ private extension OnlineNextTeamView {
                             ForEach(guessers, id: \.id) { guesser in
                                 HStack(spacing: DesignBook.Spacing.sm) {
                                     Circle()
-                                        .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.medium))
+                                        .fill(DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.medium))
                                         .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
                                     Text(guesser.name)
                                         .font(DesignBook.Font.body)
@@ -179,7 +179,7 @@ private extension OnlineNextTeamView {
                                     if guesser.id == roomManager.currentPlayerId {
                                         Text(localized("onlineNextTeam.you"))
                                             .font(DesignBook.Font.subheadlineSemibold)
-                                            .foregroundStyle(DesignBook.Color.Text.accent)
+                                            .foregroundStyle(DesignBook.Color.Text.primary)
                                     }
                                 }
                             }

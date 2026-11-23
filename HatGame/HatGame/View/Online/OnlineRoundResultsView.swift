@@ -198,7 +198,7 @@ private extension OnlineRoundResultsView {
 
                 Text(round.title)
                     .font(DesignBook.Font.displaySmall)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
 
                 Text(round.description)
                     .font(DesignBook.Font.body)

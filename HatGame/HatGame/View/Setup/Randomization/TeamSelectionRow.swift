@@ -34,7 +34,7 @@ struct TeamSelectionRow: View {
 
             Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                 .font(DesignBook.IconFont.medium)
-                .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
+                .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
         }
         .accessibilityElement(children: .combine)
         .accessibilityAddTraits(isSelected ? .isSelected : [])

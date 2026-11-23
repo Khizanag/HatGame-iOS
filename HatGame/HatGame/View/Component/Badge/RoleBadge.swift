@@ -27,7 +27,7 @@ struct RoleBadge: View {
 
         var textColor: Color {
             switch self {
-            case .host: DesignBook.Color.Text.accent
+            case .host: DesignBook.Color.Text.primary
             case .you: DesignBook.Color.Text.primary
             case .noTeam: DesignBook.Color.Text.tertiary
             }
@@ -35,7 +35,7 @@ struct RoleBadge: View {
 
         var backgroundColor: Color {
             switch self {
-            case .host: DesignBook.Color.Text.accent.opacity(0.15)
+            case .host: DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.light)
             case .you: DesignBook.Color.Background.secondary
             case .noTeam: DesignBook.Color.Background.secondary.opacity(0.6)
             }

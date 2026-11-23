@@ -67,7 +67,7 @@ private extension GameSettingsRow {
         HStack(spacing: DesignBook.Spacing.sm) {
             Image(systemName: icon)
                 .font(DesignBook.IconFont.small)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
+                .foregroundStyle(DesignBook.Color.Text.primary)
                 .frame(width: iconWidth)
 
             Text(title)
@@ -79,7 +79,7 @@ private extension GameSettingsRow {
     var valueLabel: some View {
         Text(formattedValue)
             .font(DesignBook.Font.title3)
-            .foregroundStyle(DesignBook.Color.Text.accent)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .monospacedDigit()
             .contentTransition(.numericText(value: Double(value)))
             .animation(reduceMotion ? nil : DesignBook.Motion.snappy, value: value)

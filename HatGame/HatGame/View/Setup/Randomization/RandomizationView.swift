@@ -170,7 +170,6 @@ private extension RandomizationView {
                         Text(localized("randomization.startingTeam.randomize"))
                             .font(DesignBook.Font.subheadline)
                     }
-                    .foregroundStyle(DesignBook.Color.Text.accent)
                 }
                 .glassButtonStyle()
                 .buttonBorderShape(.capsule)
@@ -195,8 +194,7 @@ private extension RandomizationView {
                     }
                     .buttonStyle(.glassCard(selection: selectedStartingTeamIndex == index ? team.color : nil))
                     .shadow(color: team.color.opacity(selectedStartingTeamIndex == index ? 0.45 : 0), radius: 14)
-                    .scaleEffect(selectedStartingTeamIndex == index ? 1.03 : 1.0)
-                }
+                    }
             }
         }
     }

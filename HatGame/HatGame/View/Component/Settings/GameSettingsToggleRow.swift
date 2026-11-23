@@ -18,7 +18,7 @@ struct GameSettingsToggleRow: View {
     let title: String
     var subtitle: String?
     @Binding var isOn: Bool
-    var tint: Color = DesignBook.Color.Text.accent
+    var tint: Color = DesignBook.Color.Text.primary
 
     @ScaledMetric(relativeTo: .title3) private var iconWidth = DesignBook.Size.iconSize
 
@@ -43,6 +43,7 @@ struct GameSettingsToggleRow: View {
                 }
             }
         }
+        .accentTint()
         .padding(.vertical, DesignBook.Spacing.xs)
     }
 }

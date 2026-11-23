@@ -16,14 +16,15 @@ struct PlayerStepIndicator: View {
     var body: some View {
         HStack(spacing: DesignBook.Spacing.xs) {
             ForEach(0..<playerCount, id: \.self) { index in
+                // Done and current steps are filled, the rest only outlined,
+                // so the step reads by shape as well as colour (article 8).
                 Capsule()
-                    .fill(color(for: index))
-                    .frame(height: 6)
-                    .overlay {
-                        if index == currentIndex {
-                            Capsule().stroke(DesignBook.Color.Text.accent, lineWidth: 2)
-                        }
-                    }
+                    .fill(index <= currentIndex ? color(for: index) : .clear)
+                    .strokeBorder(
+                        index <= currentIndex ? .clear : DesignBook.Color.Text.tertiary,
+                        lineWidth: 1
+                    )
+                    .frame(height: DesignBook.Size.dotSmall)
             }
         }
         // Color alone can't say which player is up; VoiceOver hears the step.

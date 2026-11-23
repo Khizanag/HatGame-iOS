@@ -182,8 +182,9 @@ private extension WordInputView {
                 Spacer()
                 Text(verbatim: "\(playerWords.count)/\(wordsPerPlayer)")
                     .font(DesignBook.Font.title1)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .monospacedDigit()
+                    .contentTransition(.numericText())
             }
             ProgressView(value: Double(playerWords.count), total: Double(wordsPerPlayer))
                 .tint(DesignBook.Color.Text.accent)

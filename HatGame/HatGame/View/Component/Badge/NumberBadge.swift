@@ -8,67 +8,33 @@
 import DesignBook
 import SwiftUI
 
+/// A row's place or a count beside a heading, in a disc: the one way the app
+/// draws a small number (constitution article 30). Scales with the text
+/// beside it, and its digits never shift (article 9).
 struct NumberBadge: View {
     let number: Int
-    let size: CGFloat
-    let backgroundColor: Color
-    let textColor: Color
-    let font: Font
 
-    @ScaledMetric(relativeTo: .subheadline) private var scale: CGFloat = 1
-
-    init(
-        number: Int,
-        size: CGFloat = DesignBook.Size.badgeSize,
-        backgroundColor: Color = DesignBook.Color.Text.accent,
-        textColor: Color = .white,
-        font: Font = DesignBook.Font.subheadlineSemibold
-    ) {
-        self.number = number
-        self.size = size
-        self.backgroundColor = backgroundColor
-        self.textColor = textColor
-        self.font = font
-    }
+    @ScaledMetric(relativeTo: .subheadline) private var size = DesignBook.Size.badgeSize
 
     var body: some View {
         Text(verbatim: "\(number)")
-            .font(font)
-            .foregroundStyle(textColor)
-            .frame(width: size * scale, height: size * scale)
-            .background(backgroundColor)
-            .clipShape(Circle())
+            .font(DesignBook.Font.subheadline)
+            .monospacedDigit()
+            .contentTransition(.numericText())
+            .foregroundStyle(DesignBook.Color.Text.secondary)
+            .lineLimit(1)
+            .minimumScaleFactor(0.6)
+            .frame(minWidth: size, minHeight: size)
+            .padding(.horizontal, number > 9 ? DesignBook.Spacing.xs : 0)
+            .background(DesignBook.Color.Background.secondary, in: .capsule)
     }
 }
 
 // MARK: - Preview
 #Preview {
-    VStack(spacing: DesignBook.Spacing.lg) {
-        // Default style
+    HStack(spacing: DesignBook.Spacing.lg) {
         NumberBadge(number: 1)
-
-        // Custom size
-        NumberBadge(
-            number: 42,
-            size: DesignBook.Size.mediumIconSize,
-            backgroundColor: .green
-        )
-
-        // Player number style
-        NumberBadge(
-            number: 3,
-            size: DesignBook.Size.playerNumberBadgeSize,
-            backgroundColor: DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight),
-            textColor: DesignBook.Color.Text.accent
-        )
-
-        // Rank indicator
-        NumberBadge(
-            number: 5,
-            size: DesignBook.Size.dotLarge,
-            backgroundColor: DesignBook.Color.Status.success,
-            font: DesignBook.Font.subheadline
-        )
+        NumberBadge(number: 12)
     }
     .padding()
 }

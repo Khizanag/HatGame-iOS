@@ -66,7 +66,7 @@ private extension RoomSetupForm {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "gearshape.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(localized("createRoom.gameSettings"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
@@ -117,7 +117,7 @@ private extension RoomSetupForm {
         Group {
             if isWorking {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                    .progressViewStyle(.circular)
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else {

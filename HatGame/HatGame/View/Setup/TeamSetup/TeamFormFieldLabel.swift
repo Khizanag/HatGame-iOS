@@ -20,7 +20,7 @@ struct TeamFormFieldLabel: View {
                 .foregroundStyle(DesignBook.Color.Text.secondary)
         } icon: {
             Image(systemName: icon)
-                .foregroundStyle(DesignBook.Color.Text.accent)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
         }
         .font(DesignBook.Font.subheadlineSemibold)
         .accessibilityAddTraits(.isHeader)

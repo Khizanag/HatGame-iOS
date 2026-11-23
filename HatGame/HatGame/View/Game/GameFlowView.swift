@@ -75,6 +75,7 @@ struct GameFlowView: View {
                         .environment(gameNavigator)
                 }
         }
+        .controlTint()
         .environment(gameManager)
         .environment(gameManager.engine)
         .environment(gameNavigator)

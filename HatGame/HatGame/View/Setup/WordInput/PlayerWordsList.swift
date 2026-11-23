@@ -39,20 +39,13 @@ struct PlayerWordRow: View {
     let text: String
     let onRemove: () -> Void
 
-    @ScaledMetric(relativeTo: .subheadline) private var badgeSize: CGFloat = DesignBook.Size.badgeSize
-
     private var removeLabel: String {
         String(format: localized("wordInput.removeWord %@"), text)
     }
 
     var body: some View {
         HStack(spacing: DesignBook.Spacing.sm) {
-            Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.subheadline)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: badgeSize, height: badgeSize)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(Circle())
+            NumberBadge(number: index + 1)
                 .accessibilityHidden(true)
 
             Text(text)

@@ -59,7 +59,7 @@ struct HeaderCard<Content: View>: View {
 
         HeaderCard(title: "How many words?") {
             ProgressView(value: 0.5)
-                .tint(DesignBook.Color.Text.accent)
+                .tint(DesignBook.Color.Text.primary)
         }
     }
     .setDefaultBackground()

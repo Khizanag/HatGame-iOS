@@ -25,13 +25,14 @@ struct InstructionRow: View {
         HStack(alignment: .center, spacing: DesignBook.Spacing.md) {
             ZStack {
                 Circle()
-                    .fill(DesignBook.Color.Text.accent.opacity(0.14))
+                    .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.light))
                     .frame(width: iconDiscSize, height: iconDiscSize)
 
                 Image(systemName: icon)
                     .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.accent)
             }
+            .accessibilityHidden(true)
 
             Text(text)
                 .font(DesignBook.Font.body)
@@ -41,17 +42,10 @@ struct InstructionRow: View {
             Spacer()
 
             if let index {
-                Text(verbatim: "\(index)")
-                    .font(DesignBook.Font.caption1Semibold)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .monospacedDigit()
-                    .padding(.horizontal, DesignBook.Spacing.sm)
-                    .padding(.vertical, 2)
-                    .background {
-                        Capsule().fill(DesignBook.Color.Background.secondary)
-                    }
+                NumberBadge(number: index)
             }
         }
+        .accessibilityElement(children: .combine)
     }
 }
 

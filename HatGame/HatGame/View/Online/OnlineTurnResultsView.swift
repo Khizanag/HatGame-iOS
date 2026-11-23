@@ -47,7 +47,7 @@ struct OnlineTurnResultsView: View {
     }
 
     private var tint: Color {
-        currentTeam?.color ?? DesignBook.Color.Text.accent
+        currentTeam?.color ?? TeamDefaultColorGenerator.defaultColors[0]
     }
 
     private var sortedTeams: [OnlineTeam] {

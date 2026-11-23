@@ -81,7 +81,6 @@ private extension OnlineTeamCreationView {
             if isCreating {
                 ProgressView()
                     .controlSize(.large)
-                    .tint(DesignBook.Color.Text.accent)
             }
         }
         .onAppear {
@@ -96,7 +95,7 @@ private extension OnlineTeamCreationView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "textformat")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(localized("createTeam.teamName"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
@@ -122,7 +121,7 @@ private extension OnlineTeamCreationView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "paintpalette.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(localized("createTeam.teamColor"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)

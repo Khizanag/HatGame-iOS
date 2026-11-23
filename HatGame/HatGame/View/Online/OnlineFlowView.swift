@@ -25,6 +25,7 @@ struct OnlineFlowView: View {
                         .environment(onlineNavigator)
                 }
         }
+        .controlTint()
         .environment(roomManager)
         .environment(gameSyncManager)
         .environment(onlineNavigator)

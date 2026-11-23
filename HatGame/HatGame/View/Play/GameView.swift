@@ -20,7 +20,7 @@ struct GameView: View {
     @State private var didPauseForGiveUp = false
 
     private var team: Team? { engine.state.currentTeam }
-    private var tint: Color { team?.color ?? DesignBook.Color.Text.accent }
+    private var tint: Color { team?.color ?? TeamDefaultColorGenerator.defaultColors[0] }
     private var isShowingPausedOverlay: Bool { engine.isPaused && !isGiveUpConfirmationPresented }
 
     /// At accessibility sizes the timer shrinks so the word card keeps its room.

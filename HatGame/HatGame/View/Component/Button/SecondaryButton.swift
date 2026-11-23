@@ -25,7 +25,7 @@ struct SecondaryButton<Label: View>: View {
                 .font(DesignBook.Font.title3)
                 // Footer buttons stack; past this size they would bury the screen.
                 .dynamicTypeSize(...DynamicTypeSize.accessibility1)
-                .padding(8)
+                .padding(DesignBook.Spacing.sm)
                 .frame(maxWidth: .infinity)
         }
         .glassButtonStyle()

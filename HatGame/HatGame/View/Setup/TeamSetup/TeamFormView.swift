@@ -48,7 +48,6 @@ struct TeamFormView: View {
     @State private var choiceChanges = 0
 
     @FocusState private var focusedField: Field?
-    @ScaledMetric(relativeTo: .subheadline) private var playerBadgeSize: CGFloat = 24
 
     private var trimmedTeamName: String {
         teamName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -204,6 +203,8 @@ private extension TeamFormView {
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .monospacedDigit()
+                        .contentTransition(.numericText())
+                        .monospacedDigit()
                 }
 
                 playersMessage
@@ -226,7 +227,6 @@ private extension TeamFormView {
         Button(action: addPlayer) {
             Label(localized("teamForm.addPlayer"), systemImage: "person.badge.plus")
                 .font(DesignBook.Font.subheadlineSemibold)
-                .foregroundStyle(DesignBook.Color.Text.accent)
         }
         .glassButtonStyle()
         .buttonBorderShape(.capsule)
@@ -253,13 +253,7 @@ private extension TeamFormView {
 
     func playerField(index: Int) -> some View {
         HStack(spacing: DesignBook.Spacing.md) {
-            Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.subheadlineSemibold)
-                .foregroundStyle(DesignBook.Color.Text.accent)
-                .frame(width: playerBadgeSize, height: playerBadgeSize)
-                .background(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.highlight))
-                .clipShape(Circle())
-                .monospacedDigit()
+            NumberBadge(number: index + 1)
                 .accessibilityHidden(true)
 
             TextField(

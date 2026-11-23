@@ -165,7 +165,7 @@ private extension RoomLobbyView {
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             } icon: {
                 Image(systemName: "antenna.radiowaves.left.and.right")
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }
@@ -177,7 +177,7 @@ private extension RoomLobbyView {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.3.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(localized("lobby.players"))
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)
@@ -186,6 +186,7 @@ private extension RoomLobbyView {
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.tertiary)
                         .monospacedDigit()
+                        .contentTransition(.numericText())
                 }
 
                 ForEach(allPlayers, id: \.id) { player in
@@ -338,13 +339,7 @@ private extension RoomLobbyView {
                         .lineLimit(1)
                         .minimumScaleFactor(0.5)
                     Spacer()
-                    Text(verbatim: "\(players.count)")
-                        .font(DesignBook.Font.subheadlineSemibold)
-                        .foregroundStyle(DesignBook.Color.Text.tertiary)
-                        .monospacedDigit()
-                        .padding(.horizontal, DesignBook.Spacing.sm)
-                        .padding(.vertical, 2)
-                        .background { Capsule().fill(color.opacity(0.15)) }
+                    NumberBadge(number: players.count)
                 }
 
                 if players.isEmpty {
@@ -439,7 +434,7 @@ private extension RoomLobbyView {
             HStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: "hourglass")
                     .font(DesignBook.Font.title1)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
                 VStack(alignment: .leading, spacing: 2) {
                     Text(localized("lobby.waitingForHost"))
@@ -457,7 +452,7 @@ private extension RoomLobbyView {
                     .fill(DesignBook.Color.Background.card)
                     .overlay {
                         RoundedRectangle(cornerRadius: DesignBook.Size.cardCornerRadius, style: .continuous)
-                            .strokeBorder(DesignBook.Color.Text.accent.opacity(0.18), lineWidth: 1)
+                            .strokeBorder(DesignBook.Color.Text.primary.opacity(0.18), lineWidth: 1)
                     }
             }
         }

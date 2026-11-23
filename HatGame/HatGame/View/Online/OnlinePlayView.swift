@@ -133,7 +133,7 @@ private extension OnlinePlayView {
     }
 
     var tint: Color {
-        guard let team = currentTeam else { return DesignBook.Color.Text.accent }
+        guard let team = currentTeam else { return TeamDefaultColorGenerator.defaultColors[0] }
         return team.color
     }
 

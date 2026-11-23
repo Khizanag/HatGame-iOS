@@ -79,7 +79,7 @@ private extension LocalRoomBrowser {
             HStack(spacing: DesignBook.Spacing.sm) {
                 Image(systemName: "dot.radiowaves.left.and.right")
                     .font(DesignBook.IconFont.medium)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.secondary)
                     .symbolEffect(.pulse, options: .repeating, isActive: !reduceMotion)
                 Text(localized("local.browser.nearby"))
                     .font(DesignBook.Font.subheadlineSemibold)
@@ -89,6 +89,7 @@ private extension LocalRoomBrowser {
                     .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.tertiary)
                     .monospacedDigit()
+                    .contentTransition(.numericText())
             }
 
             if hosts.isEmpty {

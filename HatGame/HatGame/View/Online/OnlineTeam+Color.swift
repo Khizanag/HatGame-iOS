@@ -13,6 +13,6 @@ import SwiftUI
 extension OnlineTeam {
     /// The team's chosen color, or the accent when its stored hex is unreadable.
     var color: Color {
-        Color(hex: colorHex) ?? DesignBook.Color.Text.accent
+        Color(hex: colorHex) ?? TeamDefaultColorGenerator.defaultColors[0]
     }
 }

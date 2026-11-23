@@ -20,7 +20,6 @@ struct WordSourceTile: View {
             label
         }
         .buttonStyle(.glassCard(selection: isSelected ? DesignBook.Color.Text.accent : nil))
-        .scaleEffect(isSelected ? 1 : 0.97)
         .accessibilityLabel(Text(title))
         .accessibilityHint(Text(detail))
         .accessibilityAddTraits(isSelected ? .isSelected : [])
@@ -35,12 +34,12 @@ private extension WordSourceTile {
                 Image(systemName: icon)
                     .symbolVariant(isSelected ? .fill : .none)
                     .font(DesignBook.IconFont.medium)
-                    .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .symbolEffect(.bounce, options: .nonRepeating, value: isSelected)
                 Spacer(minLength: DesignBook.Spacing.xs)
                 Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
                     .font(DesignBook.IconFont.small)
-                    .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.tertiary)
+                    .foregroundStyle(isSelected ? DesignBook.Color.Text.accent : DesignBook.Color.Text.primary)
                     .contentTransition(.symbolEffect(.replace))
             }
 

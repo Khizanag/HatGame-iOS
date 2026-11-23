@@ -29,6 +29,7 @@ struct GameProgressFooter: View {
                     .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
                     .monospacedDigit()
+                    .contentTransition(.numericText())
             }
             ProgressView(value: Double(passed), total: Double(safeTotal))
                 .tint(tint)

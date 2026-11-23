@@ -111,8 +111,9 @@ private extension OnlineWordInputView {
                 Spacer()
                 Text(verbatim: "\(playerWords.count)/\(wordsPerPlayer)")
                     .font(DesignBook.Font.title1)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .monospacedDigit()
+                    .contentTransition(.numericText())
             }
             ProgressView(value: Double(playerWords.count), total: Double(wordsPerPlayer))
                 .tint(DesignBook.Color.Text.accent)
@@ -135,12 +136,8 @@ private extension OnlineWordInputView {
 
     func wordRow(at index: Int) -> some View {
         HStack(spacing: DesignBook.Spacing.sm) {
-            Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.subheadline)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-                .frame(width: 24, height: 24)
-                .background(DesignBook.Color.Background.secondary)
-                .clipShape(Circle())
+            NumberBadge(number: index + 1)
+                .accessibilityHidden(true)
             Text(playerWords[index])
                 .font(DesignBook.Font.body)
                 .foregroundStyle(DesignBook.Color.Text.primary)
@@ -226,7 +223,7 @@ private extension OnlineWordInputView {
         Group {
             if isSubmitting {
                 ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                    .progressViewStyle(.circular)
                     .scaleEffect(1.2)
                     .padding(.vertical, DesignBook.Spacing.md)
             } else if playerWords.count == wordsPerPlayer {

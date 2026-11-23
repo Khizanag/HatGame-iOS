@@ -20,7 +20,7 @@ struct NavigationCard: View {
             HStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: icon)
                     .font(DesignBook.IconFont.extraLarge)
-                    .foregroundStyle(DesignBook.Color.Text.accent)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
                     .decorativeHeroSizing()
 

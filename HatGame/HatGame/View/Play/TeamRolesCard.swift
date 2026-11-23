@@ -26,7 +26,7 @@ struct TeamRolesCard: View {
 
                     Image(systemName: "arrow.triangle.2.circlepath")
                         .font(DesignBook.Font.subheadline)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
                         .accessibilityHidden(true)
                 }
 
@@ -43,7 +43,7 @@ struct TeamRolesCard: View {
                     if !guessers.isEmpty {
                         roleSection(
                             icon: "lightbulb.fill",
-                            iconColor: DesignBook.Color.Text.accent,
+                            iconColor: DesignBook.Color.Text.tertiary,
                             label: "game.nextTeam.role.guessing",
                             content: { guessersList }
                         )
@@ -99,7 +99,7 @@ private extension TeamRolesCard {
             ForEach(guessers) { guesser in
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Circle()
-                        .fill(DesignBook.Color.Text.accent.opacity(DesignBook.Opacity.medium))
+                        .fill(DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.medium))
                         .frame(width: DesignBook.Size.dotSmall, height: DesignBook.Size.dotSmall)
 
                     Text(guesser.name)

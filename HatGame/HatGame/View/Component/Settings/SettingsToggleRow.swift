@@ -37,5 +37,6 @@ struct SettingsToggleRow: View {
                 }
             }
         }
+        .accentTint()
     }
 }

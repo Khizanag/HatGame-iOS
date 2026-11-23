@@ -32,6 +32,7 @@ struct HatGameApp: App {
                     .hatGameTestingLab(isRoot: true)
                     #endif
             }
+            .controlTint()
             .environment(roomManager)
             .environment(gameSyncManager)
             .preferredColorScheme(preferredColorScheme)

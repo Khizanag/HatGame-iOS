@@ -40,6 +40,7 @@ struct LocalFlowView: View {
                         .environment(navigator)
                 }
         }
+        .controlTint()
         .environment(roomManager as RoomManager)
         .environment(gameSyncManager as GameSyncManager)
         .environment(navigator)

@@ -28,7 +28,7 @@ struct PlayerNameCard<Field: Hashable>: View {
                 HStack(spacing: DesignBook.Spacing.sm) {
                     Image(systemName: "person.fill")
                         .font(DesignBook.IconFont.medium)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                        .foregroundStyle(DesignBook.Color.Text.secondary)
                     Text(title)
                         .font(DesignBook.Font.subheadlineSemibold)
                         .foregroundStyle(DesignBook.Color.Text.secondary)

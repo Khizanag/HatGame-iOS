@@ -173,7 +173,7 @@ private extension WordGenerationView {
     var wordCard: some View {
         Text(displayWord)
             .font(DesignBook.Font.displaySmall)
-            .foregroundStyle(DesignBook.Color.Text.accent)
+            .foregroundStyle(DesignBook.Color.Text.primary)
             .lineLimit(1)
             .minimumScaleFactor(0.5)
             .blur(radius: wordBlur)

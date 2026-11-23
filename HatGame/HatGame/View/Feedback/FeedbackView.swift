@@ -122,7 +122,7 @@ private extension FeedbackView {
         HStack(spacing: DesignBook.Spacing.sm) {
             Image(systemName: icon)
                 .font(DesignBook.IconFont.small)
-                .foregroundStyle(DesignBook.Color.Text.accent)
+                .foregroundStyle(DesignBook.Color.Text.secondary)
                 .contentTransition(.symbolEffect(.replace))
             Text(title)
                 .font(DesignBook.Font.subheadlineSemibold)
@@ -134,7 +134,7 @@ private extension FeedbackView {
     var submitButton: some View {
         if service.isSubmitting {
             ProgressView()
-                .progressViewStyle(CircularProgressViewStyle(tint: DesignBook.Color.Text.accent))
+                .progressViewStyle(.circular)
                 .scaleEffect(1.2)
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, DesignBook.Spacing.md)

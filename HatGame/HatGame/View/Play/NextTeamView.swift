@@ -217,7 +217,6 @@ private extension NextTeamView {
         Button(action: randomizeExplainer) {
             Image(systemName: isRandomizingExplainer ? "sparkles" : "shuffle")
                 .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.accent)
                 .symbolEffect(.pulse, options: .repeating, isActive: isRandomizingExplainer && !reduceMotion)
         }
         .glassIconButtonStyle()
