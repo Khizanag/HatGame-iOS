@@ -144,10 +144,7 @@ private extension DeveloperInfoView {
                 SettingsIconTile(systemImage: icon, tint: tint)
                 titleStack(title: title, subtitle: subtitle)
                 Spacer(minLength: DesignBook.Spacing.sm)
-                Image(systemName: "arrow.up.right")
-                    .font(DesignBook.Font.subheadline)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .accessibilityHidden(true)
+                RowChevron()
             }
             .contentShape(.rect)
         }

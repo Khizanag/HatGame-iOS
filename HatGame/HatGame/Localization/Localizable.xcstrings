@@ -959,23 +959,6 @@
         }
       }
     },
-    "onlineWordInput.removeWord" : {
-      "comment" : "Accessibility label and tooltip of the button that removes a word from the online/nearby word list. %@ is the word.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Remove %@"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "წაშლა: %@"
-          }
-        }
-      }
-    },
     "randomization.title" : {
       "comment" : "Randomization view title.",
       "localizations" : {

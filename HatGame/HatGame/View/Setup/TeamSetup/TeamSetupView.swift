@@ -177,22 +177,7 @@ private extension TeamSetupView {
         .listRowSeparator(.hidden)
         .accessibilityLabel(Text(rowAccessibilityLabel(for: team)))
         .accessibilityHint(Text(localized("teamSetup.editTeam.a11yHint")))
-        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-            deleteSwipeAction(for: team)
-            editSwipeAction(for: team)
-        }
-        .contextMenu {
-            Button {
-                editingTeam = team
-            } label: {
-                Label(localized("common.buttons.edit"), systemImage: "pencil")
-            }
-            Button(role: .destructive) {
-                deletingTeam = team
-            } label: {
-                Label(localized("common.buttons.delete"), systemImage: "trash")
-            }
-        }
+        .teamActions(team, onEdit: { editingTeam = team }, onDelete: { deletingTeam = team })
     }
 
     /// "Alpha, players: Ann and Ben" — the members, not just the name.
@@ -201,23 +186,6 @@ private extension TeamSetupView {
             .map(\.name)
             .formatted(.list(type: .and).locale(AppConfiguration.shared.locale))
         return String(format: localized("teamSetup.teamRow.a11y %@ %@"), team.name, members)
-    }
-
-    func deleteSwipeAction(for team: Team) -> some View {
-        Button(role: .destructive) {
-            deletingTeam = team
-        } label: {
-            Label(localized("teamCard.delete"), systemImage: "trash")
-        }
-    }
-
-    func editSwipeAction(for team: Team) -> some View {
-        Button {
-            editingTeam = team
-        } label: {
-            Label(localized("teamCard.edit"), systemImage: "pencil")
-        }
-        .tint(DesignBook.Color.Text.accent)
     }
 
     var addTeamButtonRow: some View {

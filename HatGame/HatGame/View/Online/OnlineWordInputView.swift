@@ -134,29 +134,11 @@ private extension OnlineWordInputView {
         }
     }
 
+    /// The same row the single-device word list draws (constitution article 30).
     func wordRow(at index: Int) -> some View {
-        HStack(spacing: DesignBook.Spacing.sm) {
-            NumberBadge(number: index + 1)
-                .accessibilityHidden(true)
-            Text(playerWords[index])
-                .font(DesignBook.Font.body)
-                .foregroundStyle(DesignBook.Color.Text.primary)
-            Spacer()
-            Button(role: .destructive) { removeWord(at: index) } label: {
-                Image(systemName: "xmark.circle.fill")
-                    .font(DesignBook.IconFont.small)
-                    .foregroundStyle(DesignBook.Color.Status.error.opacity(DesignBook.Opacity.strong))
-                    .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
-                    .contentShape(.rect)
-            }
-            .buttonStyle(.plain)
-            .accessibilityLabel(Text(String(format: localized("onlineWordInput.removeWord"), playerWords[index])))
-            .help(String(format: localized("onlineWordInput.removeWord"), playerWords[index]))
+        PlayerWordRow(index: index, text: playerWords[index]) {
+            removeWord(at: index)
         }
-        .padding(.leading, DesignBook.Spacing.md)
-        .padding(.vertical, DesignBook.Spacing.xs)
-        .background(DesignBook.Color.Background.secondary)
-        .clipShape(.rect(cornerRadius: DesignBook.Size.smallCardCornerRadius, style: .continuous))
     }
 
     var textField: some View {

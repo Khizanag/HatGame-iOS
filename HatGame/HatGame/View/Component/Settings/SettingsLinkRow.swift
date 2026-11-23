@@ -41,10 +41,7 @@ struct SettingsLinkRow: View {
                         .lineLimit(1)
                 }
 
-                Image(systemName: "chevron.forward")
-                    .font(DesignBook.Font.subheadline)
-                    .fontWeight(.semibold)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
+                RowChevron()
             }
             .contentShape(.rect)
         }

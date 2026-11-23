@@ -182,9 +182,7 @@ private extension OnlineNextTeamView {
                                         .font(DesignBook.Font.body)
                                         .foregroundStyle(DesignBook.Color.Text.primary)
                                     if guesser.id == roomManager.currentPlayerId {
-                                        Text(localized("onlineNextTeam.you"))
-                                            .font(DesignBook.Font.subheadlineSemibold)
-                                            .foregroundStyle(DesignBook.Color.Text.primary)
+                                        RoleBadge(style: .you)
                                     }
                                 }
                             }
@@ -223,12 +221,7 @@ private extension OnlineNextTeamView {
                     .font(DesignBook.Font.bodySemibold)
                     .foregroundStyle(DesignBook.Color.teamText(for: tint))
                 if isMe {
-                    Text(localized("onlineNextTeam.you"))
-                        .font(DesignBook.Font.subheadlineSemibold)
-                        .foregroundStyle(DesignBook.Color.onAccent(for: tint))
-                        .padding(.horizontal, DesignBook.Spacing.sm)
-                        .padding(.vertical, DesignBook.Spacing.xxs)
-                        .background(Capsule().fill(tint))
+                    RoleBadge(style: .you)
                 }
             }
             .padding(DesignBook.Spacing.sm)

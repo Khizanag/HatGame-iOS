@@ -57,7 +57,7 @@ struct PlayerWordRow: View {
             Button(action: onRemove) {
                 Image(systemName: "xmark.circle.fill")
                     .font(DesignBook.IconFont.small)
-                    .foregroundStyle(DesignBook.Color.Status.error.opacity(DesignBook.Opacity.strong))
+                    .foregroundStyle(DesignBook.Color.Status.error)
                     .frame(minWidth: DesignBook.Size.touchTargetSize, minHeight: DesignBook.Size.touchTargetSize)
                     .contentShape(.rect)
             }

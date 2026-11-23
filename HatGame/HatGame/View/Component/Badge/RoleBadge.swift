@@ -8,36 +8,43 @@
 import DesignBook
 import SwiftUI
 
-/// A small uppercase pill used to flag a player's role on a row —
-/// host, you, etc. Variants share spacing/typography so multiple
-/// badges on the same row sit visually side-by-side.
+/// A small uppercase pill that flags a player's role on a row: host, you,
+/// explaining, guessing. The one way the app draws a role (constitution
+/// article 30), so badges on one row sit side by side.
 struct RoleBadge: View {
     enum Style {
         case host
         case you
         case noTeam
+        /// The explainer, in their team's colour.
+        case explaining(team: Color)
+        case guessing
 
         var titleKey: String.LocalizationValue {
             switch self {
             case .host: "lobby.host"
             case .you: "onlineNextTeam.you"
             case .noTeam: "lobby.noTeam"
+            case .explaining: "game.nextTeam.role.explaining"
+            case .guessing: "game.nextTeam.role.guessing"
             }
         }
 
         var textColor: Color {
             switch self {
-            case .host: DesignBook.Color.Text.primary
-            case .you: DesignBook.Color.Text.primary
+            case .host, .you: DesignBook.Color.Text.primary
             case .noTeam: DesignBook.Color.Text.tertiary
+            case .explaining(let team): DesignBook.Color.teamText(for: team)
+            case .guessing: DesignBook.Color.Text.secondary
             }
         }
 
         var backgroundColor: Color {
             switch self {
             case .host: DesignBook.Color.Text.primary.opacity(DesignBook.Opacity.light)
-            case .you: DesignBook.Color.Background.secondary
+            case .you, .guessing: DesignBook.Color.Background.secondary
             case .noTeam: DesignBook.Color.Background.secondary.opacity(DesignBook.Opacity.semiTransparent)
+            case .explaining(let team): team.opacity(DesignBook.Opacity.tint)
             }
         }
     }

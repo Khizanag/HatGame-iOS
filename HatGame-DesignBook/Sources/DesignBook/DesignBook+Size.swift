@@ -110,6 +110,8 @@ extension DesignBook {
         /// Readable max width for a content column; centers the column on wide
         /// windows (macOS / large iPad). A no-op on phone-width windows.
         public static let maxContentWidth: CGFloat = 600
+        /// The one width a long-press preview is drawn at.
+        public static let previewWidth: CGFloat = 320
         /// Max width of the gameplay word card, kept comfortably square and
         /// proportional to the timer regardless of window width.
         public static let wordCardMaxWidth: CGFloat = 440

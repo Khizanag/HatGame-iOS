@@ -77,29 +77,11 @@ private extension OnlineSpectatorView {
     }
 
     var scoreChip: some View {
-        HStack(spacing: DesignBook.Spacing.xs) {
-            Image(systemName: "checkmark.seal.fill")
-                .font(DesignBook.Font.subheadlineSemibold)
-            Text(verbatim: "\(teamScore)")
-                .font(DesignBook.Font.title1)
-                .monospacedDigit()
-                .contentTransition(.numericText())
-        }
-        .foregroundStyle(DesignBook.Color.Status.success)
-        .padding(.horizontal, DesignBook.Spacing.md)
-        .padding(.vertical, DesignBook.Spacing.sm)
-        .background {
-            Capsule()
-                .fill(DesignBook.Color.Status.success.opacity(DesignBook.Opacity.light))
-                .overlay {
-                    Capsule().strokeBorder(
-                        DesignBook.Color.Status.success.opacity(DesignBook.Opacity.disabled),
-                        lineWidth: DesignBook.Size.strokeThin
-                    )
-                }
-        }
-        .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: teamScore)
-        .accessibilityLabel(Text(localized("onlineSpectator.score.accessibility \(teamScore)")))
+        TurnScoreBadge(
+            points: teamScore,
+            reduceMotion: reduceMotion,
+            accessibilityLabel: localized("onlineSpectator.score.accessibility \(teamScore)")
+        )
     }
 
     var instructionCard: some View {

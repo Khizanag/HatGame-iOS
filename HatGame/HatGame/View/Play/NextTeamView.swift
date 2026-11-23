@@ -256,18 +256,7 @@ private extension NextTeamView {
     }
 
     func roleBadge(isSelected: Bool) -> some View {
-        let text = localized(isSelected ? "game.nextTeam.role.explaining" : "game.nextTeam.role.guessing")
-        let fg: Color = isSelected ? DesignBook.Color.teamText(for: team.color) : DesignBook.Color.Text.secondary
-        let bg: Color = isSelected ? team.color.opacity(DesignBook.Opacity.tint) : DesignBook.Color.Background.card
-
-        return Text(text)
-            .font(DesignBook.Font.subheadlineSemibold)
-            .eyebrowUppercase()
-            .tracking(1.1)
-            .foregroundStyle(fg)
-            .padding(.horizontal, DesignBook.Spacing.sm)
-            .padding(.vertical, DesignBook.Spacing.xsPlus)
-            .background(Capsule().fill(bg))
+        RoleBadge(style: isSelected ? .explaining(team: team.color) : .guessing)
     }
 
     var playButton: some View {

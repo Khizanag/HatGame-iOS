@@ -141,7 +141,10 @@ private extension OnlineTeamCreationView {
             spacing: DesignBook.Spacing.md
         ) {
             ForEach(TeamDefaultColorGenerator.defaultColors.indices, id: \.self) { index in
-                colorOption(TeamDefaultColorGenerator.defaultColors[index])
+                colorOption(
+                    TeamDefaultColorGenerator.defaultColors[index],
+                    name: TeamColorName.name(forPaletteIndex: index)
+                )
             }
             ColorPicker(localized("createTeam.teamColor"), selection: $teamColor, supportsOpacity: false)
                 .labelsHidden()
@@ -152,35 +155,18 @@ private extension OnlineTeamCreationView {
         }
     }
 
-    func colorOption(_ color: Color) -> some View {
-        let isSelected = teamColor.isApproximatelyEqual(to: color)
-        let isUsed = isColorUsedByOtherTeam(color)
-
-        return Button {
-            guard !isUsed else { return }
+    /// The same swatch the single-device team form draws (constitution article 30).
+    func colorOption(_ color: Color, name: String) -> some View {
+        ColorSwatchButton(
+            color: color,
+            name: name,
+            isSelected: teamColor.isApproximatelyEqual(to: color),
+            isDisabled: isColorUsedByOtherTeam(color)
+        ) {
             withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
                 teamColor = color
             }
-        } label: {
-            Circle()
-                .fill(color)
-                .frame(width: DesignBook.Size.colorSwatchSize, height: DesignBook.Size.colorSwatchSize)
-                .overlay {
-                    if isSelected {
-                        Image(systemName: "checkmark")
-                            .font(DesignBook.Font.bodyBold)
-                            .foregroundStyle(DesignBook.Color.onAccent(for: color))
-                    } else if isUsed {
-                        Image(systemName: "xmark")
-                            .font(DesignBook.Font.footnoteBold)
-                            .foregroundStyle(DesignBook.Color.onAccent(for: color))
-                            .opacity(DesignBook.Opacity.disabled)
-                    }
-                }
-                .opacity(isUsed ? DesignBook.Opacity.disabled : DesignBook.Opacity.enabled)
         }
-        .buttonStyle(.plain)
-        .disabled(isUsed)
     }
 
     func isColorUsedByOtherTeam(_ color: Color) -> Bool {

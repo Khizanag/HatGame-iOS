@@ -157,9 +157,7 @@ private extension LocalRoomBrowser {
                 if isConnecting {
                     ProgressView()
                 } else {
-                    Image(systemName: "arrow.right.circle.fill")
-                        .font(DesignBook.Font.title1)
-                        .foregroundStyle(DesignBook.Color.Text.accent)
+                    RowChevron()
                 }
             }
         }

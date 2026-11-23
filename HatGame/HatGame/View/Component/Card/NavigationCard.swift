@@ -41,10 +41,7 @@ struct NavigationCard: View {
 
                 Spacer(minLength: 0)
 
-                Image(systemName: "chevron.right")
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .accessibilityHidden(true)
+                RowChevron()
             }
         }
         .buttonStyle(.glassCard)

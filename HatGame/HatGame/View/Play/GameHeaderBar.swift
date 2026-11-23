@@ -43,10 +43,14 @@ private extension GameHeaderBar {
     }
 }
 
-/// Live "X points this turn" pill. Bounces when the count changes.
-private struct TurnScoreBadge: View {
+/// Live "X points this turn" pill. Bounces when the count changes. The one
+/// score pill, on the turn and on a spectator's screen (constitution
+/// article 30).
+struct TurnScoreBadge: View {
     let points: Int
     let reduceMotion: Bool
+    /// What VoiceOver reads; "X points this turn" by default.
+    var accessibilityLabel: String?
 
     /// Orange once skip penalties push the turn below zero.
     private var tint: Color {
@@ -74,6 +78,6 @@ private struct TurnScoreBadge: View {
                 }
         }
         .animation(reduceMotion ? nil : DesignBook.Motion.bouncy, value: points)
-        .accessibilityLabel(Text(localized("game.turn.points.accessibility \(points)")))
+        .accessibilityLabel(Text(accessibilityLabel ?? localized("game.turn.points.accessibility \(points)")))
     }
 }
