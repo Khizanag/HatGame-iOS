@@ -24,6 +24,7 @@ struct FloatingAddButton: View {
                 .decorativeHeroSizing()
         }
         .glassProminentButtonStyle()
+        .accentTint()
         .buttonBorderShape(.circle)
         .disabled(isDisabled)
         .glassMorphID("addButton", in: namespace)

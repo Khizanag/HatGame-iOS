@@ -154,6 +154,7 @@ private extension OnlineWordInputView {
                         .font(DesignBook.Font.bodySemibold)
                 }
                 .glassIconButtonStyle(isProminent: true)
+                .accentTint()
                 .disabled(!canAdd)
                 .accessibilityLabel(Text(localized("wordInput.addWord")))
                 .help(localized("wordInput.addWord"))

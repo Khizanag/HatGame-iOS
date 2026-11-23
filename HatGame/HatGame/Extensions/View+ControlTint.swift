@@ -17,9 +17,10 @@ extension View {
         tint(DesignBook.Color.Text.primary)
     }
 
-    /// The accent, for the few controls that wear it: a screen's one primary
-    /// action and a toggle's on state.
+    /// The accent fill, for the few controls that wear it: a screen's one
+    /// primary action and a toggle's on state. Made to carry white text,
+    /// unlike the lighter text accent.
     func accentTint() -> some View {
-        tint(DesignBook.Color.Text.accent)
+        tint(DesignBook.Color.Status.accentFill)
     }
 }

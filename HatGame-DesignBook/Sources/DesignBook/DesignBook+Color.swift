@@ -38,6 +38,9 @@ extension DesignBook {
             public static let successFill = SwiftUI.Color(.Status.successFill)
             /// Tint for a prominent destructive button.
             public static let errorFill = SwiftUI.Color(.Status.errorFill)
+            /// Tint for a screen's one primary action and a toggle's on state:
+            /// the brand blue, dark enough to carry a white label.
+            public static let accentFill = SwiftUI.Color(.Status.accentFill)
         }
 
         /// The tinted tiles at the leading edge of Settings rows, matching the

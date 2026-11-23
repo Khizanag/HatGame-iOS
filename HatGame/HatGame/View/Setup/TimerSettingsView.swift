@@ -95,10 +95,19 @@ private extension TimerSettingsView {
     }
 
     var durationStepper: some View {
+        // The stepper carries the value it changes (constitution article 29).
         Stepper(value: $selectedDuration, in: 5...120, step: 5) {
-            Text(localized("timerSettings.turnLength"))
-                .font(DesignBook.Font.subheadline)
-                .foregroundStyle(DesignBook.Color.Text.secondary)
+            HStack {
+                Text(localized("timerSettings.turnLength"))
+                    .font(DesignBook.Font.subheadline)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+                Spacer(minLength: DesignBook.Spacing.sm)
+                Text(durationValue)
+                    .font(DesignBook.Font.subheadlineSemibold)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
+                    .monospacedDigit()
+                    .contentTransition(.numericText(value: Double(selectedDuration)))
+            }
         }
         .accessibilityValue(Text(durationValue))
     }
