@@ -93,7 +93,7 @@ struct MultiplayerSessionView: View {
             } message: {
                 Text(leaveMessage)
             }
-            .errorAlert($leaveError, title: localized("error.title.leaveRoom"), transport: transport)
+            .errorAlert($leaveError, title: localized("error.title.leaveRoom"), transport: transport, retry: leaveRoom)
     }
 }
 

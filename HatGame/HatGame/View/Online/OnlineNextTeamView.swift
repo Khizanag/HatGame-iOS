@@ -18,6 +18,7 @@ struct OnlineNextTeamView: View {
     @State private var isLoading: Bool = false
     @State private var error: Error?
     @State private var forfeits = 0
+    @State private var lastAction: GameAction?
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -72,7 +73,7 @@ struct OnlineNextTeamView: View {
         content
             .setDefaultStyle()
             .haptic(.warning, trigger: forfeits)
-            .errorAlert($error, title: localized("error.title.connection"))
+            .errorAlert($error, title: localized("error.title.connection"), retry: retryLastAction)
     }
 }
 
@@ -301,8 +302,13 @@ private extension OnlineNextTeamView {
         perform(.endTurn)
     }
 
+    func retryLastAction() {
+        if let lastAction { perform(lastAction) }
+    }
+
     func perform(_ action: GameAction) {
         guard !isLoading, let room, let playerId = roomManager.currentPlayerId else { return }
+        lastAction = action
         isLoading = true
         Task {
             do {

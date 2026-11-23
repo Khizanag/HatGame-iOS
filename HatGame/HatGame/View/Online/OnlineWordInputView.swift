@@ -44,7 +44,7 @@ struct OnlineWordInputView: View {
             .haptic(.selection, trigger: removedWords)
             .haptic(.success, trigger: sentWords)
             .onAppear { isFieldFocused = true }
-            .errorAlert($error, title: localized("error.title.submitWords"))
+            .errorAlert($error, title: localized("error.title.submitWords"), retry: submit)
     }
 }
 

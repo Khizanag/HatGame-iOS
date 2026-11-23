@@ -4603,13 +4603,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Make sure the host has started a nearby game and you're on the same Wi-Fi or have Bluetooth on"
+            "value" : "Make sure the host has started a nearby game and you're on the same Wi-Fi or have Bluetooth on. If Local Network was turned off for Hat Game, turn it on in Settings."
           }
         },
         "ka" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "დარწმუნდით, რომ მასპინძელმა დაიწყო ახლომდებარე თამაში და ხართ იმავე Wi-Fi-ზე ან ჩართული გაქვთ Bluetooth"
+            "value" : "დარწმუნდით, რომ მასპინძელმა დაიწყო ახლომდებარე თამაში და ხართ იმავე Wi-Fi-ზე ან ჩართული გაქვთ Bluetooth. თუ Hat Game-ისთვის ლოკალური ქსელი გამორთულია, ჩართე ის პარამეტრებში."
           }
         }
       }
@@ -8708,6 +8708,57 @@
         }
       },
       "comment" : "VoiceOver value of the team color card: the color’s name, then whether the palette is open."
+    },
+    "online.privacy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Your name and the words you add are stored in the room on Hat Game’s server, so the other players can see them."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შენი სახელი და დამატებული სიტყვები Hat Game-ის სერვერზე, ოთახში ინახება, რომ სხვა მოთამაშეებმა დაინახონ."
+          }
+        }
+      },
+      "comment" : "Online menu: what leaves the device in online play."
+    },
+    "feedback.privacy" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "With your message, Hat Game sends its version, your device model and system version, the app language, and a random device ID, so the report can be followed up."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეტყობინებასთან ერთად Hat Game აგზავნის აპის ვერსიას, მოწყობილობის მოდელს, სისტემის ვერსიას, აპის ენას და შემთხვევით ID-ს, რომ გამოხმაურებას მივყვეთ."
+          }
+        }
+      },
+      "comment" : "Feedback: what is sent beside the message."
+    },
+    "local.browser.openSettings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open Settings"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "პარამეტრების გახსნა"
+          }
+        }
+      },
+      "comment" : "Opens the system Settings, where Local Network can be turned on for Hat Game."
     }
   },
   "version" : "1.1"

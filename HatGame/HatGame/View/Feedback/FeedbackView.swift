@@ -47,7 +47,18 @@ struct FeedbackView: View {
             }
             .errorAlert(
                 title: localized("error.title.sendFeedback"),
-                message: service.errorMessage, onDismiss: service.resetAfterFailure)
+                message: service.errorMessage,
+                onDismiss: service.resetAfterFailure,
+                retry: send
+            )
+    }
+}
+
+// MARK: - Actions
+private extension FeedbackView {
+    func send() {
+        isMessageFocused = false
+        Task { await service.submit(category: category, message: message) }
     }
 }
 
@@ -72,6 +83,8 @@ private extension FeedbackView {
                 )
                 categoryCard
                 messageCard
+                // What is sent beside the message (constitution article 26).
+                Callout(tone: .info, systemImage: "info.circle", message: localized("feedback.privacy"))
             }
             .paddingHorizontalDefault()
             .padding(.top, DesignBook.Spacing.lg)
@@ -139,10 +152,7 @@ private extension FeedbackView {
                 .frame(maxWidth: .infinity)
                 .padding(.vertical, DesignBook.Spacing.md)
         } else {
-            PrimaryButton(title: localized("feedback.submit"), icon: "paperplane.fill") {
-                isMessageFocused = false
-                Task { await service.submit(category: category, message: message) }
-            }
+            PrimaryButton(title: localized("feedback.submit"), icon: "paperplane.fill", action: send)
             .disabled(!canSubmit)
         }
     }

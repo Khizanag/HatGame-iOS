@@ -59,7 +59,7 @@ struct OnlineTeamCreationView: View {
                     Button(localized("createTeam.discard.confirm"), role: .destructive) { dismiss() }
                     Button(localized("createTeam.discard.keepEditing"), role: .cancel) { }
                 }
-                .errorAlert($error, title: localized("error.title.createTeam"))
+                .errorAlert($error, title: localized("error.title.createTeam"), retry: createTeam)
                 .haptic(.success, trigger: completedActions)
         }
     }

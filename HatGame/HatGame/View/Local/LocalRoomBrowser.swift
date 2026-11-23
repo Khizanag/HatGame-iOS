@@ -19,11 +19,13 @@ struct LocalRoomBrowser: View {
     @Environment(Navigator.self) private var navigator
     @Environment(LocalRoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.openURL) private var openURL
 
     @AppStorage(PlayerNameStorage.key) private var playerName: String = ""
     @State private var isConnecting: Bool = false
     @State private var error: Error?
     @State private var completedActions = 0
+    @State private var lastHost: LocalMultipeerService.DiscoveredHost?
 
     @FocusState private var focusedField: Field?
 
@@ -39,7 +41,7 @@ struct LocalRoomBrowser: View {
         content
             .navigationTitle(localized("local.browser.title"))
             .setDefaultStyle()
-            .errorAlert($error, title: localized("error.title.joinRoom"), transport: .nearby)
+            .errorAlert($error, title: localized("error.title.joinRoom"), transport: .nearby, retry: retryJoin)
             .haptic(.success, trigger: completedActions)
             .onAppear {
                 roomManager.startBrowsingForHosts()
@@ -107,6 +109,17 @@ private extension LocalRoomBrowser {
             Label(localized("local.browser.empty"), systemImage: "antenna.radiowaves.left.and.right")
         } description: {
             Text(localized("local.browser.empty.hint"))
+        } actions: {
+            // Finding nearby games needs Local Network; if it was refused,
+            // this is the way back to it (constitution article 24).
+            #if os(iOS)
+            if let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                Button(localized("local.browser.openSettings")) {
+                    openURL(settingsURL)
+                }
+                .glassButtonStyle()
+            }
+            #endif
         }
     }
 
@@ -154,8 +167,13 @@ private extension LocalRoomBrowser {
         .disabled(trimmedName.isEmpty || isConnecting)
     }
 
+    func retryJoin() {
+        if let lastHost { join(lastHost) }
+    }
+
     func join(_ host: LocalMultipeerService.DiscoveredHost) {
         guard !trimmedName.isEmpty else { return }
+        lastHost = host
         focusedField = nil
         isConnecting = true
         Task {

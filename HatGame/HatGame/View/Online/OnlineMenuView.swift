@@ -28,12 +28,16 @@ struct OnlineMenuView: View {
 private extension OnlineMenuView {
     var content: some View {
         CenteredScrollView {
-            ConnectivityMenuHero(
-                symbol: "globe.americas.fill",
-                title: "online.hero.title",
-                description: "online.description",
-                animation: .pulse
-            )
+            VStack(spacing: DesignBook.Spacing.xl) {
+                ConnectivityMenuHero(
+                    symbol: "globe.americas.fill",
+                    title: "online.hero.title",
+                    description: "online.description",
+                    animation: .pulse
+                )
+                // What leaves the device, said where it starts (constitution article 26).
+                Callout(tone: .info, systemImage: "lock", message: localized("online.privacy"))
+            }
             .paddingHorizontalDefault()
         }
         .actionBar {
@@ -51,18 +55,7 @@ private extension OnlineMenuView {
     }
 
     var unavailableNotice: some View {
-        GameCard {
-            HStack(spacing: DesignBook.Spacing.md) {
-                Image(systemName: "icloud.slash")
-                    .font(DesignBook.IconFont.medium)
-                    .foregroundStyle(DesignBook.Color.Text.tertiary)
-                    .accessibilityHidden(true)
-                Text(localized("online.unavailable"))
-                    .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-            }
-        }
+        Callout(tone: .warning, systemImage: "icloud.slash", message: localized("online.unavailable"))
     }
 
     var actionButtons: some View {

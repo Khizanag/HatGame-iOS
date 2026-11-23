@@ -69,7 +69,7 @@ struct OnlineTurnResultsView: View {
                 guard !Task.isCancelled else { return }
                 hasCelebrated = true
             }
-            .errorAlert($error, title: localized("error.title.continue"))
+            .errorAlert($error, title: localized("error.title.continue"), retry: continueFlow)
     }
 }
 

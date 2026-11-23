@@ -41,7 +41,7 @@ struct RoomCreationView: View {
         }
         .navigationTitle(localized("createRoom.title"))
         .setDefaultStyle()
-        .errorAlert($error, title: localized("error.title.createRoom"))
+        .errorAlert($error, title: localized("error.title.createRoom"), retry: createRoom)
         .haptic(.success, trigger: completedActions)
         .onAppear {
             settings.isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled

@@ -26,6 +26,7 @@ struct RoomLobbyView: View {
     /// Names the lobby action that failed ("Couldn't Join Team").
     @State private var errorTitle: String = ""
     @State private var removals = 0
+    @State private var lastWrite: (title: String, write: () async throws -> Void)?
     @State private var teamChoices = 0
     @State private var codeCopies = 0
     @State private var isCodeCopied = false
@@ -69,7 +70,7 @@ struct RoomLobbyView: View {
             } message: { _ in
                 Text(localized("lobby.deleteTeam.message"))
             }
-            .errorAlert($error, title: errorTitle, transport: transport)
+            .errorAlert($error, title: errorTitle, transport: transport, retry: retryLastWrite)
     }
 }
 
@@ -506,8 +507,13 @@ private extension RoomLobbyView {
     /// One lobby write in flight at a time; a tap while one is pending is
     /// dropped rather than racing it. `failureTitle` names the action in
     /// the alert if it fails.
+    func retryLastWrite() {
+        if let lastWrite { perform(failureTitle: lastWrite.title, lastWrite.write) }
+    }
+
     func perform(failureTitle: String, _ write: @escaping () async throws -> Void) {
         guard !isUpdating else { return }
+        lastWrite = (failureTitle, write)
         isUpdating = true
         Task {
             do {

@@ -41,7 +41,7 @@ struct RoomJoinView: View {
         content
             .navigationTitle(localized("joinRoom.title"))
             .setDefaultStyle()
-            .errorAlert($error, title: localized("error.title.joinRoom"))
+            .errorAlert($error, title: localized("error.title.joinRoom"), retry: joinRoom)
             .haptic(.success, trigger: completedActions)
             .onAppear { focusedField = .code }
     }
