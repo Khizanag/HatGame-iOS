@@ -81,7 +81,7 @@ private extension TeamScoreRowView {
         Text(name)
             .font(DesignBook.Font.title3)
             .foregroundStyle(DesignBook.Color.Text.primary)
-            .lineLimit(1)
+            .lineLimit(2)
     }
 
     var scoreView: some View {

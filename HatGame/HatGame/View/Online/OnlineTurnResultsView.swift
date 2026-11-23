@@ -180,6 +180,7 @@ private extension OnlineTurnResultsView {
                             duration: 0.6
                         )
                     }
+                    .accessibilityElement(children: .combine)
                     .padding(.vertical, DesignBook.Spacing.xs)
                 }
             }

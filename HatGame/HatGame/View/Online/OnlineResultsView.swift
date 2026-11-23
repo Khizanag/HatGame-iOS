@@ -44,7 +44,20 @@ struct OnlineResultsView: View {
             .task {
                 try? await Task.sleep(for: .milliseconds(180))
                 hasCelebrated = true
+                announceWinners()
             }
+    }
+}
+
+// MARK: - Announcement
+private extension OnlineResultsView {
+    /// Says who won, since the result is the change a VoiceOver user waits
+    /// for (constitution article 18).
+    func announceWinners() {
+        let message = winners.count == 1
+            ? localized("game.results.winnerAnnouncement \(winners[0].name)")
+            : localized("game.results.tieAnnouncement")
+        AccessibilityNotification.Announcement(message).post()
     }
 }
 

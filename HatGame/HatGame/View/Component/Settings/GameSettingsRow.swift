@@ -37,28 +37,43 @@ struct GameSettingsRow: View {
 
 // MARK: - Layout
 private extension GameSettingsRow {
+    /// Title, value, and stepper on one line while they fit; stacked when
+    /// they don't, so nothing clips at any text size (constitution article 15).
     @ViewBuilder
     var content: some View {
         if dynamicTypeSize.isAccessibilitySize {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
-                titleLabel
-                    .accessibilityHidden(true)
-                HStack {
-                    valueLabel
-                        .accessibilityHidden(true)
-                    Spacer(minLength: DesignBook.Spacing.sm)
-                    Stepper(title, value: $value, in: range, step: step)
-                        .labelsHidden()
-                        .accessibilityValue(Text(formattedValue))
-                }
-            }
+            stacked
         } else {
-            Stepper(value: $value, in: range, step: step) {
-                HStack(spacing: DesignBook.Spacing.sm) {
-                    titleLabel
-                    Spacer(minLength: DesignBook.Spacing.sm)
-                    valueLabel
-                }
+            ViewThatFits(in: .horizontal) {
+                inline
+                stacked
+            }
+        }
+    }
+
+    var inline: some View {
+        Stepper(value: $value, in: range, step: step) {
+            HStack(spacing: DesignBook.Spacing.sm) {
+                titleLabel
+                    .fixedSize()
+                Spacer(minLength: DesignBook.Spacing.sm)
+                valueLabel
+                    .fixedSize()
+            }
+        }
+    }
+
+    var stacked: some View {
+        VStack(alignment: .leading, spacing: DesignBook.Spacing.sm) {
+            titleLabel
+                .accessibilityHidden(true)
+            HStack {
+                valueLabel
+                    .accessibilityHidden(true)
+                Spacer(minLength: DesignBook.Spacing.sm)
+                Stepper(title, value: $value, in: range, step: step)
+                    .labelsHidden()
+                    .accessibilityValue(Text(formattedValue))
             }
         }
     }

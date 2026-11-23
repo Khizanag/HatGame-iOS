@@ -27,7 +27,7 @@ struct TeamSelectionRow: View {
 
                 Text(localized("randomization.team.players \(team.players.count)"))
                     .font(DesignBook.Font.subheadline)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
             }
 
             Spacer()

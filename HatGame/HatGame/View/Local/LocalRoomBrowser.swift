@@ -144,13 +144,13 @@ private extension LocalRoomBrowser {
                     Text(hostName(of: host))
                         .font(DesignBook.Font.title3)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                        .lineLimit(1)
+                        .lineLimit(2)
                     // The device's advertised name, when it adds anything.
                     if host.displayName != hostName(of: host) {
                         Text(host.displayName)
                             .font(DesignBook.Font.subheadline)
                             .foregroundStyle(DesignBook.Color.Text.tertiary)
-                            .lineLimit(1)
+                            .lineLimit(2)
                     }
                 }
                 Spacer()

@@ -15,14 +15,17 @@ struct NavigationCard: View {
     let description: String
     let action: () -> Void
 
+    /// Grows with the title beside it (constitution article 15).
+    @ScaledMetric(relativeTo: .title3) private var iconSize = DesignBook.Size.largeIconSize
+
     var body: some View {
         Button(action: action) {
             HStack(spacing: DesignBook.Spacing.md) {
                 Image(systemName: icon)
                     .font(DesignBook.IconFont.extraLarge)
                     .foregroundStyle(DesignBook.Color.Text.primary)
-                    .frame(width: DesignBook.Size.largeIconSize, height: DesignBook.Size.largeIconSize)
-                    .decorativeHeroSizing()
+                    .frame(width: iconSize, height: iconSize)
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text(title)
@@ -31,7 +34,7 @@ struct NavigationCard: View {
 
                     Text(description)
                         .font(DesignBook.Font.subheadline)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }

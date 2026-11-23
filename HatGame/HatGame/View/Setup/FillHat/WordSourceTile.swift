@@ -50,7 +50,7 @@ private extension WordSourceTile {
 
             Text(detail)
                 .font(DesignBook.Font.subheadline)
-                .foregroundStyle(DesignBook.Color.Text.secondary)
+                .foregroundStyle(DesignBook.Color.Text.primary)
                 .fixedSize(horizontal: false, vertical: true)
 
             Spacer(minLength: 0)

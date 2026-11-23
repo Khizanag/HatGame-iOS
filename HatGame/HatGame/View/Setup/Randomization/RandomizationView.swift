@@ -13,6 +13,7 @@ struct RandomizationView: View {
     @Environment(GameManager.self) private var gameManager
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     @State private var isShuffling: Bool = false
     @State private var isRandomizingTeam: Bool = false
@@ -152,13 +153,21 @@ private extension RandomizationView {
         return [selectedTeam.color, selectedTeam.color] + ConfettiView.defaultPalette
     }
 
+    /// Side by side; stacked at accessibility sizes, where the button would
+    /// squeeze to a column of letters (constitution article 15).
     var startingTeamHeader: some View {
-        HStack {
+        let layout = dynamicTypeSize.isAccessibilitySize
+            ? AnyLayout(VStackLayout(alignment: .leading, spacing: DesignBook.Spacing.sm))
+            : AnyLayout(HStackLayout())
+        return layout {
             Text(localized("randomization.startingTeam.title"))
                 .font(DesignBook.Font.title1)
                 .foregroundStyle(DesignBook.Color.Text.primary)
+                .accessibilityAddTraits(.isHeader)
 
-            Spacer()
+            if !dynamicTypeSize.isAccessibilitySize {
+                Spacer()
+            }
 
             if !showTeamReveal {
                 Button(action: randomizeStartingTeam) {

@@ -127,6 +127,7 @@ private extension OnlineRoundResultsView {
                             duration: 0.6
                         )
                     }
+                    .accessibilityElement(children: .combine)
                     .padding(.vertical, DesignBook.Spacing.xs)
                 }
             }
@@ -181,6 +182,7 @@ private extension OnlineRoundResultsView {
                             duration: 0.7
                         )
                     }
+                    .accessibilityElement(children: .combine)
                     .padding(.vertical, DesignBook.Spacing.xs)
                 }
             }

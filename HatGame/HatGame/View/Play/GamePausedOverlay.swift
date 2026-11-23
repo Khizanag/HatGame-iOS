@@ -48,7 +48,7 @@ private extension GamePausedOverlay {
     var backdrop: some View {
         if reduceTransparency {
             Rectangle()
-                .fill(DesignBook.Color.Background.primary.opacity(0.95))
+                .fill(DesignBook.Color.Background.primary)
                 .ignoresSafeArea()
         } else {
             Rectangle()

@@ -18,6 +18,7 @@ struct TimerSettingsView: View {
     @State private var isSkippingEnabled: Bool = GameDefaults.standard.isSkippingEnabled
     @State private var skipPenalty: Int = GameDefaults.standard.skipPenalty
     @State private var hasLoadedConfiguration = false
+    @ScaledMetric(relativeTo: .title3) private var skipIconSize = DesignBook.Size.touchTargetSize
 
     var body: some View {
         content
@@ -61,6 +62,7 @@ private extension TimerSettingsView {
             Text(localized("timerSettings.headerTitle"))
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
+                .accessibilityAddTraits(.isHeader)
 
             Text(localized("timerSettings.headerDescription"))
                 .font(DesignBook.Font.body)
@@ -147,9 +149,9 @@ private extension TimerSettingsView {
                 Image(systemName: "arrow.uturn.forward")
                     .font(DesignBook.IconFont.small)
                     .foregroundStyle(DesignBook.Color.Status.warning)
-                    .frame(width: DesignBook.Size.touchTargetSize, height: DesignBook.Size.touchTargetSize)
+                    .frame(width: skipIconSize, height: skipIconSize)
                     .background(Circle().fill(DesignBook.Color.Status.warning.opacity(0.15)))
-                    .decorativeHeroSizing()
+                    .accessibilityHidden(true)
 
                 VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
                     Text(localized("timerSettings.allowSkipping.title"))

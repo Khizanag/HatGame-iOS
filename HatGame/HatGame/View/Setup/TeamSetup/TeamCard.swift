@@ -38,7 +38,7 @@ private extension TeamCard {
             Text(team.name)
                 .font(DesignBook.Font.title3)
                 .foregroundStyle(DesignBook.Color.Text.primary)
-                .lineLimit(1)
+                .lineLimit(2)
 
             Spacer()
 

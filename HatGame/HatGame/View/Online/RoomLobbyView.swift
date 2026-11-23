@@ -293,6 +293,7 @@ private extension RoomLobbyView {
                 Text(localized("lobby.teams"))
                     .font(DesignBook.Font.subheadlineSemibold)
                     .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .accessibilityAddTraits(.isHeader)
                 Spacer()
                 if isHost {
                     Button {

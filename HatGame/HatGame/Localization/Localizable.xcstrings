@@ -8759,6 +8759,40 @@
         }
       },
       "comment" : "Opens the system Settings, where Local Network can be turned on for Hat Game."
+    },
+    "game.results.winnerAnnouncement %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ wins the game."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშს იგებს %@."
+          }
+        }
+      },
+      "comment" : "VoiceOver announcement when the game ends with one winner."
+    },
+    "game.results.tieAnnouncement" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The game ends in a tie for first place."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაში პირველ ადგილზე ფრით დასრულდა."
+          }
+        }
+      },
+      "comment" : "VoiceOver announcement when several teams share first place."
     }
   },
   "version" : "1.1"

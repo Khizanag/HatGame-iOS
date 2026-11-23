@@ -38,9 +38,23 @@ struct ResultsView: View {
                 guard isFinal else { return }
                 try? await Task.sleep(for: .milliseconds(180))
                 hasCelebrated = true
+                announceWinners()
                 try? await Task.sleep(for: .milliseconds(420))
                 areFinalActionsArmed = true
             }
+    }
+}
+
+// MARK: - Announcement
+private extension ResultsView {
+    /// Says who won, since the result is the change a VoiceOver user waits
+    /// for (constitution article 18).
+    func announceWinners() {
+        guard let first = winners.first else { return }
+        let message = winners.count == 1
+            ? localized("game.results.winnerAnnouncement \(first.name)")
+            : localized("game.results.tieAnnouncement")
+        AccessibilityNotification.Announcement(message).post()
     }
 }
 

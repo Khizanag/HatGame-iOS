@@ -27,7 +27,7 @@ struct GameView: View {
     private var timerSize: CGFloat { dynamicTypeSize.isAccessibilitySize ? 120 : 168 }
 
     var body: some View {
-        content
+        adaptiveContent
             .accessibilityHidden(isShowingPausedOverlay)
             .navigationTitle(engine.state.round.title)
             .inlineNavigationTitle()
@@ -84,9 +84,15 @@ private extension GameView {
         }
         .padding(.top, DesignBook.Spacing.lg)
         .paddingHorizontalDefault()
-        // The turn is one fixed, non-scrolling screen; past this size the
-        // timer, card, and buttons can no longer all fit.
-        .dynamicTypeSize(...DynamicTypeSize.accessibility2)
+    }
+
+    /// The turn fits on one screen; at the largest text sizes, where it
+    /// can't, it scrolls instead of clipping (constitution article 15).
+    var adaptiveContent: some View {
+        ViewThatFits(in: .vertical) {
+            content
+            ScrollView { content }
+        }
     }
 
     @ViewBuilder
@@ -174,9 +180,18 @@ private extension GameView {
                 .accessibilityIdentifier("game.giveUp")
         }
 
+        // The clock's control carries its readout, "❚❚ 0:42", so the eye has
+        // one place to look (constitution article 29).
         ToolbarItem(placement: .primaryAction) {
             Button(action: togglePause) {
-                Image(systemName: engine.isPaused ? "play.fill" : "pause.fill")
+                Label {
+                    Text(verbatim: clockText)
+                        .monospacedDigit()
+                        .contentTransition(.numericText(countsDown: true))
+                } icon: {
+                    Image(systemName: engine.isPaused ? "play.fill" : "pause.fill")
+                }
+                .labelStyle(.titleAndIcon)
             }
             .accessibilityLabel(Text(pauseButtonTitle))
             .help(pauseButtonTitle)
@@ -187,6 +202,11 @@ private extension GameView {
 
     var skipPenalty: Int {
         engine.state.settings.skipPenalty
+    }
+
+    var clockText: String {
+        let seconds = max(0, engine.remainingSeconds)
+        return String(format: "%d:%02d", seconds / 60, seconds % 60)
     }
 
     var pauseButtonTitle: String {

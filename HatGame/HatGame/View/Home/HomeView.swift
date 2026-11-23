@@ -122,7 +122,7 @@ private extension HomeView {
 
                 Text(localized("home.subtitle"))
                     .font(DesignBook.Font.body)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
+                    .foregroundStyle(DesignBook.Color.Text.primary)
                     .multilineTextAlignment(.center)
                     .padding(.horizontal, DesignBook.Spacing.lg)
             }

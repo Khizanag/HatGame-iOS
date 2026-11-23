@@ -24,13 +24,32 @@ extension View {
     /// The surface of a content card: the card color on iOS and macOS, the
     /// regular material on visionOS, where an opaque fill reads as a hole in
     /// the glass window.
-    @ViewBuilder
+    /// Under Increase Contrast it gains a visible edge, so a card never
+    /// relies on a faint fill alone (constitution article 17).
     func cardSurface(cornerRadius: CGFloat = DesignBook.Size.cardCornerRadius) -> some View {
+        modifier(CardSurface(cornerRadius: cornerRadius))
+    }
+}
+
+// MARK: - Card surface
+private struct CardSurface: ViewModifier {
+    let cornerRadius: CGFloat
+
+    @Environment(\.colorSchemeContrast) private var contrast
+
+    func body(content: Content) -> some View {
+        let shape = RoundedRectangle(cornerRadius: cornerRadius, style: .continuous)
         #if os(visionOS)
-        background(.regularMaterial, in: .rect(cornerRadius: cornerRadius, style: .continuous))
+        content.background(.regularMaterial, in: shape)
         #else
-        background(DesignBook.Color.Background.card)
-            .clipShape(.rect(cornerRadius: cornerRadius, style: .continuous))
+        content
+            .background(DesignBook.Color.Background.card)
+            .clipShape(shape)
+            .overlay {
+                if contrast == .increased {
+                    shape.strokeBorder(DesignBook.Color.Text.tertiary, lineWidth: 1)
+                }
+            }
         #endif
     }
 }

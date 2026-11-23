@@ -16,8 +16,6 @@ struct AppIconCard: View {
     let isSelected: Bool
     let onSelect: () -> Void
 
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
     var body: some View {
         Button(action: onSelect) {
             VStack(spacing: DesignBook.Spacing.md) {
@@ -27,13 +25,12 @@ struct AppIconCard: View {
                     Text(icon.title)
                         .font(DesignBook.Font.headline)
                         .foregroundStyle(DesignBook.Color.Text.primary)
-                        .lineLimit(titleLineLimit, reservesSpace: true)
-                        .minimumScaleFactor(0.8)
+                        .fixedSize(horizontal: false, vertical: true)
 
                     Text(icon.subtitle)
                         .font(DesignBook.Font.subheadline)
-                        .foregroundStyle(DesignBook.Color.Text.secondary)
-                        .lineLimit(subtitleLineLimit, reservesSpace: true)
+                        .foregroundStyle(DesignBook.Color.Text.primary)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .multilineTextAlignment(.center)
             }
@@ -48,16 +45,6 @@ struct AppIconCard: View {
 
 // MARK: - Subviews
 private extension AppIconCard {
-    /// The grid is one column at accessibility sizes, which gives the text
-    /// room for more lines.
-    var titleLineLimit: Int {
-        dynamicTypeSize.isAccessibilitySize ? 3 : 1
-    }
-
-    var subtitleLineLimit: Int {
-        dynamicTypeSize.isAccessibilitySize ? 4 : 2
-    }
-
     var preview: some View {
         ZStack(alignment: .topTrailing) {
             AppIconPreview(icon: icon, size: 100)
