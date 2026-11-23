@@ -11,14 +11,28 @@ struct HatGameBuildNotes {
 
     var current: [BuildNote] {
         [
-            hatWords, hatLanding, startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes, onlineFixes,
-            liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings,
+            glassCards, hatWords, hatLanding, startingTeam, fillTheHat, skipPenalty, toolbarSymbols, setupFixes,
+            onlineFixes, liquidGlass, heroNumbers, appIconCards, saveAndExit, leaveRoom, haptics, settings,
         ]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var glassCards: BuildNote {
+        BuildNote(
+            commit: "03f4bf7",
+            title: lab("Every tappable card is Liquid Glass"),
+            howToTest: lab("""
+                Home: Play Nearby, Play Online, and How to Play are glass and shimmer under your finger. \
+                The same glass, tinted and ringed when picked, on Fill the Hat's two tiles, Starting Team, \
+                the explainer picker, App Icon, the team color card, and nearby rooms.
+                """),
+            systemImage: "square.on.square",
+            color: .blue
+        ) { routes.passAndPlay() }
+    }
+
     var hatWords: BuildNote {
         BuildNote(
             commit: "41ac46d",
