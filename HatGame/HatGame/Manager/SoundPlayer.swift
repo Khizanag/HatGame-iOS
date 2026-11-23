@@ -10,8 +10,8 @@ import OSLog
 
 private let logger = Logger(subsystem: "com.khizanag.hat-game", category: "SoundPlayer")
 
-/// Centralized, semantic sound effects for the game. Mirrors `DesignBook.Haptics`:
-/// callers fire intent-named methods and never touch `AVAudioPlayer` directly.
+/// Centralized, semantic sound effects for the game: callers fire
+/// intent-named methods and never touch `AVAudioPlayer` directly.
 ///
 /// Uses the `.playback` audio session category with `.mixWithOthers`, so the
 /// time-up cue is audible even when the hardware mute switch is on (it is a

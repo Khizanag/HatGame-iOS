@@ -37,6 +37,8 @@ struct NextTeamView: View {
         content
             .navigationTitle(localized("game.nextTeam.title"))
             .setDefaultStyle()
+            // A pick by tap, or where the shuffle lands; silent while it spins.
+            .haptic(.selection, trigger: selectedExplainerIndex) { _, _ in !isRandomizingExplainer }
             .toolbar {
                 StandingsToolbarItem { isStandingsPresented = true }
             }
@@ -267,7 +269,6 @@ private extension NextTeamView {
 
     var playButton: some View {
         PrimaryButton(title: localized("common.buttons.play"), icon: "play.fill") {
-            DesignBook.Haptics.confirm()
             engine.beginTurn(explainerIndex: isFirstPlay ? selectedExplainerIndex : nil)
         }
         .keyboardShortcut(.defaultAction)
@@ -305,6 +306,5 @@ private extension NextTeamView {
             selectedExplainerIndex = Int.random(in: 0..<playerCount)
             isRandomizingExplainer = false
         }
-        DesignBook.Haptics.success()
     }
 }

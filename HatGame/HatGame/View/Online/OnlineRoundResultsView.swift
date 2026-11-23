@@ -45,7 +45,6 @@ struct OnlineRoundResultsView: View {
             .task {
                 try? await Task.sleep(for: .milliseconds(180))
                 guard !Task.isCancelled else { return }
-                DesignBook.Haptics.success()
                 hasCelebrated = true
             }
             .errorAlert($error, title: localized("error.title.continue"))

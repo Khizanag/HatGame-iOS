@@ -5,7 +5,6 @@
 //  Created by Giga Khizanishvili on 15.11.25.
 //
 
-import DesignBook
 import Observation
 import OSLog
 import SwiftUI
@@ -98,13 +97,11 @@ final class AppConfiguration {
         }
     }
 
-    /// Whether gameplay moments play haptics. Mirrored into
-    /// `DesignBook.Haptics.isEnabled`, which every haptic checks.
+    /// Whether changes a person makes play haptics; `View.haptic` reads it.
     var isHapticsEnabled: Bool {
         didSet {
             userDefaults.set(isHapticsEnabled, forKey: Self.isHapticsEnabledKey)
-            DesignBook.Haptics.isEnabled = isHapticsEnabled
-            }
+        }
     }
 
     /// The app's display language. Changing it overrides the bundle so all
@@ -171,7 +168,6 @@ final class AppConfiguration {
         }
         languageBundle = Self.bundle(for: language)
         persistPreferredLanguage(language)
-        DesignBook.Haptics.isEnabled = isHapticsEnabled
     }
 
     /// The defaults a new single-device game starts from.

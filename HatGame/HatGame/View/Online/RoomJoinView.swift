@@ -25,6 +25,7 @@ struct RoomJoinView: View {
     @State private var sanitizedWrite: String?
     @State private var isJoining: Bool = false
     @State private var error: Error?
+    @State private var completedActions = 0
 
     @FocusState private var focusedField: Field?
 
@@ -41,6 +42,7 @@ struct RoomJoinView: View {
             .navigationTitle(localized("joinRoom.title"))
             .setDefaultStyle()
             .errorAlert($error, title: localized("error.title.joinRoom"))
+            .haptic(.success, trigger: completedActions)
             .onAppear { focusedField = .code }
     }
 }
@@ -180,6 +182,7 @@ private extension RoomJoinView {
         Task {
             do {
                 try await roomManager.joinRoom(code: code, playerName: name)
+                completedActions += 1
                 navigator.push(.roomLobby(roomCode: code))
             } catch {
                 self.error = error

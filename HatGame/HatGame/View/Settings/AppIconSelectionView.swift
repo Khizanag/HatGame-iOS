@@ -14,6 +14,7 @@ struct AppIconSelectionView: View {
     @Environment(\.navZoomNamespace) private var zoomNamespace
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
+    @State private var iconPicks = 0
 
     private let appConfiguration = AppConfiguration.shared
 
@@ -30,6 +31,7 @@ struct AppIconSelectionView: View {
         }
         .navigationTitle(localized("settings.appIcon.title"))
         .setDefaultStyle()
+        .haptic(.selection, trigger: iconPicks)
         .navigationZoomDestination(id: "appIconSelection", in: zoomNamespace)
     }
 }
@@ -92,6 +94,7 @@ private extension AppIconSelectionView {
         withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             appConfiguration.appIcon = icon
         }
+        iconPicks += 1
     }
 }
 

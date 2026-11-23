@@ -25,6 +25,10 @@ struct RoomLobbyView: View {
     @State private var error: Error?
     /// Names the lobby action that failed ("Couldn't Join Team").
     @State private var errorTitle: String = ""
+    @State private var removals = 0
+    @State private var teamChoices = 0
+    @State private var codeCopies = 0
+    @State private var isCodeCopied = false
 
     private var room: GameRoom? { roomManager.room }
     private var isHost: Bool { roomManager.isHost }
@@ -40,6 +44,14 @@ struct RoomLobbyView: View {
         content
             .navigationTitle(localized("lobby.title"))
             .setDefaultStyle()
+            .haptic(.warning, trigger: removals)
+            .haptic(.selection, trigger: teamChoices)
+            .haptic(.success, trigger: codeCopies)
+            // The copy glyph turns to a check for a moment, in its own frame.
+            .task(id: codeCopies) {
+                guard isCodeCopied, (try? await Task.sleep(for: .seconds(2))) != nil else { return }
+                isCodeCopied = false
+            }
             .sheet(isPresented: $showingTeamCreation) {
                 OnlineTeamCreationView()
             }
@@ -115,9 +127,16 @@ private extension RoomLobbyView {
                         if let code = room?.id {
                             Button {
                                 Platform.copyToClipboard(code)
+                                isCodeCopied = true
+                                codeCopies += 1
                             } label: {
-                                Label(localized("lobby.copyCode"), systemImage: "doc.on.doc")
-                                    .font(DesignBook.Font.subheadline)
+                                Label {
+                                    Text(localized("lobby.copyCode"))
+                                } icon: {
+                                    Image(systemName: isCodeCopied ? "checkmark" : "doc.on.doc")
+                                        .contentTransition(.symbolEffect(.replace))
+                                }
+                                .font(DesignBook.Font.subheadline)
                             }
                             .glassButtonStyle()
 
@@ -457,27 +476,28 @@ private extension RoomLobbyView {
 // MARK: - Actions
 private extension RoomLobbyView {
     func joinTeam(_ teamId: String) {
+        teamChoices += 1
         perform(failureTitle: localized("error.title.joinTeam")) { try await roomManager.joinTeam(teamId: teamId) }
     }
 
     func leaveTeam() {
+        teamChoices += 1
         perform(failureTitle: localized("error.title.leaveTeam")) { try await roomManager.leaveTeam() }
     }
 
     func removeAwayPlayer(_ player: OnlinePlayer) {
-        DesignBook.Haptics.rigid()
+        removals += 1
         perform(failureTitle: localized("error.title.removePlayer")) {
             try await roomManager.removeAwayPlayer(player.id)
         }
     }
 
     func removeTeam(_ teamId: String) {
-        DesignBook.Haptics.rigid()
+        removals += 1
         perform(failureTitle: localized("error.title.deleteTeam")) { try await roomManager.removeTeam(teamId: teamId) }
     }
 
     func startGame() {
-        DesignBook.Haptics.confirm()
         perform(failureTitle: localized("error.title.startGame")) { try await roomManager.startGame() }
     }
 

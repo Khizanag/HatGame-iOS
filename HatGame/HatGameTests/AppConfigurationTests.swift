@@ -57,22 +57,17 @@ final class AppConfigurationTests {
         let configuration = AppConfiguration(userDefaults: defaults)
 
         #expect(configuration.isHapticsEnabled)
-        #expect(DesignBook.Haptics.isEnabled)
     }
 
-    /// Turning the setting off silences DesignBook's haptics and persists,
-    /// so the next launch starts with haptics off too.
-    @Test func hapticsSettingDrivesDesignBookAndPersists() {
-        defer { DesignBook.Haptics.isEnabled = true }
+    /// Turning the setting off persists, so the next launch starts with
+    /// haptics off too.
+    @Test func hapticsSettingPersists() {
         let configuration = AppConfiguration(userDefaults: defaults)
 
         configuration.isHapticsEnabled = false
 
-        #expect(!DesignBook.Haptics.isEnabled)
-        DesignBook.Haptics.isEnabled = true
         let relaunched = AppConfiguration(userDefaults: defaults)
         #expect(!relaunched.isHapticsEnabled)
-        #expect(!DesignBook.Haptics.isEnabled)
     }
 
     @Test func gameDefaultsMirrorSettings() {

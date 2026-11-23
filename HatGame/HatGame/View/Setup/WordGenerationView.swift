@@ -47,6 +47,8 @@ struct WordGenerationView: View {
             .setDefaultBackground()
             .navigationBarBackButtonHidden(phase == .generating)
             .hidesNavigationBar(phase == .generating)
+            .haptic(.error, trigger: phase) { _, new in new == .unavailable }
+            .haptic(.success, trigger: phase) { _, new in new == .ready }
             .task {
                 await generateIfNeeded()
             }
@@ -207,7 +209,6 @@ private extension WordGenerationView {
 
         let pool = WordDatabase.words
         guard !pool.isEmpty else {
-            DesignBook.Haptics.error()
             phase = .unavailable
             return
         }
@@ -266,7 +267,6 @@ private extension WordGenerationView {
     func finish(from pool: [String]) {
         gameManager.fillRandomWords(count: targetCount, from: pool)
         generatedCount = gameManager.configuration.words.count
-        DesignBook.Haptics.success()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
             progress = 1
             phase = .ready

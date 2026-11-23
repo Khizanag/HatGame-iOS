@@ -20,6 +20,7 @@ struct HomeView: View {
     @State private var savedGame: GameState?
     @State private var isDiscardConfirmationPresented = false
     @State private var isOverwriteConfirmationPresented = false
+    @State private var discardedGames = 0
 
     private let gameStore = FileGameStore.shared
 
@@ -29,6 +30,7 @@ struct HomeView: View {
                 heroBackdrop.ignoresSafeArea()
             }
             .toolbar { settingsToolbar }
+            .haptic(.warning, trigger: discardedGames)
             .uiTestDeepLink(navigator)
             // Re-check whenever a flow closes: it may have saved, finished, or replaced a game.
             .task(id: navigator.presentedPage?.id) {
@@ -336,7 +338,7 @@ private extension HomeView {
     }
 
     func discardSavedGame() {
-        DesignBook.Haptics.rigid()
+        discardedGames += 1
         withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
             savedGame = nil
         }

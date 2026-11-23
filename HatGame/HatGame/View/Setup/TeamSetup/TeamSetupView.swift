@@ -40,6 +40,8 @@ struct TeamSetupView: View {
             .inlineNavigationTitle()
             .setDefaultBackground()
             .toolbar { toolbarContent }
+            .haptic(.success, trigger: gameManager.configuration.teams.count) { old, new in new > old }
+            .haptic(.warning, trigger: gameManager.configuration.teams.count) { old, new in new < old }
             .confirmationDialog(
                 localized("teamSetup.discard.title"),
                 isPresented: $isDiscardConfirmationPresented,
@@ -324,7 +326,6 @@ private extension TeamSetupView {
         }
         Button(localized("teamSetup.deleteTeam.title"), role: .destructive) {
             if let deletingTeam {
-                DesignBook.Haptics.rigid()
                 withAnimation(DesignBook.Motion.respectingReducedMotion(.smooth, reduceMotion: reduceMotion)) {
                     gameManager.removeTeam(deletingTeam)
                 }

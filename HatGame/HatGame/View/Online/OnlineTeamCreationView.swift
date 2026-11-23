@@ -22,6 +22,7 @@ struct OnlineTeamCreationView: View {
     @State private var isCreating: Bool = false
     @State private var isDiscardConfirmationPresented: Bool = false
     @State private var error: Error?
+    @State private var completedActions = 0
 
     @FocusState private var focusedField: Field?
 
@@ -59,6 +60,7 @@ struct OnlineTeamCreationView: View {
                     Button(localized("createTeam.discard.keepEditing"), role: .cancel) { }
                 }
                 .errorAlert($error, title: localized("error.title.createTeam"))
+                .haptic(.success, trigger: completedActions)
         }
     }
 }
@@ -215,6 +217,7 @@ private extension OnlineTeamCreationView {
         Task {
             do {
                 try await roomManager.createTeam(name: name, colorHex: colorHex)
+                completedActions += 1
                 dismiss()
             } catch {
                 self.error = error

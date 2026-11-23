@@ -17,6 +17,7 @@ struct OnlineNextTeamView: View {
 
     @State private var isLoading: Bool = false
     @State private var error: Error?
+    @State private var forfeits = 0
 
     private var room: GameRoom? { roomManager.room }
     private var gameState: OnlineGameState? { room?.gameState }
@@ -70,6 +71,7 @@ struct OnlineNextTeamView: View {
     var body: some View {
         content
             .setDefaultStyle()
+            .haptic(.warning, trigger: forfeits)
             .errorAlert($error, title: localized("error.title.connection"))
     }
 }
@@ -288,13 +290,12 @@ private extension OnlineNextTeamView {
 // MARK: - Actions
 private extension OnlineNextTeamView {
     func startTurn() {
-        DesignBook.Haptics.confirm()
         perform(.startTurn)
     }
 
     /// Host-only: forfeits the turn of an explainer who is offline.
     func skipAwayExplainer() {
-        DesignBook.Haptics.rigid()
+        forfeits += 1
         perform(.endTurn)
     }
 

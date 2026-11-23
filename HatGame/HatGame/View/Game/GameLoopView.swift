@@ -20,6 +20,7 @@ struct GameLoopView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     @State private var isEndGameConfirmationPresented = false
+    @State private var hasEndedGame = false
 
     var body: some View {
         phaseContent
@@ -45,8 +46,12 @@ struct GameLoopView: View {
                 engine.handleLeavingForeground()
             }
             .onChange(of: engine.phase) { previous, phase in
-                playTurnEndFeedback(from: previous, to: phase)
+                announceTimeUp(from: previous, to: phase)
             }
+            .haptic(.warning, trigger: engine.phase) { old, new in
+                old == .playing && new == .turnResults && engine.state.turn?.endReason == .gaveUp
+            }
+            .haptic(.warning, trigger: hasEndedGame) { _, new in new }
     }
 }
 
@@ -120,7 +125,7 @@ private extension GameLoopView {
     }
 
     func endGame() {
-        DesignBook.Haptics.warning()
+        hasEndedGame = true
         engine.abandon()
         returnToMain()
     }
@@ -138,18 +143,15 @@ private extension GameLoopView {
 
 // MARK: - Feedback
 private extension GameLoopView {
-    /// Marks the end of a turn by feel, and — when the clock ran out —
-    /// announces it, since the time-up is a time-critical change.
-    func playTurnEndFeedback(from previous: GameState.Phase, to phase: GameState.Phase) {
+    /// Announces a turn the clock ended, since time-up is a time-critical
+    /// change. It plays no haptic: the person didn't make it.
+    func announceTimeUp(from previous: GameState.Phase, to phase: GameState.Phase) {
         guard previous == .playing, phase == .turnResults else { return }
         switch engine.state.turn?.endReason {
-        case .allWordsGuessed:
-            DesignBook.Haptics.success()
-        case .gaveUp:
-            DesignBook.Haptics.rigid()
         case .timeExpired, nil:
-            DesignBook.Haptics.warning()
             AccessibilityNotification.Announcement(localized("game.turnResults.timeUp")).post()
+        case .allWordsGuessed, .gaveUp:
+            break
         }
     }
 }

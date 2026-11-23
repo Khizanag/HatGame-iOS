@@ -45,9 +45,6 @@ struct OnlineResultsView: View {
                 try? await Task.sleep(for: .milliseconds(180))
                 hasCelebrated = true
             }
-            .onChange(of: hasCelebrated) { _, celebrated in
-                if celebrated { DesignBook.Haptics.success() }
-            }
     }
 }
 

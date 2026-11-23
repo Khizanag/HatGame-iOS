@@ -19,7 +19,11 @@ struct OnlinePlayView: View {
     @State private var remainingSeconds: Int = 0
     @State private var showingGiveUpConfirmation: Bool = false
     @State private var words: [String: OnlineWord] = [:]
-    @State private var hasPlayedFinalWarning: Bool = false
+    /// How many times this player marked a word guessed, skipped, or gave up,
+    /// so each tap plays its haptic on this view.
+    @State private var guessCount = 0
+    @State private var skipCount = 0
+    @State private var hasGivenUp = false
     @State private var wordLoadFailed: Bool = false
     @State private var isSubmitting: Bool = false
     @State private var error: Error?
@@ -61,6 +65,9 @@ struct OnlinePlayView: View {
             .setDefaultBackground()
             .navigationBarBackButtonHidden()
             .toolbar { gameToolbar }
+            .haptic(.success, trigger: guessCount)
+            .haptic(.selection, trigger: skipCount)
+            .haptic(.warning, trigger: hasGivenUp) { _, new in new }
             .task(id: gameState?.currentWordId) {
                 await loadWordsIfNeeded()
             }
@@ -263,7 +270,6 @@ private extension OnlinePlayView {
     /// second; the remaining time always comes from the deadline, never
     /// from counting ticks.
     func runCountdown() async {
-        hasPlayedFinalWarning = false
         syncRemainingSeconds()
         while gameState?.phase == .playing {
             do {
@@ -279,7 +285,7 @@ private extension OnlinePlayView {
         guard gameState?.phase == .playing else { return }
         let previous = remainingSeconds
         syncRemainingSeconds()
-        playUrgencyHaptics(from: previous, to: remainingSeconds)
+        announceTimeLeft(from: previous, to: remainingSeconds)
         if previous > 0, remainingSeconds == 0 {
             SoundPlayer.shared.playTimeUp()
         }
@@ -296,14 +302,15 @@ private extension OnlinePlayView {
         return OnlineGameRules.isStalled(state, now: roomManager.now)
     }
 
-    func playUrgencyHaptics(from previous: Int, to current: Int) {
+    /// Speaks the time left at 10 s and 5 s and when it runs out, so a
+    /// VoiceOver user who can't watch the clock still hears the turn end.
+    func announceTimeLeft(from previous: Int, to current: Int) {
         guard previous != current else { return }
         switch current {
-        case 3 where !hasPlayedFinalWarning:
-            DesignBook.Haptics.warning()
-            hasPlayedFinalWarning = true
-        case 1, 2:
-            DesignBook.Haptics.tap()
+        case 10, 5:
+            AccessibilityNotification.Announcement(localized("game.timer.accessibility.seconds \(current)")).post()
+        case 0:
+            AccessibilityNotification.Announcement(localized("game.turnResults.timeUp")).post()
         default:
             break
         }
@@ -335,19 +342,19 @@ private extension OnlinePlayView {
 private extension OnlinePlayView {
     func markGuessed() {
         guard isActivePlayer, !isSubmitting, let wordId = gameState?.currentWordId else { return }
-        DesignBook.Haptics.confirm()
+        guessCount += 1
         perform(.markGuessed(wordId: wordId))
     }
 
     func skipCurrentWord() {
         guard isActivePlayer, !isSubmitting, isSkipEnabled, let wordId = gameState?.currentWordId else { return }
-        DesignBook.Haptics.soft()
+        skipCount += 1
         perform(.skip(wordId: wordId))
     }
 
     func giveUp() {
         guard isActivePlayer else { return }
-        DesignBook.Haptics.rigid()
+        hasGivenUp = true
         perform(.endTurn)
     }
 

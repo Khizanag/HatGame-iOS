@@ -23,6 +23,7 @@ struct WordSourceView: View {
     @State private var sampleWords: [String] = []
     @State private var hasLoadedConfiguration = false
     @State private var isReplaceConfirmationPresented = false
+    @State private var sourcePicks = 0
 
     private static let sampleWordCount = 80
     /// Short enough to read on a chip in flight.
@@ -41,6 +42,7 @@ struct WordSourceView: View {
             .navigationTitle(localized("wordSource.navTitle"))
             .setDefaultStyle()
             .onAppear(perform: loadConfiguration)
+            .haptic(.selection, trigger: sourcePicks)
             .confirmationDialog(
                 localized("wordSource.replaceTyped.title"),
                 isPresented: $isReplaceConfirmationPresented,
@@ -179,6 +181,7 @@ private extension WordSourceView {
         withAnimation(DesignBook.Motion.respectingReducedMotion(.snappy, reduceMotion: reduceMotion)) {
             source = newSource
         }
+        sourcePicks += 1
     }
 
     func handleContinue() {

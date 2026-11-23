@@ -19,6 +19,9 @@ struct OnlineWordInputView: View {
     @State private var currentWord: String = ""
     @State private var isSubmitting: Bool = false
     @State private var error: Error?
+    @State private var addedWords = 0
+    @State private var removedWords = 0
+    @State private var sentWords = 0
 
     @FocusState private var isFieldFocused: Bool
 
@@ -37,6 +40,9 @@ struct OnlineWordInputView: View {
             .navigationTitle(localized("onlineWordInput.title"))
             .setDefaultStyle()
             .toolbar { keyboardToolbar }
+            .haptic(.success, trigger: addedWords)
+            .haptic(.selection, trigger: removedWords)
+            .haptic(.success, trigger: sentWords)
             .onAppear { isFieldFocused = true }
             .errorAlert($error, title: localized("error.title.submitWords"))
     }
@@ -268,6 +274,7 @@ private extension OnlineWordInputView {
         withAnimation(animation) {
             playerWords.append(trimmed)
         }
+        addedWords += 1
         currentWord = ""
         // Return adds the word; the field stays ready for the next one
         // until the list is full and the submit step takes over.
@@ -279,6 +286,7 @@ private extension OnlineWordInputView {
         _ = withAnimation(animation) {
             playerWords.remove(at: index)
         }
+        removedWords += 1
     }
 
     func submit() {
@@ -290,6 +298,7 @@ private extension OnlineWordInputView {
         Task {
             do {
                 try await roomManager.submitWords(snapshot)
+                sentWords += 1
             } catch {
                 self.error = error
             }

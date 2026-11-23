@@ -18,6 +18,7 @@ struct RoomCreationView: View {
     @State private var settings = GameSettings()
     @State private var isCreating: Bool = false
     @State private var error: Error?
+    @State private var completedActions = 0
 
     private var trimmedName: String {
         playerName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -41,6 +42,7 @@ struct RoomCreationView: View {
         .navigationTitle(localized("createRoom.title"))
         .setDefaultStyle()
         .errorAlert($error, title: localized("error.title.createRoom"))
+        .haptic(.success, trigger: completedActions)
         .onAppear {
             settings.isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
         }
@@ -58,6 +60,7 @@ private extension RoomCreationView {
         Task {
             do {
                 let code = try await roomManager.createRoom(hostName: name, settings: settings)
+                completedActions += 1
                 navigator.push(.roomLobby(roomCode: code))
             } catch {
                 self.error = error

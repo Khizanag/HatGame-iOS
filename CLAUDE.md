@@ -2,6 +2,13 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Constitution
+
+Every screen obeys [`../iOS-Constitution/CONSTITUTION.md`](../iOS-Constitution/CONSTITUTION.md),
+with this app's additions and recorded exceptions in [`CONSTITUTION.md`](./CONSTITUTION.md).
+Read both before any UI change, and check a change against article 27 before calling it done.
+On what a person sees, the constitution outranks the conventions below. Conforms as of the 2026-11-24 entry.
+
 ## What this is
 
 Hat Game — a SwiftUI party game (explain words to teammates against a timer, 3 rounds). One app target plus three local Swift packages. Three independent play modes: single-device pass-and-play, online multiplayer (Firebase Realtime Database), and same-network multiplayer (MultipeerConnectivity).
@@ -98,7 +105,7 @@ This project predates / diverges from the generic personal-org house pattern. **
   - Intentional exits confirm with `.confirmationDialog` and offer the non-destructive option (Save and Exit, Keep Editing); `.alert` is for unexpected conditions and `errorAlert` requires a specific `title:` — never "Error". Input that would be lost on close → `.interactiveDismissDisabled(hasChanges)` + discard confirmation.
   - Text fields use `.hatFieldStyle(label:…)` (whole box tappable, ≥ 44 pt, real VoiceOver label, keyboard/content type). Validate on submit or focus-leave, not per keystroke. In-content icon buttons are ≥ 44 pt with a label that names the target.
   - Multiplayer session pages hide the system back button; the only exit is the Leave control in `MultiplayerSessionView`, which confirms and calls `leaveRoom()`. Back must never leave a player silently in a room.
-  - Haptics are optional (`AppConfiguration.isHapticsEnabled`, mirrored to `DesignBook.Haptics.isEnabled`) and only mark game moments: Got It = confirm, Skip = soft, countdown = tick, time-up = warning, all guessed = success, destructive confirm = rigid. Never on system controls, navigation, or form submits.
+  - Haptics follow constitution article 23: only `.haptic(_:trigger:when:)` (`Extensions/View+Haptic.swift`, a `.sensoryFeedback` that honours the Haptics setting) on the view whose state changed. Got It and adding or saving = `.success`, Skip and any pick or take-back = `.selection`, a confirmed delete, discard, end, or give-up = `.warning`, a refused entry or failed action = `.error` (`errorAlert` plays it). Nothing on navigation, appear, timers (countdown, time-up), or changes the person didn't make; nothing on top of a system control's own.
   - Liquid Glass is for controls and navigation, never content. A card that only shows content is a `GameCard`; a card that is itself a control — it opens a mode, picks a choice, or folds open — is glass: `.buttonStyle(.glassCard)` when the whole card is the button (`.glassCard(selection:)` tints and rings the picked choice), `.glassCard()` on a card whose header is the button (`FoldableCard`). Never a `.plain` button over an opaque card. In-content controls use system glass, not hand-drawn capsules or circles: `glassButtonStyle()` / `glassProminentButtonStyle()` (capsule chips: `.buttonBorderShape(.capsule)` + `.controlSize(.large)`), round icon buttons `glassIconButtonStyle(isProminent:)`, floating surfaces `glassSurface(in:)`. Neighbouring glass controls share a `GlassContainer`; a control that turns into another morphs with `glassMorphID(_:in:)` inside one container. Never dim glass with `.opacity` (disabled glass styles itself). A sheet at a partial detent sets `.environment(\.showsScreenBackground, false)` so the system glass shows through.
   - Georgian has no case: never `.textCase(.uppercase)` directly — use `eyebrowUppercase()`.
   - Turn keyboard: → Got It, ← Skip, Esc pause/resume on single-device play (online turns have no pause; Esc there is Give Up). The in-app Language and Color Scheme settings deliberately duplicate system settings (one shared party device).

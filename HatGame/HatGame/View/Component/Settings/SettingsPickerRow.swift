@@ -46,6 +46,7 @@ struct SettingsPickerRow<Selection: Hashable, Options: View>: View {
         }
         .accessibilityLabel(Text(title))
         .accessibilityValue(Text(value))
+        .haptic(.selection, trigger: selection)
         #endif
     }
 }

@@ -41,9 +41,6 @@ struct ResultsView: View {
                 try? await Task.sleep(for: .milliseconds(420))
                 areFinalActionsArmed = true
             }
-            .onChange(of: hasCelebrated) { _, celebrated in
-                if celebrated { DesignBook.Haptics.success() }
-            }
     }
 }
 

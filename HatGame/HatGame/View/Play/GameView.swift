@@ -34,9 +34,10 @@ struct GameView: View {
             .setDefaultBackground()
             .toolbar { gameToolbar }
             .onChange(of: engine.remainingSeconds) { _, seconds in
-                playUrgencyHaptics(at: seconds)
                 announceTimeLeft(at: seconds)
             }
+            .haptic(.success, trigger: guessedCount) { old, new in new > old }
+            .haptic(.selection, trigger: skippedCount) { old, new in new > old }
             .alert(localized("game.giveUp.title"), isPresented: $isGiveUpConfirmationPresented) {
                 giveUpAlertActions
             } message: {
@@ -203,9 +204,16 @@ private extension GameView {
 
 // MARK: - Actions
 private extension GameView {
+    var guessedCount: Int {
+        engine.state.turn?.guessedWordIds.count ?? 0
+    }
+
+    var skippedCount: Int {
+        engine.state.turn?.skippedCount ?? 0
+    }
+
     func markCurrentWordGuessed() {
         guard !engine.isPaused, engine.state.currentWord != nil else { return }
-        DesignBook.Haptics.confirm()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
             engine.guess()
         }
@@ -213,7 +221,6 @@ private extension GameView {
 
     func skipCurrentWord() {
         guard engine.canSkip else { return }
-        DesignBook.Haptics.soft()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.smooth) {
             engine.skip()
         }
@@ -236,19 +243,6 @@ private extension GameView {
             engine.resume()
         }
         didPauseForGiveUp = false
-    }
-
-    /// Final-seconds urgency: one warning at 3 s, ticks at 2 s and 1 s.
-    func playUrgencyHaptics(at seconds: Int) {
-        guard !engine.isPaused else { return }
-        switch seconds {
-        case 3:
-            DesignBook.Haptics.warning()
-        case 1, 2:
-            DesignBook.Haptics.tap()
-        default:
-            break
-        }
     }
 
     /// Speaks the time left at 10 s and 5 s, so a VoiceOver user who can't

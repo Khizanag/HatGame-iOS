@@ -17,6 +17,7 @@ struct TeamColorCard: View {
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var isExpanded = false
+    @State private var palettePicks = 0
 
     private let appConfiguration = AppConfiguration.shared
 
@@ -44,6 +45,7 @@ struct TeamColorCard: View {
         .padding(DesignBook.Spacing.md)
         .frame(maxWidth: .infinity)
         .glassCard()
+        .haptic(.selection, trigger: palettePicks)
     }
 }
 
@@ -142,7 +144,7 @@ private extension TeamColorCard {
 
     /// A palette pick is final, so the card closes on it.
     func selectColor(_ color: Color) {
-        DesignBook.Haptics.soft()
+        palettePicks += 1
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             self.color = color
             isExpanded = false

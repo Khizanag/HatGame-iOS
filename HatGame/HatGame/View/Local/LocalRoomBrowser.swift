@@ -23,6 +23,7 @@ struct LocalRoomBrowser: View {
     @AppStorage(PlayerNameStorage.key) private var playerName: String = ""
     @State private var isConnecting: Bool = false
     @State private var error: Error?
+    @State private var completedActions = 0
 
     @FocusState private var focusedField: Field?
 
@@ -39,6 +40,7 @@ struct LocalRoomBrowser: View {
             .navigationTitle(localized("local.browser.title"))
             .setDefaultStyle()
             .errorAlert($error, title: localized("error.title.joinRoom"), transport: .nearby)
+            .haptic(.success, trigger: completedActions)
             .onAppear {
                 roomManager.startBrowsingForHosts()
                 focusedField = .name
@@ -158,6 +160,7 @@ private extension LocalRoomBrowser {
         Task {
             do {
                 try await roomManager.connectToHost(host, playerName: trimmedName)
+                completedActions += 1
                 navigator.push(.localSession(roomCode: host.id.displayName))
             } catch {
                 self.error = error

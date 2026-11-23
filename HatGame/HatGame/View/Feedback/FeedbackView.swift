@@ -37,6 +37,7 @@ struct FeedbackView: View {
         content
             .navigationTitle(localized("feedback.title"))
             .setDefaultStyle()
+            .haptic(.success, trigger: service.state) { _, new in new == .submitted }
             .navigationBarBackButtonHidden(hasDraft)
             .toolbar {
                 if hasDraft {
@@ -184,7 +185,6 @@ private extension FeedbackView {
             .padding(.bottom, DesignBook.Spacing.sm)
         }
         .frame(maxWidth: .infinity)
-        .onAppear { DesignBook.Haptics.success() }
     }
 
     /// Stands in for the system Back button while a message is unsent, so

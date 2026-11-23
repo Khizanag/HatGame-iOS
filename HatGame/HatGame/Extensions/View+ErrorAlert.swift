@@ -54,5 +54,6 @@ private struct ErrorAlertModifier: ViewModifier {
             } message: {
                 Text(message ?? "")
             }
+            .haptic(.error, trigger: message != nil) { _, isFailing in isFailing }
     }
 }

@@ -26,6 +26,7 @@ struct RandomizationView: View {
     @State private var shuffleDuration = RandomizationView.fullShuffleSeconds
     /// Bumped on each reveal to fire the confetti.
     @State private var revealBurst = 0
+    @State private var teamPicks = 0
 
     private static let fullShuffleSeconds = 2.6
     private static let shortShuffleSeconds = 0.8
@@ -54,6 +55,8 @@ struct RandomizationView: View {
         .navigationTitle(localized("randomization.title"))
         .setDefaultStyle()
         .navigationBarBackButtonHidden(isShuffling)
+        .haptic(.selection, trigger: teamPicks)
+        .haptic(.selection, trigger: revealBurst)
         .hidesNavigationBar(isShuffling)
         .interactiveDismissDisabled(isShuffling)
         .onAppear(perform: resetForNewGame)
@@ -217,6 +220,7 @@ private extension RandomizationView {
             selectedStartingTeamIndex = index
             showTeamReveal = false
         }
+        teamPicks += 1
     }
 
     func randomizeStartingTeam() {
@@ -244,7 +248,6 @@ private extension RandomizationView {
             showTeamReveal = true
         }
         revealBurst += 1
-        DesignBook.Haptics.success()
     }
 
     /// Steps the highlight forward, at least a dozen times and whole laps
@@ -260,7 +263,6 @@ private extension RandomizationView {
             withAnimation(.snappy(duration: 0.14)) {
                 selectedStartingTeamIndex = (start + step) % teamCount
             }
-            DesignBook.Haptics.tap()
         }
         return (try? await Task.sleep(for: .milliseconds(380))) != nil
     }
@@ -280,7 +282,6 @@ private extension RandomizationView {
         let isShort = reduceMotion || SessionAnimations.hasPlayedShuffle
         SessionAnimations.hasPlayedShuffle = true
         shuffleDuration = isShort ? Self.shortShuffleSeconds : Self.fullShuffleSeconds
-        DesignBook.Haptics.confirm()
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             isShuffling = true
         }

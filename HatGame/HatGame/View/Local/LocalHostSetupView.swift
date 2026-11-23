@@ -21,6 +21,7 @@ struct LocalHostSetupView: View {
     @State private var settings = GameSettings()
     @State private var isCreating: Bool = false
     @State private var error: Error?
+    @State private var completedActions = 0
 
     private var trimmedName: String {
         hostName.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -40,6 +41,7 @@ struct LocalHostSetupView: View {
         .navigationTitle(localized("local.host.title"))
         .setDefaultStyle()
         .errorAlert($error, title: localized("error.title.hostGame"), transport: .nearby)
+        .haptic(.success, trigger: completedActions)
         .onAppear {
             settings.isSkippingEnabled = AppConfiguration.shared.defaultSkippingEnabled
         }
@@ -90,6 +92,7 @@ private extension LocalHostSetupView {
         Task {
             do {
                 let roomId = try await roomManager.createRoom(hostName: name, settings: settings)
+                completedActions += 1
                 navigator.push(.localSession(roomCode: roomId))
             } catch {
                 self.error = error

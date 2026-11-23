@@ -27,6 +27,11 @@ struct WordInputView: View {
     /// Why the last entry was turned away ("Already in the hat"), shown under the field.
     @State private var entryMessage: String?
     @State private var hasRestoredPosition = false
+    /// Counts of words added, entries refused, and words taken back, so each
+    /// plays its haptic on this view.
+    @State private var addedWords = 0
+    @State private var refusedEntries = 0
+    @State private var removedWords = 0
 
     @FocusState private var isWordFieldFocused: Bool
     @Namespace private var addButtonNamespace
@@ -61,6 +66,10 @@ struct WordInputView: View {
             // Back keeps what this player typed; coming back resumes here.
             .onDisappear(perform: keepCurrentPlayerWords)
             .onChange(of: currentWord) { _, _ in entryMessage = nil }
+            .haptic(.success, trigger: addedWords)
+            .haptic(.error, trigger: refusedEntries)
+            .haptic(.selection, trigger: removedWords)
+            .haptic(.success, trigger: currentPlayerIndex) { old, new in new > old }
             .task(id: currentPlayerIndex) {
                 loadCurrentPlayerWords()
             }
@@ -341,6 +350,7 @@ private extension WordInputView {
         withAnimation(reduceMotion ? nil : DesignBook.Motion.bouncy) {
             playerWords.append(trimmed)
         }
+        addedWords += 1
         currentWord = ""
         requestScrollToLatestWord()
         focusRequest += 1
@@ -349,7 +359,7 @@ private extension WordInputView {
     /// Says why an entry didn't go in — on screen, to VoiceOver, and by feel —
     /// so the field never just ignores the player.
     func rejectEntry(with message: String) {
-        DesignBook.Haptics.warning()
+        refusedEntries += 1
         withAnimation(reduceMotion ? nil : DesignBook.Motion.standard) {
             entryMessage = message
         }
@@ -361,6 +371,7 @@ private extension WordInputView {
         _ = withAnimation(reduceMotion ? nil : DesignBook.Motion.snappy) {
             playerWords.remove(at: index)
         }
+        removedWords += 1
     }
 
     func handleSaveWords() {

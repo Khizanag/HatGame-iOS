@@ -44,6 +44,8 @@ struct TeamFormView: View {
     /// so it never scolds while they are still typing.
     @State private var isPlayerValidationVisible = false
     @State private var isDiscardConfirmationPresented = false
+    @State private var addedPlayers = 0
+    @State private var choiceChanges = 0
 
     @FocusState private var focusedField: Field?
     @ScaledMetric(relativeTo: .subheadline) private var playerBadgeSize: CGFloat = 24
@@ -112,6 +114,8 @@ struct TeamFormView: View {
     var body: some View {
         ScrollViewReader { proxy in
             formContent
+                .haptic(.success, trigger: addedPlayers)
+                .haptic(.selection, trigger: choiceChanges)
                 .dismissesKeyboardInteractively()
                 .onChange(of: focusedField) { previous, field in
                     handleFocusChange(from: previous, to: field, proxy: proxy)
@@ -375,6 +379,7 @@ private extension TeamFormView {
             teamName = name
         }
         hasEditedTeamName = true
+        choiceChanges += 1
         focusedField = nil
     }
 
@@ -425,6 +430,7 @@ private extension TeamFormView {
             playerNames.append("")
             playerIds.append(nil)
         }
+        addedPlayers += 1
         focusedField = .player(playerNames.count - 1)
     }
 
@@ -437,6 +443,7 @@ private extension TeamFormView {
             playerNames.remove(at: index)
         }
         playerIds.remove(at: index)
+        choiceChanges += 1
     }
 
     func handlePrimaryAction() {
