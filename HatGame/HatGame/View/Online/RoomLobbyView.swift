@@ -11,6 +11,7 @@ import Networking
 import SwiftUI
 
 struct RoomLobbyView: View {
+    @Environment(Navigator.self) private var navigator
     @Environment(RoomManager.self) private var roomManager
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dynamicTypeSize) private var dynamicTypeSize
@@ -19,7 +20,6 @@ struct RoomLobbyView: View {
     /// local connection.
     let transport: NetworkErrorMessage.Transport
 
-    @State private var showingTeamCreation: Bool = false
     @State private var isUpdating: Bool = false
     @State private var teamPendingDeletion: OnlineTeam?
     @State private var error: Error?
@@ -54,10 +54,6 @@ struct RoomLobbyView: View {
                       (try? await Task.sleep(for: DesignBook.Motion.confirmationHold)) != nil
                 else { return }
                 isCodeCopied = false
-            }
-            .sheet(isPresented: $showingTeamCreation) {
-                OnlineTeamCreationView()
-                    .environment(\.showsScreenBackground, false)
             }
             .confirmationDialog(
                 deletionTitle,
@@ -299,7 +295,7 @@ private extension RoomLobbyView {
                 Spacer()
                 if isHost {
                     Button {
-                        showingTeamCreation = true
+                        navigator.presentSheet(.createOnlineTeam)
                     } label: {
                         Label(localized("lobby.addTeam"), systemImage: "plus")
                             .font(DesignBook.Font.subheadline)

@@ -21,7 +21,6 @@ struct TeamTurnResultsView: View {
     /// Penalized skips this turn; zero when skipping costs nothing.
     let skippedCount: Int
     let completionReason: PlayCompletionReason
-    @State private var isStandingsPresented = false
     @State private var hasCelebrated: Bool = false
     @State private var confettiBurst: Int = 0
 
@@ -45,16 +44,10 @@ struct TeamTurnResultsView: View {
             .inlineNavigationTitle()
             .setDefaultBackground()
             .toolbar {
-                StandingsToolbarItem { isStandingsPresented = true }
+                StandingsToolbarItem { navigator.presentSheet(.standings) }
             }
-            .sheet(isPresented: $isStandingsPresented) {
-                StandingsSheet()
-                    .environment(gameManager)
-                    .environment(engine)
-                    .environment(navigator)
-            }
-            .onChange(of: isStandingsPresented) { _, presented in
-                if !presented { confettiBurst += 1 }
+            .onChange(of: navigator.presentedSheet == nil) { _, isClosed in
+                if isClosed { confettiBurst += 1 }
             }
             .task {
                 guard !hasCelebrated else { return }

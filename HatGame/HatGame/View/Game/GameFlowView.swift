@@ -75,6 +75,15 @@ struct GameFlowView: View {
                         .environment(gameNavigator)
                 }
         }
+        // The flow presents every sheet its screens ask for (constitution article 13).
+        .sheet(item: Bindable(gameNavigator).presentedSheet) { page in
+            page.view()
+                .environment(gameManager)
+                .environment(gameManager.engine)
+                .environment(gameNavigator)
+                .environment(\.showsScreenBackground, false)
+                .controlTint()
+        }
         .controlTint()
         .environment(gameManager)
         .environment(gameManager.engine)

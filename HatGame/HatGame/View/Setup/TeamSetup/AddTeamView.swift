@@ -21,3 +21,15 @@ struct AddTeamView: View {
         )
     }
 }
+
+// MARK: - Sheet
+/// Add Team in its own navigation stack, as the flow presents it.
+struct AddTeamSheet: View {
+    let onCreate: (Team) -> Void
+
+    var body: some View {
+        NavigationStack {
+            AddTeamView(onTeamCreate: onCreate)
+        }
+    }
+}

@@ -18,7 +18,6 @@ struct NextTeamView: View {
     let round: GameRound
     let team: Team
 
-    @State private var isStandingsPresented = false
     @State private var selectedExplainerIndex: Int = 0
     @State private var isRandomizingExplainer: Bool = false
     /// Play stays disabled for a moment after the screen appears, so a double
@@ -40,13 +39,7 @@ struct NextTeamView: View {
             // A pick by tap, or where the shuffle lands; silent while it spins.
             .haptic(.selection, trigger: selectedExplainerIndex) { _, _ in !isRandomizingExplainer }
             .toolbar {
-                StandingsToolbarItem { isStandingsPresented = true }
-            }
-            .sheet(isPresented: $isStandingsPresented) {
-                StandingsSheet()
-                    .environment(gameManager)
-                    .environment(engine)
-                    .environment(navigator)
+                StandingsToolbarItem { navigator.presentSheet(.standings) }
             }
             .onAppear {
                 if let explainerIndex = engine.state.explainerIndex(for: team) {

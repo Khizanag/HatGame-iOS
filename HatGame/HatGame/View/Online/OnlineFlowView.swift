@@ -25,6 +25,15 @@ struct OnlineFlowView: View {
                         .environment(onlineNavigator)
                 }
         }
+        // The flow presents every sheet its screens ask for (constitution article 13).
+        .sheet(item: Bindable(onlineNavigator).presentedSheet) { page in
+            page.view()
+                .environment(roomManager)
+                .environment(gameSyncManager)
+                .environment(onlineNavigator)
+                .environment(\.showsScreenBackground, false)
+                .controlTint()
+        }
         .controlTint()
         .environment(roomManager)
         .environment(gameSyncManager)

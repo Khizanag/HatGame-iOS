@@ -131,6 +131,33 @@ extension Page {
         }
     }
 
+    // MARK: - Sheets
+    /// Presented with `navigator.presentSheet`, never by the screen itself
+    /// (constitution article 13).
+    static func addTeam(onCreate: @escaping (Team) -> Void) -> Page<AddTeamSheet> {
+        Page<AddTeamSheet>(id: "addTeam") {
+            AddTeamSheet(onCreate: onCreate)
+        }
+    }
+
+    static func editTeam(_ team: Team) -> Page<EditTeamSheet> {
+        Page<EditTeamSheet>(id: "editTeam-\(team.id)") {
+            EditTeamSheet(team: team)
+        }
+    }
+
+    static var standings: Page<StandingsSheet> {
+        Page<StandingsSheet>(id: "standings") {
+            StandingsSheet()
+        }
+    }
+
+    static var createOnlineTeam: Page<OnlineTeamCreationView> {
+        Page<OnlineTeamCreationView>(id: "createOnlineTeam") {
+            OnlineTeamCreationView()
+        }
+    }
+
     // MARK: - Local (Multipeer) Pages
     static var localFlow: Page<LocalFlowView> {
         Page<LocalFlowView>(id: "localFlow") {

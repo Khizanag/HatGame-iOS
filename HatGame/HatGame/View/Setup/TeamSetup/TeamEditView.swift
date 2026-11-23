@@ -27,3 +27,15 @@ struct TeamEditView: View {
         .presentationDetents([.large])
     }
 }
+
+// MARK: - Sheet
+/// Edit Team in its own navigation stack, as the flow presents it.
+struct EditTeamSheet: View {
+    let team: Team
+
+    var body: some View {
+        NavigationStack {
+            TeamEditView(team: team)
+        }
+    }
+}

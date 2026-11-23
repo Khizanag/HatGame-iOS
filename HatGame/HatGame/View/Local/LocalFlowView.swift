@@ -40,6 +40,15 @@ struct LocalFlowView: View {
                         .environment(navigator)
                 }
         }
+        // The flow presents every sheet its screens ask for (constitution article 13).
+        .sheet(item: Bindable(navigator).presentedSheet) { page in
+            page.view()
+                .environment(roomManager as RoomManager)
+                .environment(gameSyncManager as GameSyncManager)
+                .environment(navigator)
+                .environment(\.showsScreenBackground, false)
+                .controlTint()
+        }
         .controlTint()
         .environment(roomManager as RoomManager)
         .environment(gameSyncManager as GameSyncManager)

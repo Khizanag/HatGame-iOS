@@ -14,6 +14,9 @@ import SwiftUI
 public final class Navigator {
     public var navigationPath: [AnyPage] = []
     public var presentedPage: AnyPage?
+    /// The sheet over the current flow, presented by the flow's root so a
+    /// screen never presents one itself.
+    public var presentedSheet: AnyPage?
 
     private var pleaseDismissViewSubject = PassthroughSubject<Void, Never>()
 
@@ -30,6 +33,14 @@ public final class Navigator {
 
     public func present<Content: View>(_ page: Page<Content>) {
         presentedPage = page.eraseToAnyPage()
+    }
+
+    public func presentSheet<Content: View>(_ page: Page<Content>) {
+        presentedSheet = page.eraseToAnyPage()
+    }
+
+    public func dismissSheet() {
+        presentedSheet = nil
     }
 
     public func dismiss() {

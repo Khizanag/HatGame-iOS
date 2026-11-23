@@ -15,8 +15,6 @@ struct TeamSetupView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Environment(\.dismiss) private var dismiss
 
-    @State private var isAddTeamSheetPresented = false
-    @State private var editingTeam: Team?
     @State private var deletingTeam: Team?
     @State private var isEditing: Bool = false
     @State private var isDiscardConfirmationPresented = false
@@ -51,22 +49,6 @@ struct TeamSetupView: View {
                 Button(localized("common.keepEditing"), role: .cancel) {}
             } message: {
                 Text(localized("teamSetup.discard.message"))
-            }
-            .sheet(isPresented: $isAddTeamSheetPresented) {
-                NavigationStack {
-                    AddTeamView(
-                        onTeamCreate: { team in
-                            gameManager.addTeam(team)
-                        }
-                    )
-                }
-                .environment(navigator)
-                .environment(gameManager)
-                // Sheets keep the system's own background (constitution article 4).
-                .environment(\.showsScreenBackground, false)
-            }
-            .sheet(isPresented: editTeamBinding) {
-                editTeamSheet
             }
             .alert(localized("teamSetup.deleteTeam.title"), isPresented: isDeleteTeamAlertPresented) {
                 deleteTeamAlertActions
@@ -131,7 +113,7 @@ private extension TeamSetupView {
                 title: localized("teamSetup.addTeam"),
                 icon: "plus.circle.fill"
             ) {
-                isAddTeamSheetPresented = true
+                presentAddTeam()
             }
             .paddingHorizontalDefault()
         }
@@ -164,7 +146,7 @@ private extension TeamSetupView {
 private extension TeamSetupView {
     func teamRow(for team: Team) -> some View {
         Button {
-            editingTeam = team
+            presentEditTeam(team)
         } label: {
             TeamCard(team: team)
         }
@@ -177,7 +159,7 @@ private extension TeamSetupView {
         .listRowSeparator(.hidden)
         .accessibilityLabel(Text(rowAccessibilityLabel(for: team)))
         .accessibilityHint(Text(localized("teamSetup.editTeam.a11yHint")))
-        .teamActions(team, onEdit: { editingTeam = team }, onDelete: { deletingTeam = team })
+        .teamActions(team, onEdit: { presentEditTeam(team) }, onDelete: { deletingTeam = team })
     }
 
     /// "Alpha, players: Ann and Ben" — the members, not just the name.
@@ -193,7 +175,7 @@ private extension TeamSetupView {
             title: localized("teamSetup.addTeam"),
             icon: "plus.circle.fill"
         ) {
-            isAddTeamSheetPresented = true
+            presentAddTeam()
         }
         .paddingHorizontalDefault()
         .padding(.vertical, DesignBook.Spacing.xs)
@@ -231,7 +213,7 @@ private extension TeamSetupView {
         if canAddMore {
             ToolbarItem(placement: .trailingAction) {
                 Button {
-                    isAddTeamSheetPresented = true
+                    presentAddTeam()
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -264,23 +246,14 @@ private extension TeamSetupView {
 
 // MARK: - Sheets and alerts
 private extension TeamSetupView {
-    var editTeamBinding: Binding<Bool> {
-        Binding(
-            get: { editingTeam != nil },
-            set: { if !$0 { editingTeam = nil } }
-        )
+    func presentAddTeam() {
+        navigator.presentSheet(.addTeam { team in
+            gameManager.addTeam(team)
+        })
     }
 
-    @ViewBuilder
-    var editTeamSheet: some View {
-        if let team = editingTeam {
-            NavigationStack {
-                TeamEditView(team: team)
-            }
-            .environment(navigator)
-            .environment(gameManager)
-            .environment(\.showsScreenBackground, false)
-        }
+    func presentEditTeam(_ team: Team) {
+        navigator.presentSheet(.editTeam(team))
     }
 
     var isDeleteTeamAlertPresented: Binding<Bool> {

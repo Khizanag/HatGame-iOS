@@ -67,21 +67,18 @@ private extension WordGenerationView {
     }
 
     var unavailableContent: some View {
-        VStack(spacing: DesignBook.Spacing.xl) {
-            Spacer(minLength: 0)
-            ContentUnavailableView {
-                Label(localized("wordGeneration.unavailable.title"), systemImage: "exclamationmark.triangle")
-            } description: {
-                Text(localized("wordGeneration.unavailable.message"))
-            }
-            Spacer(minLength: 0)
+        ContentUnavailableView {
+            Label(localized("wordGeneration.unavailable.title"), systemImage: "exclamationmark.triangle")
+        } description: {
+            Text(localized("wordGeneration.unavailable.message"))
+        }
+        .actionBar {
             PrimaryButton(title: localized("wordGeneration.unavailable.enterManually"), icon: "pencil") {
                 gameManager.configuration.wordSource = .manual
                 navigator.replace(with: .wordInput)
             }
+            .paddingHorizontalDefault()
         }
-        .paddingHorizontalDefault()
-        .padding(.bottom, DesignBook.Spacing.xl)
     }
 
     var generationContent: some View {
@@ -103,10 +100,6 @@ private extension WordGenerationView {
                     .foregroundStyle(DesignBook.Color.Text.secondary)
             }
             Spacer(minLength: 0)
-            if phase == .ready, generatedCount > 0 {
-                continueButton
-                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
-            }
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.xl)
@@ -114,6 +107,14 @@ private extension WordGenerationView {
         .contentShape(.rect)
         .onTapGesture(perform: skipDraw)
         .accessibilityAction(named: Text(localized("common.skip")), skipDraw)
+        // Continue rides in the bottom bar, within reach (constitution article 11).
+        .actionBar {
+            if phase == .ready, generatedCount > 0 {
+                continueButton
+                    .paddingHorizontalDefault()
+                    .transition(reduceMotion ? .opacity : .move(edge: .bottom).combined(with: .opacity))
+            }
+        }
     }
 
     var hatHero: some View {

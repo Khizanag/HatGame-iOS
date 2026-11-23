@@ -75,7 +75,6 @@ struct MultiplayerLocalizationTests {
         "online.unsupported.message",
         "online.unsupported.title",
         "onlineWordInput.duplicate",
-        "onlineWordInput.removeWord",
         "session.leave",
         "session.leave.nearby.inGame",
         "session.leave.nearby.lobby",
