@@ -93,7 +93,7 @@ private extension RoomSetupForm {
             value: $settings.roundDuration,
             range: 30...120,
             step: 10,
-            suffix: localized("createRoom.seconds")
+            format: { localized("settings.seconds.value \($0)") }
         )
         GameSettingsToggleRow(
             icon: "wand.and.stars",

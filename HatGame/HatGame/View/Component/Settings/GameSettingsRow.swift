@@ -22,13 +22,12 @@ struct GameSettingsRow: View {
     @Binding var value: Int
     let range: ClosedRange<Int>
     let step: Int
-    var suffix: String?
-    /// Spells out the value when a number and suffix can't, such as "None".
+    /// Spells out the value with its unit or a word, such as "30 seconds" or
+    /// "None", from a String Catalog key so plurals and word order hold.
     var format: ((Int) -> String)?
 
     private var formattedValue: String {
-        if let format { return format(value) }
-        return suffix.map { "\(value) \($0)" } ?? "\(value)"
+        format?(value) ?? "\(value)"
     }
 
     var body: some View {

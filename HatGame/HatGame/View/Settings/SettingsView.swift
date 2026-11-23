@@ -150,11 +150,12 @@ private extension SettingsView {
         SettingsPickerRow(
             icon: "globe",
             title: localized("settings.language.title"),
-            value: "\(appConfiguration.language.flag)  \(appConfiguration.language.displayName)",
+            value: appConfiguration.language.displayName,
+            valueSystemImage: appConfiguration.language.systemImage,
             selection: languageBinding
         ) {
             ForEach(AppLanguage.allCases) { language in
-                Text(verbatim: "\(language.flag)  \(language.displayName)").tag(language)
+                Label(language.displayName, systemImage: language.systemImage).tag(language)
             }
         }
     }

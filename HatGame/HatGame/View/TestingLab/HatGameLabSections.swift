@@ -56,7 +56,7 @@ private extension HatGameLabSections {
         Section {
             Picker(selection: $configuration.language) {
                 ForEach(AppLanguage.allCases, id: \.self) { language in
-                    Text(verbatim: "\(language.flag) \(language.displayName)").tag(language)
+                    Label(language.displayName, systemImage: language.systemImage).tag(language)
                 }
             } label: {
                 LabRow(verbatim: "Language", systemImage: "globe", color: .blue)

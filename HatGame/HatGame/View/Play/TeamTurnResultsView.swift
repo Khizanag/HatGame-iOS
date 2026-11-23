@@ -27,6 +27,12 @@ struct TeamTurnResultsView: View {
 
     private var isCelebratory: Bool { completionReason == .allWordsGuessed }
 
+    private var scoreAccessibilityLabel: String {
+        skippedCount > 0
+            ? localized("game.turnResults.points.a11y \(points)")
+            : localized("game.turnResults.words.a11y \(points)")
+    }
+
     private var scoreUnit: String {
         skippedCount > 0
             ? localized("game.turnResults.pointsUnit \(points)")
@@ -141,7 +147,7 @@ private extension TeamTurnResultsView {
                 }
                 .padding(.top, DesignBook.Spacing.xs)
                 .accessibilityElement(children: .ignore)
-                .accessibilityLabel(Text(verbatim: "\(points) \(scoreUnit)"))
+                .accessibilityLabel(Text(scoreAccessibilityLabel))
 
                 if skippedCount > 0 {
                     Text(localized("game.turnResults.breakdown \(guessedWords.count) \(skippedCount)"))

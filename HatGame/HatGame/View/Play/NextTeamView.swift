@@ -92,8 +92,9 @@ private extension NextTeamView {
                     .strokeBorder(team.color.opacity(0.4), lineWidth: 2)
                     .frame(width: 120, height: 120)
 
-                Text(verbatim: "🎯")
+                Image(systemName: "target")
                     .font(DesignBook.IconFont.emoji)
+                    .foregroundStyle(DesignBook.Color.teamText(for: team.color))
             }
             .accessibilityHidden(true)
             .decorativeHeroSizing()

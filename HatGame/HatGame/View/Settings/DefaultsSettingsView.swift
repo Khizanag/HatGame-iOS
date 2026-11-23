@@ -54,7 +54,7 @@ private extension DefaultsSettingsView {
                 value: durationBinding,
                 range: 5...120,
                 step: 5,
-                suffix: localized("createRoom.seconds")
+                format: { localized("settings.seconds.value \($0)") }
             )
         } footer: {
             Text(localized("settings.defaultRoundDuration.description"))

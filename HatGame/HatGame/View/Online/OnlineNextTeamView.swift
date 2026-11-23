@@ -100,7 +100,9 @@ private extension OnlineNextTeamView {
             ZStack {
                 Circle().fill(tint.opacity(0.15)).frame(width: 120, height: 120)
                 Circle().strokeBorder(tint.opacity(0.4), lineWidth: 2).frame(width: 120, height: 120)
-                Text(verbatim: "🎯").font(DesignBook.IconFont.emoji)
+                Image(systemName: "target")
+                    .font(DesignBook.IconFont.emoji)
+                    .foregroundStyle(DesignBook.Color.teamText(for: tint))
             }
             .accessibilityHidden(true)
             .decorativeHeroSizing()

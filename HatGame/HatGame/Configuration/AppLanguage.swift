@@ -25,12 +25,13 @@ enum AppLanguage: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Flag (or globe for system) shown next to the option.
-    var flag: String {
+    /// The glyph beside the option: the device for System, the language's
+    /// code letter otherwise.
+    var systemImage: String {
         switch self {
-        case .system: "🌐"
-        case .english: "🇬🇧"
-        case .georgian: "🇬🇪"
+        case .system: "iphone"
+        case .english: "e.circle"
+        case .georgian: "k.circle"
         }
     }
 

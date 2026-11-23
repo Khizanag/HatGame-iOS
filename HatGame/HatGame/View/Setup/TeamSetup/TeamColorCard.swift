@@ -84,7 +84,7 @@ private extension TeamColorCard {
         }
         .buttonStyle(.plain)
         .pointerHoverEffect()
-        .accessibilityValue(Text(verbatim: "\(colorName), \(colorSectionState)"))
+        .accessibilityValue(Text(localized("teamForm.color.a11y \(colorName) \(colorSectionState)")))
     }
 
     var colorPicker: some View {

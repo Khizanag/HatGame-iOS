@@ -73,8 +73,9 @@ private extension OnlineRoundResultsView {
 
     var header: some View {
         VStack(spacing: DesignBook.Spacing.sm) {
-            Text(verbatim: "🏁")
+            Image(systemName: "flag.checkered")
                 .font(DesignBook.IconFont.emoji)
+                .foregroundStyle(DesignBook.Color.Text.primary)
                 .decorativeHeroSizing()
                 .accessibilityHidden(true)
             Text(localized("onlineRoundResults.roundComplete"))
@@ -210,15 +211,10 @@ private extension OnlineRoundResultsView {
 
     @ViewBuilder
     func medalIcon(for index: Int) -> some View {
-        switch index {
-        case 0: Text(verbatim: "🥇").font(DesignBook.Font.title1)
-        case 1: Text(verbatim: "🥈").font(DesignBook.Font.title1)
-        case 2: Text(verbatim: "🥉").font(DesignBook.Font.title1)
-        default:
-            Text(verbatim: "\(index + 1)")
-                .font(DesignBook.Font.title3)
-                .foregroundStyle(DesignBook.Color.Text.tertiary)
-        }
+        // The place as a numbered disc, the leader's filled.
+        Image(systemName: index == 0 ? "\(index + 1).circle.fill" : "\(index + 1).circle")
+            .font(DesignBook.Font.title2)
+            .foregroundStyle(DesignBook.Color.Text.primary)
     }
 
     @ViewBuilder
