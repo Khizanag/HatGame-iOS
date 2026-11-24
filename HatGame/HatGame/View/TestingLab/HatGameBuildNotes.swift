@@ -18,7 +18,7 @@ struct HatGameBuildNotes {
 private extension HatGameBuildNotes {
     var howToPlay: BuildNote {
         BuildNote(
-            commit: "pending",
+            commit: "e69c61e",
             title: lab("How to Play moves to the toolbar"),
             howToTest: lab("""
                 Home no longer has the How to Play card. Tap the question mark beside Settings: the rules open \
