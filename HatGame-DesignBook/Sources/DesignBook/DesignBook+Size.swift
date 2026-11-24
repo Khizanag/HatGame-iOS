@@ -115,8 +115,12 @@ extension DesignBook {
         /// Max width of the gameplay word card, kept comfortably square and
         /// proportional to the timer regardless of window width.
         public static let wordCardMaxWidth: CGFloat = 440
-        /// Width over height of the gameplay word card: just wider than square.
+        /// Width over height of the gameplay word card at its tallest: just
+        /// wider than square.
         public static let wordCardAspectRatio: CGFloat = 1.05
+        /// The shortest the word card gets on a short screen before the turn
+        /// scrolls instead.
+        public static let wordCardMinHeight: CGFloat = 160
 
         // MARK: - App Icon Previews
         /// The current icon in its Settings row.

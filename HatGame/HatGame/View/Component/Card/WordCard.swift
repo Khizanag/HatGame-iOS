@@ -23,8 +23,7 @@ struct WordCard: View {
             cardBackground
             wordText
         }
-        .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
-        .aspectRatio(DesignBook.Size.wordCardAspectRatio, contentMode: .fit)
+        .wordCardFrame()
         // Scoring is never the default (double-tap) action: Got It and Skip
         // are named actions, so a stray double-tap can't score a word.
         .accessibilityElement(children: .combine)
@@ -73,4 +72,18 @@ private extension WordCard {
     )
     .padding()
     .background(DesignBook.Color.Background.primary)
+}
+
+// MARK: - Word card frame
+extension View {
+    /// The word card's size: it fills the height the turn leaves it, between
+    /// a floor and its just-wider-than-square shape. A fixed shape made the
+    /// turn a little taller than a phone, so the whole screen scrolled.
+    func wordCardFrame() -> some View {
+        frame(
+            maxWidth: DesignBook.Size.wordCardMaxWidth,
+            minHeight: DesignBook.Size.wordCardMinHeight,
+            maxHeight: DesignBook.Size.wordCardMaxWidth / DesignBook.Size.wordCardAspectRatio,
+        )
+    }
 }

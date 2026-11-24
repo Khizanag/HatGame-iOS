@@ -115,8 +115,7 @@ private extension GameView {
         } else {
             RoundedRectangle(cornerRadius: DesignBook.Size.heroCardCornerRadius, style: .continuous)
                 .fill(DesignBook.Color.Background.card)
-                .frame(maxWidth: DesignBook.Size.wordCardMaxWidth)
-                .aspectRatio(DesignBook.Size.wordCardAspectRatio, contentMode: .fit)
+                .wordCardFrame()
                 .opacity(DesignBook.Opacity.disabled)
         }
     }
