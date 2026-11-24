@@ -32,17 +32,6 @@ struct LabRoutes {
         present(.onlineFlow)
     }
 
-    /// Home with the How to Play sheet open. Waits for the lab's own sheet to
-    /// leave, since one host can't present two sheets at once.
-    func howToPlay() {
-        navigator.presentedPage = nil
-        navigator.navigationPath = []
-        Task {
-            try? await Task.sleep(for: .milliseconds(600))
-            navigator.presentSheet(.howToPlay)
-        }
-    }
-
     /// A started two-team, two-word game: the shortest way into a turn.
     func quickGame() {
         present(.uiTestGame)

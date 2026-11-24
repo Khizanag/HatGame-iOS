@@ -15,7 +15,7 @@ final class HatGameUITests: XCTestCase {
     }
 
     @MainActor
-    func testHowToPlayOpensFromTheToolbarAndCloses() throws {
+    func testHowToPlayOpensTheRulesPageFromTheToolbar() throws {
         let app = XCUIApplication()
         app.launchArguments = ["-uiTestResetState"]
         app.launch()
@@ -24,12 +24,15 @@ final class HatGameUITests: XCTestCase {
         XCTAssertTrue(howToPlay.waitForExistence(timeout: 10))
         howToPlay.tap()
 
-        let close = app.buttons["common.close"]
-        XCTAssertTrue(close.waitForExistence(timeout: 5), "the How to Play sheet didn't open")
-        XCTAssertTrue(app.staticTexts["How to Play"].exists)
-        close.tap()
-        XCTAssertTrue(howToPlay.waitForExistence(timeout: 5))
-        XCTAssertFalse(close.exists)
+        XCTAssertTrue(app.staticTexts["Three rounds, the same words"].waitForExistence(timeout: 5))
+        let question = app.buttons["Who explains?"]
+        for _ in 0 ..< 8 where !(question.exists && question.isHittable) { app.swipeUp() }
+        question.tap()
+        XCTAssertTrue(
+            app.staticTexts.matching(NSPredicate(format: "label BEGINSWITH 'On a team’s first turn'")).firstMatch
+                .waitForExistence(timeout: 5),
+            "the question didn't open to its answer"
+        )
     }
 
     @MainActor

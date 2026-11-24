@@ -1859,23 +1859,6 @@
         }
       }
     },
-    "common.gotIt" : {
-      "comment" : "Dismiss button on error / informational alerts — friendlier alternative to OK.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Got it"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გასაგებია"
-          }
-        }
-      }
-    },
     "common.tryAgain" : {
       "comment" : "Button label to retry a failed action.",
       "localizations" : {
@@ -8742,6 +8725,992 @@
         }
       },
       "comment" : "VoiceOver announcement when several teams share first place."
+    },
+    "rules.hero.subtitle" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Explain words to your team before the clock runs out. Three rounds, the same words, a stricter rule each time."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "აუხსენი სიტყვები შენს გუნდს, სანამ დრო ამოიწურება. სამი რაუნდი, იგივე სიტყვები, ყოველ ჯერზე უფრო მკაცრი წესი."
+          }
+        }
+      },
+      "comment" : "Rules page: the one-line summary under the hero."
+    },
+    "rules.glance.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "At a glance"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოკლედ"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of the quick facts."
+    },
+    "rules.glance.teams" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "teams of two or more players"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდი, თითოში ორი ან მეტი მოთამაშე"
+          }
+        }
+      },
+      "comment" : "Rules page: caption under \"2–6\"."
+    },
+    "rules.glance.words" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "words from every player, by default"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვა თითოეული მოთამაშისგან, ნაგულისხმევად"
+          }
+        }
+      },
+      "comment" : "Rules page: caption under the words-per-player number."
+    },
+    "rules.glance.seconds" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "seconds a turn, by default"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წამი ერთ სვლაზე, ნაგულისხმევად"
+          }
+        }
+      },
+      "comment" : "Rules page: caption under the turn length."
+    },
+    "rules.glance.rounds" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "rounds with the same words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რაუნდი იგივე სიტყვებით"
+          }
+        }
+      },
+      "comment" : "Rules page: caption under \"3\"."
+    },
+    "rules.rounds.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Three rounds, the same words"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სამი რაუნდი, იგივე სიტყვები"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of the rounds section."
+    },
+    "rules.rounds.intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Every round plays the same words from the hat. Only the way you may explain them gets stricter, so by the last round everyone knows the words and it all comes down to how you get them across."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყოველ რაუნდში ქუდიდან იგივე სიტყვები თამაშდება. იცვლება მხოლოდ ახსნის წესი და ხდება უფრო მკაცრი, ასე რომ ბოლო რაუნდისთვის ყველამ იცის სიტყვები და ყველაფერი იმაზეა დამოკიდებული, როგორ გადასცემ მათ."
+          }
+        }
+      },
+      "comment" : "Rules page: intro to the three rounds."
+    },
+    "rules.example.word" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "If the word is “Penguin”"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თუ სიტყვაა „პინგვინი“"
+          }
+        }
+      },
+      "comment" : "Rules page: the example word the three round cards explain."
+    },
+    "rules.round1.example" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“A black-and-white bird that can’t fly and lives where it’s cold.”"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„შავ-თეთრი ფრინველი, რომელიც ვერ დაფრინავს და ცივ ადგილას ცხოვრობს.“"
+          }
+        }
+      },
+      "comment" : "Rules page: how the example word is explained in round 1."
+    },
+    "rules.round2.example" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "“Antarctica.”"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "„ანტარქტიდა.“"
+          }
+        }
+      },
+      "comment" : "Rules page: the one-word clue for the example in round 2."
+    },
+    "rules.round3.example" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Waddle with your arms pressed to your sides."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იბაჯბაჯე, ხელები გვერდებზე მიიკარი."
+          }
+        }
+      },
+      "comment" : "Rules page: the mime for the example in round 3."
+    },
+    "rules.allowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Allowed"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეიძლება"
+          }
+        }
+      },
+      "comment" : "Rules page: label before what a round allows."
+    },
+    "rules.notAllowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not allowed"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "არ შეიძლება"
+          }
+        }
+      },
+      "comment" : "Rules page: label before what a round forbids."
+    },
+    "rules.round1.allowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any words, gestures, and sounds"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ნებისმიერი სიტყვა, ჟესტი და ხმა"
+          }
+        }
+      },
+      "comment" : "Round 1 allows."
+    },
+    "rules.round1.notAllowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The word itself or any part of it"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თავად სიტყვა ან მისი ნაწილი"
+          }
+        }
+      },
+      "comment" : "Round 1 forbids."
+    },
+    "rules.round2.allowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Exactly one word, said once"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ზუსტად ერთი სიტყვა, ერთხელ ნათქვამი"
+          }
+        }
+      },
+      "comment" : "Round 2 allows."
+    },
+    "rules.round2.notAllowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A second word, or a word with the same root"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მეორე სიტყვა ან იმავე ძირის სიტყვა"
+          }
+        }
+      },
+      "comment" : "Round 2 forbids."
+    },
+    "rules.round3.allowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gestures, miming, and acting it out"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჟესტები, მიმიკა და გათამაშება"
+          }
+        }
+      },
+      "comment" : "Round 3 allows."
+    },
+    "rules.round3.notAllowed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Any words or sounds, mouthing the word"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ნებისმიერი სიტყვა თუ ხმა, ტუჩებით სიტყვის გამოთქმა"
+          }
+        }
+      },
+      "comment" : "Round 3 forbids."
+    },
+    "rules.turn.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How a turn works"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როგორ მიდის სვლა"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of the turn steps."
+    },
+    "rules.turn.explainer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One player explains and only they see the word; the rest of the team guesses."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ერთი მოთამაშე ხსნის და სიტყვას მხოლოდ ის ხედავს; გუნდის დანარჩენი წევრები გამოიცნობენ."
+          }
+        }
+      },
+      "comment" : "Turn step 1."
+    },
+    "rules.turn.gotIt" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the team says the word, tap Got It: one point, and the next word appears."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როცა გუნდი სიტყვას იტყვის, დააჭირე „შემდეგი“: ერთი ქულა და ჩნდება შემდეგი სიტყვა."
+          }
+        }
+      },
+      "comment" : "Turn step 2."
+    },
+    "rules.turn.skip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Stuck? Skip puts the word back in the hat for later. It costs a point by default."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვერ ხსნი? „გამოტოვება“ სიტყვას ქუდში აბრუნებს მოგვიანებისთვის. ნაგულისხმევად ერთი ქულა ღირს."
+          }
+        }
+      },
+      "comment" : "Turn step 3."
+    },
+    "rules.turn.timeUp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When time runs out, the word goes back in the hat and the next team plays."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როცა დრო ამოიწურება, სიტყვა ქუდში ბრუნდება და შემდეგი გუნდი თამაშობს."
+          }
+        }
+      },
+      "comment" : "Turn step 4."
+    },
+    "rules.turn.hatEmpty" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When the hat is empty, the round ends and the hat fills up again for the next one."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როცა ქუდი დაცარიელდება, რაუნდი მთავრდება და ქუდი შემდეგი რაუნდისთვის ისევ ივსება."
+          }
+        }
+      },
+      "comment" : "Turn step 5."
+    },
+    "rules.scoring.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scoring and winning"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქულები და გამარჯვება"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of the scoring section."
+    },
+    "rules.scoring.guess" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "for every word your team guesses"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყოველი სიტყვისთვის, რომელსაც შენი გუნდი გამოიცნობს"
+          }
+        }
+      },
+      "comment" : "Rules page: caption beside +1."
+    },
+    "rules.scoring.skip" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "for every skip; set from none to three before the game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყოველი გამოტოვებისთვის; თამაშამდე ირჩევა ნულიდან სამამდე"
+          }
+        }
+      },
+      "comment" : "Rules page: caption beside −1."
+    },
+    "rules.scoring.repeat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The same words come back every round, so each word can score three times."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იგივე სიტყვები ყოველ რაუნდში ბრუნდება, ასე რომ თითო სიტყვა სამჯერ შეიძლება მოიგო."
+          }
+        }
+      },
+      "comment" : "Rules page: scoring note."
+    },
+    "rules.scoring.win" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The highest total after the third round wins. Teams that tie share the win."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მესამე რაუნდის შემდეგ ყველაზე მეტი ქულით იგებს. ფრის შემთხვევაში გამარჯვებას გუნდები იყოფენ."
+          }
+        }
+      },
+      "comment" : "Rules page: how the winner is decided."
+    },
+    "rules.fairPlay.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Fair play"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სამართლიანი თამაში"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of what counts as fair."
+    },
+    "rules.fairPlay.intro" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In every round, the explainer may not:"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "არცერთ რაუნდში ამხსნელს არ შეუძლია:"
+          }
+        }
+      },
+      "comment" : "Rules page: intro to the fair-play list."
+    },
+    "rules.fairPlay.spell" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Spell the word or give its letters"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვის დამარცვლა ან მისი ასოების თქმა"
+          }
+        }
+      },
+      "comment" : "Fair play item."
+    },
+    "rules.fairPlay.rhyme" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say what it rhymes with or sounds like"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "იმის თქმა, რას ერითმება ან რას ჰგავს ჟღერადობით"
+          }
+        }
+      },
+      "comment" : "Fair play item."
+    },
+    "rules.fairPlay.translate" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Say it in another language"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მისი სხვა ენაზე თქმა"
+          }
+        }
+      },
+      "comment" : "Fair play item."
+    },
+    "rules.fairPlay.point" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Point at the thing if it’s in the room"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საგანზე მითითება, თუ ის ოთახშია"
+          }
+        }
+      },
+      "comment" : "Fair play item."
+    },
+    "rules.fairPlay.guessers" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Guessers may shout as many guesses as they like."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამომცნობებს რამდენი ვერსიაც უნდათ, იმდენის თქმა შეუძლიათ."
+          }
+        }
+      },
+      "comment" : "Fair play: what guessers may do."
+    },
+    "rules.deep.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The finer points"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დეტალები"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of the expandable questions."
+    },
+    "rules.deep.explainer.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Who explains?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ვინ ხსნის?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.explainer.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On a team’s first turn you choose the explainer, or let the app pick one. After that, the role passes to the next player each time the team’s clock runs out."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდის პირველ სვლაზე ამხსნელს შენ ირჩევ ან აპს ანდობ. შემდეგ როლი შემდეგ მოთამაშეზე გადადის ყოველ ჯერზე, როცა გუნდს დრო ამოეწურება."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.deep.carryOver.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What happens when we empty the hat?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რა ხდება, როცა ქუდს ვაცარიელებთ?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.carryOver.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You end the round and start the next one: your team keeps the time left on its clock and the same explainer. Every other team starts the new round with a full clock."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რაუნდს ასრულებ და შემდეგს იწყებ: შენი გუნდი ინარჩუნებს დარჩენილ დროს და იმავე ამხსნელს. ყველა სხვა გუნდი ახალ რაუნდს სრული დროით იწყებს."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.deep.skip.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When can’t we skip?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როდის არ შეიძლება გამოტოვება?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.skip.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "When skipping is turned off for the game, when only one word is left in the hat, or once time has run out. A skipped word stays in the hat and comes back later."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როცა თამაშში გამოტოვება გამორთულია, როცა ქუდში მხოლოდ ერთი სიტყვაა დარჩენილი, ან როცა დრო უკვე ამოიწურა. გამოტოვებული სიტყვა ქუდში რჩება და მოგვიანებით ბრუნდება."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.deep.negative.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Can a score go below zero?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შეიძლება ქულა ნულზე ნაკლები იყოს?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.negative.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Yes. Skip penalties count in the round they happen, so a turn or a total can be negative."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დიახ. გამოტოვების ჯარიმა იმ რაუნდში ითვლება, სადაც მოხდა, ამიტომ სვლის ან ჯამის ქულა შეიძლება უარყოფითი იყოს."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.deep.giveUp.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What does Give Up do?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რას აკეთებს „დანებება“?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.giveUp.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "It ends the turn early, as if time ran out: the word goes back in the hat and the next team plays."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სვლას ადრე ასრულებს, თითქოს დრო ამოიწურა: სიტყვა ქუდში ბრუნდება და შემდეგი გუნდი თამაშობს."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.deep.pause.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "What if we’re interrupted?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რა მოხდება, თუ თამაში შეწყდა?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.pause.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pause stops the clock. If the app goes to the background, the turn pauses by itself, and a game left halfway is saved so Home can resume it."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "პაუზა საათს აჩერებს. თუ აპი ფონზე გადავა, სვლა თავისით ჩერდება, ხოლო შუაზე მიტოვებული თამაში ინახება და მთავარი ეკრანიდან შეგიძლია განაგრძო."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.deep.again.q" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "How do we play again?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "როგორ ვითამაშოთ თავიდან?"
+          }
+        }
+      },
+      "comment" : "FAQ question."
+    },
+    "rules.deep.again.a" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "From the final results, Play Again keeps the teams and the words for a rematch; New Words keeps the teams and empties the hat."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საბოლოო შედეგებიდან „თავიდან თამაში“ გუნდებსაც და სიტყვებსაც ინარჩუნებს რევანშისთვის; „ახალი სიტყვები“ გუნდებს ინარჩუნებს და ქუდს აცარიელებს."
+          }
+        }
+      },
+      "comment" : "FAQ answer."
+    },
+    "rules.modes.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ways to play"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის გზები"
+          }
+        }
+      },
+      "comment" : "Rules page: heading of the play modes."
+    },
+    "rules.modes.passAndPlay" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "One phone passed around: teams, words, and turns all happen on this device."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ერთი ტელეფონი, რომელიც ხელიდან ხელში გადადის: გუნდები, სიტყვები და სვლები ამ მოწყობილობაზე."
+          }
+        }
+      },
+      "comment" : "Rules page: Pass and Play description."
+    },
+    "rules.modes.nearby" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Everyone on their own phone in the same room, with no internet needed."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ყველა საკუთარი ტელეფონით, ერთ ოთახში, ინტერნეტის გარეშე."
+          }
+        }
+      },
+      "comment" : "Rules page: Play Nearby description."
+    },
+    "rules.modes.online" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Friends anywhere: create a room and share its code."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მეგობრები სადაც არ უნდა იყვნენ: შექმენი ოთახი და გაუზიარე კოდი."
+          }
+        }
+      },
+      "comment" : "Rules page: Play Online description."
+    },
+    "rules.mark.a11y %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@: %2$@"
+          }
+        }
+      },
+      "comment" : "VoiceOver: whether a rule is allowed, then the rule."
     }
   },
   "version" : "1.1"

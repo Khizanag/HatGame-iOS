@@ -251,7 +251,7 @@ private extension HomeView {
     var homeToolbar: some ToolbarContent {
         ToolbarItem(placement: .trailingAction) {
             Button {
-                navigator.presentSheet(.howToPlay)
+                navigator.push(.rules)
             } label: {
                 Label(localized("home.howToPlay.title"), systemImage: "questionmark.circle")
             }

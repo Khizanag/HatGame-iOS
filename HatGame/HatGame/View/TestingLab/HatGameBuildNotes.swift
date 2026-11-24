@@ -18,15 +18,16 @@ struct HatGameBuildNotes {
 private extension HatGameBuildNotes {
     var howToPlay: BuildNote {
         BuildNote(
-            commit: "e69c61e",
-            title: lab("How to Play moves to the toolbar"),
+            commit: "pending",
+            title: lab("A full Rules page"),
             howToTest: lab("""
-                Home no longer has the How to Play card. Tap the question mark beside Settings: the rules open \
-                in a sheet, half height or full, and Close or a swipe down puts it away.
+                Tap the question mark on Home: the rules open as a page. Check the facts at a glance, the \
+                three rounds explaining one word, a turn, scoring, fair play, the finer points that open \
+                when tapped, and the ways to play, in English and Georgian.
                 """),
             systemImage: "questionmark.circle",
             color: .mint
-        ) { routes.howToPlay() }
+        ) { routes.push(.rules) }
     }
 
     var noSkip: BuildNote {

@@ -59,6 +59,8 @@ enum UITestConfiguration {
         switch screen {
         case "settings":
             navigator.push(.settings)
+        case "rules":
+            navigator.push(.rules)
         case "defaults":
             navigator.push(.defaultsSettings)
         case "appIcon":
