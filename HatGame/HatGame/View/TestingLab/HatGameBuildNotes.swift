@@ -18,7 +18,7 @@ struct HatGameBuildNotes {
 private extension HatGameBuildNotes {
     var noSkip: BuildNote {
         BuildNote(
-            commit: "pending",
+            commit: "d52bf4f",
             title: lab("The draw and the shuffle play through"),
             howToTest: lab("""
                 Pick for Us, then Start Game: neither the word draw nor the shuffle says Tap to Skip, and a \
