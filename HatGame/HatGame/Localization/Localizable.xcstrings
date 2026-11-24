@@ -53,40 +53,6 @@
         }
       }
     },
-    "common.skip" : {
-      "comment" : "VoiceOver action that skips a decorative animation.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Skip"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "გამოტოვება"
-          }
-        }
-      }
-    },
-    "common.tapToSkip" : {
-      "comment" : "Caption and VoiceOver hint on decorative animations that a tap skips.",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Tap to skip"
-          }
-        },
-        "ka" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "შეეხეთ გამოსატოვებლად"
-          }
-        }
-      }
-    },
     "createTeam.confirm" : {
       "comment" : "Toolbar button that creates the team in the online/nearby Create Team sheet.",
       "localizations" : {

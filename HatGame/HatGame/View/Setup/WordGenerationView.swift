@@ -23,7 +23,6 @@ struct WordGenerationView: View {
     @State private var generatedCount: Int = 0
     @State private var hasStarted = false
     @State private var isHatFloating = false
-    @State private var isSkipRequested = false
     @AccessibilityFocusState private var readyControlFocused: Bool
 
     private enum Phase {
@@ -94,19 +93,10 @@ private extension WordGenerationView {
                 .padding(.horizontal, DesignBook.Spacing.xl)
                 .opacity(phase == .generating ? 1 : 0)
                 .accessibilityLabel(Text(localized("wordGeneration.title")))
-            if phase == .generating {
-                Text(localized("common.tapToSkip"))
-                    .font(DesignBook.Font.footnote)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-            }
             Spacer(minLength: 0)
         }
         .paddingHorizontalDefault()
         .padding(.bottom, DesignBook.Spacing.xl)
-        // The draw is decoration over instant work: a tap anywhere skips it.
-        .contentShape(.rect)
-        .onTapGesture(perform: skipDraw)
-        .accessibilityAction(named: Text(localized("common.skip")), skipDraw)
         // Continue rides in the bottom bar, within reach (constitution article 11).
         .actionBar {
             if phase == .ready, generatedCount > 0 {
@@ -233,7 +223,6 @@ private extension WordGenerationView {
                 hasStarted = false
                 return
             }
-            if isSkipRequested { break }
             drawWord(from: pool)
             withAnimation(reduceMotion ? nil : DesignBook.Motion.drawProgress) {
                 progress = Double(draw) / Double(drawCount)
@@ -244,11 +233,6 @@ private extension WordGenerationView {
         // Move VoiceOver to the now-actionable Continue button once it is on screen.
         guard (try? await Task.sleep(for: .milliseconds(100))) != nil else { return }
         readyControlFocused = true
-    }
-
-    func skipDraw() {
-        guard phase == .generating else { return }
-        isSkipRequested = true
     }
 
     /// Draws one random word, sharpening it into focus from a blur — or a calm

@@ -11,24 +11,20 @@ import SwiftUI
 /// Covers the screen while the hat is shuffled before the first turn:
 /// blank word slips swirl around the upturned hat in 3D, then spiral in
 /// through its opening as the shuffle ends. The slips stay blank so no
-/// one's words show. A tap anywhere skips ahead.
+/// one's words show.
 struct ShufflingOverlay: View {
     let reduceMotion: Bool
     /// How long the shuffle runs before the game starts.
     let duration: Double
-    let onSkip: () -> Void
 
     @State private var startDate = Date.now
 
     var body: some View {
-        Button(action: onSkip) {
-            overlayContent
-        }
-        .buttonStyle(.plain)
-        .accessibilityLabel(Text(localized("randomization.shuffling.message")))
-        .accessibilityHint(Text(localized("common.tapToSkip")))
-        .accessibilityAddTraits(.isModal)
-        .onAppear { startDate = .now }
+        overlayContent
+            .accessibilityElement(children: .ignore)
+            .accessibilityLabel(Text(localized("randomization.shuffling.message")))
+            .accessibilityAddTraits(.isModal)
+            .onAppear { startDate = .now }
     }
 }
 
@@ -82,11 +78,6 @@ private extension ShufflingOverlay {
                 .tint(DesignBook.Color.onGradient)
                 .frame(width: DesignBook.Size.shuffleProgressWidth)
                 .opacity(reduceMotion ? 0 : 1)
-
-            Text(localized("common.tapToSkip"))
-                .font(DesignBook.Font.footnote)
-                .foregroundStyle(DesignBook.Color.onGradient.opacity(DesignBook.Opacity.mostlyOpaque))
-                .padding(.top, DesignBook.Spacing.md)
         }
         .paddingHorizontalDefault()
     }

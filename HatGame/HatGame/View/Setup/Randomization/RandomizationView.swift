@@ -49,7 +49,7 @@ struct RandomizationView: View {
                 .accessibilityHidden(isShuffling)
 
             if isShuffling {
-                ShufflingOverlay(reduceMotion: reduceMotion, duration: shuffleDuration, onSkip: startGame)
+                ShufflingOverlay(reduceMotion: reduceMotion, duration: shuffleDuration)
                     .transition(.opacity)
             }
         }
@@ -291,8 +291,7 @@ private extension RandomizationView {
     }
 
     /// Lets the shuffle play out — in full only the first time this session
-    /// — and the last slip go in, then starts the game. A tap on the overlay
-    /// starts it sooner.
+    /// — and the last slip go in, then starts the game.
     func startGameAfterShuffle() async {
         guard isShuffling else { return }
         let wait = Duration.seconds(shuffleDuration + DesignBook.Motion.shuffleSettle)

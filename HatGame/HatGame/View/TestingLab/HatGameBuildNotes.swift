@@ -10,12 +10,25 @@ struct HatGameBuildNotes {
     let routes: LabRoutes
 
     var current: [BuildNote] {
-        [haptics, copy, glass, colour, behaviour, accessibility]
+        [noSkip, haptics, copy, glass, colour, behaviour, accessibility]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var noSkip: BuildNote {
+        BuildNote(
+            commit: "pending",
+            title: lab("The draw and the shuffle play through"),
+            howToTest: lab("""
+                Pick for Us, then Start Game: neither the word draw nor the shuffle says Tap to Skip, and a \
+                tap no longer cuts them short. Each still plays in full only the first time in a session.
+                """),
+            systemImage: "play.circle",
+            color: .purple
+        ) { routes.passAndPlay() }
+    }
+
     var haptics: BuildNote {
         BuildNote(
             commit: "a1bb094",
