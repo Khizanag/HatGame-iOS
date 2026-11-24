@@ -10,12 +10,25 @@ struct HatGameBuildNotes {
     let routes: LabRoutes
 
     var current: [BuildNote] {
-        [noSkip, haptics, copy, glass, colour, behaviour, accessibility]
+        [howToPlay, noSkip, haptics, copy, glass, colour, behaviour, accessibility]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
+    var howToPlay: BuildNote {
+        BuildNote(
+            commit: "pending",
+            title: lab("How to Play moves to the toolbar"),
+            howToTest: lab("""
+                Home no longer has the How to Play card. Tap the question mark beside Settings: the rules open \
+                in a sheet, half height or full, and Close or a swipe down puts it away.
+                """),
+            systemImage: "questionmark.circle",
+            color: .mint
+        ) { routes.howToPlay() }
+    }
+
     var noSkip: BuildNote {
         BuildNote(
             commit: "d52bf4f",

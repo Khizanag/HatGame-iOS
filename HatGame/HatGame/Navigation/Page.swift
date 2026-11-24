@@ -134,6 +134,12 @@ extension Page {
     // MARK: - Sheets
     /// Presented with `navigator.presentSheet`, never by the screen itself
     /// (constitution article 13).
+    static var howToPlay: Page<HowToPlaySheet> {
+        Page<HowToPlaySheet>(id: "howToPlay") {
+            HowToPlaySheet()
+        }
+    }
+
     static func addTeam(onCreate: @escaping (Team) -> Void) -> Page<AddTeamSheet> {
         Page<AddTeamSheet>(id: "addTeam") {
             AddTeamSheet(onCreate: onCreate)

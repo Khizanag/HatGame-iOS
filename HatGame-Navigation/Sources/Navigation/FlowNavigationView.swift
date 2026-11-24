@@ -30,6 +30,11 @@ public struct FlowNavigationView<RootContent: View>: View {
         }
         .environment(navigator)
         .environment(\.navZoomNamespace, zoomNamespace)
+        // Sheets the root's screens ask for, such as How to Play.
+        .sheet(item: $navigator.presentedSheet) { page in
+            page.view()
+                .environment(navigator)
+        }
         // Presented flows are deliberate (game setup, nearby, online). They are
         // full-screen covers on iOS (left only via their own controls) and
         // sheets on macOS, which has no full-screen cover.

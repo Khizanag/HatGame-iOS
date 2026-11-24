@@ -12,8 +12,6 @@ import SwiftUI
 struct HomeView: View {
     @Environment(Navigator.self) private var navigator
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
-    @SceneStorage("HomeView.howToPlay.expanded.v2") private var isHowToPlayExpanded: Bool = false
-    @AppStorage("HomeView.hasSeenHowToPlay") private var hasSeenHowToPlay: Bool = false
     @State private var isHeroFloating: Bool = false
     /// The single-device game saved mid-play, offered for resuming.
     @State private var savedGame: GameState?
@@ -28,7 +26,7 @@ struct HomeView: View {
             .background {
                 heroBackdrop.ignoresSafeArea()
             }
-            .toolbar { settingsToolbar }
+            .toolbar { homeToolbar }
             .haptic(.warning, trigger: discardedGames)
             .uiTestDeepLink(navigator)
             // Re-check whenever a flow closes: it may have saved, finished, or replaced a game.
@@ -76,7 +74,6 @@ private extension HomeView {
                         .transition(reduceMotion ? .opacity : .move(edge: .top).combined(with: .opacity))
                 }
                 multiDeviceModes
-                howToPlayCard
                 Spacer().frame(height: DesignBook.Spacing.xl)
             }
         }
@@ -84,17 +81,6 @@ private extension HomeView {
             actionButtons
         }
         .onAppear {
-            #if DEBUG
-            // Snapshots need the same Home every launch: no first-run expansion.
-            if UITestConfiguration.screen != nil {
-                isHowToPlayExpanded = false
-                hasSeenHowToPlay = true
-            }
-            #endif
-            if !hasSeenHowToPlay {
-                hasSeenHowToPlay = true
-                isHowToPlayExpanded = true
-            }
             guard !reduceMotion else { return }
             #if DEBUG
             if UITestConfiguration.disablesAnimations { return }
@@ -206,25 +192,6 @@ private extension HomeView {
         )
     }
 
-    var howToPlayCard: some View {
-        FoldableCard(
-            isExpanded: $isHowToPlayExpanded,
-            title: localized("home.howToPlay.title"),
-            icon: "sparkles"
-        ) {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.md) {
-                ForEach(Array(instructions.enumerated()), id: \.offset) { index, instruction in
-                    InstructionRow(
-                        index: index + 1,
-                        icon: instruction.icon,
-                        text: instruction.text
-                    )
-                }
-            }
-        }
-        .paddingHorizontalDefault()
-    }
-
     /// The one primary action — Pass and Play — rides in the action bar,
     /// prominent unless a saved game's Resume already is.
     @ViewBuilder
@@ -281,14 +248,22 @@ private extension HomeView {
     }
 
     @ToolbarContentBuilder
-    var settingsToolbar: some ToolbarContent {
+    var homeToolbar: some ToolbarContent {
+        ToolbarItem(placement: .trailingAction) {
+            Button {
+                navigator.presentSheet(.howToPlay)
+            } label: {
+                Label(localized("home.howToPlay.title"), systemImage: "questionmark.circle")
+            }
+            .help(localized("home.howToPlay.title"))
+            .accessibilityIdentifier("home.howToPlay")
+        }
         ToolbarItem(placement: .trailingAction) {
             Button {
                 navigator.push(.settings)
             } label: {
-                Image(systemName: "gearshape")
+                Label(localized("common.buttons.settings"), systemImage: "gearshape")
             }
-            .accessibilityLabel(Text(localized("common.buttons.settings")))
             .help(localized("common.buttons.settings"))
         }
     }
@@ -300,18 +275,6 @@ private extension HomeView {
         } else {
             isOverwriteConfirmationPresented = true
         }
-    }
-
-    var instructions: [(icon: String, text: String)] {
-        [
-            (icon: "person.2.fill", text: localized("home.instructions.createTeams")),
-            (icon: "text.bubble.fill", text: localized("home.instructions.addWords")),
-            (icon: "shuffle.circle.fill", text: localized("home.instructions.randomize")),
-            (icon: "1.circle.fill", text: localized("home.instructions.round1")),
-            (icon: "2.circle.fill", text: localized("home.instructions.round2")),
-            (icon: "3.circle.fill", text: localized("home.instructions.round3")),
-            (icon: "trophy.fill", text: localized("home.instructions.winner")),
-        ]
     }
 }
 

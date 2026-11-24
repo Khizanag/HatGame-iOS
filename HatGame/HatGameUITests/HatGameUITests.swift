@@ -15,6 +15,24 @@ final class HatGameUITests: XCTestCase {
     }
 
     @MainActor
+    func testHowToPlayOpensFromTheToolbarAndCloses() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestResetState"]
+        app.launch()
+
+        let howToPlay = app.buttons["home.howToPlay"]
+        XCTAssertTrue(howToPlay.waitForExistence(timeout: 10))
+        howToPlay.tap()
+
+        let close = app.buttons["common.close"]
+        XCTAssertTrue(close.waitForExistence(timeout: 5), "the How to Play sheet didn't open")
+        XCTAssertTrue(app.staticTexts["How to Play"].exists)
+        close.tap()
+        XCTAssertTrue(howToPlay.waitForExistence(timeout: 5))
+        XCTAssertFalse(close.exists)
+    }
+
+    @MainActor
     func testEmptyingTheHatAdvancesToRoundTwo() throws {
         let app = launchIntoTestGame()
         let roundTitle = app.staticTexts["nextTeam.roundTitle"]
