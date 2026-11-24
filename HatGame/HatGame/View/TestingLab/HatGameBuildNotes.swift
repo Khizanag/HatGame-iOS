@@ -18,7 +18,7 @@ struct HatGameBuildNotes {
 private extension HatGameBuildNotes {
     var howToPlay: BuildNote {
         BuildNote(
-            commit: "pending",
+            commit: "2ce11e2",
             title: lab("A full Rules page"),
             howToTest: lab("""
                 Tap the question mark on Home: the rules open as a page. Check the facts at a glance, the \
