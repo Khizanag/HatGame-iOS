@@ -20,7 +20,7 @@ SCHEME="HatGame"
 BUNDLE_ID="com.khizanag.hat-game"
 OUTPUT_DIR="Screenshots"
 SETTLE_SECONDS="${SETTLE_SECONDS:-2.5}"
-read -r -a SCREENS <<< "${SCREENS:-home rules settings defaults appIcon}"
+read -r -a SCREENS <<< "${SCREENS:-home rules history recap settings defaults appIcon}"
 read -r -a APPEARANCES <<< "${APPEARANCES:-light dark}"
 
 MODE="capture"

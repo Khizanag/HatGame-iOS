@@ -95,7 +95,7 @@ nonisolated enum GameRules {
             next.lockedTeamIds.insert(team.id)
         }
         let seconds = next.carryOverSeconds.removeValue(forKey: team.id) ?? state.settings.roundDuration
-        next.turn = GameState.Turn(teamId: team.id, remaining: .seconds(seconds))
+        next.turn = GameState.Turn(teamId: team.id, remaining: .seconds(seconds), allottedSeconds: seconds)
         next.currentWordId = firstWord
         next.phase = .playing
         return next
@@ -127,6 +127,7 @@ nonisolated enum GameRules {
             next.turn = turn
             next.currentWordId = nil
             next.phase = .turnResults
+            logTurn(in: &next)
         }
         return next
     }
@@ -242,7 +243,27 @@ nonisolated private extension GameRules {
         next.turn?.isPaused = false
         next.currentWordId = nil
         next.phase = .turnResults
+        logTurn(in: &next)
         return next
+    }
+
+    /// Adds the turn that just ended to the log the history reads.
+    static func logTurn(in state: inout GameState) {
+        guard let turn = state.turn, let endReason = turn.endReason,
+              let team = state.team(withId: turn.teamId)
+        else { return }
+        let secondsUsed = turn.allottedSeconds.map { max(0, $0 - TurnClock.displayedSeconds(for: turn.remaining)) }
+        state.turnLog.append(
+            GameState.TurnLogEntry(
+                round: state.round,
+                teamId: turn.teamId,
+                explainerId: state.explainer(for: team)?.id,
+                guessedWordIds: turn.guessedWordIds,
+                skippedCount: turn.skippedCount,
+                endReason: endReason,
+                secondsUsed: secondsUsed
+            )
+        )
     }
 
     static func resetProgress(_ state: GameState) -> GameState {

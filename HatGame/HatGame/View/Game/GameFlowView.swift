@@ -36,19 +36,21 @@ struct GameFlowView: View {
         let appConfiguration = AppConfiguration.shared
         let navigator = Navigator()
         let manager: GameManager
+        let history = GameHistory.shared
         switch launch {
         case .newGame:
             manager = GameManager(
                 configuration: appConfiguration.isTestMode
                     ? .mockForTesting
-                    : GameConfiguration(defaults: appConfiguration.gameDefaults)
+                    : GameConfiguration(defaults: appConfiguration.gameDefaults),
+                recorder: history
             )
         case .resume(let state):
-            manager = GameManager(restoring: state, defaults: appConfiguration.gameDefaults)
+            manager = GameManager(restoring: state, defaults: appConfiguration.gameDefaults, recorder: history)
             navigator.navigationPath = [Page<GameLoopView>.gameLoop.eraseToAnyPage()]
         #if DEBUG
         case .uiTestGame:
-            manager = GameManager(configuration: .uiTestGame)
+            manager = GameManager(configuration: .uiTestGame, recorder: history)
             navigator.navigationPath = [Page<GameLoopView>.gameLoop.eraseToAnyPage()]
         case .uiTestFillHat:
             let configuration = GameConfiguration.uiTestGame

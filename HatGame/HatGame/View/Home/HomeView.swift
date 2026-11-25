@@ -251,6 +251,15 @@ private extension HomeView {
     var homeToolbar: some ToolbarContent {
         ToolbarItem(placement: .trailingAction) {
             Button {
+                navigator.push(.history)
+            } label: {
+                Label(localized("history.title"), systemImage: "clock.arrow.circlepath")
+            }
+            .help(localized("history.title"))
+            .accessibilityIdentifier("home.history")
+        }
+        ToolbarItem(placement: .trailingAction) {
+            Button {
                 navigator.push(.rules)
             } label: {
                 Label(localized("home.howToPlay.title"), systemImage: "questionmark.circle")

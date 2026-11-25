@@ -81,7 +81,11 @@ Each mode's `*FlowView` is the seam. It:
 
 ### Single-device game engine
 
-`GameManager` (`Manager/GameManager.swift`, `@Observable`) owns all pass-and-play logic: round iteration, team rotation, explainer-role locking, word pool, and per-team time preservation across rounds. It **owns** `HistoryManager` as a `let` (accessed via `gameManager.historyManager`, not injected separately). Other single-device managers: `GameConfiguration`, `SoundPlayer`, `WordDatabase` (4,943 Georgian quick-fill words from Wiktionary, bundled as `Resources/georgian-words.txt`), `TeamDefaultColorGenerator`, `TeamNameSuggestions`, `FeedbackService`.
+`GameManager` (`Manager/GameManager.swift`, `@Observable`) wires setup into `GameEngine` (`Engine/`), which runs the game over the pure `GameRules` transitions on a Codable `GameState` (saved by `FileGameStore`). Other single-device managers: `GameConfiguration`, `SoundPlayer`, `WordDatabase` (4,943 Georgian quick-fill words from Wiktionary, bundled as `Resources/georgian-words.txt`), `TeamDefaultColorGenerator`, `TeamNameSuggestions`, `FeedbackService`.
+
+### History
+
+`GameHistory.shared` (`Manager/GameHistory.swift`, `@Observable`) keeps every game played on the device as a `GameRecord` (`Model/`), newest first, capped at 200, in `Application Support/HatGame/history.json` via `FileHistoryStore`. `GameEngine` records a pass-and-play game when it finishes, or when it is ended with points on the board (`.endedEarly`), from the `GameState.turnLog` it builds turn by turn; `OnlineResultsView` records online and nearby games (scores only, deduplicated by `sourceKey`). Records copy names and words in, so they never depend on the game they came from. Screens: `HistoryView` (Home toolbar) and `GameRecapView` in `View/History/`; a game's long-press, share, and delete live once in `gameRecordActions`. History never leaves the device. In DEBUG, `-uiTestHistory samples|empty` seeds it (the `history` and `recap` deep links default to the samples in `GameRecord+Samples.swift`).
 
 ### Local Swift packages (repo-root siblings: `HatGame-Navigation/`, `HatGame-Networking/`, `HatGame-DesignBook/`)
 

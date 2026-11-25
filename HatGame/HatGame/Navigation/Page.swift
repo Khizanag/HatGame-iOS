@@ -22,6 +22,18 @@ extension Page {
         }
     }
 
+    static var history: Page<HistoryView> {
+        Page<HistoryView>(id: "history") {
+            HistoryView()
+        }
+    }
+
+    static func gameRecap(_ id: GameRecord.ID) -> Page<GameRecapView> {
+        Page<GameRecapView>(id: "gameRecap-\(id)") {
+            GameRecapView(recordId: id)
+        }
+    }
+
     static var settings: Page<SettingsView> {
         Page<SettingsView>(id: "settings") {
             SettingsView()

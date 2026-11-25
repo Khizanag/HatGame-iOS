@@ -22,7 +22,8 @@ final class GameManager {
         store: any GameStore = FileGameStore.shared,
         sound: (any SoundPlaying)? = nil,
         clock: any Clock<Duration> = ContinuousClock(),
-        generator: any RandomNumberGenerator = SystemRandomNumberGenerator()
+        generator: any RandomNumberGenerator = SystemRandomNumberGenerator(),
+        recorder: (any GameRecording)? = nil
     ) {
         self.configuration = configuration
         engine = GameEngine(
@@ -30,7 +31,8 @@ final class GameManager {
             clock: clock,
             generator: generator,
             store: store,
-            sound: sound ?? SoundPlayer.shared
+            sound: sound ?? SoundPlayer.shared,
+            recorder: recorder
         )
     }
 
@@ -41,7 +43,8 @@ final class GameManager {
         store: any GameStore = FileGameStore.shared,
         sound: (any SoundPlaying)? = nil,
         clock: any Clock<Duration> = ContinuousClock(),
-        generator: any RandomNumberGenerator = SystemRandomNumberGenerator()
+        generator: any RandomNumberGenerator = SystemRandomNumberGenerator(),
+        recorder: (any GameRecording)? = nil
     ) {
         configuration = GameConfiguration(restoring: state, defaults: defaults)
         engine = GameEngine(
@@ -49,7 +52,8 @@ final class GameManager {
             clock: clock,
             generator: generator,
             store: store,
-            sound: sound ?? SoundPlayer.shared
+            sound: sound ?? SoundPlayer.shared,
+            recorder: recorder
         )
     }
 }

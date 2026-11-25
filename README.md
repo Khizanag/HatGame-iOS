@@ -45,6 +45,7 @@ After all three rounds, the highest total score wins.
 - Three play modes (pass-and-play, online, nearby).
 - Configurable per game: words per player, round duration, number of teams, players per team, skipping on/off, manual vs automatic words.
 - Real-time scoring and round-by-round standings.
+- History of every game played on the device, with a recap of each: the scoreboard by round, the best explainer and best turn, and every turn's words.
 - Pause and resume during a turn.
 - Five app icons (Classic, Sunset, Neon, Vintage, Minimal).
 - Light / Dark / System appearance.
@@ -70,11 +71,13 @@ HatGame-iOS/
 │   └── HatGame/
 │       ├── HatGameApp.swift
 │       ├── Configuration/   # AppConfiguration, AppIcon, AppColorScheme, AppLanguage, Handedness
-│       ├── Manager/         # GameManager, HistoryManager, GameConfiguration, WordDatabase, SoundPlayer, ...
-│       ├── Model/           # Team, Player, Word, GameRound, PlayCompletionReason
+│       ├── Engine/          # GameEngine, GameRules, GameState, Scoreboard, TurnClock
+│       ├── Manager/         # GameManager, GameHistory, GameConfiguration, WordDatabase, SoundPlayer, ...
+│       ├── Model/           # Team, Player, Word, GameRound, GameRecord, PlayCompletionReason
+│       ├── Persistence/     # FileGameStore (the game in progress), FileHistoryStore (History)
 │       ├── Navigation/      # App destinations as Page factories
 │       ├── View/
-│       │   ├── Home/ Setup/ Game/ Play/ Settings/ Developer/ Feedback/ Component/
+│       │   ├── Home/ Setup/ Game/ Play/ History/ Rules/ Settings/ Developer/ Feedback/ Component/
 │       │   ├── Online/      # Firebase multiplayer screens
 │       │   └── Local/       # Nearby (Multipeer) multiplayer screens
 │       ├── Extensions/

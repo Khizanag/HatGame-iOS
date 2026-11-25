@@ -9711,6 +9711,1211 @@
         }
       },
       "comment" : "VoiceOver: whether a rule is allowed, then the rule."
+    },
+    "history.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "History"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ისტორია"
+          }
+        }
+      },
+      "comment" : "Home toolbar item and title of the page listing played games."
+    },
+    "history.overview" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Overview"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მიმოხილვა"
+          }
+        }
+      },
+      "comment" : "History section header above the totals."
+    },
+    "history.stat.games" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Games"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაში"
+          }
+        }
+      },
+      "comment" : "Caption under the number of games in History."
+    },
+    "history.stat.words" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words guessed"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოცნობილი სიტყვა"
+          }
+        }
+      },
+      "comment" : "Caption under the total words guessed across History."
+    },
+    "history.stat.time" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time played"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის დრო"
+          }
+        }
+      },
+      "comment" : "Caption under the total time played across History."
+    },
+    "history.empty.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No games yet"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშები ჯერ არ არის"
+          }
+        }
+      },
+      "comment" : "Title when History has no games."
+    },
+    "history.empty.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Finished games appear here with their scores, best explainers, and every turn."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დასრულებული თამაშები აქ გამოჩნდება — ქულებით, საუკეთესო ამხსნელებითა და ყველა სვლით."
+          }
+        }
+      },
+      "comment" : "Explains what History will show once a game is played."
+    },
+    "history.empty.action" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start a Game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის დაწყება"
+          }
+        }
+      },
+      "comment" : "Button in empty History that starts Pass and Play."
+    },
+    "history.clear" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear History"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ისტორიის გასუფთავება"
+          }
+        }
+      },
+      "comment" : "Toolbar action and confirm button that deletes every game in History."
+    },
+    "history.clear.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear every game from History?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წაიშალოს ყველა თამაში ისტორიიდან?"
+          }
+        }
+      },
+      "comment" : "Confirmation title before clearing History."
+    },
+    "history.delete" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Game"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის წაშლა"
+          }
+        }
+      },
+      "comment" : "Action that deletes one game from History."
+    },
+    "history.delete.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete this game from History?"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "წაიშალოს ეს თამაში ისტორიიდან?"
+          }
+        }
+      },
+      "comment" : "Confirmation title before deleting one game."
+    },
+    "history.delete.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This can't be undone."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ამის დაბრუნება შეუძლებელია."
+          }
+        }
+      },
+      "comment" : "Message under History delete confirmations."
+    },
+    "history.open" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Open"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გახსნა"
+          }
+        }
+      },
+      "comment" : "Context menu action that opens a game's recap."
+    },
+    "history.share" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Share"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაზიარება"
+          }
+        }
+      },
+      "comment" : "Shares a game's standings as text."
+    },
+    "history.row.won %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ won"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გაიმარჯვა: %@"
+          }
+        }
+      },
+      "comment" : "History row headline; the argument is the winning team."
+    },
+    "history.row.led %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ led"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ლიდერობდა: %@"
+          }
+        }
+      },
+      "comment" : "History row headline for a game ended early; the argument is the team ahead."
+    },
+    "history.row.tie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "A tie"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ფრე"
+          }
+        }
+      },
+      "comment" : "History row headline when teams shared the top score."
+    },
+    "history.endedEarly" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ended early"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ადრე დასრულდა"
+          }
+        }
+      },
+      "comment" : "Marks a game ended before round three was over."
+    },
+    "history.endedEarly.round %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ended early · round %lld of 3"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ადრე დასრულდა · რაუნდი %lld / 3"
+          }
+        }
+      },
+      "comment" : "Marks a game ended early; the argument is the round it reached."
+    },
+    "history.share.header %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@"
+          }
+        }
+      },
+      "comment" : "First line of shared standings: app name and date."
+    },
+    "history.share.line %lld %@ %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld. %2$@ — %3$lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld. %2$@ — %3$lld"
+          }
+        }
+      },
+      "comment" : "A line of shared standings: place, team, points."
+    },
+    "recap.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Recap"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის შეჯამება"
+          }
+        }
+      },
+      "comment" : "Title of one game's page in History."
+    },
+    "recap.eyebrow.winner" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Winner"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამარჯვებული"
+          }
+        }
+      },
+      "comment" : "Small heading above the winning team's name."
+    },
+    "recap.eyebrow.tie" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tie"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ფრე"
+          }
+        }
+      },
+      "comment" : "Small heading above the names of tied teams."
+    },
+    "recap.standings.final" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Final Standings"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საბოლოო შედეგები"
+          }
+        }
+      },
+      "comment" : "Recap section with the scoreboard of a finished game."
+    },
+    "recap.standings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Standings"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "შედეგები"
+          }
+        }
+      },
+      "comment" : "Recap section with the scoreboard of a game ended early."
+    },
+    "recap.multiplayerNote" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Online and nearby games keep the scores only, not each turn."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ონლაინ და ახლომახლო თამაშებიდან მხოლოდ ქულები ინახება, სვლები — არა."
+          }
+        }
+      },
+      "comment" : "Note on a multiplayer game's recap."
+    },
+    "recap.highlights" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Highlights"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამორჩეული მომენტები"
+          }
+        }
+      },
+      "comment" : "Recap section with the best explainer and best turn."
+    },
+    "recap.players" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Players"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "მოთამაშეები"
+          }
+        }
+      },
+      "comment" : "Recap section with what each player explained."
+    },
+    "recap.turns" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn by Turn"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სვლა სვლით"
+          }
+        }
+      },
+      "comment" : "Recap section listing every turn by round."
+    },
+    "recap.settings" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Game Settings"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "თამაშის პარამეტრები"
+          }
+        }
+      },
+      "comment" : "Recap section with the settings the game used."
+    },
+    "recap.settings.turnLength" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turn length"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სვლის ხანგრძლივობა"
+          }
+        }
+      },
+      "comment" : "Recap setting row."
+    },
+    "recap.settings.words" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words in the hat"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "სიტყვები ქუდში"
+          }
+        }
+      },
+      "comment" : "Recap setting row."
+    },
+    "recap.settings.skipping" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skipping"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვება"
+          }
+        }
+      },
+      "comment" : "Recap setting row."
+    },
+    "recap.settings.skipping.off" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Off"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამორთულია"
+          }
+        }
+      },
+      "comment" : "Skipping wasn't allowed."
+    },
+    "recap.settings.skipping.free" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "On, no penalty"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჩართულია, ჯარიმის გარეშე"
+          }
+        }
+      },
+      "comment" : "Skipping was allowed at no cost."
+    },
+    "recap.bestExplainer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best explainer"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საუკეთესო ამხსნელი"
+          }
+        }
+      },
+      "comment" : "Highlight: the player who explained the most words."
+    },
+    "recap.bestTurn" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Best turn"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "საუკეთესო სვლა"
+          }
+        }
+      },
+      "comment" : "Highlight: the turn with the most words."
+    },
+    "recap.bestTurn.detail %@ %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · round %2$lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · რაუნდი %2$lld"
+          }
+        }
+      },
+      "comment" : "Who had the best turn, and in which round."
+    },
+    "recap.wordsGuessed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Words guessed"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოცნობილი სიტყვა"
+          }
+        }
+      },
+      "comment" : "Highlight caption under the words guessed in the game."
+    },
+    "recap.skips" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Skips"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გამოტოვება"
+          }
+        }
+      },
+      "comment" : "Highlight caption under the number of skips."
+    },
+    "recap.turnsPlayed" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Turns played"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ნათამაშები სვლა"
+          }
+        }
+      },
+      "comment" : "Highlight caption under the number of turns."
+    },
+    "recap.column.team" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Team"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "გუნდი"
+          }
+        }
+      },
+      "comment" : "Scoreboard column header."
+    },
+    "recap.column.total" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ჯამი"
+          }
+        }
+      },
+      "comment" : "Scoreboard column header."
+    },
+    "recap.round.score %lld %lld" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Round %1$lld: %2$lld"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "რაუნდი %1$lld: %2$lld"
+          }
+        }
+      },
+      "comment" : "A team's points in one round."
+    },
+    "recap.missing.title" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No longer in History"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ისტორიაში აღარ არის"
+          }
+        }
+      },
+      "comment" : "Shown when an opened game was deleted."
+    },
+    "recap.missing.message" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This game was deleted from History."
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ეს თამაში ისტორიიდან წაიშალა."
+          }
+        }
+      },
+      "comment" : "Shown when an opened game was deleted."
+    },
+    "recap.turn.title %@ %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · %2$@ explained"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ · ხსნიდა %2$@"
+          }
+        }
+      },
+      "comment" : "A turn: the team, then who explained."
+    },
+    "recap.turn.noWords" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No words this turn"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ამ სვლაზე სიტყვა არ გამოცნობილა"
+          }
+        }
+      },
+      "comment" : "A turn that guessed nothing."
+    },
+    "recap.turn.timeExpired" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Time ran out"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დრო ამოიწურა"
+          }
+        }
+      },
+      "comment" : "How a turn ended."
+    },
+    "recap.turn.gaveUp" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gave up"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "დანებდნენ"
+          }
+        }
+      },
+      "comment" : "How a turn ended."
+    },
+    "recap.turn.emptiedHat" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emptied the hat"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "ქუდი დაცარიელდა"
+          }
+        }
+      },
+      "comment" : "How a turn ended: the last word was guessed."
+    },
+    "recap.player.didNotExplain" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Didn't explain"
+          }
+        },
+        "ka" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "არ აუხსნია"
+          }
+        }
+      },
+      "comment" : "A player who never explained in the game."
+    },
+    "recap.points %lld" : {
+      "comment" : "A team's points.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld points"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ქულა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ქულა"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recap.margin.won %lld" : {
+      "comment" : "How far ahead the winner finished.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "won by %lld"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "won by %lld"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ქულით მოიგო"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ქულით მოიგო"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recap.margin.ahead %lld" : {
+      "comment" : "How far ahead the leader was when the game ended early.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ahead"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld ahead"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld-ით წინ"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld-ით წინ"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recap.settings.skipping.penalty %lld" : {
+      "comment" : "Skipping was allowed at this cost.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On, −%lld point"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "On, −%lld points"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ჩართულია, −%lld ქულა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "ჩართულია, −%lld ქულა"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recap.words.count %lld" : {
+      "comment" : "A count of words.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld word"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld words"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სიტყვა"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recap.turns.count %lld" : {
+      "comment" : "A count of turns.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld turn"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld turns"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სვლა"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld სვლა"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "recap.turn.skipped %lld" : {
+      "comment" : "Words skipped in a turn.",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld skipped"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld skipped"
+                }
+              }
+            }
+          }
+        },
+        "ka" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld გამოტოვებული"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld გამოტოვებული"
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "version" : "1.1"

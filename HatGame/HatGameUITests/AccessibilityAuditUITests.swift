@@ -11,7 +11,8 @@ import XCTest
 final class AccessibilityAuditUITests: XCTestCase {
     /// `nil` is Home; the rest are `-uiTestScreen` values.
     private static let screens: [String?] = [
-        nil, "rules", "settings", "defaults", "appIcon", "developer", "fillHat", "randomization", "game",
+        nil, "rules", "history", "recap", "settings", "defaults", "appIcon", "developer", "fillHat",
+        "randomization", "game",
     ]
 
     private static let largestSize = "UICTContentSizeCategoryAccessibilityXXXL"

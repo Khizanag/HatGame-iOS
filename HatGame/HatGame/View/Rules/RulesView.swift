@@ -11,8 +11,6 @@ import SwiftUI
 /// finer points as questions to open, and the ways to play. A page to read,
 /// so it sits on the opaque ground (constitution article 2).
 struct RulesView: View {
-    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
-
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: DesignBook.Spacing.xxl) {
@@ -60,45 +58,11 @@ private extension RulesView {
     }
 
     var glanceSection: some View {
-        let facts = RulesContent.facts
-        return section("rules.glance.title") {
-            VStack(spacing: DesignBook.Spacing.md) {
-                ForEach(Array(stride(from: 0, to: facts.count, by: 2)), id: \.self) { start in
-                    glanceRow {
-                        ForEach(facts[start ..< min(start + 2, facts.count)]) { fact in
-                            factCard(fact)
-                        }
-                    }
-                }
+        section("rules.glance.title") {
+            StatTileGrid(items: RulesContent.facts) { fact in
+                StatTile(value: fact.value, caption: localized(fact.caption))
             }
         }
-    }
-
-    /// Two facts a row; stacked at accessibility sizes, where half a row is
-    /// too narrow for the captions.
-    func glanceRow(@ViewBuilder content: () -> some View) -> some View {
-        let layout = dynamicTypeSize.isAccessibilitySize
-            ? AnyLayout(VStackLayout(spacing: DesignBook.Spacing.md))
-            : AnyLayout(HStackLayout(alignment: .top, spacing: DesignBook.Spacing.md))
-        return layout(content)
-            .fixedSize(horizontal: false, vertical: true)
-    }
-
-    func factCard(_ fact: RulesContent.Fact) -> some View {
-        GameCard {
-            VStack(alignment: .leading, spacing: DesignBook.Spacing.xs) {
-                Text(verbatim: fact.value)
-                    .font(DesignBook.Font.title1)
-                    .monospacedDigit()
-                    .foregroundStyle(DesignBook.Color.Text.primary)
-                Text(localized(fact.caption))
-                    .font(DesignBook.Font.subheadline)
-                    .foregroundStyle(DesignBook.Color.Text.secondary)
-                    .fixedSize(horizontal: false, vertical: true)
-            }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
-        }
-        .accessibilityElement(children: .combine)
     }
 }
 

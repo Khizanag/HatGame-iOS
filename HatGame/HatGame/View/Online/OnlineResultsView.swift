@@ -42,10 +42,22 @@ struct OnlineResultsView: View {
                 }
             }
             .task {
+                recordGame()
                 try? await Task.sleep(for: DesignBook.Motion.celebrationDelay)
                 hasCelebrated = true
                 announceWinners()
             }
+    }
+}
+
+// MARK: - History
+private extension OnlineResultsView {
+    /// Keeps the game in History; the record's key makes a second showing a no-op.
+    func recordGame() {
+        guard let room = roomManager.room else { return }
+        let mode: GameRecord.Mode = roomManager is LocalRoomManager ? .nearby : .online
+        guard let record = GameRecord(room: room, mode: mode) else { return }
+        GameHistory.shared.record(record)
     }
 }
 

@@ -43,3 +43,34 @@ final class SoundSpy: SoundPlaying {
         timeUpCount += 1
     }
 }
+
+/// Keeps History in memory and counts its loads and saves.
+actor InMemoryHistoryStore: HistoryStore {
+    private(set) var stored: [GameRecord]
+    private(set) var loadCount = 0
+    private(set) var saveCount = 0
+
+    init(stored: [GameRecord] = []) {
+        self.stored = stored
+    }
+
+    func load() -> [GameRecord] {
+        loadCount += 1
+        return stored
+    }
+
+    func save(_ records: [GameRecord]) {
+        saveCount += 1
+        stored = records
+    }
+}
+
+/// Collects every game the engine hands to History.
+@MainActor
+final class RecorderSpy: GameRecording {
+    private(set) var records: [GameRecord] = []
+
+    func record(_ record: GameRecord) {
+        records.append(record)
+    }
+}

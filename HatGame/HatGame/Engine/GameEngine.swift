@@ -5,6 +5,7 @@
 //  Created by Giga Khizanishvili on 16.11.26.
 //
 
+import Foundation
 import Observation
 
 /// Runs a single-device game: owns its `GameState`, the turn clock, and
@@ -25,6 +26,8 @@ final class GameEngine {
     @ObservationIgnored private var generator: any RandomNumberGenerator
     @ObservationIgnored private let store: any GameStore
     @ObservationIgnored private let sound: any SoundPlaying
+    @ObservationIgnored private let recorder: (any GameRecording)?
+    @ObservationIgnored private let currentDate: () -> Date
     @ObservationIgnored private var turnClock: TurnClock?
     @ObservationIgnored private var tickTask: Task<Void, Never>?
     @ObservationIgnored private var persistTask: Task<Void, Never>?
@@ -34,12 +37,16 @@ final class GameEngine {
 
     /// - Parameter state: A fresh `.setup` state, or a saved game. A saved game
     ///   that was mid-turn comes back paused with its remaining time.
+    /// - Parameter recorder: Where a finished game, or one ended with points
+    ///   on the board, goes; `nil` keeps no history.
     init(
         state: GameState,
         clock: any Clock<Duration> = ContinuousClock(),
         generator: any RandomNumberGenerator = SystemRandomNumberGenerator(),
         store: any GameStore,
-        sound: any SoundPlaying
+        sound: any SoundPlaying,
+        recorder: (any GameRecording)? = nil,
+        currentDate: @escaping () -> Date = { .now }
     ) {
         var restored = GameRules.pause(state, remaining: state.turn?.remaining ?? .zero)
         if restored.phase == .playing, (restored.turn?.remaining ?? .zero) <= .zero {
@@ -51,6 +58,8 @@ final class GameEngine {
         self.generator = generator
         self.store = store
         self.sound = sound
+        self.recorder = recorder
+        self.currentDate = currentDate
         let remaining = restored.turn?.remaining ?? .seconds(restored.settings.roundDuration)
         remainingSeconds = TurnClock.displayedSeconds(for: remaining)
         if restored.phase == .playing {
@@ -73,8 +82,9 @@ extension GameEngine {
     /// and the setup can start; a rejected setup leaves the engine untouched.
     func start(_ setup: GameState, startingTeamIndex: Int) {
         guard state.phase == .setup else { return }
-        let started = GameRules.start(setup, startingTeamIndex: startingTeamIndex, using: &generator)
+        var started = GameRules.start(setup, startingTeamIndex: startingTeamIndex, using: &generator)
         guard started.phase == .nextTeam else { return }
+        started.startedAt = currentDate()
         apply(started)
     }
 
@@ -132,8 +142,12 @@ extension GameEngine {
     }
 
     /// Ends a game in progress for good; the saved game is cleared.
+    /// A game with points on the board is kept in History as ended early.
     func abandon() {
+        let ended = state
         apply(GameRules.abandon(state))
+        guard ended.phase.isInProgress, ended.scoreboard.hasAnyScore else { return }
+        recorder?.record(GameRecord(state: ended, outcome: .endedEarly, endedAt: currentDate()))
     }
 
     /// The app left the foreground: a running turn pauses so the clock can't
@@ -160,6 +174,9 @@ private extension GameEngine {
         state = next
         syncClock(after: previous)
         persist()
+        if next.phase == .finished, previous.phase != .finished {
+            recorder?.record(GameRecord(state: next, outcome: .finished, endedAt: currentDate()))
+        }
     }
 
     func expire() {

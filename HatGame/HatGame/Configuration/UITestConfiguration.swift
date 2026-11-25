@@ -17,6 +17,7 @@ extension View {
         #if DEBUG
         return task {
             try? await Task.sleep(for: .milliseconds(120))
+            await UITestConfiguration.prepareHistory()
             UITestConfiguration.deepLink(using: navigator)
         }
         #else
@@ -36,6 +37,11 @@ enum UITestConfiguration {
 
     static var colorScheme: AppColorScheme? {
         value(for: "-uiTestColorScheme").flatMap(AppColorScheme.init(rawValue:))
+    }
+
+    /// `-uiTestHistory empty` starts with no games; `samples` with the sample games.
+    static var history: String? {
+        value(for: "-uiTestHistory")
     }
 
     static var disablesAnimations: Bool {
@@ -61,6 +67,11 @@ enum UITestConfiguration {
             navigator.push(.settings)
         case "rules":
             navigator.push(.rules)
+        case "history":
+            navigator.push(.history)
+        case "recap":
+            navigator.push(.history)
+            navigator.push(.gameRecap(GameRecord.samples()[0].id))
         case "defaults":
             navigator.push(.defaultsSettings)
         case "appIcon":

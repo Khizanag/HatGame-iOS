@@ -36,6 +36,66 @@ final class HatGameUITests: XCTestCase {
     }
 
     @MainActor
+    func testAGameEndedWithPointsIsKeptInHistory() throws {
+        let app = XCUIApplication()
+        app.launchArguments = [
+            "-uiTestScreen", "game", "-uiTestResetState", "-uiTestDisableAnimations", "-uiTestHistory", "empty",
+        ]
+        app.launch()
+        tapWhenEnabled(app.buttons["nextTeam.play"])
+        let gotIt = app.buttons["game.gotIt"]
+        XCTAssertTrue(gotIt.waitForExistence(timeout: 5))
+        gotIt.tap()
+        gotIt.tap()
+        XCTAssertTrue(app.staticTexts["turnResults.title"].waitForExistence(timeout: 5))
+        app.buttons["game.endGame"].tap()
+        let confirm = app.buttons["game.endGame.confirm"].firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        confirm.tap()
+
+        let history = app.buttons["home.history"]
+        XCTAssertTrue(history.waitForExistence(timeout: 10))
+        history.tap()
+        let row = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Alpha led'")).firstMatch
+        XCTAssertTrue(row.waitForExistence(timeout: 5), "the ended game isn't in History")
+        row.tap()
+
+        XCTAssertTrue(app.staticTexts["Standings"].waitForExistence(timeout: 5))
+        let turns = app.staticTexts["Turn by Turn"]
+        for _ in 0 ..< 6 where !turns.exists { app.swipeUp() }
+        XCTAssertTrue(turns.exists, "the recap has no turns")
+    }
+
+    @MainActor
+    func testDeletingAGameFromItsRecapLeavesHistory() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestScreen", "recap", "-uiTestResetState", "-uiTestDisableAnimations"]
+        app.launch()
+
+        let delete = app.buttons["recap.delete"]
+        XCTAssertTrue(delete.waitForExistence(timeout: 10))
+        delete.tap()
+        let confirm = app.buttons["history.delete.confirm"].firstMatch
+        XCTAssertTrue(confirm.waitForExistence(timeout: 5))
+        confirm.tap()
+
+        let remaining = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Mimes won'")).firstMatch
+        XCTAssertTrue(remaining.waitForExistence(timeout: 5), "deleting didn't return to History")
+        let deleted = app.buttons.matching(NSPredicate(format: "label BEGINSWITH 'Night Owls won'")).firstMatch
+        XCTAssertFalse(deleted.exists, "the deleted game is still listed")
+    }
+
+    @MainActor
+    func testEmptyHistoryOffersToStartAGame() throws {
+        let app = XCUIApplication()
+        app.launchArguments = ["-uiTestScreen", "history", "-uiTestHistory", "empty", "-uiTestResetState"]
+        app.launch()
+
+        XCTAssertTrue(app.staticTexts["No games yet"].waitForExistence(timeout: 10))
+        XCTAssertTrue(app.buttons["Start a Game"].exists)
+    }
+
+    @MainActor
     func testEmptyingTheHatAdvancesToRoundTwo() throws {
         let app = launchIntoTestGame()
         let roundTitle = app.staticTexts["nextTeam.roundTitle"]

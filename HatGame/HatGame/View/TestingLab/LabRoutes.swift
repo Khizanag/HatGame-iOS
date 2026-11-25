@@ -32,6 +32,24 @@ struct LabRoutes {
         present(.onlineFlow)
     }
 
+    /// History, after adding the sample games when it has none to show.
+    func history(openingSample: Bool = false) {
+        let history = GameHistory.shared
+        Task {
+            await history.load()
+            if history.records.isEmpty {
+                GameRecord.samples().reversed().forEach(history.record)
+            }
+            await history.waitForPendingWrites()
+            navigator.presentedPage = nil
+            var path = [Page<HistoryView>.history.eraseToAnyPage()]
+            if openingSample, let record = history.records.first {
+                path.append(Page<GameRecapView>.gameRecap(record.id).eraseToAnyPage())
+            }
+            navigator.navigationPath = path
+        }
+    }
+
     /// A started two-team, two-word game: the shortest way into a turn.
     func quickGame() {
         present(.uiTestGame)

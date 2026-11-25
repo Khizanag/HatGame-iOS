@@ -49,7 +49,9 @@ Each mode's `*FlowView` is the composition seam. It:
 - The word pool (`remainingWords`, `currentWord`) and skipping.
 - Per-team remaining-time tracking and preservation across rounds.
 
-It **owns** `HistoryManager` as a `let` (reached via `gameManager.historyManager`, not injected separately). `HistoryManager` tracks guessed words per team per round and computes scores and rankings.
+The game itself runs in `GameEngine` over the pure `GameRules` transitions on a Codable `GameState`; `Scoreboard` computes scores and rankings, and `GameState.turnLog` keeps every finished turn.
+
+When a game finishes, or is ended with points on the board, the engine hands a `GameRecord` to `GameHistory.shared`, which keeps the device's played games in `Application Support/HatGame/history.json` (newest first, capped at 200). Online and nearby games are recorded from their results screen, scores only. `HistoryView` (Home's toolbar) and `GameRecapView` show them.
 
 `GameConfiguration` (`@Observable`, reference type) holds one game's settings and data (teams, words, durations). Defaults come from `AppConfiguration.shared` unless overridden. Test mode swaps in `GameConfiguration.mockForTesting`, which must stay a fresh value per access (see the regression note in the type).
 

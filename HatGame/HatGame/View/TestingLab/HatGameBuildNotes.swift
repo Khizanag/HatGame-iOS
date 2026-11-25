@@ -10,118 +10,52 @@ struct HatGameBuildNotes {
     let routes: LabRoutes
 
     var current: [BuildNote] {
-        [howToPlay, noSkip, haptics, copy, glass, colour, behaviour, accessibility]
+        [history, recap, recording]
     }
 }
 
 // MARK: - Notes
 private extension HatGameBuildNotes {
-    var howToPlay: BuildNote {
+    var history: BuildNote {
         BuildNote(
-            commit: "2ce11e2",
-            title: lab("A full Rules page"),
+            commit: "HEAD",
+            title: lab("History of every game"),
             howToTest: lab("""
-                Tap the question mark on Home: the rules open as a page. Check the facts at a glance, the \
-                three rounds explaining one word, a turn, scoring, fair play, the finer points that open \
-                when tapped, and the ways to play, in English and Georgian.
+                Tap the clock on Home. History lists the games played on this phone by month, under games, \
+                words guessed, and time played. Long-press a game to preview it, share it, or delete it; swipe \
+                it to delete. The trash clears everything. The lab adds sample games when History is empty.
                 """),
-            systemImage: "questionmark.circle",
-            color: .mint
-        ) { routes.push(.rules) }
-    }
-
-    var noSkip: BuildNote {
-        BuildNote(
-            commit: "d52bf4f",
-            title: lab("The draw and the shuffle play through"),
-            howToTest: lab("""
-                Pick for Us, then Start Game: neither the word draw nor the shuffle says Tap to Skip, and a \
-                tap no longer cuts them short. Each still plays in full only the first time in a session.
-                """),
-            systemImage: "play.circle",
-            color: .purple
-        ) { routes.passAndPlay() }
-    }
-
-    var haptics: BuildNote {
-        BuildNote(
-            commit: "a1bb094",
-            title: lab("Haptics follow the constitution"),
-            howToTest: lab("""
-                Every change you make is felt once: Got It and adding a word or player tap like a success, \
-                Skip and any pick tick, a confirmed delete or end warns, a refused word buzzes. The countdown, \
-                time-up, starting a turn, and results screens no longer vibrate. Settings ▸ Haptics silences all.
-                """),
-            systemImage: "iphone.radiowaves.left.and.right",
-            color: .pink
-        ) { routes.quickGame() }
-    }
-
-    var copy: BuildNote {
-        BuildNote(
-            commit: "f047874",
-            title: lab("Calmer copy, symbols for emoji"),
-            howToTest: lab("""
-                No exclamation marks anywhere, in English or Georgian. Next Team shows a target symbol, \
-                round results number the places, and Settings ▸ Language lists its choices with glyphs.
-                """),
-            systemImage: "text.quote",
-            color: .orange
-        ) { routes.quickGame() }
-    }
-
-    var glass: BuildNote {
-        BuildNote(
-            commit: "a5a98d3",
-            title: lab("Flows rise from the bottom; glass only on controls"),
-            howToTest: lab("""
-                Pass and Play, Play Nearby, and Play Online slide up instead of zooming out of their button. \
-                How to Play is an opaque card again. With a saved game, Resume is the one blue button. In a \
-                lobby, long-press a team to delete it; Add Team is a glass capsule.
-                """),
-            systemImage: "square.on.square",
-            color: .blue
-        ) { routes.passAndPlay() }
-    }
-
-    var colour: BuildNote {
-        BuildNote(
-            commit: "8f1c183",
-            title: lab("The accent is rare"),
-            howToTest: lab("""
-                Blue stays on the main button, toggles, checkmarks, and progress; card headers, menus, links, \
-                and small controls draw in the text colour. Counts roll in place, and small numbers share one badge.
-                """),
-            systemImage: "paintpalette",
+            systemImage: "clock.arrow.circlepath",
             color: .indigo
-        ) { routes.passAndPlay() }
+        ) { routes.history() }
     }
 
-    var behaviour: BuildNote {
+    var recap: BuildNote {
         BuildNote(
-            commit: "bae66b4",
-            title: lab("Try Again, and what leaves the device"),
+            commit: "HEAD",
+            title: lab("A recap for each game"),
             howToTest: lab("""
-                Turn the network off and join or create a room: the alert offers Try Again. Play Online and \
-                Feedback say what they send. Join Nearby explains Local Network and opens Settings.
+                Open a game: the winner and margin, the scoreboard by round, the best explainer and best turn, \
+                what each player explained, every turn with its words, and the settings it used. Share sends \
+                the standings as text. Online and nearby games show scores only. Try Georgian and dark mode.
                 """),
-            systemImage: "arrow.clockwise",
-            color: .teal
-        ) { routes.playOnline() }
+            systemImage: "trophy",
+            color: .orange
+        ) { routes.history(openingSample: true) }
     }
 
-    var accessibility: BuildNote {
+    var recording: BuildNote {
         BuildNote(
-            commit: "ae2ec87",
-            title: lab("Bigger text, clearer cards"),
+            commit: "HEAD",
+            title: lab("Games are kept when they end"),
             howToTest: lab("""
-                At the largest text size, settings rows and Starting Team stack instead of clipping, and the \
-                turn scrolls. The pause button shows the clock. With Increase Contrast, cards gain an edge. \
-                Team sheets now open from the flow, so swipe a team to edit or delete it.
+                Play a Quick Game to the end, or score a word and end it from the Close button: it appears at \
+                the top of History, an ended game marked Ended early. A game ended before anyone scored isn't \
+                kept. Online and nearby games are kept from their results screen.
                 """),
-            systemImage: "textformat.size",
+            systemImage: "checkmark.seal",
             color: .green
-        ) { routes.passAndPlay() }
+        ) { routes.quickGame() }
     }
 }
 

@@ -15,6 +15,7 @@ struct HatGameLabSections: View {
 
     var body: some View {
         playSection
+        historySection
         switchesSection
         lookSection
         multiplayerSection
@@ -35,6 +36,26 @@ private extension HatGameLabSections {
         } footer: {
             Text(verbatim: "A quick game is two teams of two and a two-word hat, already started. "
                 + "Test Mode fills Pass and Play with sample teams and words.")
+        }
+    }
+
+    var historySection: some View {
+        Section {
+            go("Open History", "clock.arrow.circlepath", .indigo) { routes.history() }
+            Button {
+                GameRecord.samples().reversed().forEach(GameHistory.shared.record)
+            } label: {
+                LabRow(verbatim: "Add Sample Games", systemImage: "plus.square.on.square", color: .teal)
+            }
+            Button(role: .destructive) {
+                GameHistory.shared.deleteAll()
+            } label: {
+                LabRow(verbatim: "Clear History", systemImage: "trash", color: .red)
+            }
+        } header: {
+            Text(verbatim: "History")
+        } footer: {
+            Text(verbatim: "Sample games: a close game, three teams, a tie, one ended early, one online, one nearby.")
         }
     }
 
