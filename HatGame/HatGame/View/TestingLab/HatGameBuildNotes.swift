@@ -18,7 +18,7 @@ struct HatGameBuildNotes {
 private extension HatGameBuildNotes {
     var history: BuildNote {
         BuildNote(
-            commit: "HEAD",
+            commit: "78d6574",
             title: lab("History of every game"),
             howToTest: lab("""
                 Tap the clock on Home. History lists the games played on this phone by month, under games, \
@@ -32,7 +32,7 @@ private extension HatGameBuildNotes {
 
     var recap: BuildNote {
         BuildNote(
-            commit: "HEAD",
+            commit: "78d6574",
             title: lab("A recap for each game"),
             howToTest: lab("""
                 Open a game: the winner and margin, the scoreboard by round, the best explainer and best turn, \
@@ -46,7 +46,7 @@ private extension HatGameBuildNotes {
 
     var recording: BuildNote {
         BuildNote(
-            commit: "HEAD",
+            commit: "78d6574",
             title: lab("Games are kept when they end"),
             howToTest: lab("""
                 Play a Quick Game to the end, or score a word and end it from the Close button: it appears at \
